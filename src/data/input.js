@@ -7,4 +7,12 @@ export const input = {
       label: "Email address",
     },
   ],
+  pass: [
+    {
+      placeholder: "Enter Your Password",
+      label: "Your Password",
+      inputType: "password",
+      name: "pass",
+    },
+  ],
 };

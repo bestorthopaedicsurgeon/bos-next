@@ -15,6 +15,15 @@ const Page = () => {
             key={data.name}
           />
         ))}
+        {input.pass.map((data) => (
+          <InputField
+            placeholder={data.placeholder}
+            name={data.name}
+            inputType={data.password}
+            label={data.label}
+            key={data.name}
+          />
+        ))}
       </form>
     </div>
   );
