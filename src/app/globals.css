@@ -147,3 +147,9 @@
   background-color: transparent !important;
   cursor: pointer !important;
 }
+/* Remove white background on flag dropdown open */
+
+.react-tel-input .flag-dropdown.open .selected-flag {
+  background-color: transparent;
+  background: transparent !important;
+}
