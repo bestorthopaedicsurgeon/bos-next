@@ -8,15 +8,18 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import WelcomeTxt from "@/components/reusable/welcomeTxt";
 import login_banner from "../../../public/login_banner.png";
 import Image from "next/image";
+import Link from "next/link";
 const Page = () => {
   return (
     <div className="flex justify-center items-center min-xl:pr-[200px]">
       <div className="min-lg:w-[60%] max-lg:hidden">
-        <Image
-          src={login_banner}
-          alt="login banner"
-          className="w-[1000px] h-auto"
-        />
+        <Link href="#">
+          <Image
+            src={login_banner}
+            alt="login banner"
+            className="w-[1000px] h-auto"
+          />
+        </Link>
       </div>
       <div className="min-lg:w-[40%] w-[100%] max-xl:mx-[20px]">
         <WelcomeTxt

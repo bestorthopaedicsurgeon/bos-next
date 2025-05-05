@@ -141,3 +141,9 @@
 .random {
   @apply pt-0.5 bg-amber-100 text-2xl;
 }
+
+.flag-dropdown:hover,
+.flag-dropdown .selected-flag:hover {
+  background-color: transparent !important;
+  cursor: pointer !important;
+}
