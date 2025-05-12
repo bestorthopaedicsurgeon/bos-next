@@ -9,9 +9,11 @@ const WelcomeTxt = (props) => {
       </h1>
       <p>
         {subTxt}{" "}
-        <a href={ctaLink} className="underline text-(--primary)">
-          {cta}
-        </a>
+        {ctaLink && (
+          <a href={ctaLink} className="underline text-(--primary)">
+            {cta}
+          </a>
+        )}
       </p>
     </div>
   );

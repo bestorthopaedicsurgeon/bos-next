@@ -25,7 +25,7 @@ const Page = () => {
         <WelcomeTxt
           header="Welcome Back"
           cta="Sign up"
-          ctaLink="#"
+          ctaLink="/signup"
           subTxt="Don’t have an account?"
           color="--primary"
         />

@@ -8,7 +8,7 @@ const btnStyle =
 const SocialLogin = (props) => {
   const { headerTxt } = props;
   return (
-    <div className="mt-[29px]">
+    <div className="my-[29px]">
       <p className="my-[12px]">{headerTxt}</p>
       <div className="flex gap-[12px]">
         <button className={btnStyle}>

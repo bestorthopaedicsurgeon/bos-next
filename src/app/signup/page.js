@@ -15,21 +15,22 @@ import Link from "next/link";
 const Page = () => {
   const [phone, setPhone] = useState("");
   return (
-    <div className="flex justify-center items-center min-xl:pr-[200px]">
-      <div className="min-lg:w-[60%] max-lg:hidden">
-        <Link href="#">
+    <div className="flex justify-center items-center min-xl:pr-[170px]">
+      <div className="min-lg:w-[65%] max-lg:hidden">
+        <Link href="#" className="h-full">
           <Image
             src={login_banner}
             alt="login banner"
-            className="w-[1000px] h-auto"
+            className=" h-[990px]"
+            // height="100%"
           />
         </Link>
       </div>
-      <div className="min-lg:w-[40%] w-[100%] max-xl:mx-[20px]">
+      <div className="min-lg:w-[35%] w-[100%] max-xl:mx-[20px]">
         <WelcomeTxt
           header="Sign up"
           cta="Login"
-          ctaLink="#"
+          ctaLink="/login"
           subTxt="Already have an account ?"
           color="--primary"
         />
