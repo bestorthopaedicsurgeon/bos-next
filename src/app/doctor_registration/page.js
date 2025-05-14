@@ -14,14 +14,15 @@ const page = () => {
           step3={data.step3}
         />
       ))}
+      {/*need to check size */}
       {profileHeader.welcome.map((data, key) => (
-        <WelcomeTxt
-          key={key}
-          header={data.heading}
-          subTxt={data.subTxt}
-          color={data.color}
-        />
+        <div key={key} className="text-center mt-[77px]">
+          <h3 className="text-(--primary)">{data.heading}</h3>
+          <span>{data.subTxt}</span>
+        </div>
       ))}
+
+      <form action=""></form>
     </div>
   );
 };

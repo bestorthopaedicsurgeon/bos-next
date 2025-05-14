@@ -136,6 +136,9 @@
   a {
     @apply text-[20px] font-[400];
   }
+  h3 {
+    @apply min-lg:text-[36px] font-[700] max-lg:text-[24px];
+  }
 }
 
 .random {
