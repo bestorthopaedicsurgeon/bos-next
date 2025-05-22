@@ -14,15 +14,6 @@ const page = () => {
     "border border-(--primary) rounded-md p-3 pr-5 appearance-none bg-no-repeat bg-[right_0.75rem_center] bg-[length:16px_12px";
   const formField = "flex flex-col gap-2 max-lg:col-span-2";
   const inputField = "border border-(--primary) rounded-md p-3";
-  const specialties = [
-    "Foot and Ankle Surgery",
-    "Pediatric Orthopedics",
-    "Joint Replacement (Arthroplasty)",
-    "Spine Surgery",
-    "Hand Surgery",
-    "Shoulder and Elbow Surgery",
-    "Sports Medicine",
-  ];
 
   const handleSpecialtyChange = (specialty) => {
     setSelectedSpecialties((prev) =>
