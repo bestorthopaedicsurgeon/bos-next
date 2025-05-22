@@ -136,8 +136,35 @@
   a {
     @apply text-[20px] font-[400];
   }
+  h3 {
+    @apply min-lg:text-[36px] font-[700] max-lg:text-[24px];
+  }
 }
 
 .random {
   @apply pt-0.5 bg-amber-100 text-2xl;
+}
+.profile_head {
+  @apply bg-(--primary) rounded-4xl flex items-center justify-center gap-[18px] flex-col max-w-[1216px] max-h-[310px] m-auto py-[80px];
+}
+.container {
+  @apply min-sm:max-w-[1216px] max-sm:max-w-full px-5 m-auto;
+}
+.hide {
+  /* @apply hidden; */
+}
+.flag-dropdown:hover,
+.flag-dropdown .selected-flag:hover {
+  background-color: transparent !important;
+  cursor: pointer !important;
+}
+/* Remove white background on flag dropdown open */
+
+.react-tel-input .flag-dropdown.open .selected-flag {
+  background-color: transparent;
+  background: transparent !important;
+}
+
+.btn_fill {
+  @apply bg-(--primary) rounded-sm text-secondary text-[20px];
 }
