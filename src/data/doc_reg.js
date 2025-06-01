@@ -76,9 +76,33 @@ export const schedule_date = [
     location:"Clinic"
   },
    {
-    day:"Mon",
+    day:"Tue",
     time:"09:00am - 09:30am",
     location:"Online"
   },
-
+{
+    day:"Wed",
+    time:"09:00am - 09:30am",
+    location:"Online"
+  },
+  {
+    day:"Thu",
+    time:"09:00am - 09:30am",
+    location:"Online"
+  },
+  {
+    day:"Fri",
+    time:"09:00am - 09:30am",
+    location:"Online"
+  },
+  {
+    day:"Sat",
+    time:"09:00am - 09:30am",
+    location:"Online"
+  },
+  {
+    day:"Sun",
+    time:"09:00am - 09:30am",
+    location:"Online"
+  },
 ]

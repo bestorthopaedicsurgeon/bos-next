@@ -338,11 +338,9 @@ const page = () => {
                             <button
                               key={day}
                               disabled={isDisabled}
-                              className={`py-[3px] px-[7px] text-[17px] flex items-center justify-center 
-                ${
-                  isHoliday ? "bg-[var(--primary)] rounded-full text-white" : ""
-                } 
-                ${isDisabled ? "cursor-not-allowed opacity-50" : ""}
+                              className={`w-10 h-10 flex items-center justify-center border border-gray-300 
+                ${isHoliday ? 'bg-[var(--primary)] rounded-full text-white' : ''} 
+                ${isDisabled ? 'cursor-not-allowed opacity-50' : 'hover:bg-gray-100 hover:text-primary'}
               `}
                             >
                               {day}
@@ -355,25 +353,28 @@ const page = () => {
                   ))}
                 </div>
               </div>
-            </DialogContent>
-          </Dialog>
-        </div>
-       <div className="col-span-2 text-center">
-       <p className="text-primary font-[700]">Schedules</p>
-       </div>
-          {schedule_date.map((data,key)=>(
+              <div className="grid max-lg:grid-cols-1 grid-cols-2 gap-10">
+              <div className="col-span-2 bg-secondary p-5 rounded-md mt-10">
+              <div className="flex justify-between items-center w-[60%] max-lg:w-full m-auto text-primary">
+              <p>Clinic Timing</p>
+              <div className="line w-[1px] bg-primary h-[30px]"></div>
+              <p>Online Timing</p>
+              </div>
+              </div>
+            
+                   {schedule_date.map((data,key)=>(
 
           
-            <div key={key} className="flex bg-secondary p-6 justify-between rounded-md items-center">
+            <div key={key} className="max-lg:col-span-2 flex bg-secondary p-6 max-sm:p-2 max-sm:justify-flex-start max-sm:flex-wrap max-sm:gap-[10px] justify-between rounded-md items-center">
             <p className="bg-background h-[47px] px-5 rounded-md flex items-center pb-[4px]">{data.day}</p>
             <div className="line h-[68px] w-[1px] bg-(--background)"></div>
-            <div className="flex flex-col gap-5">
+            <div className="flex flex-col gap-5 max-sm:gap-2 justify-center">
               <div className="flex items-center gap-3">
-                <Clock3 />
-                <p>{data.time}</p>
+                <Clock3 className="max-sm:w-[15px] max-sm:h-[15px]" />
+                <p className="text-wrap">{data.time}</p>
               </div>
               <div className="flex items-center gap-3">
-                <User />
+                <User className="max-sm:w-[15px] max-sm:h-[15px]"/>
                 <p>{data.location}</p>
               </div>
             </div>
@@ -390,6 +391,11 @@ const page = () => {
         ))
         }
         
+        </div>
+        
+            </DialogContent>
+          </Dialog>
+        </div>
         <div className="flex gap-3 items-center col-span-2">
           <input
             type="checkbox"
