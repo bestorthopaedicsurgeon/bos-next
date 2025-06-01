@@ -3,7 +3,7 @@ import ProfileHeader from "@/components/reusable/profileHeader";
 import React, { useState } from "react";
 import { profileHeader } from "@/data/profileHeader";
 import WelcomeTxt from "@/components/reusable/welcomeTxt";
-import { doc_reg, calendar_data, calendar } from "@/data/doc_reg";
+import { doc_reg, calendar_data, calendar,schedule_date } from "@/data/doc_reg";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import {
@@ -358,32 +358,39 @@ const page = () => {
             </DialogContent>
           </Dialog>
         </div>
-        <div>
-          <div className="flex bg-(--secondary) p-6">
-            <p>Mon</p>
-            <div className="line h-10 w-1 bg-(--background)"></div>
-            <div>
-              <div className="flex items-center">
+       <div className="col-span-2 text-center">
+       <p className="text-primary font-[700]">Schedules</p>
+       </div>
+          {schedule_date.map((data,key)=>(
+
+          
+            <div key={key} className="flex bg-secondary p-6 justify-between rounded-md items-center">
+            <p className="bg-background h-[47px] px-5 rounded-md flex items-center pb-[4px]">{data.day}</p>
+            <div className="line h-[68px] w-[1px] bg-(--background)"></div>
+            <div className="flex flex-col gap-5">
+              <div className="flex items-center gap-3">
                 <Clock3 />
-                <p>09:00am - 09:30am</p>
+                <p>{data.time}</p>
               </div>
-              <div className="flex items-center">
+              <div className="flex items-center gap-3">
                 <User />
-                <p>Clinic</p>
+                <p>{data.location}</p>
               </div>
             </div>
             <select
               name="edit"
               id="edit"
-              className={dropDown}
+              className={`${dropDown} !border-none bg-background px-[20px] cursor-pointer`}
               style={selectStyle}
             >
               <option value="">Edit</option>
               <option value="">Delete</option>
             </select>
           </div>
-        </div>
-        <div className="flex gap-3 items-center max-lg:col-span-2">
+        ))
+        }
+        
+        <div className="flex gap-3 items-center col-span-2">
           <input
             type="checkbox"
             name="terms"

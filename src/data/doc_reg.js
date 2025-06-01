@@ -67,3 +67,18 @@ export const calendar = [
     disabled: [20, 31, 30],
   },
 ];
+
+
+export const schedule_date = [
+  {
+    day:"Mon",
+    time:"09:00am - 09:30am",
+    location:"Clinic"
+  },
+   {
+    day:"Mon",
+    time:"09:00am - 09:30am",
+    location:"Online"
+  },
+
+]
