@@ -3,8 +3,23 @@ import ProfileHeader from "@/components/reusable/profileHeader";
 import React, { useState } from "react";
 import { profileHeader } from "@/data/profileHeader";
 import WelcomeTxt from "@/components/reusable/welcomeTxt";
-import { doc_reg } from "@/data/doc_reg";
+import { doc_reg, calendar_data, calendar } from "@/data/doc_reg";
 import Link from "next/link";
+import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { Label } from "@/components/ui/label";
+import UsePresenceData from "@/components/ui/slider.jsx";
+// import { Pencil } from "lucide";
+import { Clock3, PencilIcon, User } from "lucide-react";
 const page = () => {
   const [selectedSpecialties, setSelectedSpecialties] = useState([]);
   const selectStyle = {
@@ -272,11 +287,103 @@ const page = () => {
         </div>
         <div className={formField}>
           <label htmlFor="avail">Set Your Availability</label>
-          <button className="flex items-center justify-center gap-2 px-4 py-3 bg-[#83C5BE] text-white rounded-md cursor-pointer">
-            <span>Click to set availability</span>
-          </button>
+
+          <Dialog className="overflow-auto max-w-full">
+            <DialogTrigger asChild>
+              <Button
+                variant="outline"
+                className="flex items-center justify-center gap-2 px-4 py-4 h-[48px] bg-[#83C5BE] text-white rounded-md cursor-pointer"
+              >
+                <span>Click to set availability</span>
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="sm:max-w-md">
+              <DialogHeader>
+                <DialogTitle>My Availability</DialogTitle>
+                <DialogDescription>
+                  Set your availabilty to let the patients choose the timeslots
+                  to conveniently book appointments
+                </DialogDescription>
+              </DialogHeader>
+              <div className="flex items-center gap-2">
+                <div className="grid flex-1 gap-2">
+                  <Label htmlFor="link" className="sr-only">
+                    Link
+                  </Label>
+                </div>
+              </div>
+              <div>
+                <div className="flex justify-between items-center">
+                  <UsePresenceData />
+                  <button className="bg-(--primary) text-(--secondary) py-3 pt-[7px] cursor-pointer px-6 rounded-md">
+                    Mark Holidays
+                  </button>
+                </div>
+
+                <div className="flex flex-col space-y-4 mt-10 max-sm:gap-[30px]">
+                  {calendar.map((item, idx) => (
+                    <div
+                      key={idx}
+                      className="flex items-start justify-center max-sm:gap-[20px]"
+                    >
+                      <div className="font-semibold capitalize max-sm:gap-[10px] max-sm:w-[100px] w-[280px]">
+                        {item.type}
+                      </div>
+                      <div className="flex flex-wrap gap-1 max-sm:items-start">
+                        {item.date.map((day) => {
+                          const isDisabled = item.disabled.includes(day);
+                          const isHoliday = item.holiday.includes(day);
+
+                          return (
+                            <button
+                              key={day}
+                              disabled={isDisabled}
+                              className={`py-[3px] px-[7px] text-[17px] flex items-center justify-center 
+                ${
+                  isHoliday ? "bg-[var(--primary)] rounded-full text-white" : ""
+                } 
+                ${isDisabled ? "cursor-not-allowed opacity-50" : ""}
+              `}
+                            >
+                              {day}
+                            </button>
+                          );
+                        })}
+                      </div>
+                      <PencilIcon className="cursor-pointer min-lg:h-[20px] min-sm:h-[40px] min-sm:w-[40px] min-lg:w-[20px] h-[40px] w-[70px] ml-3" />
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </DialogContent>
+          </Dialog>
         </div>
-        <div className="flex gap-3 items-center">
+        <div>
+          <div className="flex bg-(--secondary) p-6">
+            <p>Mon</p>
+            <div className="line h-10 w-1 bg-(--background)"></div>
+            <div>
+              <div className="flex items-center">
+                <Clock3 />
+                <p>09:00am - 09:30am</p>
+              </div>
+              <div className="flex items-center">
+                <User />
+                <p>Clinic</p>
+              </div>
+            </div>
+            <select
+              name="edit"
+              id="edit"
+              className={dropDown}
+              style={selectStyle}
+            >
+              <option value="">Edit</option>
+              <option value="">Delete</option>
+            </select>
+          </div>
+        </div>
+        <div className="flex gap-3 items-center max-lg:col-span-2">
           <input
             type="checkbox"
             name="terms"
