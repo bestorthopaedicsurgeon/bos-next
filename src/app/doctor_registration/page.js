@@ -3,7 +3,12 @@ import ProfileHeader from "@/components/reusable/profileHeader";
 import React, { useState } from "react";
 import { profileHeader } from "@/data/profileHeader";
 import WelcomeTxt from "@/components/reusable/welcomeTxt";
-import { doc_reg, calendar_data, calendar,schedule_date } from "@/data/doc_reg";
+import {
+  doc_reg,
+  calendar_data,
+  calendar,
+  schedule_date,
+} from "@/data/doc_reg";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import {
@@ -20,7 +25,7 @@ import { Label } from "@/components/ui/label";
 import UsePresenceData from "@/components/ui/slider.jsx";
 // import { Pencil } from "lucide";
 import { Clock3, PencilIcon, User } from "lucide-react";
-const page = () => {
+const Page = () => {
   const [selectedSpecialties, setSelectedSpecialties] = useState([]);
   const selectStyle = {
     backgroundImage: `url("data:image/svg+xml,%3Csvg width='18' height='11' viewBox='0 0 18 11' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath fill-rule='evenodd' clip-rule='evenodd' d='M9.53026 9.88407C9.23736 10.177 8.76256 10.177 8.46966 9.88407L0.823183 2.23757C0.530293 1.94467 0.530293 1.46987 0.823183 1.17697L1.17674 0.823374C1.46963 0.530474 1.9445 0.530474 2.2374 0.823374L8.99996 7.58597L15.7626 0.823374C16.0555 0.530474 16.5303 0.530474 16.8232 0.823374L17.1768 1.17697C17.4697 1.46987 17.4697 1.94467 17.1768 2.23757L9.53026 9.88407Z' fill='%23033333'/%3E%3C/svg%3E")`,
@@ -34,7 +39,7 @@ const page = () => {
     setSelectedSpecialties((prev) =>
       prev.includes(specialty)
         ? prev.filter((item) => item !== specialty)
-        : [...prev, specialty]
+        : [...prev, specialty],
     );
   };
   return (
@@ -50,7 +55,7 @@ const page = () => {
       ))}
       {/*need to check size */}
       {profileHeader.welcome.map((data, key) => (
-        <div key={key} className="text-center mt-[77px]">
+        <div key={key} className="mt-[77px] text-center">
           <h3 className="text-(--primary)">{data.heading}</h3>
           <span>{data.subTxt}</span>
         </div>
@@ -58,7 +63,7 @@ const page = () => {
 
       <form
         action=""
-        className="grid grid-cols-2 gap-[32px] container m-auto pt-16"
+        className="container m-auto grid grid-cols-2 gap-[32px] pt-16"
       >
         <div className={formField}>
           <label htmlFor="title">Title</label>
@@ -80,7 +85,7 @@ const page = () => {
           <input type="file" name="pic" id="pic" className="hidden" />
           <label
             htmlFor="pic"
-            className="flex items-center justify-center gap-2 px-4 py-2 bg-[#83C5BE] text-white rounded-md cursor-pointer"
+            className="flex cursor-pointer items-center justify-center gap-2 rounded-md bg-[#83C5BE] px-4 py-2 text-white"
           >
             <span>Click to upload</span>
             <span>
@@ -172,9 +177,9 @@ const page = () => {
         </div>
         <div className={formField}>
           <label htmlFor="">Subspeciality/Special Interests</label>
-          <div className="border-(--primary) border-1 p-3 ">
+          <div className="border-1 border-(--primary) p-3">
             <div
-              className="max-h-[240px] overflow-auto "
+              className="max-h-[240px] overflow-auto"
               style={{
                 scrollbarWidth: "thin",
                 scrollbarColor: "#2F797B #D9D9D9",
@@ -191,15 +196,14 @@ const page = () => {
                   />
                   <label
                     htmlFor={specialty.replace(/\s+/g, "-").toLowerCase()}
-                    className={`flex items-center cursor-pointer select-none rounded-full py-2`}
+                    className={`flex cursor-pointer items-center rounded-full py-2 select-none`}
                   >
                     <span
-                      className={`w-4 h-4 inline-block mr-2 rounded-full border 
-                    ${
-                      selectedSpecialties.includes(specialty)
-                        ? "bg-blue-500 border-blue-500"
-                        : "bg-white border-gray-400"
-                    }`}
+                      className={`mr-2 inline-block h-4 w-4 rounded-full border ${
+                        selectedSpecialties.includes(specialty)
+                          ? "border-blue-500 bg-blue-500"
+                          : "border-gray-400 bg-white"
+                      }`}
                     ></span>
                     {specialty}
                   </label>
@@ -209,7 +213,7 @@ const page = () => {
           </div>
         </div>
         <div className={formField}>
-          <div className="border-(--primary) border-1 p-3 mt-9">
+          <div className="mt-9 border-1 border-(--primary) p-3">
             <div
               className="h-[240px] overflow-auto"
               style={{
@@ -221,10 +225,10 @@ const page = () => {
                 <div key={specialty}>
                   <label
                     htmlFor={specialty.replace(/\s+/g, "-").toLowerCase()}
-                    className={`flex items-center cursor-pointer select-none rounded-full py-2`}
+                    className={`flex cursor-pointer items-center rounded-full py-2 select-none`}
                   >
                     <span
-                      className={`w-4 h-4 inline-block mr-2 rounded-full border bg-blue-500 border-blue-500`}
+                      className={`mr-2 inline-block h-4 w-4 rounded-full border border-blue-500 bg-blue-500`}
                     ></span>
                     {specialty}
                   </label>
@@ -288,11 +292,11 @@ const page = () => {
         <div className={formField}>
           <label htmlFor="avail">Set Your Availability</label>
 
-          <Dialog className="overflow-auto max-w-full">
+          <Dialog className="max-w-full overflow-auto">
             <DialogTrigger asChild>
               <Button
                 variant="outline"
-                className="flex items-center justify-center gap-2 px-4 py-4 h-[48px] bg-[#83C5BE] text-white rounded-md cursor-pointer"
+                className="flex h-[48px] cursor-pointer items-center justify-center gap-2 rounded-md bg-[#83C5BE] px-4 py-4 text-white"
               >
                 <span>Click to set availability</span>
               </Button>
@@ -313,20 +317,20 @@ const page = () => {
                 </div>
               </div>
               <div>
-                <div className="flex justify-between items-center">
+                <div className="flex items-center justify-between">
                   <UsePresenceData />
-                  <button className="bg-(--primary) text-(--secondary) py-3 pt-[7px] cursor-pointer px-6 rounded-md">
+                  <button className="cursor-pointer rounded-md bg-(--primary) px-6 py-3 pt-[7px] text-(--secondary)">
                     Mark Holidays
                   </button>
                 </div>
 
-                <div className="flex flex-col space-y-4 mt-10 max-sm:gap-[30px]">
+                <div className="mt-10 flex flex-col space-y-4 max-sm:gap-[30px]">
                   {calendar.map((item, idx) => (
                     <div
                       key={idx}
                       className="flex items-start justify-center max-sm:gap-[20px]"
                     >
-                      <div className="font-semibold capitalize max-sm:gap-[10px] max-sm:w-[100px] w-[280px]">
+                      <div className="w-[280px] font-semibold capitalize max-sm:w-[100px] max-sm:gap-[10px]">
                         {item.type}
                       </div>
                       <div className="flex flex-wrap gap-1 max-sm:items-start">
@@ -338,79 +342,76 @@ const page = () => {
                             <button
                               key={day}
                               disabled={isDisabled}
-                              className={`w-10 h-10 flex items-center justify-center border border-gray-300 
-                ${isHoliday ? 'bg-[var(--primary)] rounded-full text-white' : ''} 
-                ${isDisabled ? 'cursor-not-allowed opacity-50' : 'hover:bg-gray-100 hover:text-primary'}
-              `}
+                              className={`flex h-10 w-10 items-center justify-center border border-gray-300 ${isHoliday ? "rounded-full bg-[var(--primary)] text-white" : ""} ${isDisabled ? "cursor-not-allowed opacity-50" : "hover:text-primary hover:bg-gray-100"} `}
                             >
                               {day}
                             </button>
                           );
                         })}
                       </div>
-                      <PencilIcon className="cursor-pointer min-lg:h-[20px] min-sm:h-[40px] min-sm:w-[40px] min-lg:w-[20px] h-[40px] w-[70px] ml-3" />
+                      <PencilIcon className="ml-3 h-[40px] w-[70px] cursor-pointer min-sm:h-[40px] min-sm:w-[40px] min-lg:h-[20px] min-lg:w-[20px]" />
                     </div>
                   ))}
                 </div>
               </div>
-              <div className="grid max-lg:grid-cols-1 grid-cols-2 gap-10">
-              <div className="col-span-2 bg-secondary p-5 rounded-md mt-10">
-              <div className="flex justify-between items-center w-[60%] max-lg:w-full m-auto text-primary">
-              <p>Clinic Timing</p>
-              <div className="line w-[1px] bg-primary h-[30px]"></div>
-              <p>Online Timing</p>
-              </div>
-              </div>
-            
-                   {schedule_date.map((data,key)=>(
+              <div className="grid grid-cols-2 gap-10 max-lg:grid-cols-1">
+                <div className="bg-secondary col-span-2 mt-10 rounded-md p-5">
+                  <div className="text-primary m-auto flex w-[60%] items-center justify-between max-lg:w-full">
+                    <p>Clinic Timing</p>
+                    <div className="line bg-primary h-[30px] w-[1px]"></div>
+                    <p>Online Timing</p>
+                  </div>
+                </div>
 
-          
-            <div key={key} className="max-lg:col-span-2 flex bg-secondary p-6 max-sm:p-2 max-sm:justify-flex-start max-sm:flex-wrap max-sm:gap-[10px] justify-between rounded-md items-center">
-            <p className="bg-background h-[47px] px-5 rounded-md flex items-center pb-[4px]">{data.day}</p>
-            <div className="line h-[68px] w-[1px] bg-(--background)"></div>
-            <div className="flex flex-col gap-5 max-sm:gap-2 justify-center">
-              <div className="flex items-center gap-3">
-                <Clock3 className="max-sm:w-[15px] max-sm:h-[15px]" />
-                <p className="text-wrap">{data.time}</p>
+                {schedule_date.map((data, key) => (
+                  <div
+                    key={key}
+                    className="bg-secondary max-sm:justify-flex-start flex items-center justify-between rounded-md p-6 max-lg:col-span-2 max-sm:flex-wrap max-sm:gap-[10px] max-sm:p-2"
+                  >
+                    <p className="bg-background flex h-[47px] items-center rounded-md px-5 pb-[4px]">
+                      {data.day}
+                    </p>
+                    <div className="line h-[68px] w-[1px] bg-(--background)"></div>
+                    <div className="flex flex-col justify-center gap-5 max-sm:gap-2">
+                      <div className="flex items-center gap-3">
+                        <Clock3 className="max-sm:h-[15px] max-sm:w-[15px]" />
+                        <p className="text-wrap">{data.time}</p>
+                      </div>
+                      <div className="flex items-center gap-3">
+                        <User className="max-sm:h-[15px] max-sm:w-[15px]" />
+                        <p>{data.location}</p>
+                      </div>
+                    </div>
+                    <select
+                      name="edit"
+                      id="edit"
+                      className={`${dropDown} bg-background cursor-pointer !border-none px-[20px]`}
+                      style={selectStyle}
+                    >
+                      <option value="">Edit</option>
+                      <option value="">Delete</option>
+                    </select>
+                  </div>
+                ))}
               </div>
-              <div className="flex items-center gap-3">
-                <User className="max-sm:w-[15px] max-sm:h-[15px]"/>
-                <p>{data.location}</p>
-              </div>
-            </div>
-            <select
-              name="edit"
-              id="edit"
-              className={`${dropDown} !border-none bg-background px-[20px] cursor-pointer`}
-              style={selectStyle}
-            >
-              <option value="">Edit</option>
-              <option value="">Delete</option>
-            </select>
-          </div>
-        ))
-        }
-        
-        </div>
-        
             </DialogContent>
           </Dialog>
         </div>
-        <div className="flex gap-3 items-center col-span-2">
+        <div className="col-span-2 flex items-center gap-3">
           <input
             type="checkbox"
             name="terms"
             id="terms"
-            className="border-(--primary) h-3 w-3 border-2 appearance-none  checked:border-primary checked:bg-primary focus:outline-none "
+            className="checked:border-primary checked:bg-primary h-3 w-3 appearance-none border-2 border-(--primary) focus:outline-none"
           />
           <label htmlFor="terms">I accept the terms</label>
         </div>
       </form>
-      <button className="btn_fill px-14 py-2 mt-10 flex justify-center m-auto max-sm:w-full">
+      <button className="btn_fill m-auto mt-10 flex justify-center px-14 py-2 max-sm:w-full">
         Confirm Registration
       </button>
     </div>
   );
 };
 
-export default page;
+export default Page;
