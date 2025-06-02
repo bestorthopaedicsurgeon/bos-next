@@ -127,7 +127,7 @@
     @apply font-[700] max-lg:text-[24px] min-lg:text-[48px];
   }
   p {
-    @apply text-[20px] font-[400] font-dm-sans;
+    @apply font-dm-sans text-[20px] font-[400] max-sm:text-[16px];
   }
   label {
     @apply text-[20px] font-[400];
