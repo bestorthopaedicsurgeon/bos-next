@@ -9,6 +9,7 @@
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
   --font-syne: var(--font-syne);
+  --font-dm-sans: var(--font-dm-sans);
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
@@ -123,33 +124,36 @@
     @apply bg-background text-foreground;
   }
   h1 {
-    @apply min-lg:text-[48px] max-lg:text-[24px] font-[700];
+    @apply font-[700] max-lg:text-[24px] min-lg:text-[48px];
   }
   p {
-    @apply text-[20px]  font-[400];
+    @apply text-[20px] font-[400] font-dm-sans;
   }
   label {
-    @apply text-[20px]  font-[400];
+    @apply text-[20px] font-[400];
   }
   h2 {
-    @apply min-lg:text-[20px] max-lg:text-[16px] font-[700];
+    @apply text-[24px] font-bold sm:text-[28px] md:text-[32px] lg:text-[36px];
+  }
+  h4 {
+    @apply text-[16px] font-semibold sm:text-[17px] md:text-[18px];
   }
   a {
     @apply text-[20px] font-[400];
   }
   h3 {
-    @apply min-lg:text-[36px] font-[700] max-lg:text-[24px];
+    @apply font-[700] max-lg:text-[24px] min-lg:text-[36px];
   }
 }
 
 .random {
-  @apply pt-0.5 bg-amber-100 text-2xl;
+  @apply bg-amber-100 pt-0.5 text-2xl;
 }
 .profile_head {
-  @apply bg-(--primary) rounded-4xl flex items-center justify-center gap-[18px] flex-col max-w-[1216px] max-h-[310px] m-auto py-[80px];
+  @apply m-auto flex max-h-[310px] max-w-[1216px] flex-col items-center justify-center gap-[18px] rounded-4xl bg-(--primary) py-[80px];
 }
 .container {
-  @apply min-sm:max-w-[1216px] max-sm:max-w-full px-5 m-auto;
+  @apply m-auto px-5 max-sm:max-w-full min-sm:max-w-[1216px];
 }
 .hide {
   /* @apply hidden; */
@@ -167,5 +171,5 @@
 }
 
 .btn_fill {
-  @apply bg-(--primary) rounded-sm text-secondary text-[20px];
+  @apply text-secondary rounded-sm bg-(--primary) text-[20px];
 }

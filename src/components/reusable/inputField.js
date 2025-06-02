@@ -3,10 +3,10 @@ import React from "react";
 const InputField = (props) => {
   const { placeholder, inputType, label, name } = props;
   return (
-    <div className="flex flex-col gap-3 mt-[40px] ">
+    <div className="mt-[40px] flex flex-col gap-3">
       <label htmlFor={name}>{label}</label>
       <input
-        className="border-solid outline-(--primary) outline rounded-md py-[14px] px-[16px]"
+        className="outline-primary rounded-md border-solid px-[16px] py-[14px] outline"
         type={inputType}
         name={name}
         id={name}
