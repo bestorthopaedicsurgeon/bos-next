@@ -1,6 +1,6 @@
 import DoctorCard from "@/components/reusable/doctorCard";
 import { Button } from "@/components/ui/button";
-import { featuredDoctors } from "@/data/featuredDoctors";
+import { featuredDoctors } from "@/data/doctors";
 import { ExternalLink } from "lucide-react";
 import Image from "next/image";
 import React from "react";

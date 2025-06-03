@@ -28,6 +28,7 @@ const buttonVariants = cva(
       size: {
         default: "h-9 px-4 py-2 has-[>svg]:px-3",
         primary: "px-5 py-4 has-[>svg]:px-4 rounded-full text-md",
+        primarySm: "px-3 py-2 has-[>svg]:px-2 rounded-full text-md",
         primaryForeground: "px-5 py-4 has-[>svg]:px-4 rounded-full",
         sm: "h-8 rounded-md gap-1.5 px-3 has-[>svg]:px-2.5",
         lg: "h-10 rounded-md px-6 has-[>svg]:px-4",
