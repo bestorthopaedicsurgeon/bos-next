@@ -39,7 +39,7 @@ const DoctorCard = ({
           <Image src="/icons/star.png" alt="Star icon" width={24} height={24} />
           <p className="text-lg text-neutral-800">{rating}</p>
         </div>
-<div className="flex items-center gap-2">
+        <div className="flex items-center gap-2">
           <Button className="w-fit" variant={"primary"} size={"primary"}>
             View Profile
           </Button>
@@ -48,7 +48,7 @@ const DoctorCard = ({
               Write a Review
             </Button>
           )}
-</div>
+        </div>
       </div>
       <div className="relative h-[221px] w-[195px] overflow-hidden rounded-md">
         <Image
