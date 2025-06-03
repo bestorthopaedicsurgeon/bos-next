@@ -126,23 +126,23 @@
   h1 {
     @apply font-[700] max-lg:text-[24px] min-lg:text-[48px];
   }
+  h2 {
+    @apply text-[24px] font-bold sm:text-[28px] md:text-[32px] lg:text-[36px];
+  }
+  h3 {
+    @apply font-[700] max-lg:text-[24px] min-lg:text-[28px];
+  }
+  h4 {
+    @apply text-[16px] font-semibold sm:text-[17px] md:text-[18px];
+  }
   p {
     @apply font-dm-sans text-[20px] font-[400] max-sm:text-[16px];
   }
   label {
     @apply text-[20px] font-[400];
   }
-  h2 {
-    @apply text-[24px] font-bold sm:text-[28px] md:text-[32px] lg:text-[36px];
-  }
-  h4 {
-    @apply text-[16px] font-semibold sm:text-[17px] md:text-[18px];
-  }
   a {
     @apply text-[20px] font-[400];
-  }
-  h3 {
-    @apply font-[700] max-lg:text-[24px] min-lg:text-[36px];
   }
 }
 

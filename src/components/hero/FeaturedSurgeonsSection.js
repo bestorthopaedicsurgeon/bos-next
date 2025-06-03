@@ -1,5 +1,6 @@
 import DoctorCard from "@/components/reusable/doctorCard";
 import { Button } from "@/components/ui/button";
+import { featuredDoctors } from "@/data/featuredDoctors";
 import { ExternalLink } from "lucide-react";
 import Image from "next/image";
 import React from "react";
@@ -24,11 +25,10 @@ export const FeaturedSurgeonsSection = () => {
         </Button>
         {/* <div className="bg-primary text-primary-foreground flex cursor-pointer items-center gap-2 rounded-full px-10 py-5 text-sm"></div> */}
       </div>
-      <div className="flex flex-wrap justify-evenly gap-8">
-        <DoctorCard />
-        <DoctorCard />
-        <DoctorCard />
-        <DoctorCard />
+      <div className="grid grid-cols-1 gap-8 lg:grid-cols-2">
+        {featuredDoctors.map((doctor, index) => (
+          <DoctorCard key={index} {...doctor} />
+        ))}
       </div>
     </section>
   );
