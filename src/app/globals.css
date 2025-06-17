@@ -56,6 +56,7 @@
   --primary: oklch(0.53 0.0723 197.68); /* #2f797b*/
   --text-primary: oklch(0.29 0.0274 281.54); /* #292a39 */
   --text-secondary: oklch(0.56 0 0); /* #747474 */
+  --text-lightgray:oklch(0.6286 0.0308 272.27);
   --primary-foreground: oklch(0.9315 0.0085 56.31); /* #ede7e3 */
   --secondary: oklch(0.968 0.007 247.896);
   --secondary-foreground: oklch(0.208 0.042 265.755);
@@ -153,7 +154,7 @@
   @apply bg-amber-100 pt-0.5 text-2xl;
 }
 .profile_head {
-  @apply m-auto flex max-h-[310px] max-w-[1216px] flex-col items-center justify-center gap-[18px] rounded-4xl bg-(--primary) py-[80px];
+  @apply m-auto flex max-h-[310px] max-w-full flex-col items-center justify-center gap-[18px] rounded-4xl bg-(--primary) py-[80px];
 }
 .container {
   @apply m-auto px-5 max-sm:max-w-full min-sm:max-w-[1216px];

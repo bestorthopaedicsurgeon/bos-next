@@ -1,15 +1,13 @@
-export const stepper = {
-  createProfile: [
+export const docProfile_Details = {
+  stepper: [
     {
-      heading: "Create Profile",
-      step1: "signup",
-      step2: "Join as doctor",
-      step3: "Registration",
+      heading: "Your Profile",
+      step1: "Doctors",
     },
   ],
   doc_details: [
     {
-      pic: "",
+      pic: "/surgeons/doctors.png",
       name: "Dr. Smith Brown",
       designation: "Orthopaedic Surgeon",
       qualification: "MBBS, MD",
@@ -21,7 +19,7 @@ export const stepper = {
       email: "brown.smith@gmail.com",
       fee: 500,
       online_fee: 500,
-      clinic_loc: "123 Maple Street, Apollo hospital, Springfield, Sydney",
+      clinic_loc: "Ghan NT 0872, Australia",
     },
   ],
 };
