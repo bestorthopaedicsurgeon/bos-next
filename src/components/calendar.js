@@ -141,7 +141,7 @@ export default function AvailabilityCalendar() {
   }
 
   return (
-    <div className="max-w-md mx-auto p-4  rounded-lg border-2 border-primary h-[420px]">
+    <div className="max-w-full p-4  rounded-lg border-2 border-primary h-[450px]">
       <div className="flex justify-center gap-3 items-center mb-4">
         <h2 className="text-xl font-semibold text-primary">Availability</h2>
         <button 

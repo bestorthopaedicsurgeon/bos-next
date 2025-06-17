@@ -50,11 +50,11 @@ export default function HospitalAffiliations() {
 
 
     return (
-        <div className="max-w-2xl mx-auto p-6 bg-white rounded-lg shadow">
+        <div className="max-w-2xl mx-auto p-6 bg-white rounded-lg shadow mt-10">
             <div className='flex items-center justify-between'>
 
 
-                <h2 className="text-2xl font-bold ">Hospital affiliations</h2>
+                <h2 className="text-2xl font-bold text-primary">Hospital affiliations</h2>
                 <div>
                     {/* Left Arrow */}
                     <button
@@ -85,7 +85,7 @@ export default function HospitalAffiliations() {
                     >
                         {/* <ChevronRight className="w-6 h-6" /> */}
                         <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M9.05298 0.482666C13.6816 0.482909 17.4338 4.23582 17.4338 8.8645C17.4336 13.493 13.6815 17.2451 9.05298 17.2454C4.4243 17.2454 0.671386 13.4931 0.671143 8.8645C0.671143 4.23567 4.42415 0.482666 9.05298 0.482666Z" stroke="#006D77" stroke-width="0.728804" />
+                            <path d="M9.05298 0.482666C13.6816 0.482909 17.4338 4.23582 17.4338 8.8645C17.4336 13.493 13.6815 17.2451 9.05298 17.2454C4.4243 17.2454 0.671386 13.4931 0.671143 8.8645C0.671143 4.23567 4.42415 0.482666 9.05298 0.482666Z" stroke="#006D77" strokeWidth="0.728804" />
                             <path d="M7.63546 11.7792L10.5107 8.9533L7.63546 6.12742" stroke="#006D77" strokeWidth="0.728804" strokeLinecap="round" />
                         </svg>
 
@@ -101,18 +101,25 @@ export default function HospitalAffiliations() {
                         <div
                             key={hospital.name}
                             className={
-                                `flex-shrink-0 w-1/2 px-4 transition-all duration-300 ease-in-out ${animateDirection === 'right' ? 'translate-x-full opacity-0' : ''
+                                `flex-shrink-0 w-1/2 transition-all duration-300 ease-in-out ${animateDirection === 'right' ? 'translate-x-full opacity-0' : ''
                                 } ${animateDirection === 'left' ? '-translate-x-full opacity-0' : ''
                                 } ${index === 1 ? 'pl-4' : 'pr-4'
                                 }`
                             }
                         >
-                            <div className="border border-gray-200 rounded-lg p-4 h-full">
-                                <h3 className="font-semibold text-lg mb-2">{hospital.name}</h3>
-                                <p className="text-gray-600">{hospital.address}</p>
+                            <div className=" py-4 h-full">
+                                <h3 className="font-semibold text-lg mb-2 text-[#82889C]">{hospital.name}</h3>
+                                <p className="text-gray-600 w-50 text-[15px]">{hospital.address}</p>
+                                
                             </div>
+                              {/* Vertical separator line - only show between cards */}
+      {index === 0 && visibleHospitals.length > 1 && (
+        <div className="absolute top-0 right-86 h-full w-px bg-gray-200"></div>
+      )}
+                           
                         </div>
                     ))}
+                    
                 </div>
 
 
