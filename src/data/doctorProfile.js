@@ -22,4 +22,54 @@ export const docProfile_Details = {
       clinic_loc: "Ghan NT 0872, Australia",
     },
   ],
+  review: [
+    {
+      pic: "/surgeons/doctors.png",
+      name: "John Doe",
+      rating: 5,
+      date: "2023-10-01",
+      review:
+        "Dr. Smith is an excellent surgeon. He performed my knee surgery flawlessly and I am now pain-free. Highly recommend!",
+      professionalism: 5,
+      punctuality: 5,
+      helpfulness: 5,
+      knowledge: 5,
+    },
+    {
+      pic: "/surgeons/doctors.png",
+      name: "John Doe",
+      rating: 5,
+      date: "2023-10-01",
+      review:
+        "Dr. Smith is an excellent surgeon. He performed my knee surgery flawlessly and I am now pain-free. Highly recommend!",
+      professionalism: 5,
+      punctuality: 5,
+      helpfulness: 5,
+      knowledge: 5,
+    },
+    {
+      pic: "/surgeons/doctors.png",
+      name: "John Doe",
+      rating: 5,
+      date: "2023-10-01",
+      review:
+        "Dr. Smith is an excellent surgeon. He performed my knee surgery flawlessly and I am now pain-free. Highly recommend!",
+      professionalism: 5,
+      punctuality: 5,
+      helpfulness: 5,
+      knowledge: 5,
+    },
+    {
+      pic: "/surgeons/doctors.png",
+      name: "John Doe",
+      rating: 5,
+      date: "2023-10-01",
+      review:
+        "Dr. Smith is an excellent surgeon. He performed my knee surgery flawlessly and I am now pain-free. Highly recommend!",
+      professionalism: 5,
+      punctuality: 5,
+      helpfulness: 5,
+      knowledge: 5,
+    },
+  ],
 };
