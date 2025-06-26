@@ -2,6 +2,17 @@
 import ProfileHeader from "@/components/reusable/profileHeader";
 import React, { useState } from "react";
 import { appointment } from "@/data/apppointment";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter,
+  DialogClose,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import AvailabilityCalendar from "@/components/calendar";
 
 const formField = "flex flex-col gap-2 max-md:col-span-2";
 const inputField =
@@ -15,6 +26,7 @@ const selectStyle = {
 const Page = () => {
   const [consultType, setConsultType] = useState("online");
   const [acceptTerms, setAcceptTerms] = useState(false);
+  const [openDialog, setOpenDialog] = useState(false);
   return (
     <div className="container m-auto px-2 md:px-0">
       {appointment.stepper &&
@@ -33,7 +45,13 @@ const Page = () => {
           Fill the form to book an appointment
         </p>
       </div>
-      <form className="mx-auto mt-8 grid grid-cols-2 gap-6 rounded-lg bg-transparent md:gap-8">
+      <form
+        className="mx-auto mt-8 grid grid-cols-2 gap-6 rounded-lg bg-transparent md:gap-8"
+        onSubmit={(e) => {
+          e.preventDefault();
+          setOpenDialog(true);
+        }}
+      >
         {/* Doctor's Name & Clinic Address */}
         <div className={formField}>
           <label htmlFor="doctor_name">Doctor's Name</label>
@@ -218,6 +236,20 @@ const Page = () => {
           </button>
         </div>
       </form>
+      {/* Modal Dialog for AvailabilityCalendar */}
+      <Dialog
+        open={openDialog}
+        onOpenChange={setOpenDialog}
+        className="!w-auto"
+      >
+        <DialogContent className="bg-white p-0">
+          <DialogTitle></DialogTitle>
+          <div className="!m-0 !rounded-none bg-white p-4 !shadow-none">
+            {/* Remove border, reduce spacing, set white bg */}
+            <AvailabilityCalendar className="!m-w-sm !m-0 !border-none !bg-white !p-0" />
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
