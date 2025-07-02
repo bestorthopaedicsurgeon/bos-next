@@ -10,7 +10,7 @@ const DocProfile = ({ docProfile_Details }) => {
         docProfile_Details.doc_details.map((data, key) => (
           <div
             key={key}
-            className="flex flex-wrap items-center justify-start gap-5"
+            className="flex items-center justify-start gap-5 max-md:flex-wrap"
           >
             <div className="border-primary h-50 w-50 rounded-lg border-2">
               <Image
@@ -21,7 +21,7 @@ const DocProfile = ({ docProfile_Details }) => {
                 className="h-[100%] w-[100%]"
               />
             </div>
-            <div className="flex w-full flex-col flex-wrap gap-2 min-lg:w-[200px]">
+            <div className="flex flex-col flex-wrap gap-2 min-lg:w-[200px]">
               <h3 className="font-[500]">{data.name}</h3>
               <p className="text-primary text-[16px] font-[700]">
                 {data.designation}

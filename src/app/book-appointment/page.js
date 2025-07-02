@@ -54,7 +54,7 @@ const Page = () => {
       >
         {/* Doctor's Name & Clinic Address */}
         <div className={formField}>
-          <label htmlFor="doctor_name">Doctor's Name</label>
+          <label htmlFor="doctor_name">Doctor&#39;s Name</label>
           <input
             id="doctor_name"
             name="doctor_name"
