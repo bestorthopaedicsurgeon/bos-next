@@ -1,0 +1,109 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+  // output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        Int     @id @default(autoincrement())
+  email     String  @unique
+  password  String
+  title     Title
+  FirstName String
+  LastName  String
+  phone     String?
+  role      Role    @default(PATIENT) // Enum: DOCTOR | PATIENT
+
+  doctorProfile DoctorProfile? // optional relation
+
+  createdAt DateTime @default(now())
+}
+
+enum Role {
+  DOCTOR
+  PATIENT
+}
+
+enum Title {
+  DR
+  MR
+  MS
+  PROF
+}
+
+model DoctorProfile {
+  id     Int  @id @default(autoincrement())
+  user   User @relation(fields: [userId], references: [id])
+  userId Int  @unique
+
+  experience                Int
+  designation               Designation
+  practiceName              String
+  clinicAddress             String
+  state                     String
+  practicePhone             String
+  subspecialities           Subspeciality[]
+  about                     String?
+  registrationsAssociations String?
+  qualifications            String?
+  awardsPublications        String?
+  hospitalAffiliations      String?
+
+  DoctorAvailability     DoctorAvailabilityTime[]
+  DoctorAvailabilityDays String[]
+}
+
+enum Subspeciality {
+  FOOT_AND_ANKLE
+  PEDIATRIC_ORTHOPEDICS
+  JOINT_REPLACEMENT
+  SPINE_SURGERY
+  HAND_SURGERY
+  SHOULDER_AND_ELBOW
+  SPORTS_MEDICINE
+}
+
+enum Designation {
+  DOCTOR
+  SURGEON
+  GENERAL
+}
+
+model DoctorAvailabilityTime {
+  id       Int           @id @default(autoincrement())
+  doctor   DoctorProfile @relation(fields: [doctorId], references: [id])
+  doctorId Int
+
+  dayOfWeek  DayOfWeek
+  startTime  String // format: "09:00"
+  endTime    String // format: "12:30"
+  location   LocationType
+  clinicName String? // Only if location = CLINIC
+
+  createdAt DateTime @default(now())
+}
+
+enum DayOfWeek {
+  MONDAY
+  TUESDAY
+  WEDNESDAY
+  THURSDAY
+  FRIDAY
+  SATURDAY
+  SUNDAY
+}
+
+enum LocationType {
+  ONLINE
+  CLINIC
+}
