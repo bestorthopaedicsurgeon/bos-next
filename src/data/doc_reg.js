@@ -1,12 +1,12 @@
 export const doc_reg = {
   Subspeciality: [
-    "Foot and Ankle Surgery",
-    "Pediatric Orthopedics",
-    "Joint Replacement (Arthroplasty)",
-    "Spine Surgery",
-    "Hand Surgery",
-    "Shoulder and Elbow Surgery",
-    "Sports Medicine",
+    { value: "FOOT_AND_ANKLE", label: "Foot and Ankle Surgery" },
+    { value: "PEDIATRIC_ORTHOPEDICS", label: "Pediatric Orthopedics" },
+    { value: "JOINT_REPLACEMENT", label: "Joint Replacement (Arthroplasty)" },
+    { value: "SPINE_SURGERY", label: "Spine Surgery" },
+    { value: "HAND_SURGERY", label: "Hand Surgery" },
+    { value: "SHOULDER_AND_ELBOW", label: "Shoulder and Elbow Surgery" },
+    { value: "SPORTS_MEDICINE", label: "Sports Medicine" },
   ],
 };
 
@@ -53,8 +53,8 @@ export const calendar = [
       1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21,
       22, 23, 24, 25, 26, 27, 28, 29, 30, 31,
     ],
-    holiday: [11, 22, 23, 25],
-    disabled: [20, 31, 30],
+    holiday: [],
+    // disabled days will be handled dynamically in the UI for Saturday and Sunday
   },
 
   {
@@ -63,46 +63,45 @@ export const calendar = [
       1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21,
       22, 23, 24, 25, 26, 27, 28, 29, 30, 31,
     ],
-    holiday: [11, 22, 23, 25],
-    disabled: [20, 31, 30],
+    holiday: [],
+    // disabled days will be handled dynamically in the UI for Saturday and Sunday
   },
 ];
 
-
 export const schedule_date = [
   {
-    day:"Mon",
-    time:"09:00am - 09:30am",
-    location:"Clinic"
-  },
-   {
-    day:"Tue",
-    time:"09:00am - 09:30am",
-    location:"Online"
-  },
-{
-    day:"Wed",
-    time:"09:00am - 09:30am",
-    location:"Online"
+    day: "Mon",
+    time: "09:00am - 09:30am",
+    location: "Clinic",
   },
   {
-    day:"Thu",
-    time:"09:00am - 09:30am",
-    location:"Online"
+    day: "Tue",
+    time: "09:00am - 09:30am",
+    location: "Online",
   },
   {
-    day:"Fri",
-    time:"09:00am - 09:30am",
-    location:"Online"
+    day: "Wed",
+    time: "09:00am - 09:30am",
+    location: "Online",
   },
   {
-    day:"Sat",
-    time:"09:00am - 09:30am",
-    location:"Online"
+    day: "Thu",
+    time: "09:00am - 09:30am",
+    location: "Online",
   },
   {
-    day:"Sun",
-    time:"09:00am - 09:30am",
-    location:"Online"
+    day: "Fri",
+    time: "09:00am - 09:30am",
+    location: "Online",
   },
-]
+  {
+    day: "Sat",
+    time: "09:00am - 09:30am",
+    location: "Online",
+  },
+  {
+    day: "Sun",
+    time: "09:00am - 09:30am",
+    location: "Online",
+  },
+];

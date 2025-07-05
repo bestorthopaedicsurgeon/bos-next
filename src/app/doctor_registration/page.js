@@ -23,10 +23,191 @@ import {
 } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
 import UsePresenceData from "@/components/ui/slider.jsx";
+import { ChevronLeft, ChevronRight, Edit, Check } from "lucide-react";
 // import { Pencil } from "lucide";
 import { Clock3, PencilIcon, User } from "lucide-react";
 const Page = () => {
   const [selectedSpecialties, setSelectedSpecialties] = useState([]);
+  const [form, setForm] = useState({
+    title: "",
+    pic: null,
+    fname: "",
+    lname: "",
+    exp: "",
+    desig: "",
+    prac_name: "",
+    clinic_name: "",
+    post_code: "",
+    phone: "",
+    about_self: "",
+    reg_assoc: "",
+    qual: "",
+    awd_pub: "",
+    hosp_aff: "",
+    email: "",
+    password: "",
+  });
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
+  const handleInputChange = (e) => {
+    const { name, value, type, files } = e.target;
+    setForm((prev) => ({
+      ...prev,
+      [name]: type === "file" ? files[0] : value,
+    }));
+  };
+
+  const handleRegister = async (e) => {
+    e.preventDefault();
+    setError("");
+    setSuccess("");
+
+    // Validation
+    if (!form.title) return setError("Please select your title.");
+    if (!form.fname.trim()) return setError("First name is required.");
+    if (!form.lname.trim()) return setError("Last name is required.");
+    if (isNaN(parseInt(form.exp)))
+      return setError("Please select your years of experience.");
+    if (!form.desig) return setError("Please select your designation.");
+    if (!form.prac_name.trim()) return setError("Practice name is required.");
+    if (!form.clinic_name.trim())
+      return setError("Clinic address is required.");
+    if (!form.post_code.trim())
+      return setError("Suburb/State/Postcode is required.");
+    if (!form.phone.trim()) return setError("Phone number is required.");
+    if (selectedSpecialties.length === 0)
+      return setError("Please select at least one subspeciality.");
+    if (!form.about_self.trim())
+      return setError("Please tell us about yourself.");
+    if (!form.reg_assoc.trim())
+      return setError("Registrations & Associations are required.");
+    if (!form.qual.trim()) return setError("Qualifications are required.");
+    if (!form.awd_pub.trim())
+      return setError("Awards & Publications are required.");
+    if (!form.hosp_aff)
+      return setError("Please select your hospital affiliation.");
+    if (!form.email.trim()) return setError("Email is required.");
+    // Simple email regex
+    if (!/^\S+@\S+\.\S+$/.test(form.email))
+      return setError("Please enter a valid email address.");
+    if (!form.password) return setError("Password is required.");
+    if (form.password.length < 6)
+      return setError("Password must be at least 6 characters.");
+    const termsCheckbox = document.getElementById("terms");
+    if (!termsCheckbox || !termsCheckbox.checked)
+      return setError("You must accept the terms.");
+
+    setLoading(true);
+    try {
+      // Helper to get day of week string from a date
+      function getDayOfWeekString(year, month, day) {
+        const days = [
+          "SUNDAY",
+          "MONDAY",
+          "TUESDAY",
+          "WEDNESDAY",
+          "THURSDAY",
+          "FRIDAY",
+          "SATURDAY",
+        ];
+        return days[new Date(year, month, day).getDay()];
+      }
+
+      // Build DoctorAvailabilityDays (all selected days, as strings: 'YYYY-MM-DD')
+      let DoctorAvailabilityDays = [];
+      let DoctorAvailability = [];
+
+      Object.entries(availability).forEach(([monthKey, types]) => {
+        const [year, month] = monthKey.split("-").map(Number);
+        Object.entries(types).forEach(([type, days]) => {
+          days.forEach((day) => {
+            // DoctorAvailabilityDays: ISO string for each selected day
+            const dateObj = new Date(year, month, day);
+            DoctorAvailabilityDays.push(dateObj.toISOString().split("T")[0]);
+            // DoctorAvailability: slot for each day (example: 09:00-09:30, location from type)
+            DoctorAvailability.push({
+              dayOfWeek: getDayOfWeekString(year, month, day),
+              startTime: "09:00", // You can make this dynamic if needed
+              endTime: "09:30",
+              location: type.toUpperCase(), // 'ONLINE' or 'CLINIC'
+              clinicName: type === "clinic" ? form.clinic_name : null,
+            });
+          });
+        });
+      });
+
+      // Prepare doctor registration data
+      const data = {
+        email: form.email,
+        password: form.password,
+        name: { firstName: form.fname, lastName: form.lname },
+        title: form.title,
+        phone: form.phone,
+        role: "DOCTOR",
+        experience: parseInt(form.exp),
+        designation: form.desig,
+        practiceName: form.prac_name,
+        clinicAddress: form.clinic_name,
+        state: form.post_code,
+        practicePhone: form.phone,
+        subspecialities: selectedSpecialties,
+        about: form.about_self,
+        registrationsAssociations: form.reg_assoc,
+        qualifications: form.qual,
+        awardsPublications: form.awd_pub,
+        hospitalAffiliations: form.hosp_aff,
+        DoctorAvailability: { create: DoctorAvailability }, // <-- wrap in create
+        DoctorAvailabilityDays,
+      };
+      const res = await fetch("/api/register", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
+      });
+      const result = await res.json();
+      if (res.ok) {
+        setSuccess("Registration successful!");
+        // Optionally redirect or clear form
+        // Reset form and availability after successful registration
+        setForm({
+          title: "",
+          pic: null,
+          fname: "",
+          lname: "",
+          exp: "",
+          desig: "",
+          prac_name: "",
+          clinic_name: "",
+          post_code: "",
+          phone: "",
+          about_self: "",
+          reg_assoc: "",
+          qual: "",
+          awd_pub: "",
+          hosp_aff: "",
+          email: "",
+          password: "",
+        });
+        setSelectedSpecialties([]);
+        // Reset availability to empty for current month
+        const base = {};
+        const year = today.getFullYear();
+        const month = today.getMonth();
+        calendar.forEach((item) => {
+          base[`${year}-${month}`] = base[`${year}-${month}`] || {};
+          base[`${year}-${month}`][item.type] = [];
+        });
+        setAvailability(base);
+      } else {
+        setError(result.error || "Registration failed");
+      }
+    } catch (err) {
+      setError("Something went wrong");
+    } finally {
+      setLoading(false);
+    }
+  };
   const selectStyle = {
     backgroundImage: `url("data:image/svg+xml,%3Csvg width='18' height='11' viewBox='0 0 18 11' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath fill-rule='evenodd' clip-rule='evenodd' d='M9.53026 9.88407C9.23736 10.177 8.76256 10.177 8.46966 9.88407L0.823183 2.23757C0.530293 1.94467 0.530293 1.46987 0.823183 1.17697L1.17674 0.823374C1.46963 0.530474 1.9445 0.530474 2.2374 0.823374L8.99996 7.58597L15.7626 0.823374C16.0555 0.530474 16.5303 0.530474 16.8232 0.823374L17.1768 1.17697C17.4697 1.46987 17.4697 1.94467 17.1768 2.23757L9.53026 9.88407Z' fill='%23033333'/%3E%3C/svg%3E")`,
   };
@@ -42,6 +223,99 @@ const Page = () => {
         : [...prev, specialty],
     );
   };
+  // Calendar state for month slider and availability
+  const monthNames = [
+    "January",
+    "February",
+    "March",
+    "April",
+    "May",
+    "June",
+    "July",
+    "August",
+    "September",
+    "October",
+    "November",
+    "December",
+  ];
+  const today = new Date();
+  const [currentMonth, setCurrentMonth] = useState(today.getMonth());
+  const [currentYear, setCurrentYear] = useState(today.getFullYear());
+  const [isEditing, setIsEditing] = useState(false);
+  // availability: { ["2025-6"]: { online: [1,2,3], clinic: [4,5,6] } }
+  const [availability, setAvailability] = useState({});
+  // Initialize availability state from doc_reg.js calendar for current month (no preselected days)
+  React.useEffect(() => {
+    const base = {};
+    const year = today.getFullYear();
+    const month = today.getMonth();
+    calendar.forEach((item) => {
+      base[`${year}-${month}`] = base[`${year}-${month}`] || {};
+      base[`${year}-${month}`][item.type] = [];
+    });
+    setAvailability(base);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // Helpers for calendar days
+  function getDaysInMonth(year, month) {
+    const lastDay = new Date(year, month + 1, 0).getDate();
+    return Array.from({ length: lastDay }, (_, i) => i + 1);
+  }
+  // For UI: get disabled/holiday from doc_reg.js for current month
+  function getDocRegMeta(type) {
+    const item = calendar.find((c) => c.type === type);
+    return item
+      ? { disabled: item.disabled, holiday: item.holiday }
+      : { disabled: [], holiday: [] };
+  }
+
+  // Slider logic (month navigation)
+  function changeMonth(dir) {
+    let m = currentMonth + dir;
+    let y = currentYear;
+    if (m < 0) {
+      m = 11;
+      y--;
+    }
+    if (m > 11) {
+      m = 0;
+      y++;
+    }
+    setCurrentMonth(m);
+    setCurrentYear(y);
+  }
+
+  // Toggle day for a type (online/clinic)
+  function toggleDay(type, day) {
+    if (!isEditing) return;
+    const key = `${currentYear}-${currentMonth}`;
+    setAvailability((prev) => {
+      const monthData = { ...(prev[key] || {}) };
+      const days = new Set(monthData[type] || []);
+      if (days.has(day)) days.delete(day);
+      else days.add(day);
+      return { ...prev, [key]: { ...monthData, [type]: Array.from(days) } };
+    });
+  }
+
+  // For rendering: get days for type in current month
+  function getSelectedDays(type) {
+    const key = `${currentYear}-${currentMonth}`;
+    return new Set((availability[key] && availability[key][type]) || []);
+  }
+
+  // For rendering: get disabled/holiday for type in current month
+  function getMeta(type) {
+    // Optionally, you could make this dynamic per month
+    return getDocRegMeta(type);
+  }
+
+  // For UI: edit/save icon
+  function handleEditToggle() {
+    setIsEditing((v) => !v);
+  }
+
   return (
     <div className="container m-auto">
       {profileHeader.createProfile.map((data) => (
@@ -62,8 +336,9 @@ const Page = () => {
       ))}
 
       <form
-        action=""
+        onSubmit={handleRegister}
         className="container m-auto grid grid-cols-2 gap-[32px] pt-16"
+        autoComplete="off"
       >
         <div className={formField}>
           <label htmlFor="title">Title</label>
@@ -72,23 +347,32 @@ const Page = () => {
             id="title"
             className={dropDown}
             style={selectStyle}
+            value={form.title}
+            onChange={handleInputChange}
           >
             <option value="">select your title</option>
-            <option value="">Dr</option>
-            <option value="">Ms</option>
-            <option value="">Mr</option>
-            <option value="">Prof</option>
+            <option value="DR">Dr</option>
+            <option value="MS">Ms</option>
+            <option value="MR">Mr</option>
+            <option value="PROF">Prof</option>
           </select>
         </div>
         <div className={formField}>
           <label htmlFor="pic">Upload Profile Picture</label>
-          <input type="file" name="pic" id="pic" className="hidden" />
+          <input
+            type="file"
+            name="pic"
+            id="pic"
+            className="hidden"
+            onChange={handleInputChange}
+          />
           <label
             htmlFor="pic"
             className="flex cursor-pointer items-center justify-center gap-2 rounded-md bg-[#83C5BE] px-4 py-2 text-white"
           >
             <span>Click to upload</span>
             <span>
+              {/* ...existing svg... */}
               <svg
                 width="32"
                 height="33"
@@ -106,19 +390,40 @@ const Page = () => {
         </div>
         <div className={formField}>
           <label htmlFor="fname">First Name</label>
-          <input type="text" name="fname" id="fname" className={inputField} />
+          <input
+            type="text"
+            name="fname"
+            id="fname"
+            className={inputField}
+            value={form.fname}
+            onChange={handleInputChange}
+          />
         </div>
         <div className={formField}>
           <label htmlFor="lname">Last Name</label>
-          <input type="text" name="lname" id="lname" className={inputField} />
+          <input
+            type="text"
+            name="lname"
+            id="lname"
+            className={inputField}
+            value={form.lname}
+            onChange={handleInputChange}
+          />
         </div>
         <div className={formField}>
           <label htmlFor="exp">Experience</label>
-          <select name="exp" id="exp" className={dropDown} style={selectStyle}>
+          <select
+            name="exp"
+            id="exp"
+            className={dropDown}
+            style={selectStyle}
+            value={form.exp}
+            onChange={handleInputChange}
+          >
             <option value="">Select your years of experience</option>
-            <option value="">1</option>
-            <option value="">2</option>
-            <option value="">3</option>
+            <option value={1}>1</option>
+            <option value={2}>2</option>
+            <option value={3}>3</option>
           </select>
         </div>
         <div className={formField}>
@@ -128,11 +433,13 @@ const Page = () => {
             id="desig"
             className={dropDown}
             style={selectStyle}
+            value={form.desig}
+            onChange={handleInputChange}
           >
             <option value="">Select Designation</option>
-            <option value="">Doctor</option>
-            <option value="">Surgeon</option>
-            <option value="">General Physician</option>
+            <option value="DOCTOR">Doctor</option>
+            <option value="SURGEON">Surgeon</option>
+            <option value="GENERAL">General Physician</option>
           </select>
         </div>
         <div className={`${formField} col-span-2`}>
@@ -143,6 +450,8 @@ const Page = () => {
             id="prac_name"
             placeholder="Enter your practice name"
             className={inputField}
+            value={form.prac_name}
+            onChange={handleInputChange}
           />
         </div>
         <div className={`${formField} col-span-2`}>
@@ -153,6 +462,8 @@ const Page = () => {
             id="clinic_name"
             placeholder="123 Maple Street, Apollo hospital, Springfield, Sydney"
             className={inputField}
+            value={form.clinic_name}
+            onChange={handleInputChange}
           />
         </div>
         <div className={formField}>
@@ -163,6 +474,8 @@ const Page = () => {
             id="post_code"
             placeholder="Enter your Suburb / State / Postcode "
             className={inputField}
+            value={form.post_code}
+            onChange={handleInputChange}
           />
         </div>
         <div className={formField}>
@@ -173,6 +486,8 @@ const Page = () => {
             id="phone"
             placeholder="Enter practice phone number "
             className={inputField}
+            value={form.phone}
+            onChange={handleInputChange}
           />
         </div>
         <div className={formField}>
@@ -186,26 +501,26 @@ const Page = () => {
               }}
             >
               {doc_reg.Subspeciality.map((specialty) => (
-                <div key={specialty} className="flex items-center">
+                <div key={specialty.value} className="flex items-center">
                   <input
                     type="checkbox"
-                    id={specialty.replace(/\s+/g, "-").toLowerCase()}
-                    checked={selectedSpecialties.includes(specialty)}
-                    onChange={() => handleSpecialtyChange(specialty)}
+                    id={specialty.value.toLowerCase()}
+                    checked={selectedSpecialties.includes(specialty.value)}
+                    onChange={() => handleSpecialtyChange(specialty.value)}
                     className="hidden"
                   />
                   <label
-                    htmlFor={specialty.replace(/\s+/g, "-").toLowerCase()}
-                    className={`flex cursor-pointer items-center rounded-full py-2 select-none`}
+                    htmlFor={specialty.value.toLowerCase()}
+                    className="flex cursor-pointer items-center rounded-full py-2 select-none"
                   >
                     <span
                       className={`mr-2 inline-block h-4 w-4 rounded-full border ${
-                        selectedSpecialties.includes(specialty)
+                        selectedSpecialties.includes(specialty.value)
                           ? "border-blue-500 bg-blue-500"
                           : "border-gray-400 bg-white"
                       }`}
                     ></span>
-                    {specialty}
+                    {specialty.label}
                   </label>
                 </div>
               ))}
@@ -244,6 +559,8 @@ const Page = () => {
             id="about_self"
             className={`h-[240px] ${inputField}`}
             placeholder="Write a brief introduction about yourself."
+            value={form.about_self}
+            onChange={handleInputChange}
           ></textarea>
         </div>
         <div className={formField}>
@@ -253,6 +570,8 @@ const Page = () => {
             id="reg_assoc"
             className={`h-[240px] ${inputField}`}
             placeholder="Enter your registrations and any professional memberships (AHPRA, AHPRA, AOA, FRACS etc. )"
+            value={form.reg_assoc}
+            onChange={handleInputChange}
           ></textarea>
         </div>
         <div className={formField}>
@@ -263,6 +582,8 @@ const Page = () => {
             className={`h-[240px] ${inputField}`}
             placeholder="List your degrees, diplomas, and certifications along with the awarding institution and year.
                         E.g.: M.B, B.S — University of Sydney, 1986"
+            value={form.qual}
+            onChange={handleInputChange}
           ></textarea>
         </div>
         <div className={formField}>
@@ -272,6 +593,8 @@ const Page = () => {
             id="awd_pub"
             className={`h-[240px] ${inputField}`}
             placeholder="List your awards and publications in chronological order, starting with the most recent."
+            value={form.awd_pub}
+            onChange={handleInputChange}
           ></textarea>
         </div>
         <div className={formField}>
@@ -281,17 +604,18 @@ const Page = () => {
             id="hosp_aff"
             className={dropDown}
             style={selectStyle}
+            value={form.hosp_aff}
+            onChange={handleInputChange}
           >
             <option value="">Select hospital (s)</option>
-            <option value="">Dr</option>
-            <option value="">Ms</option>
-            <option value="">Mr</option>
-            <option value="">Prof</option>
+            <option value="Dr">Dr</option>
+            <option value="Ms">Ms</option>
+            <option value="Mr">Mr</option>
+            <option value="Prof">Prof</option>
           </select>
         </div>
         <div className={formField}>
           <label htmlFor="avail">Set Your Availability</label>
-
           <Dialog className="max-w-full overflow-auto">
             <DialogTrigger asChild>
               <Button
@@ -310,50 +634,87 @@ const Page = () => {
                 </DialogDescription>
               </DialogHeader>
               <div className="flex items-center gap-2">
-                <div className="grid flex-1 gap-2">
-                  <Label htmlFor="link" className="sr-only">
-                    Link
-                  </Label>
-                </div>
+                <div className="grid flex-1 gap-2"></div>
               </div>
               <div>
-                <div className="flex items-center justify-between">
-                  <UsePresenceData />
-                  <button className="cursor-pointer rounded-md bg-(--primary) px-6 py-3 pt-[7px] text-(--secondary)">
-                    Mark Holidays
+                {/* Month slider */}
+                <div className="mb-4 flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <span className="w-[150px] text-lg font-medium">
+                      {monthNames[currentMonth]} {currentYear}
+                    </span>
+                    <button
+                      onClick={() => changeMonth(-1)}
+                      className="cursor-pointer rounded-full p-1"
+                      aria-label="Previous month"
+                    >
+                      <ChevronLeft className="text-primary h-5 w-5" />
+                    </button>
+                    <button
+                      onClick={() => changeMonth(1)}
+                      className="cursor-pointer rounded-full p-1"
+                      aria-label="Next month"
+                    >
+                      <ChevronRight className="text-primary h-5 w-5" />
+                    </button>
+                  </div>
+                  <button
+                    onClick={handleEditToggle}
+                    className={`ml-4 rounded-full p-1 ${isEditing ? "bg-gray-200" : ""}`}
+                    aria-label={
+                      isEditing ? "Stop editing" : "Edit availability"
+                    }
+                  >
+                    {!isEditing ? (
+                      <Edit className="text-primary h-5 w-5 hover:text-gray-800" />
+                    ) : (
+                      <Check className="text-primary h-5 w-5 hover:text-gray-800" />
+                    )}
                   </button>
                 </div>
-
-                <div className="mt-10 flex flex-col space-y-4 max-sm:gap-[30px]">
-                  {calendar.map((item, idx) => (
-                    <div
-                      key={idx}
-                      className="flex items-start justify-center max-sm:gap-[20px]"
-                    >
-                      <div className="w-[280px] font-semibold capitalize max-sm:w-[100px] max-sm:gap-[10px]">
-                        {item.type}
+                {/* Calendar for online and clinic */}
+                <div className="mt-6 flex flex-col space-y-4 max-sm:gap-[30px]">
+                  {["online", "clinic"].map((type) => {
+                    const selectedDays = getSelectedDays(type);
+                    const meta = getMeta(type);
+                    const days = getDaysInMonth(currentYear, currentMonth);
+                    return (
+                      <div
+                        key={type}
+                        className="flex items-start justify-center max-sm:gap-[20px]"
+                      >
+                        <div className="w-[120px] font-semibold capitalize max-sm:w-[80px] max-sm:gap-[10px]">
+                          {type}
+                        </div>
+                        <div className="flex flex-wrap gap-1 max-sm:items-start">
+                          {days.map((day) => {
+                            // Calculate the weekday for this day (0=Sunday, 6=Saturday)
+                            const weekday = new Date(
+                              currentYear,
+                              currentMonth,
+                              day,
+                            ).getDay();
+                            const isDisabled = weekday === 0 || weekday === 6;
+                            const isHoliday = meta.holiday.includes(day);
+                            const isSelected = selectedDays.has(day);
+                            return (
+                              <button
+                                key={day}
+                                disabled={isDisabled}
+                                onClick={() => toggleDay(type, day)}
+                                className={`flex h-10 w-10 items-center justify-center border border-gray-300 ${isHoliday ? "rounded-full bg-[var(--primary)] text-white" : ""} ${isDisabled ? "cursor-not-allowed opacity-50" : isEditing ? "hover:bg-blue-200 hover:text-gray-800" : ""} ${isSelected ? "bg-[#04434317] !text-black" : ""}`}
+                              >
+                                {day}
+                              </button>
+                            );
+                          })}
+                        </div>
                       </div>
-                      <div className="flex flex-wrap gap-1 max-sm:items-start">
-                        {item.date.map((day) => {
-                          const isDisabled = item.disabled.includes(day);
-                          const isHoliday = item.holiday.includes(day);
-
-                          return (
-                            <button
-                              key={day}
-                              disabled={isDisabled}
-                              className={`flex h-10 w-10 items-center justify-center border border-gray-300 ${isHoliday ? "rounded-full bg-[var(--primary)] text-white" : ""} ${isDisabled ? "cursor-not-allowed opacity-50" : "hover:text-primary hover:bg-gray-100"} `}
-                            >
-                              {day}
-                            </button>
-                          );
-                        })}
-                      </div>
-                      <PencilIcon className="ml-3 h-[40px] w-[70px] cursor-pointer min-sm:h-[40px] min-sm:w-[40px] min-lg:h-[20px] min-lg:w-[20px]" />
-                    </div>
-                  ))}
+                    );
+                  })}
                 </div>
               </div>
+              {/* ...existing schedule_date UI... */}
               <div className="grid grid-cols-2 gap-10 max-lg:grid-cols-1">
                 <div className="bg-secondary col-span-2 mt-10 rounded-md p-5">
                   <div className="text-primary m-auto flex w-[60%] items-center justify-between max-lg:w-full">
@@ -362,7 +723,6 @@ const Page = () => {
                     <p>Online Timing</p>
                   </div>
                 </div>
-
                 {schedule_date.map((data, key) => (
                   <div
                     key={key}
@@ -397,6 +757,35 @@ const Page = () => {
             </DialogContent>
           </Dialog>
         </div>
+        {/* Email and Password fields for registration */}
+        <div className={formField + " col-span-1"}>
+          <label htmlFor="email">Email</label>
+          <input
+            type="email"
+            name="email"
+            id="email"
+            className={inputField}
+            value={form.email}
+            onChange={handleInputChange}
+            required
+          />
+        </div>
+        <div className={formField + " col-span-1"}>
+          <label htmlFor="password">Password</label>
+          <input
+            type="password"
+            name="password"
+            id="password"
+            className={inputField}
+            value={form.password}
+            onChange={handleInputChange}
+            required
+          />
+        </div>
+        {error && <div className="col-span-2 mt-2 text-red-500">{error}</div>}
+        {success && (
+          <div className="col-span-2 mt-2 text-green-500">{success}</div>
+        )}
         <div className="col-span-2 flex items-center gap-3">
           <input
             type="checkbox"
@@ -406,10 +795,15 @@ const Page = () => {
           />
           <label htmlFor="terms">I accept the terms</label>
         </div>
+
+        <button
+          type="submit"
+          className="btn_fill col-span-2 m-auto mt-10 flex justify-center px-14 py-2 max-sm:w-full"
+          disabled={loading}
+        >
+          {loading ? "Registering..." : "Confirm Registration"}
+        </button>
       </form>
-      <button className="btn_fill m-auto mt-10 flex justify-center px-14 py-2 max-sm:w-full">
-        Confirm Registration
-      </button>
     </div>
   );
 };

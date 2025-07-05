@@ -11,6 +11,7 @@ const InputField = (props) => {
         name={name}
         id={name}
         placeholder={placeholder}
+        onChange={props.onChange}
       />
     </div>
   );
