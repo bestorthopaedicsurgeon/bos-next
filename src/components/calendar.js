@@ -1,11 +1,18 @@
 import { useState, useEffect } from "react";
 import { Edit, ChevronLeft, ChevronRight, Save, Check } from "lucide-react";
+import { usePathname } from "next/navigation";
 
-export default function AvailabilityCalendar() {
+export default function AvailabilityCalendar({ className }) {
   const [currentDate, setCurrentDate] = useState(new Date());
   const [isEditing, setIsEditing] = useState(false);
   const [availability, setAvailability] = useState({});
   const [isLoading, setIsLoading] = useState(true);
+
+  // Detect current route
+  const pathname =
+    typeof window !== "undefined" ? window.location.pathname : "";
+  // const pathname = usePathname ? usePathname() : "";
+  const isDocRegistration = pathname.includes("/doctor_registration");
 
   // Get month and year
   const month = currentDate.toLocaleString("default", { month: "long" });
@@ -142,21 +149,25 @@ export default function AvailabilityCalendar() {
   }
 
   return (
-    <div className="border-primary h-[350px] max-w-full rounded-lg border-2 p-2 min-md:h-[450px] min-md:p-4">
-      <div className="mb-4 flex items-center justify-center gap-3">
-        <h2 className="text-primary text-xl font-semibold">Availability</h2>
-        <button
-          onClick={() => setIsEditing(!isEditing)}
-          className={`rounded-full p-1 ${isEditing ? "bg-gray-200" : ""}`}
-          aria-label={isEditing ? "Stop editing" : "Edit availability"}
-        >
-          {!isEditing ? (
-            <Edit className="text-primary h-5 w-5 hover:text-gray-800" />
-          ) : (
-            <Check className="text-primary h-5 w-5 hover:text-gray-800" />
-          )}
-        </button>
-      </div>
+    <div
+      className={`border-primary h-[350px] max-w-full rounded-lg border-2 p-2 min-md:h-[450px] min-md:p-4 ${className}`}
+    >
+      {isDocRegistration && (
+        <div className="mb-4 flex items-center justify-center gap-3">
+          <h2 className="text-primary text-xl font-semibold">Availability</h2>
+          <button
+            onClick={() => setIsEditing(!isEditing)}
+            className={`rounded-full p-1 ${isEditing ? "bg-gray-200" : ""}`}
+            aria-label={isEditing ? "Stop editing" : "Edit availability"}
+          >
+            {!isEditing ? (
+              <Edit className="text-primary h-5 w-5 hover:text-gray-800" />
+            ) : (
+              <Check className="text-primary h-5 w-5 hover:text-gray-800" />
+            )}
+          </button>
+        </div>
+      )}
 
       <div className="mb-4 flex items-center justify-center gap-2">
         <button

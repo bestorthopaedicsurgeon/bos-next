@@ -3,6 +3,7 @@
 import * as React from "react";
 import * as DialogPrimitive from "@radix-ui/react-dialog";
 import { XIcon } from "lucide-react";
+import { usePathname } from "next/navigation";
 
 import { cn } from "@/lib/utils";
 
@@ -27,8 +28,8 @@ function DialogOverlay({ className, ...props }) {
     <DialogPrimitive.Overlay
       data-slot="dialog-overlay"
       className={cn(
-        "data-[state=open]:animate-in overflow-auto data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 fixed inset-0 z-50 bg-black/50",
-        className
+        "data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 fixed inset-0 z-50 overflow-auto bg-black/50",
+        className,
       )}
       {...props}
     />
@@ -41,6 +42,13 @@ function DialogContent({
   showCloseButton = true,
   ...props
 }) {
+  const pathname =
+    typeof window !== "undefined" ? window.location.pathname : "";
+  // If using SSR, fallback to usePathname from next/navigation
+  // const pathname = usePathname ? usePathname() : "";
+  const isDocRegistration = pathname.includes("/doctor_registration");
+  const widthClass = isDocRegistration ? "w-full !max-w-[95%]" : "max-w-lg";
+  const heightClass = isDocRegistration ? "h-[90%]" : "h-auto";
   return (
     <DialogPortal
       data-slot="dialog-portal"
@@ -50,8 +58,8 @@ function DialogContent({
       <DialogPrimitive.Content
         data-slot="dialog-content"
         className={cn(
-          "bg-background h-[90%] max-sm:p-4 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 fixed top-[50%] left-[50%] z-50 grid !overflow-y-auto w-full !max-w-[95%] translate-x-[-50%] translate-y-[-50%] gap-4 rounded-lg border px-6  py-10 shadow-lg duration-200 ",
-          className
+          `bg-background data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 fixed top-[50%] left-[50%] z-50 grid ${heightClass} ${widthClass} translate-x-[-50%] translate-y-[-50%] gap-4 !overflow-y-auto rounded-lg border px-6 py-10 shadow-lg duration-200 max-sm:p-4`,
+          className,
         )}
         {...props}
       >
@@ -86,7 +94,7 @@ function DialogFooter({ className, ...props }) {
       data-slot="dialog-footer"
       className={cn(
         "flex flex-col-reverse gap-2 sm:flex-row sm:justify-end",
-        className
+        className,
       )}
       {...props}
     />
@@ -98,8 +106,8 @@ function DialogTitle({ className, ...props }) {
     <DialogPrimitive.Title
       data-slot="dialog-title"
       className={cn(
-        "text-3xl max-sm:text-lg leading-none font-semibold text-(--primary) text-center",
-        className
+        "text-center text-3xl leading-none font-semibold text-(--primary) max-sm:text-lg",
+        className,
       )}
       {...props}
     />
@@ -111,8 +119,8 @@ function DialogDescription({ className, ...props }) {
     <DialogPrimitive.Description
       data-slot="dialog-description"
       className={cn(
-        "text-muted-foreground text-sm text-center text-[16px]",
-        className
+        "text-muted-foreground text-center text-sm text-[16px]",
+        className,
       )}
       {...props}
     />

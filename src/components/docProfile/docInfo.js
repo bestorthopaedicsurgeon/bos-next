@@ -1,11 +1,11 @@
 import React from "react";
 import Image from "next/image";
 import { MapPin, Star } from "lucide-react";
-const DocInfo = ({ docProfile_Details }) => {
+const DocInfo = ({ docProfile_Details, showLocation = true }) => {
   const heading_style = "text-[14px] text-gray-500";
   const info_style = "text-[13px] font-[600] mt-2";
   const main_heading = "text-[20px] font-[600] text-primary mb-5";
-  const box_style = "bg-secondary rounded-xl mt-5 w-full min-lg:max-w-[800px]";
+  const box_style = "bg-secondary rounded-xl mt-5 min-lg:max-w-[800px]";
   return (
     <>
       {/* doc details  */}
@@ -56,29 +56,30 @@ const DocInfo = ({ docProfile_Details }) => {
         ))}
       </div>
       {/* doc location  */}
-
-      <div
-        className={`${box_style} flex flex-wrap items-center justify-between p-2`}
-      >
-        <div className="px-3 py-4 min-md:px-11">
-          <p className={`${main_heading}`}>Clinic Location</p>
-          <p className={`${heading_style}`}>Address</p>
-          <p className={`${info_style}`}>
-            {docProfile_Details.doc_details[0].clinic_loc}
-          </p>
+      {showLocation && (
+        <div
+          className={`${box_style} flex flex-wrap items-center justify-between p-2`}
+        >
+          <div className="px-3 py-4 min-md:px-11">
+            <p className={`${main_heading}`}>Clinic Location</p>
+            <p className={`${heading_style}`}>Address</p>
+            <p className={`${info_style}`}>
+              {docProfile_Details.doc_details[0].clinic_loc}
+            </p>
+          </div>
+          <div>
+            <iframe
+              src={`https://www.google.com/maps?q=${encodeURIComponent(docProfile_Details.doc_details[0].clinic_loc)}&output=embed`}
+              className="w-full min-lg:w-[315px]"
+              height="152"
+              style={{ border: "0", borderRadius: "9px" }}
+              allowFullScreen=""
+              loading="lazy"
+              referrerPolicy="no-referrer-when-downgrade"
+            ></iframe>
+          </div>
         </div>
-        <div>
-          <iframe
-            src={`https://www.google.com/maps?q=${encodeURIComponent(docProfile_Details.doc_details[0].clinic_loc)}&output=embed`}
-            className="w-full min-lg:w-[315px]"
-            height="152"
-            style={{ border: "0", " borderRadius": "9px" }}
-            allowFullScreen=""
-            loading="lazy"
-            referrerPolicy="no-referrer-when-downgrade"
-          ></iframe>
-        </div>
-      </div>
+      )}
     </>
   );
 };
