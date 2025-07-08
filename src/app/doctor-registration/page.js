@@ -60,91 +60,90 @@ const Page = () => {
 
   const handleRegister = async (e) => {
     e.preventDefault();
-    setError("");
-    setSuccess("");
+    // setError("");
+    // setSuccess("");
 
     // Validation
-    if (!form.title) return setError("Please select your title.");
-    if (!form.fname.trim()) return setError("First name is required.");
-    if (!form.lname.trim()) return setError("Last name is required.");
-    if (isNaN(parseInt(form.exp)))
-      return setError("Please select your years of experience.");
-    if (!form.desig) return setError("Please select your designation.");
-    if (!form.prac_name.trim()) return setError("Practice name is required.");
-    if (!form.clinic_name.trim())
-      return setError("Clinic address is required.");
-    if (!form.post_code.trim())
-      return setError("Suburb/State/Postcode is required.");
-    if (!form.phone.trim()) return setError("Phone number is required.");
-    if (selectedSpecialties.length === 0)
-      return setError("Please select at least one subspeciality.");
-    if (!form.about_self.trim())
-      return setError("Please tell us about yourself.");
-    if (!form.reg_assoc.trim())
-      return setError("Registrations & Associations are required.");
-    if (!form.qual.trim()) return setError("Qualifications are required.");
-    if (!form.awd_pub.trim())
-      return setError("Awards & Publications are required.");
-    if (!form.hosp_aff)
-      return setError("Please select your hospital affiliation.");
-    if (!form.email.trim()) return setError("Email is required.");
-    // Simple email regex
-    if (!/^\S+@\S+\.\S+$/.test(form.email))
-      return setError("Please enter a valid email address.");
-    if (!form.password) return setError("Password is required.");
-    if (form.password.length < 6)
-      return setError("Password must be at least 6 characters.");
-    const termsCheckbox = document.getElementById("terms");
-    if (!termsCheckbox || !termsCheckbox.checked)
-      return setError("You must accept the terms.");
+    // if (!form.title) return setError("Please select your title.");
+    // if (!form.fname.trim()) return setError("First name is required.");
+    // if (!form.lname.trim()) return setError("Last name is required.");
+    // if (isNaN(parseInt(form.exp)))
+    //   return setError("Please select your years of experience.");
+    // if (!form.desig) return setError("Please select your designation.");
+    // if (!form.prac_name.trim()) return setError("Practice name is required.");
+    // if (!form.clinic_name.trim())
+    //   return setError("Clinic address is required.");
+    // if (!form.post_code.trim())
+    //   return setError("Suburb/State/Postcode is required.");
+    // if (!form.phone.trim()) return setError("Phone number is required.");
+    // if (selectedSpecialties.length === 0)
+    //   return setError("Please select at least one subspeciality.");
+    // if (!form.about_self.trim())
+    //   return setError("Please tell us about yourself.");
+    // if (!form.reg_assoc.trim())
+    //   return setError("Registrations & Associations are required.");
+    // if (!form.qual.trim()) return setError("Qualifications are required.");
+    // if (!form.awd_pub.trim())
+    //   return setError("Awards & Publications are required.");
+    // if (!form.hosp_aff)
+    //   return setError("Please select your hospital affiliation.");
+    // if (!form.email.trim()) return setError("Email is required.");
+    // // Simple email regex
+    // if (!/^\S+@\S+\.\S+$/.test(form.email))
+    //   return setError("Please enter a valid email address.");
+    // if (!form.password) return setError("Password is required.");
+    // if (form.password.length < 6)
+    //   return setError("Password must be at least 6 characters.");
+    // const termsCheckbox = document.getElementById("terms");
+    // if (!termsCheckbox || !termsCheckbox.checked)
+    //   return setError("You must accept the terms.");
 
     setLoading(true);
     try {
       // Helper to get day of week string from a date
-      function getDayOfWeekString(year, month, day) {
-        const days = [
-          "SUNDAY",
-          "MONDAY",
-          "TUESDAY",
-          "WEDNESDAY",
-          "THURSDAY",
-          "FRIDAY",
-          "SATURDAY",
-        ];
-        return days[new Date(year, month, day).getDay()];
-      }
+      // function getDayOfWeekString(year, month, day) {
+      //   const days = [
+      //     "SUNDAY",
+      //     "MONDAY",
+      //     "TUESDAY",
+      //     "WEDNESDAY",
+      //     "THURSDAY",
+      //     "FRIDAY",
+      //     "SATURDAY",
+      //   ];
+      //   return days[new Date(year, month, day).getDay()];
+      // }
 
       // Build DoctorAvailabilityDays (all selected days, as strings: 'YYYY-MM-DD')
       let DoctorAvailabilityDays = [];
       let DoctorAvailability = [];
 
-      Object.entries(availability).forEach(([monthKey, types]) => {
-        const [year, month] = monthKey.split("-").map(Number);
-        Object.entries(types).forEach(([type, days]) => {
-          days.forEach((day) => {
-            // DoctorAvailabilityDays: ISO string for each selected day
-            const dateObj = new Date(year, month, day);
-            DoctorAvailabilityDays.push(dateObj.toISOString().split("T")[0]);
-            // DoctorAvailability: slot for each day (example: 09:00-09:30, location from type)
-            DoctorAvailability.push({
-              dayOfWeek: getDayOfWeekString(year, month, day),
-              startTime: "09:00", // You can make this dynamic if needed
-              endTime: "09:30",
-              location: type.toUpperCase(), // 'ONLINE' or 'CLINIC'
-              clinicName: type === "clinic" ? form.clinic_name : null,
-            });
-          });
-        });
-      });
+      // Object.entries(availability).forEach(([monthKey, types]) => {
+      //   const [year, month] = monthKey.split("-").map(Number);
+      //   Object.entries(types).forEach(([type, days]) => {
+      //     days.forEach((day) => {
+      //       // DoctorAvailabilityDays: ISO string for each selected day
+      //       const dateObj = new Date(year, month, day);
+      //       DoctorAvailabilityDays.push(dateObj.toISOString().split("T")[0]);
+      //       // DoctorAvailability: slot for each day (example: 09:00-09:30, location from type)
+      //       DoctorAvailability.push({
+      //         dayOfWeek: getDayOfWeekString(year, month, day),
+      //         startTime: "09:00", // You can make this dynamic if needed
+      //         endTime: "09:30",
+      //         location: type.toUpperCase(), // 'ONLINE' or 'CLINIC'
+      //         clinicName: type === "clinic" ? form.clinic_name : null,
+      //       });
+      //     });
+      //   });
+      // });
 
       // Prepare doctor registration data
       const data = {
-        email: form.email,
-        password: form.password,
-        name: { firstName: form.fname, lastName: form.lname },
+        // email: form.email,
+        // password: form.password,
+        // name: { firstName: form.fname, lastName: form.lname },
         title: form.title,
         phone: form.phone,
-        role: "DOCTOR",
         experience: parseInt(form.exp),
         designation: form.desig,
         practiceName: form.prac_name,
@@ -157,10 +156,10 @@ const Page = () => {
         qualifications: form.qual,
         awardsPublications: form.awd_pub,
         hospitalAffiliations: form.hosp_aff,
-        DoctorAvailability: { create: DoctorAvailability }, // <-- wrap in create
-        DoctorAvailabilityDays,
+        // DoctorAvailability: { create: DoctorAvailability }, // <-- wrap in create
+        // DoctorAvailabilityDays,
       };
-      const res = await fetch("/api/register", {
+      const res = await fetch("/api/doctor-profile", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(data),
@@ -437,9 +436,9 @@ const Page = () => {
             onChange={handleInputChange}
           >
             <option value="">Select Designation</option>
-            <option value="DOCTOR">Doctor</option>
-            <option value="SURGEON">Surgeon</option>
-            <option value="GENERAL">General Physician</option>
+            <option value="DOCTOR">DOCTOR</option>
+            <option value="SURGEON">SURGEON</option>
+            <option value="GENERAL">GENERAL</option>
           </select>
         </div>
         <div className={`${formField} col-span-2`}>
@@ -798,7 +797,8 @@ const Page = () => {
 
         <button
           type="submit"
-          className="btn_fill col-span-2 m-auto mt-10 flex justify-center px-14 py-2 max-sm:w-full"
+          className="btn_fill col-span-2 m-auto mt-10 flex justify-center px-14 py-2 max-sm:w-full mb-10 cursor-pointer"
+          onClick={handleRegister}
           disabled={loading}
         >
           {loading ? "Registering..." : "Confirm Registration"}

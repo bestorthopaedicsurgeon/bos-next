@@ -29,7 +29,6 @@ export async function registerUser(data: any): Promise<User> {
     data: {
       email,
       phone,
-      title,
       name,
       firstName: firstName || null,
       lastName: lastName || null,
