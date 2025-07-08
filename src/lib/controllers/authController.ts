@@ -36,23 +36,7 @@ export async function registerUser(data: any): Promise<User> {
       role,
       ...(role === "DOCTOR" && {
         doctorProfile: {
-          create: {
-            experience: doctorInfo.experience,
-            designation: doctorInfo.designation,
-            practiceName: doctorInfo.practiceName,
-            clinicAddress: doctorInfo.clinicAddress,
-            state: doctorInfo.state,
-            practicePhone: doctorInfo.practicePhone,
-            subspecialities: doctorInfo.subspecialities || [],
-            about: doctorInfo.about || null,
-            registrationsAssociations:
-              doctorInfo.registrationsAssociations || null,
-            qualifications: doctorInfo.qualifications || null,
-            awardsPublications: doctorInfo.awardsPublications || null,
-            hospitalAffiliations: doctorInfo.hospitalAffiliations || null,
-            DoctorAvailability: doctorInfo.DoctorAvailability || [],
-            DoctorAvailabilityDays: doctorInfo.DoctorAvailabilityDays || [],
-          },
+          create: {},
         },
       }),
     },

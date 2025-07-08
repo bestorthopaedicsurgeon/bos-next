@@ -1,6 +1,8 @@
 import { DM_Sans, Geist, Geist_Mono, Syne } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@components/theme-provider";
+import { SessionProvider } from "next-auth/react";
+import SessionWrapper from "@/components/SessionWrapper";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -33,10 +35,10 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en" suppressHydrationWarning>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} ${syne.variable} ${dmSans.variable} antialiased overflow-x-hidden`}
+        className={`${geistSans.variable} ${geistMono.variable} ${syne.variable} ${dmSans.variable} overflow-x-hidden antialiased`}
       >
         <ThemeProvider attribute="class" defaultTheme="light" enableSystem>
-          {children}
+          <SessionWrapper>{children}</SessionWrapper>
         </ThemeProvider>
       </body>
     </html>

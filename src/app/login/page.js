@@ -11,6 +11,8 @@ import login_banner from "../../../public/login_banner.png";
 import Image from "next/image";
 import Link from "next/link";
 import { signIn } from "next-auth/react";
+import { redirect } from "next/navigation";
+
 
 const Page = () => {
   const [form, setForm] = useState({ email: "", password: "" });
@@ -39,11 +41,12 @@ const Page = () => {
 
     if (signInData.error) {
       setError(signInData.error);
-      setLoading(false);
+
     } else {
       setSuccess("Login successful!");
-      setLoading(false);
+      redirect("/profile");
     }
+    setLoading(false);
   };
 
   // const handleSubmit = async (e) => {

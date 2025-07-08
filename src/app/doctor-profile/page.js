@@ -17,7 +17,7 @@ const page = async () => {
   console.log("Session in doctor profile page:", session);
 
   return (
-    <div className="">
+    <div className="px-20 my-4 ">
       {docProfile_Details.stepper.map((data) => (
         <ProfileHeader
           key={data.heading}

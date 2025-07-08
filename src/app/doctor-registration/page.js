@@ -26,7 +26,9 @@ import UsePresenceData from "@/components/ui/slider.jsx";
 import { ChevronLeft, ChevronRight, Edit, Check } from "lucide-react";
 // import { Pencil } from "lucide";
 import { Clock3, PencilIcon, User } from "lucide-react";
+import { redirect, useRouter } from "next/navigation";
 const Page = () => {
+  const router = useRouter();
   const [selectedSpecialties, setSelectedSpecialties] = useState([]);
   const [form, setForm] = useState({
     title: "",
@@ -160,49 +162,52 @@ const Page = () => {
         // DoctorAvailabilityDays,
       };
       const res = await fetch("/api/doctor-profile", {
-        method: "POST",
+        method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(data),
       });
       const result = await res.json();
       if (res.ok) {
-        setSuccess("Registration successful!");
-        // Optionally redirect or clear form
-        // Reset form and availability after successful registration
-        setForm({
-          title: "",
-          pic: null,
-          fname: "",
-          lname: "",
-          exp: "",
-          desig: "",
-          prac_name: "",
-          clinic_name: "",
-          post_code: "",
-          phone: "",
-          about_self: "",
-          reg_assoc: "",
-          qual: "",
-          awd_pub: "",
-          hosp_aff: "",
-          email: "",
-          password: "",
-        });
-        setSelectedSpecialties([]);
-        // Reset availability to empty for current month
-        const base = {};
-        const year = today.getFullYear();
-        const month = today.getMonth();
-        calendar.forEach((item) => {
-          base[`${year}-${month}`] = base[`${year}-${month}`] || {};
-          base[`${year}-${month}`][item.type] = [];
-        });
-        setAvailability(base);
+        // setSuccess("Registration successful!");
+        // // Optionally redirect or clear form
+        // // Reset form and availability after successful registration
+        // setForm({
+        //   title: "",
+        //   pic: null,
+        //   fname: "",
+        //   lname: "",
+        //   exp: "",
+        //   desig: "",
+        //   prac_name: "",
+        //   clinic_name: "",
+        //   post_code: "",
+        //   phone: "",
+        //   about_self: "",
+        //   reg_assoc: "",
+        //   qual: "",
+        //   awd_pub: "",
+        //   hosp_aff: "",
+        //   email: "",
+        //   password: "",
+        // });
+        // setSelectedSpecialties([]);
+        // // Reset availability to empty for current month
+        // const base = {};
+        // const year = today.getFullYear();
+        // const month = today.getMonth();
+        // calendar.forEach((item) => {
+        //   base[`${year}-${month}`] = base[`${year}-${month}`] || {};
+        //   base[`${year}-${month}`][item.type] = [];
+        // });
+        // setAvailability(base);
+        console.log("Registration successful:", result);
+        router.push("/doctor-profile");
       } else {
         setError(result.error || "Registration failed");
       }
     } catch (err) {
       setError("Something went wrong");
+      console.log(err);
     } finally {
       setLoading(false);
     }

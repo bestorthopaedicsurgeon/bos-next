@@ -12,6 +12,8 @@ import Image from "next/image";
 import PhoneInput from "react-phone-input-2";
 import "react-phone-input-2/lib/style.css";
 import Link from "next/link";
+import { signIn } from "next-auth/react";
+import { redirect } from "next/navigation";
 const Page = () => {
   const [data, setData] = useState();
   const [phone, setPhone] = useState("");
@@ -44,12 +46,26 @@ const Page = () => {
       }
 
       setSuccess("Registration successful!");
-      // Optionally redirect to login page
-      // router.push("/login");
     } catch (err) {
       setError(err.message);
     } finally {
       setLoading(false);
+      const result = await signIn("credentials", {
+        redirect: false,
+        email: data.email,
+        password: data.password,
+      });
+
+      if (result?.ok) {
+        // ✅ Redirect manually — e.g., to profile or dashboard
+        if (data.role === "PATIENT") {
+          redirect("/profile");
+        } else if (data.role === "DOCTOR") {
+          redirect("/doctor-registration");
+        }
+      } else {
+        setError("Sign-in failed");
+      }
     }
   };
 

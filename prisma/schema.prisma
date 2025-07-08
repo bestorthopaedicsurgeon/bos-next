@@ -106,7 +106,7 @@ model DoctorProfile {
   hospitalAffiliations      String?
 
   DoctorAvailability     DoctorAvailabilityTime[]
-  DoctorAvailabilityDays String[]
+  DoctorAvailabilityDays String[] 
 }
 
 enum Subspeciality {
