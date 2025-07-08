@@ -3,7 +3,7 @@
 import Image from "next/image";
 import { useState } from "react";
 
-export default function QuestionsAndAnswers() {
+export default function QuestionsAndAnswers({ className }) {
   const [expandedQuestions, setExpandedQuestions] = useState({});
   const [helpfulCounts, setHelpfulCounts] = useState({
     1: { count: 20, clicked: false },
@@ -94,7 +94,9 @@ export default function QuestionsAndAnswers() {
   const currentQuestion = questions[currentQuestionIndex];
 
   return (
-    <div className="mx-auto max-w-4xl rounded-lg bg-white p-6 shadow-md">
+    <div
+      className={`${className} mt-10 max-w-4xl rounded-lg bg-white p-6 shadow-md`}
+    >
       <p className="text-primary mb-6 font-[700]">Questions & Answers</p>
 
       <p className="mb-6 text-[14px]">
@@ -190,7 +192,7 @@ export default function QuestionsAndAnswers() {
               fill="none"
               xmlns="http://www.w3.org/2000/svg"
             >
-              <g clip-path="url(#clip0_427_5516)">
+              <g clipPath="url(#clip0_427_5516)">
                 <path
                   d="M9.84 2.04327L5.685 6.19827C5.4075 6.47577 5.25 6.85827 5.25 7.25577V14.7483C5.25 15.5733 5.925 16.2483 6.75 16.2483H13.5C14.1 16.2483 14.64 15.8883 14.88 15.3408L17.325 9.63327C17.955 8.14827 16.8675 6.49827 15.255 6.49827H11.0175L11.73 3.06327C11.805 2.68827 11.6925 2.30577 11.4225 2.03577C10.98 1.60077 10.275 1.60077 9.84 2.04327ZM2.25 16.2483C3.075 16.2483 3.75 15.5733 3.75 14.7483V8.74827C3.75 7.92327 3.075 7.24827 2.25 7.24827C1.425 7.24827 0.75 7.92327 0.75 8.74827V14.7483C0.75 15.5733 1.425 16.2483 2.25 16.2483Z"
                   fill="#737373"
@@ -215,7 +217,7 @@ export default function QuestionsAndAnswers() {
               fill="none"
               xmlns="http://www.w3.org/2000/svg"
             >
-              <g clip-path="url(#clip0_427_5519)">
+              <g clipPath="url(#clip0_427_5519)">
                 <path
                   d="M8.16 15.9155L12.315 11.7605C12.5925 11.483 12.75 11.1005 12.75 10.703V3.21047C12.75 2.38547 12.075 1.71047 11.25 1.71047H4.5C3.9 1.71047 3.36 2.07047 3.12 2.61797L0.674999 8.32547C0.0450001 9.81047 1.1325 11.4605 2.745 11.4605H6.9825L6.27 14.8955C6.195 15.2705 6.3075 15.653 6.5775 15.923C7.02 16.358 7.725 16.358 8.16 15.9155ZM15.75 1.71047C14.925 1.71047 14.25 2.38547 14.25 3.21047V9.21047C14.25 10.0355 14.925 10.7105 15.75 10.7105C16.575 10.7105 17.25 10.0355 17.25 9.21047V3.21047C17.25 2.38547 16.575 1.71047 15.75 1.71047Z"
                   fill="#737373"
@@ -254,13 +256,13 @@ export default function QuestionsAndAnswers() {
             <path
               d="M8.84229 17.5173C4.21366 17.5171 0.461426 13.7642 0.461426 9.1355C0.461669 4.50702 4.21381 0.754881 8.84229 0.754639C13.471 0.754639 17.2239 4.50687 17.2241 9.1355C17.2241 13.7643 13.4711 17.5173 8.84229 17.5173Z"
               stroke="#006D77"
-              stroke-width="0.728804"
+              strokeWidth="0.728804"
             />
             <path
               d="M10.2598 6.22083L7.38452 9.0467L10.2598 11.8726"
               stroke="#006D77"
-              stroke-width="0.728804"
-              stroke-linecap="round"
+              strokeWidth="0.728804"
+              strokeLinecap="round"
             />
           </svg>
         </button>
@@ -285,13 +287,13 @@ export default function QuestionsAndAnswers() {
             <path
               d="M9.01807 0.482666C13.6467 0.482909 17.3989 4.23582 17.3989 8.8645C17.3987 13.493 13.6465 17.2451 9.01807 17.2454C4.38938 17.2454 0.636474 13.4931 0.63623 8.8645C0.63623 4.23567 4.38923 0.482666 9.01807 0.482666Z"
               stroke="#006D77"
-              stroke-width="0.728804"
+              strokeWidth="0.728804"
             />
             <path
               d="M7.60055 11.7792L10.4758 8.9533L7.60055 6.12742"
               stroke="#006D77"
-              stroke-width="0.728804"
-              stroke-linecap="round"
+              strokeWidth="0.728804"
+              strokeLinecap="round"
             />
           </svg>
         </button>

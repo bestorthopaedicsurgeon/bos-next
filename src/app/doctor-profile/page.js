@@ -1,4 +1,3 @@
-"use client";
 import ProfileHeader from "@/components/reusable/profileHeader";
 import React from "react";
 
@@ -10,9 +9,15 @@ import DocInfo from "@/components/docProfile/docInfo";
 import DocProfile from "@/components/docProfile/docProfile";
 import { TabsList } from "@/components/ui/tabs";
 import { DocTabs } from "@/components/docProfile/tabs";
-const page = () => {
+import { authOptions } from "@/lib/auth";
+import { getServerSession } from "next-auth";
+const page = async () => {
+
+  const session = await getServerSession(authOptions);
+  console.log("Session in doctor profile page:", session);
+
   return (
-    <div className="container m-auto">
+    <div className="">
       {docProfile_Details.stepper.map((data) => (
         <ProfileHeader
           key={data.heading}
