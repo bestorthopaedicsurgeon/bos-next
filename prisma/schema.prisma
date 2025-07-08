@@ -14,22 +14,68 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model User {
-  id        Int     @id @default(autoincrement())
-  email     String  @unique
-  password  String
-  title     Title
-  FirstName String
-  LastName  String
-  phone     String?
-  role      Role    @default(PATIENT) // Enum: DOCTOR | PATIENT
-
-  doctorProfile DoctorProfile? // optional relation
+model Account {
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
 
   createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model VerificationToken {
+  identifier String
+  token      String
+  expires    DateTime
+
+  @@id([identifier, token])
+}
+
+model User {
+  id        String  @id @default(cuid())
+  email     String  @unique
+  password  String
+  name      String
+  firstName String?
+  lastName  String?
+  image     String?
+
+  phone String?
+  role  Role
+
+  doctorProfileId Int?           @unique
+  doctorProfile   DoctorProfile? @relation(fields: [doctorProfileId], references: [id])
+  accounts        Account[]
+  sessions        Session[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 enum Role {
+  ADMIN
   DOCTOR
   PATIENT
 }
@@ -42,17 +88,17 @@ enum Title {
 }
 
 model DoctorProfile {
-  id     Int  @id @default(autoincrement())
-  user   User @relation(fields: [userId], references: [id])
-  userId Int  @unique
+  id   Int   @id @default(autoincrement())
+  user User?
 
-  experience                Int
-  designation               Designation
-  practiceName              String
-  clinicAddress             String
-  state                     String
-  practicePhone             String
-  subspecialities           Subspeciality[]
+  title                     String?
+  experience                Int?
+  designation               Designation?
+  practiceName              String?
+  clinicAddress             String?
+  state                     String?
+  practicePhone             String?
+  subspecialities           Subspeciality[] @default([])
   about                     String?
   registrationsAssociations String?
   qualifications            String?

@@ -1,3 +1,4 @@
+'use client';
 import { useState, useEffect } from "react";
 import { Edit, ChevronLeft, ChevronRight, Save, Check } from "lucide-react";
 import { usePathname } from "next/navigation";

@@ -10,8 +10,11 @@ import WelcomeTxt from "@/components/reusable/welcomeTxt";
 import login_banner from "../../../public/login_banner.png";
 import Image from "next/image";
 import Link from "next/link";
+import { signIn } from "next-auth/react";
+
 const Page = () => {
-  const [form, setForm] = useState({ email: "", pass: "" });
+  const [form, setForm] = useState({ email: "", password: "" });
+
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
@@ -21,31 +24,54 @@ const Page = () => {
   };
 
   const handleSubmit = async (e) => {
-    console.log(form);
     e.preventDefault();
-    setLoading(true);
-    setError("");
-    setSuccess("");
-    try {
-      const res = await fetch("/api/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email: form.email, password: form.pass }),
-      });
-      const data = await res.json();
-      console.log("this is the data", data);
-      if (res.ok) {
-        setSuccess("Login successful!");
-        // TODO: Redirect or set user context here
-      } else {
-        setError(data.error || "Login failed");
-      }
-    } catch (err) {
-      setError("Something went wrong");
-    } finally {
+    // setLoading(true);
+    // setError("");
+    // setSuccess("");
+    console.log("Form Data:", form);
+    const signInData = await signIn("credentials", {
+      redirect: false,
+      email: form.email,
+      password: form.password,
+    });
+
+    console.log("SignIn Data:", signInData);
+
+    if (signInData.error) {
+      setError(signInData.error);
+      setLoading(false);
+    } else {
+      setSuccess("Login successful!");
       setLoading(false);
     }
   };
+
+  // const handleSubmit = async (e) => {
+  //   console.log(form);
+  //   e.preventDefault();
+  //   setLoading(true);
+  //   setError("");
+  //   setSuccess("");
+  //   try {
+  //     const res = await fetch("/api/login", {
+  //       method: "POST",
+  //       headers: { "Content-Type": "application/json" },
+  //       body: JSON.stringify({ email: form.email, password: form.pass }),
+  //     });
+  //     const data = await res.json();
+  //     console.log("this is the data", data);
+  //     if (res.ok) {
+  //       setSuccess("Login successful!");
+  //       // TODO: Redirect or set user context here
+  //     } else {
+  //       setError(data.error || "Login failed");
+  //     }
+  //   } catch (err) {
+  //     setError("Something went wrong");
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
 
   return (
     <div className="flex items-center justify-center min-xl:pr-[200px]">
@@ -67,8 +93,8 @@ const Page = () => {
           color="--primary"
         />
         {/* input form start */}
-        <form onSubmit={handleSubmit}>
-          <RadioGroup
+        {/* <form onSubmit={handleSubmit}> */}
+        {/* <RadioGroup
             defaultValue="comfortable"
             className="m-auto mt-[40px] flex items-center justify-center gap-[40px]"
           >
@@ -80,45 +106,48 @@ const Page = () => {
               <RadioGroupItem value="comfortable" id="r2" />
               <label htmlFor="r2">Login as Doctor</label>
             </div>
-          </RadioGroup>
+          </RadioGroup> */}
 
-          {input.email.map((data) => (
-            <InputField
-              placeholder={data.placeholder}
-              name={data.name}
-              inputType={data.inputType}
-              label={data.label}
-              key={data.name}
-              value={form.email}
-              onChange={handleChange}
-            />
-          ))}
-          {input.pass.map((data) => (
-            <InputField
-              placeholder={data.placeholder}
-              name={data.name}
-              inputType={data.inputType}
-              label={data.label}
-              key={data.name}
-              value={form.pass}
-              onChange={handleChange}
-            />
-          ))}
-          <div className="max-lg:mt-[17px] min-lg:mt-[27px]">
-            <CustomBtn
-              btnText={loading ? "Logging in..." : "Login"}
-              border="md"
-              width="100%"
-              disabled={loading}
-            />
-          </div>
-          {error && <div className="mt-2 text-red-500">{error}</div>}
-          {success && <div className="mt-2 text-green-500">{success}</div>}
-          <div className="flex items-center space-x-2">
-            <Checkbox id="terms" />
-            <label htmlFor="terms">Remember me</label>
-          </div>
-        </form>
+        {input.email.map((data) => (
+          <InputField
+            placeholder={data.placeholder}
+            name={data.name}
+            inputType={data.inputType}
+            label={data.label}
+            key={data.name}
+            value={form.email}
+            onChange={handleChange}
+          />
+        ))}
+        {input.pass.map((data) => (
+          <InputField
+            placeholder={data.placeholder}
+            name={data.name}
+            inputType={data.inputType}
+            label={data.label}
+            key={data.name}
+            value={form.password}
+            onChange={handleChange}
+          />
+        ))}
+        <div
+          onClick={handleSubmit}
+          className="max-lg:mt-[17px] min-lg:mt-[27px]"
+        >
+          <CustomBtn
+            btnText={loading ? "Logging in..." : "Login"}
+            border="md"
+            width="100%"
+            disabled={loading}
+          />
+        </div>
+        {error && <div className="mt-2 text-red-500">{error}</div>}
+        {success && <div className="mt-2 text-green-500">{success}</div>}
+        <div className="flex items-center space-x-2">
+          <Checkbox id="terms" />
+          <label htmlFor="terms">Remember me</label>
+        </div>
+        {/* </form> */}
         {/* input form end */}
 
         {/* social login */}

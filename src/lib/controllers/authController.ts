@@ -3,7 +3,22 @@ import { prisma } from "@/lib/prisma";
 import { User } from "@prisma/client";
 
 export async function registerUser(data: any): Promise<User> {
-  const { email, password, name, title, phone, role, ...doctorInfo } = data;
+  const {
+    email,
+    password,
+    firstName,
+    lastName,
+    title,
+    phone,
+    role,
+    ...doctorInfo
+  } = data;
+
+  if (!email || !password || !role || !firstName || !lastName || !phone) {
+    throw new Error("All fields are required");
+  }
+
+  const name = `${firstName} ${lastName}`.trim();
 
   const existingUser = await prisma.user.findUnique({ where: { email } });
   if (existingUser) throw new Error("User already exists");
@@ -15,8 +30,9 @@ export async function registerUser(data: any): Promise<User> {
       email,
       phone,
       title,
-      FirstName: name.firstName,
-      LastName: name.lastName,
+      name,
+      firstName: firstName || null,
+      lastName: lastName || null,
       password: hashedPassword,
       role,
       ...(role === "DOCTOR" && {
@@ -30,7 +46,8 @@ export async function registerUser(data: any): Promise<User> {
             practicePhone: doctorInfo.practicePhone,
             subspecialities: doctorInfo.subspecialities || [],
             about: doctorInfo.about || null,
-            registrationsAssociations: doctorInfo.registrationsAssociations || null,
+            registrationsAssociations:
+              doctorInfo.registrationsAssociations || null,
             qualifications: doctorInfo.qualifications || null,
             awardsPublications: doctorInfo.awardsPublications || null,
             hospitalAffiliations: doctorInfo.hospitalAffiliations || null,

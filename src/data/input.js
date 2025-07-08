@@ -12,7 +12,7 @@ export const input = {
       placeholder: "Enter Your Password",
       label: "Your Password",
       inputType: "password",
-      name: "pass",
+      name: "password",
     },
   ],
   fname: [
