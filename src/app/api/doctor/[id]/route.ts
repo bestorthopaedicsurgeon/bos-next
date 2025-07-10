@@ -1,13 +1,9 @@
 import { prisma } from "@/lib/prisma";
 import { NextResponse } from "next/server";
 
-type Params = {
-  params: { id: string };
-};
-
-export async function GET(req: Request, { params }: Params) {
+export async function GET(req: Request, context: { params: { id: string } }) {
   try {
-    const doctorId = Number(params.id);
+    const doctorId = Number(context.params.id);
     if (isNaN(doctorId)) {
       return NextResponse.json(
         { success: false, error: "Invalid doctor ID." },
