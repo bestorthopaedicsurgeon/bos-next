@@ -3,12 +3,11 @@ import { NextResponse } from "next/server";
 
 export async function GET(
   req: Request,
-  { params }: { params: Promise<{ id: string }> },
+  { params }: { params: { id: string } },
 ) {
   try {
-    const id = await params;
+    const doctorId = Number(params.id);
 
-    const doctorId = Number(id);
     if (isNaN(doctorId)) {
       return NextResponse.json(
         { success: false, error: "Invalid doctor ID." },
