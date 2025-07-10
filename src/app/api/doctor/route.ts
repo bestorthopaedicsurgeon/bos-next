@@ -108,12 +108,10 @@ export async function POST(req: Request): Promise<NextResponse> {
   }
 }
 
-export async function PATCH(
-  req: Request,
-  { params }: { params: { id: string } },
-) {
+export async function PATCH(req: Request) {
   try {
     const session = await getServerSession(authOptions);
+    const body = await req.json();
 
     if (
       !session?.user?.role ||
@@ -125,15 +123,13 @@ export async function PATCH(
       );
     }
 
-    const doctorId = Number(params.id);
+    const doctorId = Number(body.id);
     if (isNaN(doctorId)) {
       return NextResponse.json(
         { success: false, error: "Invalid doctor ID." },
         { status: 400 },
       );
     }
-
-    const body = await req.json();
 
     // If the user is a DOCTOR, they can only update their own profile
     if (session.user.role === "DOCTOR") {
