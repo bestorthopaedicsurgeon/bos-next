@@ -1,17 +1,20 @@
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 
-export async function GET(
-  request: Request,
-  { params }: { params: { id: string } }
-) {
-  const { id } = params;
+interface Params {
+  params: {
+    id: string;
+  };
+}
 
-  // Example: fetch from DB or dummy object
-  const item = {
+export async function GET(request: NextRequest, context: Params) {
+  const { id } = context.params;
+
+  // Sample data
+  const doctor = {
     id,
-    name: `Item #${id}`,
-    description: 'This is a placeholder item.',
+    name: `Dr. Example #${id}`,
+    specialty: 'General Practice',
   };
 
-  return NextResponse.json(item);
+  return NextResponse.json(doctor);
 }
