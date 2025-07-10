@@ -65,10 +65,9 @@ model User {
   phone String?
   role  Role
 
-  doctorProfileId Int?           @unique
-  doctorProfile   DoctorProfile? @relation(fields: [doctorProfileId], references: [id])
-  accounts        Account[]
-  sessions        Session[]
+  doctorProfile DoctorProfile? @relation("UserDoctorProfile")
+  accounts      Account[]
+  sessions      Session[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -83,14 +82,14 @@ enum Role {
 enum Title {
   DR
   MR
-  MS
+  MSa
   PROF
 }
 
 model DoctorProfile {
-  id   Int   @id @default(autoincrement())
-  user User?
-
+  id                        Int             @id @default(autoincrement())
+  userId                    String?          @unique
+  user                      User?            @relation("UserDoctorProfile", fields: [userId], references: [id])
   title                     String?
   experience                Int?
   designation               Designation?
@@ -106,7 +105,7 @@ model DoctorProfile {
   hospitalAffiliations      String?
 
   DoctorAvailability     DoctorAvailabilityTime[]
-  DoctorAvailabilityDays String[] 
+  DoctorAvailabilityDays String[]
 }
 
 enum Subspeciality {

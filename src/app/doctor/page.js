@@ -11,7 +11,7 @@ import { TabsList } from "@/components/ui/tabs";
 import { DocTabs } from "@/components/docProfile/tabs";
 import { authOptions } from "@/lib/auth";
 import { getServerSession } from "next-auth";
-const page = async () => {
+const Page = async () => {
 
   const session = await getServerSession(authOptions);
   console.log("Session in doctor profile page:", session);
@@ -43,4 +43,4 @@ const page = async () => {
   );
 };
 
-export default page;
+export default Page;

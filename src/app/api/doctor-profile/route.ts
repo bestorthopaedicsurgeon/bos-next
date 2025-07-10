@@ -57,8 +57,6 @@ export async function PATCH(req: Request) {
   try {
     const session = await getServerSession(authOptions);
 
-    
-
     const body = await req.json();
 
     let {
