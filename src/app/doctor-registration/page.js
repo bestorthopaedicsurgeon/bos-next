@@ -629,7 +629,7 @@ const Page = () => {
                 <span>Click to set availability</span>
               </Button>
             </DialogTrigger>
-            <DialogContent className="sm:max-w-md">
+            <DialogContent className="h-full w-full max-w-[90%] overflow-y-auto">
               <DialogHeader>
                 <DialogTitle>My Availability</DialogTitle>
                 <DialogDescription>
@@ -802,7 +802,7 @@ const Page = () => {
 
         <button
           type="submit"
-          className="btn_fill col-span-2 m-auto mt-10 flex justify-center px-14 py-2 max-sm:w-full mb-10 cursor-pointer"
+          className="btn_fill col-span-2 m-auto mt-10 mb-10 flex cursor-pointer justify-center px-14 py-2 max-sm:w-full"
           onClick={handleRegister}
           disabled={loading}
         >
