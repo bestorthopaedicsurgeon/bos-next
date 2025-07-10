@@ -1,13 +1,18 @@
 import { prisma } from "@/lib/prisma";
 import { NextResponse } from "next/server";
+import type { NextRequest } from "next/server";
 
-export async function GET(req: Request, { params }: { params: { id: string } }) {
+export async function GET(
+  req: NextRequest,
+  context: { params: { id: string } }
+) {
   try {
-    const doctorId = Number(params.id);
+    const doctorId = Number(context.params.id);
+
     if (isNaN(doctorId)) {
       return NextResponse.json(
         { success: false, error: "Invalid doctor ID." },
-        { status: 400 },
+        { status: 400 }
       );
     }
 
@@ -27,7 +32,7 @@ export async function GET(req: Request, { params }: { params: { id: string } }) 
     if (!profile) {
       return NextResponse.json(
         { success: false, error: "Doctor profile not found." },
-        { status: 404 },
+        { status: 404 }
       );
     }
 
@@ -36,7 +41,7 @@ export async function GET(req: Request, { params }: { params: { id: string } }) 
     console.error("Error in GET doctor profile:", error);
     return NextResponse.json(
       { success: false, error: error.message },
-      { status: 500 },
+      { status: 500 }
     );
   }
 }
