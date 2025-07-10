@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import InputField from "@components/reusable/inputField";
 import { input } from "@data/input.js";
 import CustomBtn from "@components/reusable/customBtn";
@@ -10,11 +10,13 @@ import WelcomeTxt from "@/components/reusable/welcomeTxt";
 import login_banner from "../../../public/login_banner.png";
 import Image from "next/image";
 import Link from "next/link";
-import { signIn } from "next-auth/react";
-import { redirect } from "next/navigation";
-
+import { signIn, useSession } from "next-auth/react";
+import { redirect, useRouter } from "next/navigation";
 
 const Page = () => {
+  const { data: session, status } = useSession();
+  const router = useRouter();
+
   const [form, setForm] = useState({ email: "", password: "" });
 
   const [loading, setLoading] = useState(false);
@@ -27,54 +29,40 @@ const Page = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    // setLoading(true);
-    // setError("");
-    // setSuccess("");
+    setLoading(true);
+    setError("");
+    setSuccess("");
+
+    if (form.email === "" || form.password === "") {
+      setError("Please fill in email and password.");
+      setLoading(false);
+      return;
+    }
+
     console.log("Form Data:", form);
-    const signInData = await signIn("credentials", {
-      redirect: false,
+    await signIn("credentials", {
+      redirect: true,
       email: form.email,
       password: form.password,
+      callbackUrl: "/",
     });
 
     console.log("SignIn Data:", signInData);
 
     if (signInData.error) {
       setError(signInData.error);
-
     } else {
-      setSuccess("Login successful!");
-      redirect("/profile");
+      // setSuccess("Login successful!");
+      // redirect("/");
     }
     setLoading(false);
   };
 
-  // const handleSubmit = async (e) => {
-  //   console.log(form);
-  //   e.preventDefault();
-  //   setLoading(true);
-  //   setError("");
-  //   setSuccess("");
-  //   try {
-  //     const res = await fetch("/api/login", {
-  //       method: "POST",
-  //       headers: { "Content-Type": "application/json" },
-  //       body: JSON.stringify({ email: form.email, password: form.pass }),
-  //     });
-  //     const data = await res.json();
-  //     console.log("this is the data", data);
-  //     if (res.ok) {
-  //       setSuccess("Login successful!");
-  //       // TODO: Redirect or set user context here
-  //     } else {
-  //       setError(data.error || "Login failed");
-  //     }
-  //   } catch (err) {
-  //     setError("Something went wrong");
-  //   } finally {
-  //     setLoading(false);
+  // useEffect(() => {
+  //   if (status === "authenticated") {
+  //     router.replace("/"); // redirect to home if already logged in
   //   }
-  // };
+  // }, [status, router]);
 
   return (
     <div className="flex items-center justify-center min-xl:pr-[200px]">
