@@ -13,6 +13,18 @@ import Image from "next/image";
 import React from "react";
 
 export const HeroSection = () => {
+
+  const subspecialities = [
+    { value: "UPPER_LIMB", label: "Upper Limb" },
+    { value: "LOWER_LIMB", label: "Lower Limb" },
+    { value: "SPINE", label: "Spine" },
+    { value: "PEDIATRICS", label: "Paediatrics" },
+    { value: "ONCOLOGY", label: "Oncology" },
+    { value: "TRAUMA", label: "Trauma" },
+    { value: "SPORTS", label: "Sports" },
+    { value: "ARTHROPLASTY", label: "Arthroplasty" },
+  ];
+
   return (
     <section className="mb-40">
       <div className="bg-primary text-primary-foreground relative mb-8 rounded-4xl px-20 py-16">
@@ -71,17 +83,22 @@ export const HeroSection = () => {
           />
           <Select>
             <SelectTrigger className="border-primary h-[52px] min-h-[56px] w-full rounded-md border px-4 py-3.5">
-              <SelectValue placeholder="Theme" />
+              <SelectValue placeholder="Subspecialty" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="light">Light</SelectItem>
+              {subspecialities.map((item) => (
+                <SelectItem key={item.value} value={item.value}>
+                  {item.label}
+                </SelectItem>
+              ))}
+              {/* <SelectItem value="light">Light</SelectItem>
               <SelectItem value="dark">Dark</SelectItem>
-              <SelectItem value="system">System</SelectItem>
+              <SelectItem value="system">System</SelectItem> */}
             </SelectContent>
           </Select>
           <Select>
             <SelectTrigger className="border-primary h-[52px] min-h-[56px] w-full rounded-md border px-4 py-3.5">
-              <SelectValue placeholder="Theme" />
+              <SelectValue placeholder="Location" />
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="light">Light</SelectItem>

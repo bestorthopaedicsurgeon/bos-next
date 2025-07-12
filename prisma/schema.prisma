@@ -88,9 +88,10 @@ enum Title {
 
 model DoctorProfile {
   id                        Int             @id @default(autoincrement())
-  userId                    String?          @unique
-  user                      User?            @relation("UserDoctorProfile", fields: [userId], references: [id])
+  userId                    String?         @unique
+  user                      User?           @relation("UserDoctorProfile", fields: [userId], references: [id])
   title                     String?
+  name                      String?
   experience                Int?
   designation               Designation?
   practiceName              String?

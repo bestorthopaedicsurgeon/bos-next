@@ -53,7 +53,7 @@ const ProfileDropdown = () => {
           <>
             <DropdownMenuItem
               className="cursor-pointer"
-              onClick={() => router.push("/doctor-profile")}
+              onClick={() => router.push("/doctor")}
             >
               View Profile
             </DropdownMenuItem>

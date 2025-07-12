@@ -1,46 +1,47 @@
 import { authOptions } from "@/lib/auth";
-import { getServerSession } from "next-auth";
-import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import type { NextRequest } from "next/server";
+import { get } from "http";
+import { getServerSession } from "next-auth";
+import { NextRequest, NextResponse } from "next/server";
 
-export async function GET(req: NextRequest) {
+export async function GET(request: NextRequest) {
   const session = await getServerSession(authOptions);
 
-  if (!session || session.user.role !== "DOCTOR") {
-    return NextResponse.json(
-      { success: false, error: "Unauthorized access." },
-      { status: 401 }
-    );
+  console.log("Fetching doctor with id:", session);
+  let id = session?.user?.id;
+
+  if (!id) {
+    return NextResponse.json({ error: "id is required." }, { status: 400 });
   }
 
   try {
-    const profile = await prisma.doctorProfile.findUnique({
-      where: { userId: session.user.id },
+    const user = await prisma.user.findUnique({
+      where: { id: id },
       include: {
-        user: {
-          select: {
-            id: true,
-            name: true,
-            email: true,
-          },
-        },
+        doctorProfile: true,
       },
     });
 
-    if (!profile) {
+    if (!user) {
       return NextResponse.json(
-        { success: false, error: "Doctor profile not found." },
-        { status: 404 }
+        { success: false, error: "Doctor not found." },
+        { status: 404 },
       );
     }
 
-    return NextResponse.json({ success: true, profile });
-  } catch (error: any) {
-    console.error("Error fetching doctor profile:", error);
     return NextResponse.json(
-      { success: false, error: "Internal server error." },
-      { status: 500 }
+      {
+        success: true,
+        data: user,
+        message: "Doctor fetched successfully",
+      },
+      { status: 200 },
+    );
+  } catch (error) {
+    console.error("Error fetching doctor data:", error);
+    return NextResponse.json(
+      { success: false, error: "Failed to fetch doctor data." },
+      { status: 500 },
     );
   }
 }

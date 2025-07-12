@@ -152,7 +152,7 @@ const Page = () => {
         clinicAddress: form.clinic_name,
         state: form.post_code,
         practicePhone: form.phone,
-        subspecialities: selectedSpecialties,
+        subspecialities: selectedSpecialties.map((s) => s.value),
         about: form.about_self,
         registrationsAssociations: form.reg_assoc,
         qualifications: form.qual,
@@ -161,7 +161,7 @@ const Page = () => {
         // DoctorAvailability: { create: DoctorAvailability }, // <-- wrap in create
         // DoctorAvailabilityDays,
       };
-      const res = await fetch("/api/doctor-profile", {
+      const res = await fetch("/api/doctor", {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(data),
@@ -201,7 +201,7 @@ const Page = () => {
         // });
         // setAvailability(base);
         console.log("Registration successful:", result);
-        router.push("/doctor-profile");
+        router.push("/doctor");
       } else {
         setError(result.error || "Registration failed");
       }
@@ -221,12 +221,18 @@ const Page = () => {
   const inputField = "border border-(--primary) rounded-md p-3";
 
   const handleSpecialtyChange = (specialty) => {
-    setSelectedSpecialties((prev) =>
-      prev.includes(specialty)
-        ? prev.filter((item) => item !== specialty)
-        : [...prev, specialty],
-    );
+    setSelectedSpecialties((prev) => {
+      const exists = prev.find((s) => s.value === specialty.value);
+      if (exists) {
+        // Remove it
+        return prev.filter((s) => s.value !== specialty.value);
+      } else {
+        // Add it
+        return [...prev, specialty];
+      }
+    });
   };
+
   // Calendar state for month slider and availability
   const monthNames = [
     "January",
@@ -509,8 +515,10 @@ const Page = () => {
                   <input
                     type="checkbox"
                     id={specialty.value.toLowerCase()}
-                    checked={selectedSpecialties.includes(specialty.value)}
-                    onChange={() => handleSpecialtyChange(specialty.value)}
+                    checked={selectedSpecialties.some(
+                      (s) => s.value === specialty.value,
+                    )}
+                    onChange={() => handleSpecialtyChange(specialty)}
                     className="hidden"
                   />
                   <label
@@ -519,7 +527,9 @@ const Page = () => {
                   >
                     <span
                       className={`mr-2 inline-block h-4 w-4 rounded-full border ${
-                        selectedSpecialties.includes(specialty.value)
+                        selectedSpecialties.some(
+                          (s) => s.value === specialty.value,
+                        )
                           ? "border-blue-500 bg-blue-500"
                           : "border-gray-400 bg-white"
                       }`}
@@ -541,15 +551,14 @@ const Page = () => {
               }}
             >
               {selectedSpecialties.map((specialty) => (
-                <div key={specialty}>
+                <div key={specialty.value}>
                   <label
-                    htmlFor={specialty.replace(/\s+/g, "-").toLowerCase()}
                     className={`flex cursor-pointer items-center rounded-full py-2 select-none`}
                   >
                     <span
                       className={`mr-2 inline-block h-4 w-4 rounded-full border border-blue-500 bg-blue-500`}
                     ></span>
-                    {specialty}
+                    {specialty.label}
                   </label>
                 </div>
               ))}
@@ -786,7 +795,7 @@ const Page = () => {
             required
           />
         </div>
-        {error && <div className="col-span-2 mt-2 text-red-500">{error}</div>}
+        {/* {error && <div className="col-span-2 mt-2 text-red-500">{error}</div>} */}
         {success && (
           <div className="col-span-2 mt-2 text-green-500">{success}</div>
         )}
@@ -799,7 +808,8 @@ const Page = () => {
           />
           <label htmlFor="terms">I accept the terms</label>
         </div>
-
+      </form>
+      <div className="flex items-center justify-center">
         <button
           type="submit"
           className="btn_fill col-span-2 m-auto mt-10 mb-10 flex cursor-pointer justify-center px-14 py-2 max-sm:w-full"
@@ -808,7 +818,15 @@ const Page = () => {
         >
           {loading ? "Registering..." : "Confirm Registration"}
         </button>
-      </form>
+        <button
+          type="submit"
+          className="btn_fill col-span-2 m-auto mt-10 mb-10 flex cursor-pointer justify-center px-14 py-2 max-sm:w-full"
+          onClick={() => router.push("/doctor")}
+          disabled={loading}
+        >
+          Complete Later
+        </button>
+      </div>
     </div>
   );
 };

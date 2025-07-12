@@ -98,9 +98,9 @@ export async function POST(req: Request): Promise<NextResponse> {
       },
     });
 
-    return NextResponse.json({ success: true, profile });
-  } catch (error: any) {
-    console.error("Error in PATCH doctor profile:", error);
+    return NextResponse.json({ success: true, profile }, { status: 201 });
+  } catch (error: Error | any) {
+    console.error("Error in POST doctor profile:", error);
     return NextResponse.json(
       { success: false, error: error.message },
       { status: 500 },
@@ -113,50 +113,85 @@ export async function PATCH(req: Request) {
     const session = await getServerSession(authOptions);
     const body = await req.json();
 
-    if (
-      !session?.user?.role ||
-      !["DOCTOR", "ADMIN"].includes(session.user.role)
-    ) {
+    // 1. Ensure user is authenticated
+    if (!session?.user?.id) {
       return NextResponse.json(
-        { success: false, error: "Not authorized to update doctor profile." },
+        { success: false, error: "Not authenticated" },
+        { status: 401 },
+      );
+    }
+
+    // 2. Allow only DOCTOR or ADMIN roles
+    const userRole = session.user.role;
+    if (!["DOCTOR", "ADMIN"].includes(userRole)) {
+      return NextResponse.json(
+        { success: false, error: "Not authorized" },
         { status: 403 },
       );
     }
 
-    const doctorId = Number(body.id);
-    if (isNaN(doctorId)) {
+    // 3. Determine doctorId based on role
+    let doctorId: number | undefined;
+
+    if (userRole === "ADMIN") {
+      if (!body.id) {
+        return NextResponse.json(
+          { success: false, error: "Doctor ID is required for ADMIN" },
+          { status: 400 },
+        );
+      }
+      doctorId = Number(body.id);
+    } else if (userRole === "DOCTOR") {
+      const doctor = await prisma.doctorProfile.findFirst({
+        where: { user: { id: session.user.id } },
+        select: { id: true },
+      });
+
+      if (!doctor) {
+        return NextResponse.json(
+          { success: false, error: "Doctor profile not found" },
+          { status: 404 },
+        );
+      }
+
+      doctorId = doctor.id;
+    }
+
+    // 4. Optional: Validate doctorId
+    if (!doctorId || isNaN(doctorId)) {
       return NextResponse.json(
-        { success: false, error: "Invalid doctor ID." },
+        { success: false, error: "Invalid doctor ID" },
         { status: 400 },
       );
     }
 
-    // If the user is a DOCTOR, they can only update their own profile
-    if (session.user.role === "DOCTOR") {
-      const profile = await prisma.doctorProfile.findUnique({
-        where: { id: doctorId },
-        select: { userId: true },
-      });
+    // 5. Prepare updatable data
+    const data = {
+      title: body.title ?? undefined,
+      experience: body.experience ?? undefined,
+      designation: body.designation ?? undefined,
+      practiceName: body.practiceName ?? undefined,
+      clinicAddress: body.clinicAddress ?? undefined,
+      state: body.state ?? undefined,
+      practicePhone: body.practicePhone ?? undefined,
+      subspecialities: body.subspecialities ?? [],
+      about: body.about ?? undefined,
+      registrationsAssociations: body.registrationsAssociations ?? undefined,
+      qualifications: body.qualifications ?? undefined,
+      awardsPublications: body.awardsPublications ?? undefined,
+      hospitalAffiliations: body.hospitalAffiliations ?? undefined,
+    };
 
-      if (!profile || profile.userId !== session.user.id) {
-        return NextResponse.json(
-          {
-            success: false,
-            error: "You are not allowed to update this profile.",
-          },
-          { status: 403 },
-        );
-      }
-    }
-
+    // 6. Perform update
     const updatedProfile = await prisma.doctorProfile.update({
       where: { id: doctorId },
-      data: {
-        ...body,
-      },
+      data,
     });
 
-    return NextResponse.json({ success: true, data: updatedProfile });
+    return NextResponse.json(
+      { success: true, data: updatedProfile },
+      { status: 200 },
+    );
   } catch (error) {
     console.error("Error updating doctor profile:", error);
     return NextResponse.json(

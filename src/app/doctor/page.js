@@ -11,13 +11,29 @@ import { TabsList } from "@/components/ui/tabs";
 import { DocTabs } from "@/components/docProfile/tabs";
 import { authOptions } from "@/lib/auth";
 import { getServerSession } from "next-auth";
+import { redirect } from "next/navigation";
+import { getDoctorProfile } from "@/lib/apiCalls/doctor";
 const Page = async () => {
-
   const session = await getServerSession(authOptions);
-  console.log("Session in doctor profile page:", session);
+
+  // console.log("Session in doctor profile page:", session);
+
+  const res = await getDoctorProfile();
+  // console.log("Doctor Profile Data:", doctorProfile);
+
+  if (!res || !res.success) {
+    console.error("Doctor profile not found");
+    // redirect("/doctor-registration");
+  }
+
+  let doctData;
+
+  if (res.success && res.data) {
+    doctData = res.data;
+  }
 
   return (
-    <div className="px-20 my-4 ">
+    <div className="">
       {docProfile_Details.stepper.map((data) => (
         <ProfileHeader
           key={data.heading}
@@ -29,8 +45,8 @@ const Page = async () => {
       <div className="mt-30 flex flex-wrap justify-center min-lg:gap-10">
         {/* left area    */}
         <div>
-          <DocProfile docProfile_Details={docProfile_Details} />
-          <DocInfo docProfile_Details={docProfile_Details} />
+          <DocProfile docProfile_Details={doctData} />
+          <DocInfo docProfile_Details={doctData} />
         </div>
         {/* right area */}
         <div>
