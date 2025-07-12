@@ -37,18 +37,28 @@ const Page = () => {
     lname: "",
     exp: "",
     desig: "",
-    prac_name: "",
-    clinic_name: "",
-    post_code: "",
-    phone: "",
     about_self: "",
     reg_assoc: "",
-    qual: "",
     awd_pub: "",
     hosp_aff: "",
     email: "",
     password: "",
   });
+
+  // Qualifications as tags
+  const [qualifications, setQualifications] = useState([]); // array of strings
+  const [qualificationInput, setQualificationInput] = useState("");
+
+  // For practice/clinic entries
+  const [practiceEntries, setPracticeEntries] = useState([]); // Array of {practiceName, clinicAddress, postCode, phone}
+  const [showPracticeDialog, setShowPracticeDialog] = useState(false);
+  const [practiceForm, setPracticeForm] = useState({
+    practiceName: "",
+    clinicAddress: "",
+    postCode: "",
+    phone: "",
+  });
+  const [practiceError, setPracticeError] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
@@ -58,6 +68,59 @@ const Page = () => {
       ...prev,
       [name]: type === "file" ? files[0] : value,
     }));
+  };
+
+  // Qualifications tag input handlers
+  const handleQualificationInputChange = (e) => {
+    setQualificationInput(e.target.value);
+  };
+
+  const handleQualificationKeyDown = (e) => {
+    if (e.key === "Enter" && qualificationInput.trim()) {
+      e.preventDefault();
+      if (!qualifications.includes(qualificationInput.trim())) {
+        setQualifications([...qualifications, qualificationInput.trim()]);
+      }
+      setQualificationInput("");
+    }
+  };
+
+  const handleRemoveQualification = (idx) => {
+    setQualifications((prev) => prev.filter((_, i) => i !== idx));
+  };
+
+  // For practice dialog input
+  const handlePracticeInputChange = (e) => {
+    const { name, value } = e.target;
+    setPracticeForm((prev) => ({ ...prev, [name]: value }));
+  };
+
+  // Add practice entry
+  const handleAddPractice = (e) => {
+    e.preventDefault();
+    setPracticeError("");
+    if (
+      !practiceForm.practiceName.trim() ||
+      !practiceForm.clinicAddress.trim() ||
+      !practiceForm.postCode.trim() ||
+      !practiceForm.phone.trim()
+    ) {
+      setPracticeError("All fields are required.");
+      return;
+    }
+    setPracticeEntries((prev) => [...prev, practiceForm]);
+    setPracticeForm({
+      practiceName: "",
+      clinicAddress: "",
+      postCode: "",
+      phone: "",
+    });
+    setShowPracticeDialog(false);
+  };
+
+  // Remove a practice entry
+  const handleRemovePractice = (idx) => {
+    setPracticeEntries((prev) => prev.filter((_, i) => i !== idx));
   };
 
   const handleRegister = async (e) => {
@@ -155,7 +218,7 @@ const Page = () => {
         subspecialities: selectedSpecialties.map((s) => s.value),
         about: form.about_self,
         registrationsAssociations: form.reg_assoc,
-        qualifications: form.qual,
+        qualifications: qualifications, // send as array
         awardsPublications: form.awd_pub,
         hospitalAffiliations: form.hosp_aff,
         // DoctorAvailability: { create: DoctorAvailability }, // <-- wrap in create
@@ -452,54 +515,127 @@ const Page = () => {
             <option value="GENERAL">GENERAL</option>
           </select>
         </div>
+
+        {/* Practice/Clinic Entries Tag Box */}
         <div className={`${formField} col-span-2`}>
-          <label htmlFor="prac_name">Practice Name</label>
-          <input
-            type="text"
-            name="prac_name"
-            id="prac_name"
-            placeholder="Enter your practice name"
-            className={inputField}
-            value={form.prac_name}
-            onChange={handleInputChange}
-          />
+          <label>Practice/Clinic Details</label>
+          <div className="flex flex-col gap-2">
+            <div className="flex min-h-[48px] flex-wrap gap-2 rounded-md border border-(--primary) bg-transparent p-3">
+              {practiceEntries.length === 0 && (
+                <span className="text-gray-400">No entries added yet.</span>
+              )}
+              {practiceEntries.map((entry, idx) => (
+                <span
+                  key={idx}
+                  className="mr-2 mb-2 flex items-center rounded-full bg-[#83C5BE] px-3 py-1 text-sm text-white"
+                >
+                  {entry.practiceName} | {entry.clinicAddress} |{" "}
+                  {entry.postCode} | {entry.phone}
+                  <button
+                    type="button"
+                    className="ml-2 text-white hover:text-red-200"
+                    onClick={() => handleRemovePractice(idx)}
+                    aria-label="Remove"
+                  >
+                    &times;
+                  </button>
+                </span>
+              ))}
+            </div>
+            <button
+              type="button"
+              className="mt-2 flex w-fit items-center gap-2 rounded-md bg-[#83C5BE] px-4 py-2 text-white hover:bg-[#5fa59e]"
+              onClick={() => setShowPracticeDialog(true)}
+            >
+              Add
+            </button>
+          </div>
         </div>
-        <div className={`${formField} col-span-2`}>
-          <label htmlFor="clinic_name">Clinic Address</label>
-          <input
-            type="text"
-            name="clinic_name"
-            id="clinic_name"
-            placeholder="123 Maple Street, Apollo hospital, Springfield, Sydney"
-            className={inputField}
-            value={form.clinic_name}
-            onChange={handleInputChange}
-          />
-        </div>
-        <div className={formField}>
-          <label htmlFor="post_code">Suburb / State / Postcode </label>
-          <input
-            type="text"
-            name="post_code"
-            id="post_code"
-            placeholder="Enter your Suburb / State / Postcode "
-            className={inputField}
-            value={form.post_code}
-            onChange={handleInputChange}
-          />
-        </div>
-        <div className={formField}>
-          <label htmlFor="phone">Phone Number</label>
-          <input
-            type="number"
-            name="phone"
-            id="phone"
-            placeholder="Enter practice phone number "
-            className={inputField}
-            value={form.phone}
-            onChange={handleInputChange}
-          />
-        </div>
+
+        {/* Practice/Clinic Add Dialog */}
+        {showPracticeDialog && (
+          <Dialog
+            open={showPracticeDialog}
+            onOpenChange={setShowPracticeDialog}
+          >
+            <DialogContent className="max-w-md">
+              <DialogHeader>
+                <DialogTitle>Add Practice/Clinic Details</DialogTitle>
+              </DialogHeader>
+              <form
+                onSubmit={handleAddPractice}
+                className="mt-4 flex flex-col gap-4"
+              >
+                <div className="flex flex-col gap-1">
+                  <label htmlFor="practiceName">Practice Name</label>
+                  <input
+                    type="text"
+                    name="practiceName"
+                    id="practiceName"
+                    className={inputField}
+                    value={practiceForm.practiceName}
+                    onChange={handlePracticeInputChange}
+                    required
+                  />
+                </div>
+                <div className="flex flex-col gap-1">
+                  <label htmlFor="clinicAddress">Clinic Address</label>
+                  <input
+                    type="text"
+                    name="clinicAddress"
+                    id="clinicAddress"
+                    className={inputField}
+                    value={practiceForm.clinicAddress}
+                    onChange={handlePracticeInputChange}
+                    required
+                  />
+                </div>
+                <div className="flex flex-col gap-1">
+                  <label htmlFor="postCode">Suburb / State / Postcode</label>
+                  <input
+                    type="text"
+                    name="postCode"
+                    id="postCode"
+                    className={inputField}
+                    value={practiceForm.postCode}
+                    onChange={handlePracticeInputChange}
+                    required
+                  />
+                </div>
+                <div className="flex flex-col gap-1">
+                  <label htmlFor="phone">Phone Number</label>
+                  <input
+                    type="text"
+                    name="phone"
+                    id="phone"
+                    className={inputField}
+                    value={practiceForm.phone}
+                    onChange={handlePracticeInputChange}
+                    required
+                  />
+                </div>
+                {practiceError && (
+                  <div className="text-sm text-red-500">{practiceError}</div>
+                )}
+                <div className="mt-2 flex justify-end gap-2">
+                  <button
+                    type="button"
+                    className="rounded bg-gray-200 px-4 py-2"
+                    onClick={() => setShowPracticeDialog(false)}
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="submit"
+                    className="rounded bg-[#83C5BE] px-4 py-2 text-white"
+                  >
+                    Add
+                  </button>
+                </div>
+              </form>
+            </DialogContent>
+          </Dialog>
+        )}
         <div className={formField}>
           <label htmlFor="">Subspeciality/Special Interests</label>
           <div className="border-1 border-(--primary) p-3">
@@ -589,15 +725,37 @@ const Page = () => {
         </div>
         <div className={formField}>
           <label htmlFor="qual">Qualifications</label>
-          <textarea
-            name="qual"
-            id="qual"
-            className={`h-[240px] ${inputField}`}
-            placeholder="List your degrees, diplomas, and certifications along with the awarding institution and year.
-                        E.g.: M.B, B.S — University of Sydney, 1986"
-            value={form.qual}
-            onChange={handleInputChange}
-          ></textarea>
+          <div className="flex flex-col gap-2">
+            <div className="flex min-h-[240px] flex-wrap gap-2 rounded-md border border-(--primary) bg-transparent p-3">
+              {qualifications.map((q, idx) => (
+                <span
+                  key={idx}
+                  className="mr-2 mb-2 flex h-fit items-center rounded-full bg-[#83C5BE] px-3 py-1 text-sm text-white"
+                >
+                  {q}
+                  <button
+                    type="button"
+                    className="ml-2 text-white hover:text-red-200"
+                    onClick={() => handleRemoveQualification(idx)}
+                    aria-label="Remove"
+                  >
+                    &times;
+                  </button>
+                </span>
+              ))}
+              <input
+                type="text"
+                className="h-fit min-w-[120px] flex-1 border-none outline-none"
+                placeholder="Type and press Enter..."
+                value={qualificationInput}
+                onChange={handleQualificationInputChange}
+                onKeyDown={handleQualificationKeyDown}
+              />
+            </div>
+            <span className="text-xs text-gray-500">
+              Press Enter to add each qualification as a tag.
+            </span>
+          </div>
         </div>
         <div className={formField}>
           <label htmlFor="awd_pub">Awards & Publications</label>

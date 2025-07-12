@@ -3,7 +3,13 @@ import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
 const AUTH_PAGES = ["/login", "/signup"];
-const PUBLIC_ROUTES = ["/", "/about", "/contact", ...AUTH_PAGES];
+const PUBLIC_ROUTES = [
+  "/",
+  "/about",
+  "/contact",
+  "/doctor-registration",
+  ...AUTH_PAGES,
+];
 
 export async function middleware(req: NextRequest) {
   const token = await getToken({
