@@ -56,7 +56,7 @@ export const TestimonialsSection = () => {
 
   return (
     <section className="mb-40">
-      <div className="bg-primary relative right-1/2 left-1/2 -mx-[50vw] flex w-screen flex-col items-center justify-center py-16">
+      <div className="bg-primary flex flex-col items-center justify-center py-16 px-5">
         <h1 className="font-syne text-primary-foreground">Testimonials</h1>
         <p className="text-primary-foreground mb-8 text-center">
           Hear from our satisfied patients and their experiences with our

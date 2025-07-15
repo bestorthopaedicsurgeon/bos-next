@@ -27,7 +27,7 @@ export const CtaSection = () => {
   ];
   return (
     <section className="mb-40">
-      <div className="mb-24 grid grid-cols-[1.1fr_1fr] gap-4">
+      <div className="mb-24 grid grid-cols-[1.1fr_1fr] gap-4 max-md:grid-cols-1">
         <h2 className="font-syne text-primary w-full">
           Experience Exceptional Healthcare In The Australia With Best
           Orthopedic Surgeon
@@ -40,7 +40,7 @@ export const CtaSection = () => {
           guiding you towards improved health and wellness.
         </p>
       </div>
-      <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
+      <div className="grid grid-cols-1 gap-5 max-lg:gap-14 md:grid-cols-2 lg:grid-cols-3">
         {ctaCards.map((card, index) => (
           <CtaCard
             key={index}

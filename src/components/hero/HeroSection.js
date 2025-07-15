@@ -27,8 +27,8 @@ export const HeroSection = () => {
 
   return (
     <section className="mb-40">
-      <div className="bg-primary text-primary-foreground relative mb-8 rounded-4xl px-20 py-16">
-        <div className="max-w-[570px]">
+      <div className="bg-primary text-primary-foreground gap-10 flex mb-8 rounded-4xl px-20 max-md:px-10 py-16 max-lg:justify-center">
+        <div className="max-w-[570px] max-md:max-w-full w-full flex flex-col">
           {/* <p className="mb-4">Find your surgeon!</p>
             <div className="bg-primary-foreground mb-4 h-[2px] w-full" /> */}
           <div className="mb-4 inline-block">
@@ -38,12 +38,21 @@ export const HeroSection = () => {
           <h1 className="font-syne mb-4">
             Unlocking Your Body For Optimal Wellness
           </h1>
+          <div className="hidden max-lg:flex max-lg:justify-center max-lg:mx-auto h-[352px] w-[308px]">
+          <Image
+            src="/home/hero-skeleton-image.png"
+            alt="hero"
+            width={100}
+            height={100}
+            className="h-full w-full"
+          />
+        </div>
           <p className="mb-4">
             At our hospital, we are dedicated to providing exceptional medical
             care to our patients and their families. Our experienced team of
             medical professionalsh make us a leader in the healthcare industry
           </p>
-          <div className="mb-4 flex gap-4">
+          <div className="mb-4 flex flex-wrap gap-4">
             <Button variant={"primaryForeground"} size={"primaryForeground"}>
               Find Your Doctor
             </Button>
@@ -51,7 +60,7 @@ export const HeroSection = () => {
               Learn More
             </Button>
           </div>
-          <div className="flex items-center gap-4">
+          <div className="flex items-center flex-wrap gap-4 ">
             <Image
               src="/home/doctors.png"
               alt="logo"
@@ -65,18 +74,19 @@ export const HeroSection = () => {
             </div>
           </div>
         </div>
-        <div className="absolute top-[-40px] right-16">
+        <div className="mt-[-120px] max-h-[607px] max-w-[456px] w-full max-lg:hidden">
           <Image
             src="/home/hero-skeleton-image.png"
             alt="hero"
-            width={456}
-            height={607}
+            width={100}
+            height={100}
+            className="h-full w-full"
           />
         </div>
       </div>
       <div className="rounded-4xl bg-white px-20 py-8">
         <h1 className="font-syne text-primary">Find A Surgeon</h1>
-        <div className="flex gap-4">
+        <div className="flex gap-4 max-md:flex-wrap">
           <input
             className="border-primary min-h-[56px] w-full rounded-md border px-4 py-3.5"
             placeholder="Email"

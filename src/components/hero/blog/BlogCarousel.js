@@ -20,8 +20,9 @@ export function BlogCarousel({ blogs }) {
         align: "start",
         loop: true,
       }}
-      className="w-full max-w-[1200px]"
+      className="w-full flex items-center justify-center gap-5 "
     >
+      <CarouselPrevious />
       <CarouselContent>
         {Array.from(blogs).map((blog, index) => (
           <CarouselItem key={index} className="md:basis-1/2 lg:basis-1/3">
@@ -31,7 +32,7 @@ export function BlogCarousel({ blogs }) {
                 alt="Blog"
                 width={343}
                 height={220}
-                className="mb-4 rounded-md object-cover"
+                className="mb-4 rounded-md object-cover w-full"
               />
               <h3 className="font-dm-sans text-primary mb-2 text-[20px]">
                 {blog.title}
@@ -47,7 +48,7 @@ export function BlogCarousel({ blogs }) {
           </CarouselItem>
         ))}
       </CarouselContent>
-      <CarouselPrevious />
+      
       <CarouselNext />
     </Carousel>
   );

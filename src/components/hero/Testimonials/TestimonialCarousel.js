@@ -19,8 +19,9 @@ export function TestimonialCarousel({ testimonials }) {
         align: "start",
         loop: true,
       }}
-      className="w-full max-w-[1200px]"
+      className="w-full max-w-[1200px] flex justify-center items-center gap-5"
     >
+      <CarouselPrevious />
       <CarouselContent>
         {Array.from(testimonials).map((testimonial, index) => (
           <CarouselItem key={index} className="md:basis-1/2 lg:basis-1/3">
@@ -46,7 +47,7 @@ export function TestimonialCarousel({ testimonials }) {
           </CarouselItem>
         ))}
       </CarouselContent>
-      <CarouselPrevious />
+      
       <CarouselNext />
     </Carousel>
   );
