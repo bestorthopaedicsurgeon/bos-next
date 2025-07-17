@@ -32,11 +32,7 @@ const DocInfo = ({ docProfile_Details, showLocation = true }) => {
           </div>
           <div>
             <p className={`${heading_style}`}>Subspeciality</p>
-            <p className={`${info_style}`}>
-              {doctorProfile.subspecialities
-                .map((subspeciality) => subspeciality.name)
-                .join(", ")}
-            </p>
+            <p className={`${info_style}`}>{doctorProfile.subspecialities.join(", ")}</p>
           </div>
           <div>
             <p className={`${heading_style}`}>Hospital</p>

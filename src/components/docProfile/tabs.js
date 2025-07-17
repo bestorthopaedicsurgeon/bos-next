@@ -22,17 +22,17 @@ export function DocTabs() {
   const line = "h-5 w-[1px] bg-primary";
   return (
     <div className="mt-7 flex w-full flex-col gap-6">
-      <Tabs defaultValue="account">
+      <Tabs defaultValue="reviews">
         <TabsList className="border-primary w-full rounded-none border-t-2 border-b-2 bg-transparent py-5">
           <TabsTrigger
-            value="account"
+            value="reviews"
             className="data-[state=active]:text-primary cursor-pointer data-[state=active]:font-bold data-[state=active]:shadow-none"
           >
             Reviews
           </TabsTrigger>
           <div className={`${line}`}></div>
           <TabsTrigger
-            value="password"
+            value="about"
             className="data-[state=active]:text-primary cursor-pointer data-[state=active]:font-bold data-[state=active]:shadow-none"
           >
             About
@@ -46,7 +46,7 @@ export function DocTabs() {
           </TabsTrigger>
         </TabsList>
         <TabsContent
-          value="account"
+          value="reviews"
           className="mt-3 flex gap-10 max-lg:flex-wrap"
         >
           <Rating className="w-[60%] max-lg:w-full" />
@@ -54,7 +54,7 @@ export function DocTabs() {
           <ReviewForm className="w-[40%] max-lg:w-full" />
         </TabsContent>
         <TabsContent
-          value="password"
+          value="about"
           className="mt-3 flex gap-10 max-lg:flex-wrap"
         >
           <About className="w-[60%] max-lg:w-full" />

@@ -87,37 +87,38 @@ enum Title {
 }
 
 model DoctorProfile {
-  id                        Int             @id @default(autoincrement())
-  userId                    String?         @unique
-  user                      User?           @relation("UserDoctorProfile", fields: [userId], references: [id])
+  id                        Int          @id @default(autoincrement())
+  userId                    String?      @unique
+  user                      User?        @relation("UserDoctorProfile", fields: [userId], references: [id])
   title                     String?
   name                      String?
   experience                Int?
   designation               Designation?
+  practices                 Json?
   practiceName              String?
   clinicAddress             String?
   state                     String?
   practicePhone             String?
-  subspecialities           Subspeciality[] @default([])
+  subspecialities           String[]     @default([])
   about                     String?
-  registrationsAssociations String?
-  qualifications            String?
-  awardsPublications        String?
-  hospitalAffiliations      String?
+  registrationsAssociations String[]     @default([])
+  qualifications            String[]     @default([])
+  awardsPublications        String[]     @default([])
+  hospitalAffiliations      Json?
 
   DoctorAvailability     DoctorAvailabilityTime[]
   DoctorAvailabilityDays String[]
 }
 
-enum Subspeciality {
-  FOOT_AND_ANKLE
-  PEDIATRIC_ORTHOPEDICS
-  JOINT_REPLACEMENT
-  SPINE_SURGERY
-  HAND_SURGERY
-  SHOULDER_AND_ELBOW
-  SPORTS_MEDICINE
-}
+// enum Subspeciality {
+//   FOOT_AND_ANKLE
+//   PEDIATRIC_ORTHOPEDICS
+//   JOINT_REPLACEMENT
+//   SPINE_SURGERY
+//   HAND_SURGERY
+//   SHOULDER_AND_ELBOW
+//   SPORTS_MEDICINE
+// }
 
 enum Designation {
   DOCTOR

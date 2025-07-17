@@ -12,10 +12,7 @@ export async function POST(req: Request): Promise<NextResponse> {
       title,
       experience,
       designation,
-      practiceName,
-      clinicAddress,
-      state,
-      practicePhone,
+      practices,
       subspecialities,
       about,
       registrationsAssociations,
@@ -25,6 +22,8 @@ export async function POST(req: Request): Promise<NextResponse> {
       DoctorAvailability,
       doctorAvailabilityDays,
     } = body;
+
+    // const { practiceName, clinicAddress, state, practicePhone } = //   practices[0] || {};
 
     let userId: string | undefined;
 
@@ -72,10 +71,11 @@ export async function POST(req: Request): Promise<NextResponse> {
       title: title || undefined,
       experience: experience || undefined,
       designation: designation || undefined,
-      practiceName: practiceName || undefined,
-      clinicAddress: clinicAddress || undefined,
-      state: state || undefined,
-      practicePhone: practicePhone || undefined,
+      practices: practices || undefined,
+      // practiceName: practiceName || undefined,
+      // clinicAddress: clinicAddress || undefined,
+      // state: state || undefined,
+      // practicePhone: practicePhone || undefined,
       subspecialities: subspecialities || [],
       about: about || undefined,
       registrationsAssociations: registrationsAssociations || undefined,
@@ -170,10 +170,11 @@ export async function PATCH(req: Request) {
       title: body.title ?? undefined,
       experience: body.experience ?? undefined,
       designation: body.designation ?? undefined,
-      practiceName: body.practiceName ?? undefined,
-      clinicAddress: body.clinicAddress ?? undefined,
-      state: body.state ?? undefined,
-      practicePhone: body.practicePhone ?? undefined,
+      practices: body.practices ?? undefined,
+      // practiceName: body.practiceName ?? undefined,
+      // clinicAddress: body.clinicAddress ?? undefined,
+      // state: body.state ?? undefined,
+      // practicePhone: body.practicePhone ?? undefined,
       subspecialities: body.subspecialities ?? [],
       about: body.about ?? undefined,
       registrationsAssociations: body.registrationsAssociations ?? undefined,
