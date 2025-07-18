@@ -32,23 +32,17 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import EditableEntry from "@/components/registration/EditableEntry";
 const Page = () => {
   const router = useRouter();
   const [selectedSpecialties, setSelectedSpecialties] = useState([]);
   const [form, setForm] = useState({
-    title: "",
-    pic: null,
-    fname: "",
-    lname: "",
-    exp: "",
-    desig: "",
-    about_self: "",
-    reg_assoc: "",
-    awd_pub: "",
-    hosp_aff: "",
-    email: "",
-    password: "",
+    qualifications: [],
+    awardsPublications: [],
+    registrationsAssociations: [],
+    hospitalAffiliation: [],
   });
+  const [inputs, setInputs] = useState();
 
   // Qualifications as tags
   const [qualifications, setQualifications] = useState([]); // array of strings
@@ -56,6 +50,7 @@ const Page = () => {
 
   // For practice/clinic entries
   const [practiceEntries, setPracticeEntries] = useState([]);
+  const [hospitalAffiliations, setHospitalAffiliations] = useState([]);
   const [registrationsAssociations, setRegistrationsAssociations] = useState(
     [],
   );
@@ -86,11 +81,42 @@ const Page = () => {
     { value: "Other", label: "Other" },
   ];
 
-  const handleInputChange = (e) => {
-    const { name, value, type, files } = e.target;
+  // const handleInputChange = (e) => {
+  //   const { name, value, type, files } = e.target;
+  //   setForm((prev) => ({
+  //     ...prev,
+  //     [name]: type === "file" ? files[0] : value,
+  //   }));
+  // };
+
+  const handleInputChange = (field) => (e) => {
+    setForm((prev) => ({ ...prev, [field]: e.target.value }));
+  };
+
+  const handleMultiInputChange = (field) => (e) => {
+    setInputs((prev) => ({ ...prev, [field]: e.target.value }));
+  };
+
+  const handleKeyDown = (field) => (e) => {
+    if (e.key === "Enter" && inputs[field].trim()) {
+      e.preventDefault();
+      console.log(inputs);
+      console.log("form", form);
+      const trimmed = inputs[field].trim();
+      if (!form[field].includes(trimmed)) {
+        setForm((prev) => ({
+          ...prev,
+          [field]: [...prev[field], trimmed],
+        }));
+      }
+      setInputs((prev) => ({ ...prev, [field]: "" }));
+    }
+  };
+
+  const handleRemoveValue = (field, idx) => {
     setForm((prev) => ({
       ...prev,
-      [name]: type === "file" ? files[0] : value,
+      [field]: prev[field].filter((_, i) => i !== idx),
     }));
   };
 
@@ -102,6 +128,7 @@ const Page = () => {
   const handleQualificationKeyDown = (e) => {
     if (e.key === "Enter" && qualificationInput.trim()) {
       e.preventDefault();
+      console.log(qualifications);
       if (!qualifications.includes(qualificationInput.trim())) {
         setQualifications([...qualifications, qualificationInput.trim()]);
       }
@@ -238,22 +265,26 @@ const Page = () => {
         clinicAddress: form.clinic_name,
         state: form.post_code,
         practicePhone: form.phone,
-        subspecialities: selectedSpecialties.map((s) => s.value),
+        subspecialities: selectedSpecialties.map((s) => s.label),
         about: form.about_self,
-        registrationsAssociations: form.reg_assoc,
-        qualifications: qualifications, // send as array
-        awardsPublications: form.awd_pub,
-        hospitalAffiliations: form.hosp_aff,
+        registrationsAssociations: form.registrationsAssociations,
+        qualifications: form.qualifications, // send as array
+        awardsPublications: form.awardsPublications,
+        hospitalAffiliations: hospitalAffiliations,
+        practices: practiceEntries,
         // DoctorAvailability: { create: DoctorAvailability }, // <-- wrap in create
         // DoctorAvailabilityDays,
       };
+
+      console.log("data", data);
+      console.log(form);
       const res = await fetch("/api/doctor", {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(data),
       });
-      const result = await res.json();
       if (res.ok) {
+        const data = await res.json();
         // setSuccess("Registration successful!");
         // // Optionally redirect or clear form
         // // Reset form and availability after successful registration
@@ -286,7 +317,7 @@ const Page = () => {
         //   base[`${year}-${month}`][item.type] = [];
         // });
         // setAvailability(base);
-        console.log("Registration successful:", result);
+        console.log("Registration successful:", data);
         router.push("/doctor");
       } else {
         setError(result.error || "Registration failed");
@@ -444,7 +475,7 @@ const Page = () => {
             className={dropDown}
             style={selectStyle}
             value={form.title}
-            onChange={handleInputChange}
+            onChange={handleInputChange("title")}
           >
             <option value="">select your title</option>
             <option value="DR">Dr</option>
@@ -460,7 +491,7 @@ const Page = () => {
             name="pic"
             id="pic"
             className="hidden"
-            onChange={handleInputChange}
+            onChange={handleInputChange("pic")}
           />
           <label
             htmlFor="pic"
@@ -492,7 +523,7 @@ const Page = () => {
             id="fname"
             className={inputField}
             value={form.fname}
-            onChange={handleInputChange}
+            onChange={handleInputChange("fname")}
           />
         </div>
         <div className={formField}>
@@ -503,7 +534,7 @@ const Page = () => {
             id="lname"
             className={inputField}
             value={form.lname}
-            onChange={handleInputChange}
+            onChange={handleInputChange("lname")}
           />
         </div>
         <div className={formField}>
@@ -514,7 +545,7 @@ const Page = () => {
             className={dropDown}
             style={selectStyle}
             value={form.exp}
-            onChange={handleInputChange}
+            onChange={handleInputChange("exp")}
           >
             <option value="">Select your years of experience</option>
             <option value={1}>1</option>
@@ -530,7 +561,7 @@ const Page = () => {
             className={dropDown}
             style={selectStyle}
             value={form.desig}
-            onChange={handleInputChange}
+            onChange={handleInputChange("desig")}
           >
             <option value="">Select Designation</option>
             <option value="DOCTOR">DOCTOR</option>
@@ -542,224 +573,17 @@ const Page = () => {
         <div className={`${formField} col-span-2`}>
           <label>Practice/Clinic Details</label>
           <div className="flex flex-col gap-2">
-            <div className="border-primary flex min-h-[48px] flex-wrap gap-2 rounded-md border bg-transparent p-3">
-              {practiceEntries.map((entry, idx) => (
-                <Popover
-                  key={idx}
-                  onOpenChange={(open) => {
-                    if (open) {
-                      setEditEntry({ ...entry });
-                      setActiveIndex(idx);
-                    } else {
-                      setEditEntry(null);
-                      setActiveIndex(null);
-                    }
-                  }}
-                >
-                  <PopoverTrigger asChild>
-                    <span className="mr-2 flex cursor-pointer items-center rounded-full bg-[#83C5BE] px-3 py-1 text-sm text-white">
-                      {entry.practiceName}
-                      <button
-                        type="button"
-                        className="ml-2 text-white hover:text-red-200"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleRemovePractice(idx);
-                        }}
-                        aria-label="Remove"
-                      >
-                        &times;
-                      </button>
-                    </span>
-                  </PopoverTrigger>
-                  <PopoverContent className="w-[260px] text-sm">
-                    {editEntry && (
-                      <div className="grid grid-cols-1 gap-4">
-                        {/* Practice Name */}
-                        <div className="flex flex-col gap-1">
-                          <label className="text-primary text-lg">
-                            Practice Name
-                          </label>
-                          <input
-                            type="text"
-                            name="practiceName"
-                            className={inputField}
-                            value={editEntry.practiceName}
-                            onChange={(e) =>
-                              setEditEntry({
-                                ...editEntry,
-                                practiceName: e.target.value,
-                              })
-                            }
-                            required
-                          />
-                        </div>
-
-                        {/* Clinic Address */}
-                        <div className="flex flex-col gap-1">
-                          <label className="text-primary text-lg">
-                            Clinic Address
-                          </label>
-                          <input
-                            type="text"
-                            name="clinicAddress"
-                            className={inputField}
-                            value={editEntry.clinicAddress}
-                            onChange={(e) =>
-                              setEditEntry({
-                                ...editEntry,
-                                clinicAddress: e.target.value,
-                              })
-                            }
-                            required
-                          />
-                        </div>
-
-                        {/* PostCode */}
-                        <div className="flex flex-col gap-1">
-                          <label className="text-primary text-lg">
-                            Suburb / State / Postcode
-                          </label>
-                          <input
-                            type="text"
-                            name="postCode"
-                            className={inputField}
-                            value={editEntry.postCode}
-                            onChange={(e) =>
-                              setEditEntry({
-                                ...editEntry,
-                                postCode: e.target.value,
-                              })
-                            }
-                            required
-                          />
-                        </div>
-
-                        {/* Phone */}
-                        <div className="flex flex-col gap-1">
-                          <label className="text-primary text-lg">
-                            Phone Number
-                          </label>
-                          <input
-                            type="text"
-                            name="phone"
-                            className={inputField}
-                            value={editEntry.phone}
-                            onChange={(e) =>
-                              setEditEntry({
-                                ...editEntry,
-                                phone: e.target.value,
-                              })
-                            }
-                            required
-                          />
-                        </div>
-
-                        <button
-                          onClick={() => {
-                            setPracticeEntries((prev) => {
-                              const updated = [...prev];
-                              updated[activeIndex] = { ...editEntry };
-                              return updated;
-                            });
-                            console.log("Updated entry:", editEntry);
-                            console.log("entries:", practiceEntries);
-                          }}
-                          className="bg-primary hover:bg-primary-hover cursor-pointer rounded px-4 py-2 text-white"
-                        >
-                          Edit
-                        </button>
-                      </div>
-                    )}
-                  </PopoverContent>
-                </Popover>
-              ))}
-              <Popover>
-                <PopoverTrigger asChild>
-                  <button className="bg-primary hover:bg-primary-hover flex h-8 w-8 cursor-pointer items-center justify-center rounded-full text-[18px] leading-none text-white">
-                    <Plus size={16} />
-                  </button>
-                </PopoverTrigger>
-                <PopoverContent className="text-sm">
-                  <div className="grid grid-cols-1 gap-4">
-                    <div className="flex flex-col gap-1">
-                      <label
-                        className="text-primary font-dm-sans text-lg"
-                        htmlFor="practiceName"
-                      >
-                        Practice Name
-                      </label>
-                      <input
-                        type="text"
-                        name="practiceName"
-                        id="practiceName"
-                        className={inputField}
-                        value={practiceForm.practiceName}
-                        onChange={handlePracticeInputChange}
-                        required
-                      />
-                    </div>
-                    <div className="flex flex-col gap-1">
-                      <label
-                        className="text-primary font-dm-sans text-lg"
-                        htmlFor="clinicAddress"
-                      >
-                        Clinic Address
-                      </label>
-                      <input
-                        type="text"
-                        name="clinicAddress"
-                        id="clinicAddress"
-                        className={inputField}
-                        value={practiceForm.clinicAddress}
-                        onChange={handlePracticeInputChange}
-                        required
-                      />
-                    </div>
-                    <div className="flex flex-col gap-1">
-                      <label
-                        className="text-primary font-dm-sans text-lg"
-                        htmlFor="postCode"
-                      >
-                        Suburb / State / Postcode
-                      </label>
-                      <input
-                        type="text"
-                        name="postCode"
-                        id="postCode"
-                        className={inputField}
-                        value={practiceForm.postCode}
-                        onChange={handlePracticeInputChange}
-                        required
-                      />
-                    </div>
-                    <div className="flex flex-col gap-1">
-                      <label
-                        className="text-primary font-dm-sans text-lg"
-                        htmlFor="phone"
-                      >
-                        Phone Number
-                      </label>
-                      <input
-                        type="text"
-                        name="phone"
-                        id="phone"
-                        className={inputField}
-                        value={practiceForm.phone}
-                        onChange={handlePracticeInputChange}
-                        required
-                      />
-                    </div>
-                    <button
-                      onClick={handleAddPractice}
-                      className="bg-primary hover:bg-primary-hover cursor-pointer rounded px-4 py-2 text-white"
-                    >
-                      Add
-                    </button>
-                  </div>
-                </PopoverContent>
-              </Popover>
-            </div>
+            <EditableEntry
+              entries={practiceEntries}
+              setEntries={setPracticeEntries}
+              fieldNames={[
+                "practiceName",
+                "clinicAddress",
+                "postCode",
+                "phone",
+              ]}
+              renderLabel={(entry) => entry.practiceName}
+            />
           </div>
         </div>
         {/* Practice/Clinic Add Dialog */}{" "}
@@ -860,115 +684,43 @@ const Page = () => {
             className={`h-[240px] resize-none ${inputField}`}
             placeholder="Write a brief introduction about yourself."
             value={form.about_self}
-            onChange={handleInputChange}
+            onChange={handleInputChange("about_self")}
           ></textarea>
         </div>
         <div className={formField}>
           <label htmlFor="reg_assoc">Registrations & Associations</label>
-          <div className="border-primary flex min-h-[240px] flex-wrap content-start items-start gap-2 rounded-md border bg-transparent p-3">
-            {registrationsAssociations.map((entry, idx) => (
-              <Popover
-                key={idx}
-                onOpenChange={(open) => {
-                  if (open) {
-                    setEditEntry(entry);
-                    setActiveIndex(idx);
-                  } else {
-                    setEditEntry(null);
-                    setActiveIndex(null);
-                  }
-                }}
-              >
-                <PopoverTrigger asChild>
-                  <span className="mr-2 cursor-pointer items-center rounded-2xl bg-[#83C5BE] px-3 py-1 text-sm text-white">
-                    {entry}
-                    <button
-                      type="button"
-                      className="ml-2 cursor-pointer text-white hover:text-red-200"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        setRegistrationsAssociations((prev) =>
-                          prev.filter((item, i) => i !== idx),
-                        );
-                      }}
-                      aria-label="Remove"
-                    >
-                      &times;
-                    </button>
-                  </span>
-                </PopoverTrigger>
-                <PopoverContent className="w-[260px] text-sm">
-                  {editEntry && (
-                    <div className="grid grid-cols-1 gap-4">
-                      {/* Practice Name */}
-                      <div className="flex flex-col gap-1">
-                        <input
-                          type="text"
-                          name="registrations_associations"
-                          className={inputField}
-                          value={editEntry}
-                          onChange={(e) => setEditEntry(e.target.value)}
-                          required
-                        />
-                      </div>
-
-                      <button
-                        onClick={() => {
-                          setRegistrationsAssociations((prev) => {
-                            const updated = [...prev];
-                            updated[activeIndex] = editEntry; // make sure editEntry is a string
-                            return updated;
-                          });
-                          console.log("Updated entry:", editEntry);
-                          console.log("entries:", registrationsAssociations);
-                        }}
-                        className="bg-primary hover:bg-primary-hover cursor-pointer rounded px-4 py-2 text-white"
-                      >
-                        Edit
-                      </button>
-                    </div>
-                  )}
-                </PopoverContent>
-              </Popover>
-            ))}
-            <Popover>
-              <PopoverTrigger asChild>
-                <button className="bg-primary hover:bg-primary-hover flex h-8 w-8 cursor-pointer items-center justify-center rounded-full text-[18px] leading-none text-white">
-                  <Plus size={16} />
-                </button>
-              </PopoverTrigger>
-              <PopoverContent className="text-sm">
-                <div className="grid grid-cols-1 gap-4">
-                  {/* Practice Name */}
-                  <div className="flex flex-col gap-1">
-                    <input
-                      type="text"
-                      name="registrations_associations"
-                      className={inputField}
-                      value={editEntry}
-                      onChange={(e) => setEditEntry(e.target.value)}
-                      required
-                    />
-                  </div>
-
+          <div className="flex flex-col gap-2">
+            <div className="items-starts border-primary flex min-h-[240px] flex-wrap content-start rounded-md border bg-transparent p-3">
+              {form?.registrationsAssociations?.map((q, idx) => (
+                <span
+                  key={idx}
+                  className="mr-2 mb-2 flex h-fit items-center rounded-full bg-[#83C5BE] px-3 py-1 text-sm text-white"
+                >
+                  {q}
                   <button
-                    onClick={() => {
-                      setRegistrationsAssociations((prev) => {
-                        const updated = [...prev];
-                        updated.push(editEntry);
-                        return updated;
-                      });
-                      setEditEntry("");
-                      console.log("Updated entry:", editEntry);
-                      console.log("entries:", registrationsAssociations);
-                    }}
-                    className="bg-primary hover:bg-primary-hover cursor-pointer rounded px-4 py-2 text-white"
+                    type="button"
+                    className="ml-2 cursor-pointer text-white hover:text-red-200"
+                    onClick={() =>
+                      handleRemoveValue("registrationsAssociations", idx)
+                    }
+                    aria-label="Remove"
                   >
-                    Add
+                    &times;
                   </button>
-                </div>
-              </PopoverContent>
-            </Popover>
+                </span>
+              ))}
+              <input
+                type="text"
+                className="h-fit min-w-[120px] flex-1 border-none outline-none"
+                placeholder="Type and press Enter..."
+                value={inputs?.registrationsAssociations}
+                onChange={handleMultiInputChange("registrationsAssociations")}
+                onKeyDown={handleKeyDown("registrationsAssociations")}
+              />
+            </div>
+            <span className="text-xs text-gray-500">
+              Press Enter to add each qualification as a tag.
+            </span>
           </div>
           {/* <textarea
             name="reg_assoc"
@@ -982,8 +734,8 @@ const Page = () => {
         <div className={formField}>
           <label htmlFor="qual">Qualifications</label>
           <div className="flex flex-col gap-2">
-            <div className="flex min-h-[240px] flex-wrap gap-2 rounded-md border border-(--primary) bg-transparent p-3">
-              {qualifications.map((q, idx) => (
+            <div className="items-starts border-primary flex min-h-[240px] flex-wrap content-start rounded-md border bg-transparent p-3">
+              {form?.qualifications?.map((q, idx) => (
                 <span
                   key={idx}
                   className="mr-2 mb-2 flex h-fit items-center rounded-full bg-[#83C5BE] px-3 py-1 text-sm text-white"
@@ -992,7 +744,7 @@ const Page = () => {
                   <button
                     type="button"
                     className="ml-2 cursor-pointer text-white hover:text-red-200"
-                    onClick={() => handleRemoveQualification(idx)}
+                    onClick={() => handleRemoveValue("qualifications", idx)}
                     aria-label="Remove"
                   >
                     &times;
@@ -1003,9 +755,9 @@ const Page = () => {
                 type="text"
                 className="h-fit min-w-[120px] flex-1 border-none outline-none"
                 placeholder="Type and press Enter..."
-                value={qualificationInput}
-                onChange={handleQualificationInputChange}
-                onKeyDown={handleQualificationKeyDown}
+                value={inputs?.qualifications}
+                onChange={handleMultiInputChange("qualifications")}
+                onKeyDown={handleKeyDown("qualifications")}
               />
             </div>
             <span className="text-xs text-gray-500">
@@ -1014,32 +766,49 @@ const Page = () => {
           </div>
         </div>
         <div className={formField}>
-          <label htmlFor="awd_pub">Awards & Publications</label>
-          <textarea
-            name="awd_pub"
-            id="awd_pub"
-            className={`h-[240px] ${inputField}`}
-            placeholder="List your awards and publications in chronological order, starting with the most recent."
-            value={form.awd_pub}
-            onChange={handleInputChange}
-          ></textarea>
+          <label htmlFor="qual">Awards & Publications</label>
+          <div className="flex flex-col gap-2">
+            <div className="items-starts border-primary flex min-h-[240px] flex-wrap content-start rounded-md border bg-transparent p-3">
+              {form?.awardsPublications?.map((q, idx) => (
+                <span
+                  key={idx}
+                  className="mr-2 mb-2 flex h-fit items-center rounded-full bg-[#83C5BE] px-3 py-1 text-sm text-white"
+                >
+                  {q}
+                  <button
+                    type="button"
+                    className="ml-2 cursor-pointer text-white hover:text-red-200"
+                    onClick={() => handleRemoveValue("awardsPublications", idx)}
+                    aria-label="Remove"
+                  >
+                    &times;
+                  </button>
+                </span>
+              ))}
+              <input
+                type="text"
+                className="h-fit min-w-[120px] flex-1 border-none outline-none"
+                placeholder="Type and press Enter..."
+                value={inputs?.awardsPublications}
+                onChange={handleMultiInputChange("awardsPublications")}
+                onKeyDown={handleKeyDown("awardsPublications")}
+              />
+            </div>
+            <span className="text-xs text-gray-500">
+              Press Enter to add each awards and Publications as a tag.
+            </span>
+          </div>
         </div>
         <div className={formField}>
           <label htmlFor="hosp_aff">Hospital affiliations</label>
-          <select
-            name="hosp_aff"
-            id="hosp_aff"
-            className={dropDown}
-            style={selectStyle}
-            value={form.hosp_aff}
-            onChange={handleInputChange}
-          >
-            <option value="">Select hospital (s)</option>
-            <option value="Dr">Dr</option>
-            <option value="Ms">Ms</option>
-            <option value="Mr">Mr</option>
-            <option value="Prof">Prof</option>
-          </select>
+          <div className="flex flex-col gap-2">
+            <EditableEntry
+              entries={hospitalAffiliations}
+              setEntries={setHospitalAffiliations}
+              fieldNames={["name", "address"]}
+              renderLabel={(entry) => entry.name}
+            />
+          </div>
         </div>
         <div className={formField}>
           <label htmlFor="avail">Set Your Availability</label>
@@ -1183,31 +952,6 @@ const Page = () => {
               </div>
             </DialogContent>
           </Dialog>
-        </div>
-        {/* Email and Password fields for registration */}
-        <div className={formField + " col-span-1"}>
-          <label htmlFor="email">Email</label>
-          <input
-            type="email"
-            name="email"
-            id="email"
-            className={inputField}
-            value={form.email}
-            onChange={handleInputChange}
-            required
-          />
-        </div>
-        <div className={formField + " col-span-1"}>
-          <label htmlFor="password">Password</label>
-          <input
-            type="password"
-            name="password"
-            id="password"
-            className={inputField}
-            value={form.password}
-            onChange={handleInputChange}
-            required
-          />
         </div>
         {/* {error && <div className="col-span-2 mt-2 text-red-500">{error}</div>} */}
         {success && (

@@ -30,6 +30,7 @@ const Page = async () => {
 
   if (res.success && res.data) {
     doctData = res.data;
+    console.log("doctData", doctData);
   }
 
   return (
