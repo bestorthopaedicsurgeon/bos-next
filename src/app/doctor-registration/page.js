@@ -253,28 +253,80 @@ const Page = () => {
       // });
 
       // Prepare doctor registration data
-      const data = {
-        // email: form.email,
-        // password: form.password,
-        // name: { firstName: form.fname, lastName: form.lname },
-        title: form.title,
-        phone: form.phone,
-        experience: parseInt(form.exp),
-        designation: form.desig,
-        practiceName: form.prac_name,
-        clinicAddress: form.clinic_name,
-        state: form.post_code,
-        practicePhone: form.phone,
-        subspecialities: selectedSpecialties.map((s) => s.label),
-        about: form.about_self,
-        registrationsAssociations: form.registrationsAssociations,
-        qualifications: form.qualifications, // send as array
-        awardsPublications: form.awardsPublications,
-        hospitalAffiliations: hospitalAffiliations,
-        practices: practiceEntries,
-        // DoctorAvailability: { create: DoctorAvailability }, // <-- wrap in create
-        // DoctorAvailabilityDays,
-      };
+      // const data = {
+      //   // email: form.email,
+      //   // password: form.password,
+      //   name: form.fname && form.lname && `${form.fname} ${form.lname}`,
+      //   title: form.title,
+      //   phone: form.phone,
+      //   experience: parseInt(form.exp),
+      //   designation: form.desig,
+      //   practiceName: form.prac_name,
+      //   clinicAddress: form.clinic_name,
+      //   state: form.post_code,
+      //   practicePhone: form.phone,
+      //   subspecialities: selectedSpecialties.map((s) => s.label),
+      //   about: form.about_self,
+      //   registrationsAssociations: form.registrationsAssociations,
+      //   qualifications: form.qualifications, // send as array
+      //   awardsPublications: form.awardsPublications,
+      //   hospitalAffiliations: hospitalAffiliations,
+      //   practices: practiceEntries,
+      //   // DoctorAvailability: { create: DoctorAvailability }, // <-- wrap in create
+      //   // DoctorAvailabilityDays,
+      // };
+
+      const data = {};
+
+      // Add only if value is non-empty / defined
+      if (form.fname && form.lname) {
+        data.name = `${form.fname} ${form.lname}`;
+      }
+
+      if (form.title) data.title = form.title;
+      if (form.exp) data.experience = parseInt(form.exp);
+      if (form.desig) data.designation = form.desig;
+      if (form.about_self) data.about = form.about_self;
+
+      // Arrays: check if defined AND has at least one item
+      if (
+        Array.isArray(selectedSpecialties) &&
+        selectedSpecialties.length > 0
+      ) {
+        data.subspecialities = selectedSpecialties.map((s) => s.label);
+      }
+
+      if (
+        Array.isArray(form.registrationsAssociations) &&
+        form.registrationsAssociations.length > 0
+      ) {
+        data.registrationsAssociations = form.registrationsAssociations;
+      }
+
+      if (
+        Array.isArray(form.qualifications) &&
+        form.qualifications.length > 0
+      ) {
+        data.qualifications = form.qualifications;
+      }
+
+      if (
+        Array.isArray(form.awardsPublications) &&
+        form.awardsPublications.length > 0
+      ) {
+        data.awardsPublications = form.awardsPublications;
+      }
+
+      if (
+        Array.isArray(hospitalAffiliations) &&
+        hospitalAffiliations.length > 0
+      ) {
+        data.hospitalAffiliations = hospitalAffiliations;
+      }
+
+      if (Array.isArray(practiceEntries) && practiceEntries.length > 0) {
+        data.practices = practiceEntries;
+      }
 
       console.log("data", data);
       console.log(form);

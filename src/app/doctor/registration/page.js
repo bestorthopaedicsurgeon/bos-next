@@ -23,41 +23,154 @@ import {
 } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
 import UsePresenceData from "@/components/ui/slider.jsx";
-import { ChevronLeft, ChevronRight, Edit, Check } from "lucide-react";
+import { ChevronLeft, ChevronRight, Edit, Check, Plus } from "lucide-react";
 // import { Pencil } from "lucide";
 import { Clock3, PencilIcon, User } from "lucide-react";
 import { redirect, useRouter } from "next/navigation";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import EditableEntry from "@/components/registration/EditableEntry";
 const Page = () => {
   const router = useRouter();
   const [selectedSpecialties, setSelectedSpecialties] = useState([]);
   const [form, setForm] = useState({
-    title: "",
-    pic: null,
-    fname: "",
-    lname: "",
-    exp: "",
-    desig: "",
-    prac_name: "",
-    clinic_name: "",
-    post_code: "",
-    phone: "",
-    about_self: "",
-    reg_assoc: "",
-    qual: "",
-    awd_pub: "",
-    hosp_aff: "",
-    email: "",
-    password: "",
+    qualifications: [],
+    awardsPublications: [],
+    registrationsAssociations: [],
+    hospitalAffiliation: [],
   });
+  const [inputs, setInputs] = useState();
+
+  // Qualifications as tags
+  const [qualifications, setQualifications] = useState([]); // array of strings
+  const [qualificationInput, setQualificationInput] = useState("");
+
+  // For practice/clinic entries
+  const [practiceEntries, setPracticeEntries] = useState([]);
+  const [hospitalAffiliations, setHospitalAffiliations] = useState([]);
+  const [registrationsAssociations, setRegistrationsAssociations] = useState(
+    [],
+  );
+
+  const [editEntry, setEditEntry] = useState(null);
+  const [activeIndex, setActiveIndex] = useState(null);
+
+  const [practiceForm, setPracticeForm] = useState({
+    practiceName: "",
+    clinicAddress: "",
+    postCode: "",
+    phone: "",
+  });
+  const [practiceError, setPracticeError] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
-  const handleInputChange = (e) => {
-    const { name, value, type, files } = e.target;
+
+  const subspecialities = [
+    { value: "UPPER_LIMB", label: "Upper Limb" },
+    { value: "LOWER_LIMB", label: "Lower Limb" },
+    { value: "SPINE", label: "Spine" },
+    { value: "PEDIATRICS", label: "Paediatrics" },
+    { value: "ONCOLOGY", label: "Oncology" },
+    { value: "TRAUMA", label: "Trauma" },
+    { value: "SPORTS", label: "Sports" },
+    { value: "ARTHROPLASTY", label: "Arthroplasty" },
+    { value: "Other", label: "Other" },
+  ];
+
+  // const handleInputChange = (e) => {
+  //   const { name, value, type, files } = e.target;
+  //   setForm((prev) => ({
+  //     ...prev,
+  //     [name]: type === "file" ? files[0] : value,
+  //   }));
+  // };
+
+  const handleInputChange = (field) => (e) => {
+    setForm((prev) => ({ ...prev, [field]: e.target.value }));
+  };
+
+  const handleMultiInputChange = (field) => (e) => {
+    setInputs((prev) => ({ ...prev, [field]: e.target.value }));
+  };
+
+  const handleKeyDown = (field) => (e) => {
+    if (e.key === "Enter" && inputs[field].trim()) {
+      e.preventDefault();
+      console.log(inputs);
+      console.log("form", form);
+      const trimmed = inputs[field].trim();
+      if (!form[field].includes(trimmed)) {
+        setForm((prev) => ({
+          ...prev,
+          [field]: [...prev[field], trimmed],
+        }));
+      }
+      setInputs((prev) => ({ ...prev, [field]: "" }));
+    }
+  };
+
+  const handleRemoveValue = (field, idx) => {
     setForm((prev) => ({
       ...prev,
-      [name]: type === "file" ? files[0] : value,
+      [field]: prev[field].filter((_, i) => i !== idx),
     }));
+  };
+
+  // Qualifications tag input handlers
+  const handleQualificationInputChange = (e) => {
+    setQualificationInput(e.target.value);
+  };
+
+  const handleQualificationKeyDown = (e) => {
+    if (e.key === "Enter" && qualificationInput.trim()) {
+      e.preventDefault();
+      console.log(qualifications);
+      if (!qualifications.includes(qualificationInput.trim())) {
+        setQualifications([...qualifications, qualificationInput.trim()]);
+      }
+      setQualificationInput("");
+    }
+  };
+
+  const handleRemoveQualification = (idx) => {
+    setQualifications((prev) => prev.filter((_, i) => i !== idx));
+  };
+
+  // For practice dialog input
+  const handlePracticeInputChange = (e) => {
+    const { name, value } = e.target;
+    setPracticeForm((prev) => ({ ...prev, [name]: value }));
+  };
+
+  // Add practice entry
+  const handleAddPractice = (e) => {
+    e.preventDefault();
+    setPracticeError("");
+    if (
+      !practiceForm.practiceName.trim() ||
+      !practiceForm.clinicAddress.trim() ||
+      !practiceForm.postCode.trim() ||
+      !practiceForm.phone.trim()
+    ) {
+      setPracticeError("All fields are required.");
+      return;
+    }
+    setPracticeEntries((prev) => [...prev, practiceForm]);
+    setPracticeForm({
+      practiceName: "",
+      clinicAddress: "",
+      postCode: "",
+      phone: "",
+    });
+  };
+
+  // Remove a practice entry
+  const handleRemovePractice = (idx) => {
+    setPracticeEntries((prev) => prev.filter((_, i) => i !== idx));
   };
 
   const handleRegister = async (e) => {
@@ -140,34 +253,90 @@ const Page = () => {
       // });
 
       // Prepare doctor registration data
-      const data = {
-        // email: form.email,
-        // password: form.password,
-        // name: { firstName: form.fname, lastName: form.lname },
-        title: form.title,
-        phone: form.phone,
-        experience: parseInt(form.exp),
-        designation: form.desig,
-        practiceName: form.prac_name,
-        clinicAddress: form.clinic_name,
-        state: form.post_code,
-        practicePhone: form.phone,
-        subspecialities: selectedSpecialties.map((s) => s.value),
-        about: form.about_self,
-        registrationsAssociations: form.reg_assoc,
-        qualifications: form.qual,
-        awardsPublications: form.awd_pub,
-        hospitalAffiliations: form.hosp_aff,
-        // DoctorAvailability: { create: DoctorAvailability }, // <-- wrap in create
-        // DoctorAvailabilityDays,
-      };
+      // const data = {
+      //   // email: form.email,
+      //   // password: form.password,
+      //   name: form.fname && form.lname && `${form.fname} ${form.lname}`,
+      //   title: form.title,
+      //   phone: form.phone,
+      //   experience: parseInt(form.exp),
+      //   designation: form.desig,
+      //   practiceName: form.prac_name,
+      //   clinicAddress: form.clinic_name,
+      //   state: form.post_code,
+      //   practicePhone: form.phone,
+      //   subspecialities: selectedSpecialties.map((s) => s.label),
+      //   about: form.about_self,
+      //   registrationsAssociations: form.registrationsAssociations,
+      //   qualifications: form.qualifications, // send as array
+      //   awardsPublications: form.awardsPublications,
+      //   hospitalAffiliations: hospitalAffiliations,
+      //   practices: practiceEntries,
+      //   // DoctorAvailability: { create: DoctorAvailability }, // <-- wrap in create
+      //   // DoctorAvailabilityDays,
+      // };
+
+      const data = {};
+
+      // Add only if value is non-empty / defined
+      if (form.fname && form.lname) {
+        data.name = `${form.fname} ${form.lname}`;
+      }
+
+      if (form.title) data.title = form.title;
+      if (form.exp) data.experience = parseInt(form.exp);
+      if (form.desig) data.designation = form.desig;
+      if (form.about_self) data.about = form.about_self;
+
+      // Arrays: check if defined AND has at least one item
+      if (
+        Array.isArray(selectedSpecialties) &&
+        selectedSpecialties.length > 0
+      ) {
+        data.subspecialities = selectedSpecialties.map((s) => s.label);
+      }
+
+      if (
+        Array.isArray(form.registrationsAssociations) &&
+        form.registrationsAssociations.length > 0
+      ) {
+        data.registrationsAssociations = form.registrationsAssociations;
+      }
+
+      if (
+        Array.isArray(form.qualifications) &&
+        form.qualifications.length > 0
+      ) {
+        data.qualifications = form.qualifications;
+      }
+
+      if (
+        Array.isArray(form.awardsPublications) &&
+        form.awardsPublications.length > 0
+      ) {
+        data.awardsPublications = form.awardsPublications;
+      }
+
+      if (
+        Array.isArray(hospitalAffiliations) &&
+        hospitalAffiliations.length > 0
+      ) {
+        data.hospitalAffiliations = hospitalAffiliations;
+      }
+
+      if (Array.isArray(practiceEntries) && practiceEntries.length > 0) {
+        data.practices = practiceEntries;
+      }
+
+      console.log("data", data);
+      console.log(form);
       const res = await fetch("/api/doctor", {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(data),
       });
-      const result = await res.json();
       if (res.ok) {
+        const data = await res.json();
         // setSuccess("Registration successful!");
         // // Optionally redirect or clear form
         // // Reset form and availability after successful registration
@@ -200,7 +369,7 @@ const Page = () => {
         //   base[`${year}-${month}`][item.type] = [];
         // });
         // setAvailability(base);
-        console.log("Registration successful:", result);
+        console.log("Registration successful:", data);
         router.push("/doctor");
       } else {
         setError(result.error || "Registration failed");
@@ -221,6 +390,7 @@ const Page = () => {
   const inputField = "border border-(--primary) rounded-md p-3";
 
   const handleSpecialtyChange = (specialty) => {
+    console.log(selectedSpecialties);
     setSelectedSpecialties((prev) => {
       const exists = prev.find((s) => s.value === specialty.value);
       if (exists) {
@@ -345,8 +515,7 @@ const Page = () => {
         </div>
       ))}
 
-      <form
-        onSubmit={handleRegister}
+      <div
         className="container m-auto grid grid-cols-2 gap-[32px] pt-16"
         autoComplete="off"
       >
@@ -358,7 +527,7 @@ const Page = () => {
             className={dropDown}
             style={selectStyle}
             value={form.title}
-            onChange={handleInputChange}
+            onChange={handleInputChange("title")}
           >
             <option value="">select your title</option>
             <option value="DR">Dr</option>
@@ -374,7 +543,7 @@ const Page = () => {
             name="pic"
             id="pic"
             className="hidden"
-            onChange={handleInputChange}
+            onChange={handleInputChange("pic")}
           />
           <label
             htmlFor="pic"
@@ -406,7 +575,7 @@ const Page = () => {
             id="fname"
             className={inputField}
             value={form.fname}
-            onChange={handleInputChange}
+            onChange={handleInputChange("fname")}
           />
         </div>
         <div className={formField}>
@@ -417,7 +586,7 @@ const Page = () => {
             id="lname"
             className={inputField}
             value={form.lname}
-            onChange={handleInputChange}
+            onChange={handleInputChange("lname")}
           />
         </div>
         <div className={formField}>
@@ -428,7 +597,7 @@ const Page = () => {
             className={dropDown}
             style={selectStyle}
             value={form.exp}
-            onChange={handleInputChange}
+            onChange={handleInputChange("exp")}
           >
             <option value="">Select your years of experience</option>
             <option value={1}>1</option>
@@ -444,7 +613,7 @@ const Page = () => {
             className={dropDown}
             style={selectStyle}
             value={form.desig}
-            onChange={handleInputChange}
+            onChange={handleInputChange("desig")}
           >
             <option value="">Select Designation</option>
             <option value="DOCTOR">DOCTOR</option>
@@ -452,54 +621,24 @@ const Page = () => {
             <option value="GENERAL">GENERAL</option>
           </select>
         </div>
+        {/* Practice/Clinic Entries Tag Box */}
         <div className={`${formField} col-span-2`}>
-          <label htmlFor="prac_name">Practice Name</label>
-          <input
-            type="text"
-            name="prac_name"
-            id="prac_name"
-            placeholder="Enter your practice name"
-            className={inputField}
-            value={form.prac_name}
-            onChange={handleInputChange}
-          />
+          <label>Practice/Clinic Details</label>
+          <div className="flex flex-col gap-2">
+            <EditableEntry
+              entries={practiceEntries}
+              setEntries={setPracticeEntries}
+              fieldNames={[
+                "practiceName",
+                "clinicAddress",
+                "postCode",
+                "phone",
+              ]}
+              renderLabel={(entry) => entry.practiceName}
+            />
+          </div>
         </div>
-        <div className={`${formField} col-span-2`}>
-          <label htmlFor="clinic_name">Clinic Address</label>
-          <input
-            type="text"
-            name="clinic_name"
-            id="clinic_name"
-            placeholder="123 Maple Street, Apollo hospital, Springfield, Sydney"
-            className={inputField}
-            value={form.clinic_name}
-            onChange={handleInputChange}
-          />
-        </div>
-        <div className={formField}>
-          <label htmlFor="post_code">Suburb / State / Postcode </label>
-          <input
-            type="text"
-            name="post_code"
-            id="post_code"
-            placeholder="Enter your Suburb / State / Postcode "
-            className={inputField}
-            value={form.post_code}
-            onChange={handleInputChange}
-          />
-        </div>
-        <div className={formField}>
-          <label htmlFor="phone">Phone Number</label>
-          <input
-            type="number"
-            name="phone"
-            id="phone"
-            placeholder="Enter practice phone number "
-            className={inputField}
-            value={form.phone}
-            onChange={handleInputChange}
-          />
-        </div>
+        {/* Practice/Clinic Add Dialog */}{" "}
         <div className={formField}>
           <label htmlFor="">Subspeciality/Special Interests</label>
           <div className="border-1 border-(--primary) p-3">
@@ -510,34 +649,58 @@ const Page = () => {
                 scrollbarColor: "#2F797B #D9D9D9",
               }}
             >
-              {doc_reg.Subspeciality.map((specialty) => (
-                <div key={specialty.value} className="flex items-center">
-                  <input
-                    type="checkbox"
-                    id={specialty.value.toLowerCase()}
-                    checked={selectedSpecialties.some(
-                      (s) => s.value === specialty.value,
-                    )}
-                    onChange={() => handleSpecialtyChange(specialty)}
-                    className="hidden"
-                  />
-                  <label
-                    htmlFor={specialty.value.toLowerCase()}
-                    className="flex cursor-pointer items-center rounded-full py-2 select-none"
-                  >
-                    <span
-                      className={`mr-2 inline-block h-4 w-4 rounded-full border ${
-                        selectedSpecialties.some(
-                          (s) => s.value === specialty.value,
-                        )
-                          ? "border-blue-500 bg-blue-500"
-                          : "border-gray-400 bg-white"
-                      }`}
-                    ></span>
-                    {specialty.label}
-                  </label>
-                </div>
-              ))}
+              {subspecialities.map((specialty) => {
+                if (specialty.value === "Other") {
+                  return (
+                    <div key="other" className="mt-2">
+                      <input
+                        type="text"
+                        placeholder="Enter other specialty"
+                        className="w-full rounded border border-gray-300 px-3 py-2 text-sm"
+                        onChange={(e) => {
+                          const value = e.target.value;
+                          const updated = selectedSpecialties.filter(
+                            (s) => s.value !== "Other",
+                          );
+                          if (value.trim() !== "") {
+                            updated.push({ value: "Other", label: value });
+                          }
+                          setSelectedSpecialties(updated);
+                        }}
+                      />
+                    </div>
+                  );
+                }
+
+                return (
+                  <div key={specialty.value} className="flex items-center">
+                    <input
+                      type="checkbox"
+                      id={specialty.value.toLowerCase()}
+                      checked={selectedSpecialties.some(
+                        (s) => s.value === specialty.value,
+                      )}
+                      onChange={() => handleSpecialtyChange(specialty)}
+                      className="hidden"
+                    />
+                    <label
+                      htmlFor={specialty.value.toLowerCase()}
+                      className="flex cursor-pointer items-center rounded-full py-2 select-none"
+                    >
+                      <span
+                        className={`mr-2 inline-block h-4 w-4 rounded-full border ${
+                          selectedSpecialties.some(
+                            (s) => s.value === specialty.value,
+                          )
+                            ? "border-blue-500 bg-blue-500"
+                            : "border-gray-400 bg-white"
+                        }`}
+                      ></span>
+                      {specialty.label}
+                    </label>
+                  </div>
+                );
+              })}
             </div>
           </div>
         </div>
@@ -570,62 +733,134 @@ const Page = () => {
           <textarea
             name="about_self"
             id="about_self"
-            className={`h-[240px] ${inputField}`}
+            className={`h-[240px] resize-none ${inputField}`}
             placeholder="Write a brief introduction about yourself."
             value={form.about_self}
-            onChange={handleInputChange}
+            onChange={handleInputChange("about_self")}
           ></textarea>
         </div>
         <div className={formField}>
           <label htmlFor="reg_assoc">Registrations & Associations</label>
-          <textarea
+          <div className="flex flex-col gap-2">
+            <div className="items-starts border-primary flex min-h-[240px] flex-wrap content-start rounded-md border bg-transparent p-3">
+              {form?.registrationsAssociations?.map((q, idx) => (
+                <span
+                  key={idx}
+                  className="mr-2 mb-2 flex h-fit items-center rounded-full bg-[#83C5BE] px-3 py-1 text-sm text-white"
+                >
+                  {q}
+                  <button
+                    type="button"
+                    className="ml-2 cursor-pointer text-white hover:text-red-200"
+                    onClick={() =>
+                      handleRemoveValue("registrationsAssociations", idx)
+                    }
+                    aria-label="Remove"
+                  >
+                    &times;
+                  </button>
+                </span>
+              ))}
+              <input
+                type="text"
+                className="h-fit min-w-[120px] flex-1 border-none outline-none"
+                placeholder="Type and press Enter..."
+                value={inputs?.registrationsAssociations}
+                onChange={handleMultiInputChange("registrationsAssociations")}
+                onKeyDown={handleKeyDown("registrationsAssociations")}
+              />
+            </div>
+            <span className="text-xs text-gray-500">
+              Press Enter to add each qualification as a tag.
+            </span>
+          </div>
+          {/* <textarea
             name="reg_assoc"
             id="reg_assoc"
             className={`h-[240px] ${inputField}`}
             placeholder="Enter your registrations and any professional memberships (AHPRA, AHPRA, AOA, FRACS etc. )"
             value={form.reg_assoc}
             onChange={handleInputChange}
-          ></textarea>
+          ></textarea> */}
         </div>
         <div className={formField}>
           <label htmlFor="qual">Qualifications</label>
-          <textarea
-            name="qual"
-            id="qual"
-            className={`h-[240px] ${inputField}`}
-            placeholder="List your degrees, diplomas, and certifications along with the awarding institution and year.
-                        E.g.: M.B, B.S — University of Sydney, 1986"
-            value={form.qual}
-            onChange={handleInputChange}
-          ></textarea>
+          <div className="flex flex-col gap-2">
+            <div className="items-starts border-primary flex min-h-[240px] flex-wrap content-start rounded-md border bg-transparent p-3">
+              {form?.qualifications?.map((q, idx) => (
+                <span
+                  key={idx}
+                  className="mr-2 mb-2 flex h-fit items-center rounded-full bg-[#83C5BE] px-3 py-1 text-sm text-white"
+                >
+                  {q}
+                  <button
+                    type="button"
+                    className="ml-2 cursor-pointer text-white hover:text-red-200"
+                    onClick={() => handleRemoveValue("qualifications", idx)}
+                    aria-label="Remove"
+                  >
+                    &times;
+                  </button>
+                </span>
+              ))}
+              <input
+                type="text"
+                className="h-fit min-w-[120px] flex-1 border-none outline-none"
+                placeholder="Type and press Enter..."
+                value={inputs?.qualifications}
+                onChange={handleMultiInputChange("qualifications")}
+                onKeyDown={handleKeyDown("qualifications")}
+              />
+            </div>
+            <span className="text-xs text-gray-500">
+              Press Enter to add each qualification as a tag.
+            </span>
+          </div>
         </div>
         <div className={formField}>
-          <label htmlFor="awd_pub">Awards & Publications</label>
-          <textarea
-            name="awd_pub"
-            id="awd_pub"
-            className={`h-[240px] ${inputField}`}
-            placeholder="List your awards and publications in chronological order, starting with the most recent."
-            value={form.awd_pub}
-            onChange={handleInputChange}
-          ></textarea>
+          <label htmlFor="qual">Awards & Publications</label>
+          <div className="flex flex-col gap-2">
+            <div className="items-starts border-primary flex min-h-[240px] flex-wrap content-start rounded-md border bg-transparent p-3">
+              {form?.awardsPublications?.map((q, idx) => (
+                <span
+                  key={idx}
+                  className="mr-2 mb-2 flex h-fit items-center rounded-full bg-[#83C5BE] px-3 py-1 text-sm text-white"
+                >
+                  {q}
+                  <button
+                    type="button"
+                    className="ml-2 cursor-pointer text-white hover:text-red-200"
+                    onClick={() => handleRemoveValue("awardsPublications", idx)}
+                    aria-label="Remove"
+                  >
+                    &times;
+                  </button>
+                </span>
+              ))}
+              <input
+                type="text"
+                className="h-fit min-w-[120px] flex-1 border-none outline-none"
+                placeholder="Type and press Enter..."
+                value={inputs?.awardsPublications}
+                onChange={handleMultiInputChange("awardsPublications")}
+                onKeyDown={handleKeyDown("awardsPublications")}
+              />
+            </div>
+            <span className="text-xs text-gray-500">
+              Press Enter to add each awards and Publications as a tag.
+            </span>
+          </div>
         </div>
         <div className={formField}>
           <label htmlFor="hosp_aff">Hospital affiliations</label>
-          <select
-            name="hosp_aff"
-            id="hosp_aff"
-            className={dropDown}
-            style={selectStyle}
-            value={form.hosp_aff}
-            onChange={handleInputChange}
-          >
-            <option value="">Select hospital (s)</option>
-            <option value="Dr">Dr</option>
-            <option value="Ms">Ms</option>
-            <option value="Mr">Mr</option>
-            <option value="Prof">Prof</option>
-          </select>
+          <div className="flex flex-col gap-2">
+            <EditableEntry
+              entries={hospitalAffiliations}
+              setEntries={setHospitalAffiliations}
+              fieldNames={["name", "address"]}
+              renderLabel={(entry) => entry.name}
+            />
+          </div>
         </div>
         <div className={formField}>
           <label htmlFor="avail">Set Your Availability</label>
@@ -770,31 +1005,6 @@ const Page = () => {
             </DialogContent>
           </Dialog>
         </div>
-        {/* Email and Password fields for registration */}
-        <div className={formField + " col-span-1"}>
-          <label htmlFor="email">Email</label>
-          <input
-            type="email"
-            name="email"
-            id="email"
-            className={inputField}
-            value={form.email}
-            onChange={handleInputChange}
-            required
-          />
-        </div>
-        <div className={formField + " col-span-1"}>
-          <label htmlFor="password">Password</label>
-          <input
-            type="password"
-            name="password"
-            id="password"
-            className={inputField}
-            value={form.password}
-            onChange={handleInputChange}
-            required
-          />
-        </div>
         {/* {error && <div className="col-span-2 mt-2 text-red-500">{error}</div>} */}
         {success && (
           <div className="col-span-2 mt-2 text-green-500">{success}</div>
@@ -808,10 +1018,9 @@ const Page = () => {
           />
           <label htmlFor="terms">I accept the terms</label>
         </div>
-      </form>
+      </div>
       <div className="flex items-center justify-center">
         <button
-          type="submit"
           className="btn_fill col-span-2 m-auto mt-10 mb-10 flex cursor-pointer justify-center px-14 py-2 max-sm:w-full"
           onClick={handleRegister}
           disabled={loading}
@@ -819,7 +1028,6 @@ const Page = () => {
           {loading ? "Registering..." : "Confirm Registration"}
         </button>
         <button
-          type="submit"
           className="btn_fill col-span-2 m-auto mt-10 mb-10 flex cursor-pointer justify-center px-14 py-2 max-sm:w-full"
           onClick={() => router.push("/doctor")}
           disabled={loading}

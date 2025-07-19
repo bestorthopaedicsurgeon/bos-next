@@ -166,22 +166,43 @@ export async function PATCH(req: Request) {
     }
 
     // 5. Prepare updatable data
-    const data = {
-      title: body.title ?? undefined,
-      experience: body.experience ?? undefined,
-      designation: body.designation ?? undefined,
-      practices: body.practices ?? undefined,
-      // practiceName: body.practiceName ?? undefined,
-      // clinicAddress: body.clinicAddress ?? undefined,
-      // state: body.state ?? undefined,
-      // practicePhone: body.practicePhone ?? undefined,
-      subspecialities: body.subspecialities ?? [],
-      about: body.about ?? undefined,
-      registrationsAssociations: body.registrationsAssociations ?? undefined,
-      qualifications: body.qualifications ?? undefined,
-      awardsPublications: body.awardsPublications ?? undefined,
-      hospitalAffiliations: body.hospitalAffiliations ?? undefined,
-    };
+    // const data = {
+    //   title: body.title ?? undefined,
+    //   experience: body.experience ?? undefined,
+    //   designation: body.designation ?? undefined,
+    //   practices: body.practices ?? undefined,
+    //   // practiceName: body.practiceName ?? undefined,
+    //   // clinicAddress: body.clinicAddress ?? undefined,
+    //   // state: body.state ?? undefined,
+    //   // practicePhone: body.practicePhone ?? undefined,
+    //   subspecialities: body.subspecialities ?? undefined,
+    //   about: body.about ?? undefined,
+    //   registrationsAssociations: body.hasOwnProperty(
+    //     "registrationsAssociations",
+    //   )
+    //     ? body.registrationsAssociations
+    //     : undefined,
+    //   qualifications: body.qualifications ?? undefined,
+    //   awardsPublications: body.awardsPublications ?? undefined,
+    //   hospitalAffiliations: body.hospitalAffiliations ?? undefined,
+    // };
+
+    const data: any = {};
+
+    if ("title" in body) data.title = body.title;
+    if ("name" in body) data.name = body.name;
+    if ("experience" in body) data.experience = body.experience;
+    if ("designation" in body) data.designation = body.designation;
+    if ("practices" in body) data.practices = body.practices;
+    if ("subspecialities" in body) data.subspecialities = body.subspecialities;
+    if ("about" in body) data.about = body.about;
+    if ("registrationsAssociations" in body)
+      data.registrationsAssociations = body.registrationsAssociations;
+    if ("qualifications" in body) data.qualifications = body.qualifications;
+    if ("awardsPublications" in body)
+      data.awardsPublications = body.awardsPublications;
+    if ("hospitalAffiliations" in body)
+      data.hospitalAffiliations = body.hospitalAffiliations;
 
     // 6. Perform update
     const updatedProfile = await prisma.doctorProfile.update({

@@ -18,7 +18,7 @@ import ReviewForm from "./ReviewForm";
 import About from "./About";
 import QuestionsAndAnswers from "./QA";
 
-export function DocTabs() {
+export function DocTabs({doctData}) {
   const line = "h-5 w-[1px] bg-primary";
   return (
     <div className="mt-7 flex w-full flex-col gap-6">
@@ -57,7 +57,7 @@ export function DocTabs() {
           value="about"
           className="mt-3 flex gap-10 max-lg:flex-wrap"
         >
-          <About className="w-[60%] max-lg:w-full" />
+          <About className="w-[60%] max-lg:w-full" doctData={doctData} />
           <ReviewForm className="w-[40%] max-lg:w-full" />
         </TabsContent>
         <TabsContent value="qa" className="mt-3 flex gap-10 max-lg:flex-wrap">

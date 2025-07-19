@@ -1,19 +1,13 @@
 "use client";
 
-export default function About({ className }) {
+export default function About({ className, doctData }) {
+  const data = doctData?.doctorProfile;
   return (
     <div className={`rounded-lg bg-white p-6 shadow-md ${className}`}>
       <p className="text-primary mb-6 font-[700]">About doctor</p>
 
       {/* Introduction Paragraph */}
-      <p className="mb-6 text-[14px]">
-        A career as a doctor is a clinical professional that involves providing
-        services in healthcare facilities. Individuals in the doctor&apos;s career
-        path are responsible for diagnosing, examining, and identifying
-        diseases, disorders, and illnesses of patients. A career as a doctor is
-        a clinical professional that involves providing services in healthcare
-        facilities.
-      </p>
+      <p className="mb-6 text-[14px]">{data?.about}</p>
 
       <div className="my-6 border-t border-gray-200"></div>
 
@@ -36,15 +30,9 @@ export default function About({ className }) {
       <div className="mb-8">
         <h2 className="mb-4 text-[14px] font-[700]">Qualifications</h2>
         <ul className="list-disc space-y-2 pl-5 text-[14px]">
-          <li>Fellowship Royal Australian College of Surgeons</li>
-          <li>Bachelor of Medicine, Bachelor of Surgery (Honours)</li>
-          <li>University of Notre Dame Australia, Fremantle</li>
-          <li>Masters of Health Science</li>
-          <li>University of Sydney, Cumberland.</li>
-          <li>Bachelor of Information Technology</li>
-          <li>Charles Sturt University</li>
-          <li>Bachelor of Applied Science (Medical Imaging)</li>
-          <li>Charles Sturt University</li>
+          {data?.qualifications?.map((qualification) => (
+            <li key={qualification}>{qualification}</li>
+          ))}
         </ul>
       </div>
 
@@ -54,42 +42,9 @@ export default function About({ className }) {
       <div className="mb-8">
         <h2 className="mb-4 text-[14px] font-[700]">Awards and Publications</h2>
         <ul className="list-disc space-y-4 pl-5 text-[14px]">
-          <li>
-            &quot;Do different screw combinations reduce the incidence of
-            peri-prosthetic fractures in osteoporotic bone?&quot; – Presented at
-            Australian Orthopedic Association Annual Scientific Meeting,
-            Brisbane, 2019
-          </li>
-          <li>
-            &quot;Up to date surgical treatment of neck of femur fractures&quot; –
-            Scientific congress of the Australian Society of Anesthetists, Perth
-            2015
-          </li>
-          <li>
-            &quot;Alignment of Total Krise Arthroplasty using patient matched
-            instrumentation vs computer assisted surgery&quot; – Presented at
-            Australian Orthopedic Association Annual Scientific Meeting,
-            Melbourne, 2014
-          </li>
-          <li>
-            &quot;Alignment of Total Krise Arthroplasty using patient matched
-            instrumentation vs computer assisted surgery&quot; – Presented at EFORT
-            Istanbul 2013
-          </li>
-          <li>
-            Clark R, Hird K, Misur P, Ramsay D, Mendelson R. &quot;CT grading scales
-            for splenic injury: why can&apos;t we agree? J Med Imaging. 2011, Apr.
-            5:6(2): 16309
-          </li>
-          <li>
-            &quot;Grading of splenic injury using CT – Inter-observer reliability&quot;
-            Presented at College of Radiologist Annual Scientific meeting,
-            Brisbane, 2009
-          </li>
-          <li>
-            Masters Thesis: &quot;Reducing intravenous contract agent for chest
-            computerized tomography&quot; University of Sydney 2005
-          </li>
+          {data?.awardsPublications?.map((award) => (
+            <li key={award}>{award}</li>
+          ))}
         </ul>
       </div>
     </div>
