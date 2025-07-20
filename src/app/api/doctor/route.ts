@@ -67,23 +67,40 @@ export async function POST(req: Request): Promise<NextResponse> {
       }
     }
 
-    const data = {
-      title: title || undefined,
-      experience: experience || undefined,
-      designation: designation || undefined,
-      practices: practices || undefined,
-      // practiceName: practiceName || undefined,
-      // clinicAddress: clinicAddress || undefined,
-      // state: state || undefined,
-      // practicePhone: practicePhone || undefined,
-      subspecialities: subspecialities || [],
-      about: about || undefined,
-      registrationsAssociations: registrationsAssociations || undefined,
-      qualifications: qualifications || undefined,
-      awardsPublications: awardsPublications || undefined,
-      hospitalAffiliations: hospitalAffiliations || undefined,
-      // DoctorAvailabilityDays: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"],
-    };
+    // const data = {
+    //   title: title || undefined,
+    //   experience: experience || undefined,
+    //   designation: designation || undefined,
+    //   practices: practices || undefined,
+    //   // practiceName: practiceName || undefined,
+    //   // clinicAddress: clinicAddress || undefined,
+    //   // state: state || undefined,
+    //   // practicePhone: practicePhone || undefined,
+    //   subspecialities: subspecialities || [],
+    //   about: about || undefined,
+    //   registrationsAssociations: registrationsAssociations || undefined,
+    //   qualifications: qualifications || undefined,
+    //   awardsPublications: awardsPublications || undefined,
+    //   hospitalAffiliations: hospitalAffiliations || undefined,
+    //   // DoctorAvailabilityDays: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"],
+    // };
+
+    const data: any = {};
+
+    if ("title" in body) data.title = body.title;
+    if ("name" in body) data.name = body.name;
+    if ("experience" in body) data.experience = body.experience;
+    if ("designation" in body) data.designation = body.designation;
+    if ("practices" in body) data.practices = body.practices;
+    if ("subspecialities" in body) data.subspecialities = body.subspecialities;
+    if ("about" in body) data.about = body.about;
+    if ("registrationsAssociations" in body)
+      data.registrationsAssociations = body.registrationsAssociations;
+    if ("qualifications" in body) data.qualifications = body.qualifications;
+    if ("awardsPublications" in body)
+      data.awardsPublications = body.awardsPublications;
+    if ("hospitalAffiliations" in body)
+      data.hospitalAffiliations = body.hospitalAffiliations;
 
     let profile;
 

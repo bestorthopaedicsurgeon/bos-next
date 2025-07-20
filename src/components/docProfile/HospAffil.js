@@ -2,26 +2,27 @@
 import { useState } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 
-const hospitals = [
-  {
-    name: "Apollo Hospital",
-    address: "123 Maple Street, Apollo hospital, Springfield, Sydney",
-  },
-  {
-    name: "Royal Perth Hospital",
-    address: "456 Royal Street, Royal Perth Hospital, Springfield, Perth",
-  },
-  {
-    name: "Melbourne Central Hospital",
-    address: "789 Health Ave, Melbourne CBD, Melbourne",
-  },
-  {
-    name: "Brisbane Medical Center",
-    address: "321 Care Blvd, South Brisbane, Brisbane",
-  },
-];
+// const hospitals = [
+//   {
+//     name: "Apollo Hospital",
+//     address: "123 Maple Street, Apollo hospital, Springfield, Sydney",
+//   },
+//   {
+//     name: "Royal Perth Hospital",
+//     address: "456 Royal Street, Royal Perth Hospital, Springfield, Perth",
+//   },
+//   {
+//     name: "Melbourne Central Hospital",
+//     address: "789 Health Ave, Melbourne CBD, Melbourne",
+//   },
+//   {
+//     name: "Brisbane Medical Center",
+//     address: "321 Care Blvd, South Brisbane, Brisbane",
+//   },
+// ];
 
-export default function HospitalAffiliations() {
+export default function HospitalAffiliations({hospitals}) {
+  console.log('hospitals',hospitals);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [animateDirection, setAnimateDirection] = useState(null);
 

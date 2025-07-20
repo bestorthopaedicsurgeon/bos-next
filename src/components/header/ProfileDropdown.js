@@ -66,6 +66,24 @@ const ProfileDropdown = () => {
             </DropdownMenuItem>
           </>
         )}
+
+        {session?.user?.role === "ADMIN" && (
+          <>
+            <DropdownMenuItem
+              className="cursor-pointer"
+              onClick={() => router.push("/admin")}
+            >
+              Dashboard
+            </DropdownMenuItem>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem
+              className="cursor-pointer"
+              onClick={() => signOut({ callbackUrl: "/login" })}
+            >
+              Logout
+            </DropdownMenuItem>
+          </>
+        )}
       </DropdownMenuContent>
     </DropdownMenu>
   );

@@ -32,7 +32,7 @@ const DocInfo = ({ docProfile_Details, showLocation = true }) => {
           </div>
           <div>
             <p className={`${heading_style}`}>Subspeciality</p>
-            <p className={`${info_style}`}>{doctorProfile.subspecialities.join(", ")}</p>
+            <p className={`${info_style}`}>{doctorProfile?.subspecialities?.join(", ")}</p>
           </div>
           <div>
             <p className={`${heading_style}`}>Hospital</p>
@@ -68,11 +68,11 @@ const DocInfo = ({ docProfile_Details, showLocation = true }) => {
           <div className="px-3 py-4 min-md:px-11">
             <p className={`${main_heading}`}>Clinic Location</p>
             <p className={`${heading_style}`}>Address</p>
-            <p className={`${info_style}`}>{doctorProfile.clinicAddress}</p>
+            <p className={`${info_style}`}>{doctorProfile.hospitalAffiliations[0].address}</p>
           </div>
           <div>
             <iframe
-              src={`https://www.google.com/maps?q=${encodeURIComponent(doctorProfile.clinicAddress)}&output=embed`}
+              src={`https://www.google.com/maps?q=${encodeURIComponent(doctorProfile.hospitalAffiliations[0].address)}&output=embed&z=15&t=m`}
               className="w-full min-lg:w-[315px]"
               height="152"
               style={{ border: "0", borderRadius: "9px" }}

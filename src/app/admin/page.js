@@ -33,7 +33,8 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import EditableEntry from "@/components/registration/EditableEntry";
-const Page = () => {
+import { toast } from "sonner";
+const AdminDashboard = () => {
   const router = useRouter();
   const [selectedSpecialties, setSelectedSpecialties] = useState([]);
   const [form, setForm] = useState({
@@ -331,7 +332,7 @@ const Page = () => {
       console.log("data", data);
       console.log(form);
       const res = await fetch("/api/doctor", {
-        method: "PATCH",
+        method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(data),
       });
@@ -370,9 +371,10 @@ const Page = () => {
         // });
         // setAvailability(base);
         console.log("Registration successful:", data);
-        router.push("/doctor");
+        toast.success("Doctor created successfully!");
       } else {
         setError(result.error || "Registration failed");
+        toast.error("Registration failed!");
       }
     } catch (err) {
       setError("Something went wrong");
@@ -501,10 +503,7 @@ const Page = () => {
       {profileHeader.createProfile.map((data) => (
         <ProfileHeader
           key={data.heading}
-          heading={data.heading}
-          step1={data.step1}
-          step2={data.step2}
-          step3={data.step3}
+          heading={"Create Doctor Profile"}
         />
       ))}
       {/*need to check size */}
@@ -1023,16 +1022,9 @@ const Page = () => {
         >
           {loading ? "Registering..." : "Confirm Registration"}
         </button>
-        <button
-          className="btn_fill col-span-2 m-auto mt-10 mb-10 flex cursor-pointer justify-center px-14 py-2 max-sm:w-full"
-          onClick={() => router.push("/doctor")}
-          disabled={loading}
-        >
-          Complete Later
-        </button>
       </div>
     </div>
   );
 };
 
-export default Page;
+export default AdminDashboard;

@@ -52,7 +52,7 @@ const Page = async () => {
         {/* right area */}
         <div>
           <AvailabilityCalendar />
-          <HospitalAffiliations />
+          <HospitalAffiliations hospitals={doctData?.doctorProfile?.hospitalAffiliations} />
         </div>
       </div>
       <DocTabs doctData={doctData} />
