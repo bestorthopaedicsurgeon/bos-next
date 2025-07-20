@@ -1,11 +1,99 @@
-import { MapPin } from "lucide-react";
+"use client"
+import { MapPin, Pencil } from "lucide-react";
 import Image from "next/image";
-import React from "react";
+import React, { useState } from "react";
+const { Popover, PopoverTrigger, PopoverContent } = require("@/components/ui/popover");
 
 const DocProfile = ({ docProfile_Details }) => {
-  const data = docProfile_Details;
+  const [data, setData] = useState(docProfile_Details);
   const doctorProfile = data?.doctorProfile || {};
-  console.log("DocProfile Data:", data);
+  const [editField, setEditField] = useState(null); // which field is being edited
+  const [editValue, setEditValue] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [message, setMessage] = useState("");
+
+  // Helper to open popover for a field
+  const handleEditClick = (field, value) => {
+    setEditField(field);
+    setEditValue(value || "");
+    setMessage("");
+  };
+
+  // Save handler
+  const handleSave = async () => {
+    setLoading(true);
+    setMessage("");
+    try {
+      // Prepare payload
+      let updatedProfile = { ...doctorProfile, [editField]: editValue };
+      // Call PUT API (adjust endpoint as needed)
+      const res = await fetch(`/api/doctor-profile`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          doctorId: data.id,
+          [editField]: editValue,
+        }),
+      });
+      if (!res.ok) throw new Error("Failed to update");
+      // Update local state
+      setData((prev) => ({
+        ...prev,
+        doctorProfile: { ...prev.doctorProfile, [editField]: editValue },
+        // For name, update at root
+        ...(editField === "name" ? { name: editValue } : {}),
+      }));
+      setMessage("Saved!");
+      setEditField(null);
+    } catch (e) {
+      setMessage("Error saving. Try again.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Render editable field
+  const renderEditable = (label, field, value, isRoot = false) => (
+    <div className="flex items-center gap-2">
+      <span>{value}</span>
+      <Popover open={editField === field} onOpenChange={(open) => {
+        if (!open) setEditField(null);
+      }}>
+        <PopoverTrigger asChild>
+          <button
+            className="ml-1 p-1 hover:bg-gray-100 rounded"
+            onClick={() => handleEditClick(field, value)}
+            aria-label={`Edit ${label}`}
+            type="button"
+          >
+            <Pencil size={16} />
+          </button>
+        </PopoverTrigger>
+        <PopoverContent className="w-64">
+          <div className="flex flex-col gap-2">
+            <label className="text-primary text-sm font-medium">Edit {label}</label>
+            <input
+              type="text"
+              className="border border-primary rounded-md p-2"
+              value={editValue}
+              onChange={e => setEditValue(e.target.value)}
+              disabled={loading}
+            />
+            <button
+              className="bg-primary text-white rounded px-3 py-1 mt-2 disabled:opacity-60"
+              onClick={handleSave}
+              disabled={loading || !editValue}
+              type="button"
+            >
+              {loading ? "Saving..." : "Save"}
+            </button>
+            {message && <span className={`text-xs ${message === "Saved!" ? "text-green-600" : "text-red-600"}`}>{message}</span>}
+          </div>
+        </PopoverContent>
+      </Popover>
+    </div>
+  );
+
   return (
     <div>
       <div
@@ -22,21 +110,24 @@ const DocProfile = ({ docProfile_Details }) => {
         </div>
         <div className="flex flex-col flex-wrap gap-2 min-lg:w-[200px]">
           <h3 className="font-[500]">
-            {`${doctorProfile?.title ? `${doctorProfile?.title}. ` : ""}${data.name}`}
+            {renderEditable(
+              "Name",
+              "name",
+              `${doctorProfile?.title ? `${doctorProfile?.title}. ` : ""}${data.name}`,
+              true
+            )}
           </h3>
-          <p className="text-primary text-[16px] font-[700]">
-            {doctorProfile?.designation}
-          </p>
-          <p className="text-primary text-[16px] font-[700]">
-            {doctorProfile?.qualification}
-          </p>
-          <p className="flex items-center gap-3 text-[13px]">
-            {" "}
+          <div className="text-primary text-[16px] font-[700]">
+            {renderEditable("Designation", "designation", doctorProfile?.designation)}
+          </div>
+          <div className="text-primary text-[16px] font-[700]">
+            {renderEditable("Qualification", "qualification", doctorProfile?.qualification)}
+          </div>
+          <div className="flex items-center gap-3 text-[13px]">
             <MapPin className="text-primary h-5 w-5" />
-            {doctorProfile?.clinicAddress}
-          </p>
+            {renderEditable("Clinic Address", "clinicAddress", doctorProfile?.clinicAddress)}
+          </div>
           <p className="flex items-center gap-3 text-[13px]">
-            {" "}
             <svg
               width="20"
               height="20"
@@ -49,7 +140,6 @@ const DocProfile = ({ docProfile_Details }) => {
                 fill="#F3CD03"
               />
             </svg>
-            {/* {data.rating} */}
             {5}
           </p>
         </div>

@@ -9,6 +9,7 @@ export async function GET(request: NextRequest) {
 
   console.log("Fetching doctor with id:", session);
   let id = session?.user?.id;
+  console.log("this is the id" , typeof(id))
 
   if (!id) {
     return NextResponse.json({ error: "id is required." }, { status: 400 });

@@ -95,7 +95,7 @@ export default function QuestionsAndAnswers({ className }) {
 
   return (
     <div
-      className={`${className} mt-10 max-w-4xl rounded-lg bg-white p-6 shadow-md`}
+      className={`${className} max-w-4xl rounded-lg bg-white p-6 shadow-md`}
     >
       <p className="text-primary mb-6 font-[700]">Questions & Answers</p>
 

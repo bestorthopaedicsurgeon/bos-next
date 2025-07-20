@@ -33,6 +33,7 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import EditableEntry from "@/components/registration/EditableEntry";
+import { toast } from "sonner";
 const Page = () => {
   const router = useRouter();
   const [selectedSpecialties, setSelectedSpecialties] = useState([]);
@@ -55,6 +56,8 @@ const Page = () => {
     [],
   );
 
+  //for availability time
+  const [doctorAvailability, setDoctorAvailability] = useState([]);
   const [editEntry, setEditEntry] = useState(null);
   const [activeIndex, setActiveIndex] = useState(null);
 
@@ -327,7 +330,10 @@ const Page = () => {
       if (Array.isArray(practiceEntries) && practiceEntries.length > 0) {
         data.practices = practiceEntries;
       }
-
+      
+      if (Array.isArray(doctorAvailability) && doctorAvailability.length > 0) {
+        data.doctorAvailability = doctorAvailability;
+      }
       console.log("data", data);
       console.log(form);
       const res = await fetch("/api/doctor", {
@@ -437,6 +443,17 @@ const Page = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  // Utility to map day short name to DayOfWeek enum
+  const dayMap = {
+    Mon: 'MONDAY',
+    Tue: 'TUESDAY',
+    Wed: 'WEDNESDAY',
+    Thu: 'THURSDAY',
+    Fri: 'FRIDAY',
+    Sat: 'SATURDAY',
+    Sun: 'SUNDAY',
+  };
+
   // Helpers for calendar days
   function getDaysInMonth(year, month) {
     const lastDay = new Date(year, month + 1, 0).getDate();
@@ -495,6 +512,58 @@ const Page = () => {
   function handleEditToggle() {
     setIsEditing((v) => !v);
   }
+
+  // Utility to generate 30-min interval time options
+  const generateTimeOptions = (start = "00:00", end = "23:30") => {
+    const options = [];
+    let [hour, minute] = start.split(":").map(Number);
+    const [endHour, endMinute] = end.split(":").map(Number);
+    while (hour < endHour || (hour === endHour && minute <= endMinute)) {
+      const h = hour.toString().padStart(2, "0");
+      const m = minute.toString().padStart(2, "0");
+      options.push(`${h}:${m}`);
+      minute += 30;
+      if (minute >= 60) {
+        minute = 0;
+        hour += 1;
+      }
+    }
+    return options;
+  };
+  const timeOptions = generateTimeOptions("06:00", "22:00"); // 6am to 10pm
+
+  // Add state for schedule times
+  const [scheduleTimes, setScheduleTimes] = useState(
+    schedule_date.map((item) => ({
+      startTime: item.startTime.replace("am", "").replace("pm", "").trim(),
+      endTime: item.endTime.replace("am", "").replace("pm", "").trim(),
+      location: 'ONLINE'// default to Online or Clinic
+    }))
+  );
+
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+
+  // Sync doctorAvailability with scheduleTimes
+  React.useEffect(() => {
+    const updatedAvailability = scheduleTimes.map((entry, idx) => {
+      const dayShort = schedule_date[idx].day;
+      const dayOfWeek = dayMap[dayShort];
+      let location = entry.location;
+      // If location is not ONLINE, treat as CLINIC
+      if (location !== 'ONLINE') location = 'CLINIC';
+      // If location is CLINIC, set clinicName to the selected hospital/clinic name
+      const clinicName = location === 'CLINIC' ? entry.location : 'ONLINE';
+      return {
+        dayOfWeek,
+        startTime: entry.startTime,
+        endTime: entry.endTime,
+        location,
+        clinicName,
+      };
+    });
+    setDoctorAvailability(updatedAvailability);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [scheduleTimes]);
 
   return (
     <div className="container m-auto">
@@ -860,15 +929,24 @@ const Page = () => {
         </div>
         <div className={formField}>
           <label htmlFor="avail">Set Your Availability</label>
-          <Dialog className="max-w-full overflow-auto">
-            <DialogTrigger asChild>
-              <Button
-                variant="outline"
-                className="flex h-[48px] cursor-pointer items-center justify-center gap-2 rounded-md bg-[#83C5BE] px-4 py-4 text-white"
-              >
-                <span>Click to set availability</span>
-              </Button>
-            </DialogTrigger>
+          <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen} className="max-w-full overflow-auto">
+            <button
+              type="button"
+              className="flex h-[48px] items-center justify-center gap-2 rounded-md bg-[#83C5BE] px-4 py-4 text-white"
+              onClick={() => {
+                if (hospitalAffiliations.length === 0) {
+                  toast.error("Please add at least one hospital affiliation before setting availability.");
+                } else {
+                  setIsDialogOpen(true);
+                }
+              }}
+              style={{
+                opacity: hospitalAffiliations.length === 0 ? 0.5 : 1,
+                cursor: hospitalAffiliations.length === 0 ? 'not-allowed' : 'pointer'
+              }}
+            >
+              <span>Click to set availability</span>
+            </button>
             <DialogContent className="h-full w-full max-w-[90%] overflow-y-auto">
               <DialogHeader>
                 <DialogTitle>My Availability</DialogTitle>
@@ -979,22 +1057,63 @@ const Page = () => {
                     <div className="flex flex-col justify-center gap-5 max-sm:gap-2">
                       <div className="flex items-center gap-3">
                         <Clock3 className="max-sm:h-[15px] max-sm:w-[15px]" />
-                        <p className="text-wrap">{data.time}</p>
+                        <select
+                          value={scheduleTimes[key].startTime}
+                          onChange={(e) => {
+                            const newTimes = [...scheduleTimes];
+                            newTimes[key].startTime = e.target.value;
+                            setScheduleTimes(newTimes);
+                          }}
+                          className="border rounded px-2 py-1"
+                        >
+                          {timeOptions.map((time) => (
+                            <option key={time} value={time}>
+                              {time}
+                            </option>
+                          ))}
+                        </select>
+                        <span>-</span>
+                        <select
+                          value={scheduleTimes[key].endTime}
+                          onChange={(e) => {
+                            const newTimes = [...scheduleTimes];
+                            newTimes[key].endTime = e.target.value;
+                            setScheduleTimes(newTimes);
+                          }}
+                          className="border rounded px-2 py-1"
+                        >
+                          {timeOptions.map((time) => (
+                            <option key={time} value={time}>
+                              {time}
+                            </option>
+                          ))}
+                        </select>
                       </div>
                       <div className="flex items-center gap-3">
                         <User className="max-sm:h-[15px] max-sm:w-[15px]" />
-                        <p>{data.location}</p>
+                        <select
+                          value={scheduleTimes[key].location}
+                          onChange={(e) => {
+                            const newTimes = [...scheduleTimes];
+                            newTimes[key].location = e.target.value;
+                            setScheduleTimes(newTimes);
+                          }}
+                          className="border rounded px-2 py-1"
+                        >
+                          <option value="ONLINE">Online</option>
+                          {hospitalAffiliations && hospitalAffiliations.map((affil, idx) => (
+                            <option key={affil.name + idx} value={affil.name}>{affil.name}</option>
+                          ))}
+                        </select>
                       </div>
                     </div>
-                    <select
-                      name="edit"
-                      id="edit"
-                      className={`${dropDown} bg-background cursor-pointer !border-none px-[20px]`}
-                      style={selectStyle}
+                    <button
+                      type="button"
+                      className="ml-4 rounded bg-[#83C5BE] px-6 py-2 text-white hover:bg-[#2F797B] transition-colors"
+                      onClick={() => toast.success('Schedule saved!')}
                     >
-                      <option value="">Edit</option>
-                      <option value="">Delete</option>
-                    </select>
+                      Save
+                    </button>
                   </div>
                 ))}
               </div>
