@@ -101,6 +101,8 @@ export async function POST(req: Request): Promise<NextResponse> {
       data.awardsPublications = body.awardsPublications;
     if ("hospitalAffiliations" in body)
       data.hospitalAffiliations = body.hospitalAffiliations;
+    if ("doctorAvailability" in body)
+      data.DoctorAvailability = { create: body.doctorAvailability };
 
     let profile;
 
@@ -226,6 +228,47 @@ export async function PATCH(req: Request) {
       where: { id: doctorId },
       data,
     });
+
+    if (
+      "doctorAvailability" in body &&
+      Array.isArray(body.doctorAvailability)
+    ) {
+      for (const item of body.doctorAvailability) {
+        if (item.id) {
+          // Existing record, update it
+          await prisma.doctorAvailabilityTime.upsert({
+            where: { id: item.id },
+            update: {
+              dayOfWeek: item.dayOfWeek,
+              startTime: item.startTime,
+              endTime: item.endTime,
+              location: item.location,
+              clinicName: item.location === "CLINIC" ? item.clinicName : null,
+            },
+            create: {
+              doctorId: doctorId,
+              dayOfWeek: item.dayOfWeek,
+              startTime: item.startTime,
+              endTime: item.endTime,
+              location: item.location,
+              clinicName: item.location === "CLINIC" ? item.clinicName : null,
+            },
+          });
+        } else {
+          // New record, just create
+          await prisma.doctorAvailabilityTime.create({
+            data: {
+              doctorId: doctorId,
+              dayOfWeek: item.dayOfWeek,
+              startTime: item.startTime,
+              endTime: item.endTime,
+              location: item.location,
+              clinicName: item.location === "CLINIC" ? item.clinicName : null,
+            },
+          });
+        }
+      }
+    }
 
     return NextResponse.json(
       { success: true, data: updatedProfile },

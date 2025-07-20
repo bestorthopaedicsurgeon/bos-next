@@ -14,14 +14,11 @@ export default function About({ className, doctData }) {
       {/* Special Interests Section */}
       <div className="mb-8">
         <h2 className="mb-4 text-[14px] font-[700]">Special interests</h2>
-        <p className="text-[14px]">
-          Total Hip Replacements (Including Anterior Approach), Robotic Total
-          and Partial Krise Replacements, ACL Reconstructions, Krise
-          Arthroscopy, Orthopaedic Oncology Surgery, Patella Stabilisation and
-          re-alignment surgery, Revision Arthroplasty, Trauma services, Sports
-          Knee; ACL Reconstruction. I am a No-Gap provider for all private
-          health funds, and welcome WC and ICWA claims.
-        </p>
+        <ul className="list-disc space-y-2 pl-5 text-[14px]">
+          {data?.subspecialities?.map((subspeciality) => (
+            <li key={subspeciality}>{subspeciality}</li>
+          ))}
+        </ul>
       </div>
 
       <div className="my-6 border-t border-gray-200"></div>
@@ -44,6 +41,19 @@ export default function About({ className, doctData }) {
         <ul className="list-disc space-y-4 pl-5 text-[14px]">
           {data?.awardsPublications?.map((award) => (
             <li key={award}>{award}</li>
+          ))}
+        </ul>
+      </div>
+
+      <div className="my-6 border-t border-gray-200"></div>
+
+      <div className="mb-8">
+        <h2 className="mb-4 text-[14px] font-[700]">
+          Registrations and Associations
+        </h2>
+        <ul className="list-disc space-y-4 pl-5 text-[14px]">
+          {data?.registrationsAssociations?.map((registration) => (
+            <li key={registration}>{registration}</li>
           ))}
         </ul>
       </div>

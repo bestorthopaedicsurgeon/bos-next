@@ -9,6 +9,7 @@ const DocInfo = ({ docProfile_Details, showLocation = true }) => {
   const info_style = "text-[13px] font-[600] mt-2";
   const main_heading = "text-[20px] font-[600] text-primary mb-5";
   const box_style = "bg-secondary rounded-xl mt-5 min-lg:max-w-[800px]";
+  console.log("doctorProfile", doctorProfile);
 
   return (
     <>
