@@ -26,13 +26,13 @@ export async function GET(
       );
     }
 
-    return (
-      NextResponse.json({
+    return NextResponse.json(
+      {
         success: true,
         data: doctor,
         message: "Doctor fetched successfully",
-      }),
-      { status: 200 }
+      },
+      { status: 200 },
     );
   } catch (error) {
     console.error("Error fetching doctor data:", error);
