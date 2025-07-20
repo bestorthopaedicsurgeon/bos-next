@@ -8,6 +8,9 @@ const PUBLIC_ROUTES = [
   "/about",
   "/contact",
   "/doctor-registration",
+  "/surgeons",
+  "/blog",
+  "/contactUs",
   ...AUTH_PAGES,
 ];
 
