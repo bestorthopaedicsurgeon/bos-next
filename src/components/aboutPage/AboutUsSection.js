@@ -1,5 +1,6 @@
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
+import Link from "next/link";
 import React from "react";
 
 export const AboutUsSection = () => {
@@ -24,9 +25,11 @@ export const AboutUsSection = () => {
             various specialties — helping you make informed decisions for your
             health with confidence and ease.
           </p>
+          <Link href="/surgeons">
           <Button className="mt-8" variant="primary" size="primary">
             Find Your Surgeon
           </Button>
+          </Link>
         </div>
       </div>
     </section>

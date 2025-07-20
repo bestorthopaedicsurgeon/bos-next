@@ -11,7 +11,7 @@ export function NavLinks() {
     { href: "/about", label: "About" },
     { href: "/surgeons", label: "Surgeons" },
     { href: "/blog", label: "Blog" },
-    { href: "/contact", label: "Contact" },
+    { href: "/contactUs", label: "Contact" },
   ];
 
   return (

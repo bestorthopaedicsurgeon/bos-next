@@ -3,7 +3,7 @@ import React from "react";
 
 const InfoSectionRight = ({image}) => {
   return (
-    <section className="grid grid-cols-1 gap-8 px-4 py-8 md:grid-cols-[1.4fr_1fr] lg:px-16">
+    <section className="grid grid-cols-1 gap-8 px-4 py-8 md:grid-cols-[1.4fr_1fr]">
       <Image
         src={image}
         alt="Orthopaedic Specialist"

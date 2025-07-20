@@ -8,9 +8,9 @@ const inputField =
 const Page = () => {
   const [acceptTerms, setAcceptTerms] = useState(false);
   return (
-    <div className="container m-auto px-2 md:px-0">
+    <div className=" m-auto px-2 md:px-0">
       {/* Header Section */}
-      <div className="mb-8 rounded-b-2xl bg-[#217B7E] py-10 text-center">
+      <div className="mb-8 rounded-2xl bg-[#217B7E] py-10 text-center">
         <h1 className="mb-2 text-3xl font-bold text-white">Contact Us</h1>
         <div className="text-sm text-white">Home &gt; Contact Us</div>
       </div>

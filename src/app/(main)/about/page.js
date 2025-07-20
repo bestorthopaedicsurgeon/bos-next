@@ -14,6 +14,7 @@ import React from "react";
 const AboutPage = () => {
   return (
     <div>
+      <div className="container">
       <HeroSection />
       <AboutUsSection />
       <WhoWeAre />
@@ -22,8 +23,11 @@ const AboutPage = () => {
       <FeaturedSurgeonsSection />
       <Partners />
       <CtaSection />
+      </div>
       <TestimonialsSection />
+      <div className="container">
       <ServicesSection />
+      </div>
     </div>
   );
 };

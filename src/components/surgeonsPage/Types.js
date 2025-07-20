@@ -43,7 +43,7 @@ const Types = () => {
   return (
     <section>
       <h1 className="font-syne text-primary">Types Of Orthopaedic Surgeons</h1>
-      <div className="grid grid-cols-1 gap-8 px-4 py-8 md:grid-cols-3 lg:px-16">
+      <div className="grid grid-cols-1 gap-8 px-4 py-8 md:grid-cols-3 ">
         {cards.map((card, index) => (
           <div
             key={index}

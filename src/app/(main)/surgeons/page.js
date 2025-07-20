@@ -7,7 +7,7 @@ import React from "react";
 
 const SurgeonsPage = () => {
   return (
-    <div>
+    <div className="container">
       <HeroSection />
       <AllSurgeons />
       <InfoSectionLeft image={"/surgeons/info1.png"} />

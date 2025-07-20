@@ -4,7 +4,7 @@ import React from "react";
 
 const BlogPage = () => {
   return (
-    <div>
+    <div className="container">
       <HeroSection />
       <Blogs />
     </div>

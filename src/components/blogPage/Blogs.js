@@ -43,7 +43,7 @@ const cards = [
 
 export const Blogs = () => {
   return (
-    <section>
+    <section id="blogs">
       <h1 className="font-syne text-primary text-center mb-8">Types Of Orthopaedic Surgeons</h1>
       <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
         {cards.map((card, index) => (
