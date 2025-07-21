@@ -9,18 +9,6 @@ export async function POST(req: Request): Promise<NextResponse> {
     const body = await req.json();
     let {
       userId: bodyUserId,
-      title,
-      experience,
-      designation,
-      practices,
-      subspecialities,
-      about,
-      registrationsAssociations,
-      qualifications,
-      awardsPublications,
-      hospitalAffiliations,
-      DoctorAvailability,
-      doctorAvailabilityDays,
     } = body;
 
     // const { practiceName, clinicAddress, state, practicePhone } = //   practices[0] || {};
@@ -66,24 +54,6 @@ export async function POST(req: Request): Promise<NextResponse> {
         );
       }
     }
-
-    // const data = {
-    //   title: title || undefined,
-    //   experience: experience || undefined,
-    //   designation: designation || undefined,
-    //   practices: practices || undefined,
-    //   // practiceName: practiceName || undefined,
-    //   // clinicAddress: clinicAddress || undefined,
-    //   // state: state || undefined,
-    //   // practicePhone: practicePhone || undefined,
-    //   subspecialities: subspecialities || [],
-    //   about: about || undefined,
-    //   registrationsAssociations: registrationsAssociations || undefined,
-    //   qualifications: qualifications || undefined,
-    //   awardsPublications: awardsPublications || undefined,
-    //   hospitalAffiliations: hospitalAffiliations || undefined,
-    //   // DoctorAvailabilityDays: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"],
-    // };
 
     const data: any = {};
 

@@ -5,7 +5,7 @@ export const getDoctorProfile = async () => {
   const cookie = headersList.get("cookie");
   try {
     const res = await fetch(
-      `${process.env.NEXT_PUBLIC_BASE_URL}/api/doctor/me`,
+      `${process.env.NEXT_PUBLIC_BASE_URL}/api/doctors/me`,
       {
         method: "GET",
         headers: {

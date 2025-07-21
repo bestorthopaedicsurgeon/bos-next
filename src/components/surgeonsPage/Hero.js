@@ -30,8 +30,8 @@ export const HeroSection = () => {
             <Image
               src="/surgeons/doctors.png"
               alt="hero"
-              width={100}
-              height={100}
+              width={500}
+              height={500}
               className="h-full w-full"
             />
           </div>
@@ -66,8 +66,8 @@ export const HeroSection = () => {
           <Image
             src="/surgeons/doctors.png"
             alt="hero"
-            width={100}
-            height={100}
+            width={500}
+            height={500}
             className="h-full w-full"
           />
         </div>

@@ -62,6 +62,8 @@ model User {
   lastName  String?
   image     String?
 
+  reviews DoctorReview[]
+
   phone String?
   role  Role
 
@@ -106,8 +108,30 @@ model DoctorProfile {
   awardsPublications        String[]     @default([])
   hospitalAffiliations      Json?
 
+  featured Boolean        @default(false)
+  reviews  DoctorReview[]
+
   DoctorAvailability     DoctorAvailabilityTime[]
   DoctorAvailabilityDays String[]
+}
+
+model DoctorReview {
+  id              Int    @id @default(autoincrement())
+  professionalism Int
+  punctuality     Int
+  helpfulness     Int
+  knowledge       Int
+  review          String
+
+  doctor   DoctorProfile @relation(fields: [doctorId], references: [id])
+  doctorId Int
+
+  user   User   @relation(fields: [userId], references: [id])
+  userId String
+
+  createdAt DateTime @default(now())
+
+  @@unique([userId, doctorId])
 }
 
 // enum Subspeciality {

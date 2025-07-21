@@ -331,7 +331,7 @@ const AdminDashboard = () => {
 
       console.log("data", data);
       console.log(form);
-      const res = await fetch("/api/doctor", {
+      const res = await fetch("/api/doctors", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(data),
@@ -611,9 +611,9 @@ const AdminDashboard = () => {
             onChange={handleInputChange("desig")}
           >
             <option value="">Select Designation</option>
-            <option value="DOCTOR">DOCTOR</option>
-            <option value="SURGEON">SURGEON</option>
-            <option value="GENERAL">GENERAL</option>
+            <option value="DOCTOR">Doctor</option>
+            <option value="SURGEON">Surgeon</option>
+            <option value="GENERAL">General Physician</option>
           </select>
         </div>
         {/* Practice/Clinic Entries Tag Box */}

@@ -29,7 +29,7 @@ export async function middleware(req: NextRequest) {
     return NextResponse.redirect(new URL("/", req.url));
   }
 
-  // 🔐 Unauthenticated users trying to access protected routes
+  // Unauthenticated users trying to access protected routes
   const isProtected = !PUBLIC_ROUTES.includes(pathname);
   if (!token && isProtected) {
     return NextResponse.redirect(new URL("/login", req.url));

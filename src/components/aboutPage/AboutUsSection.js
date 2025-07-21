@@ -6,7 +6,7 @@ import React from "react";
 export const AboutUsSection = () => {
   return (
     <section className="mb-40">
-      <div className="grid grid-cols-2 gap-8 items-center">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center place-items-center">
         <Image
           src="/about/left-side.png"
           alt="About Us"
