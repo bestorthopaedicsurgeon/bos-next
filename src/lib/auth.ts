@@ -57,8 +57,14 @@ export const authOptions: NextAuthOptions = {
     },
     async session({ session, token }) {
       if (token) {
+        const doctor = await prisma.doctorProfile.findUnique({
+          where: { userId: token.id },
+          select: { id: true },
+        });
+
         session.user.id = token.id;
         session.user.role = token.role;
+        session.user.doctorId = doctor?.id || null;
       }
 
       return session;

@@ -91,7 +91,8 @@ const AdminDashboard = () => {
   // };
 
   const handleInputChange = (field) => (e) => {
-    setForm((prev) => ({ ...prev, [field]: e.target.value }));
+    const value = field === "image" ? e.target.files?.[0] : e.target.value;
+    setForm((prev) => ({ ...prev, [field]: value }));
   };
 
   const handleMultiInputChange = (field) => (e) => {
@@ -172,6 +173,29 @@ const AdminDashboard = () => {
   // Remove a practice entry
   const handleRemovePractice = (idx) => {
     setPracticeEntries((prev) => prev.filter((_, i) => i !== idx));
+  };
+
+  const handleImageUpload = async (doctorId) => {
+    if (!form.image) return alert("Please upload an image");
+
+    const formData = new FormData();
+    formData.append("file", form.image);
+    formData.append("doctorId", doctorId);
+
+    const res = await fetch("/api/doctors/upload-image", {
+      method: "POST",
+      body: formData,
+    });
+
+    const result = await res.json();
+
+    if (!res.ok) return alert("Upload failed");
+
+    console.log("Public URL:", result.url);
+    return true;
+
+    // optionally: update doctor profile with the image URL
+    // await updateDoctor({ imageUrl: result.url });
   };
 
   const handleRegister = async (e) => {
@@ -371,7 +395,13 @@ const AdminDashboard = () => {
         // });
         // setAvailability(base);
         console.log("Registration successful:", data);
-        toast.success("Doctor created successfully!");
+        if (data.success) {
+          const imageUploaded = await handleImageUpload(data?.profile?.id);
+          if (imageUploaded) {
+            console.log("Image uploaded successfully");
+          }
+          toast.success("Doctor created successfully!");
+        }
       } else {
         setError(result.error || "Registration failed");
         toast.error("Registration failed!");
@@ -501,10 +531,7 @@ const AdminDashboard = () => {
   return (
     <div className="container m-auto">
       {profileHeader.createProfile.map((data) => (
-        <ProfileHeader
-          key={data.heading}
-          heading={"Create Doctor Profile"}
-        />
+        <ProfileHeader key={data.heading} heading={"Create Doctor Profile"} />
       ))}
       {/*need to check size */}
       {profileHeader.welcome.map((data, key) => (
@@ -536,16 +563,16 @@ const AdminDashboard = () => {
           </select>
         </div>
         <div className={formField}>
-          <label htmlFor="pic">Upload Profile Picture</label>
+          <label htmlFor="image">Upload Profile picture</label>
           <input
             type="file"
-            name="pic"
-            id="pic"
+            name="image"
+            id="image"
             className="hidden"
-            onChange={handleInputChange("pic")}
+            onChange={handleInputChange("image")}
           />
           <label
-            htmlFor="pic"
+            htmlFor="image"
             className="flex cursor-pointer items-center justify-center gap-2 rounded-md bg-[#83C5BE] px-4 py-2 text-white"
           >
             <span>Click to upload</span>

@@ -13,6 +13,12 @@ const EditableEntry = ({ entries, setEntries, fieldNames, renderLabel }) => {
     fieldNames.reduce((acc, key) => ({ ...acc, [key]: "" }), {}),
   );
 
+  function formatFieldName(field) {
+    return field
+      .replace(/([A-Z])/g, " $1") // insert space before capitals
+      .replace(/^./, (str) => str.toUpperCase()); // capitalize first letter
+  }
+
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
@@ -72,7 +78,7 @@ const EditableEntry = ({ entries, setEntries, fieldNames, renderLabel }) => {
                 {fieldNames.map((field) => (
                   <div key={field} className="flex flex-col gap-1">
                     <label className="text-primary text-lg">
-                      {field.replace(/([A-Z])/g, " $1")}
+                      {formatFieldName(field)}
                     </label>
                     <input
                       type="text"
@@ -103,7 +109,7 @@ const EditableEntry = ({ entries, setEntries, fieldNames, renderLabel }) => {
       {/* Add Button */}
       <Popover>
         <PopoverTrigger asChild>
-          <button className="bg-primary hover:bg-primary-hover flex h-8 w-8 items-center justify-center rounded-full text-white">
+          <button className="bg-primary hover:bg-primary-hover flex h-8 w-8 cursor-pointer items-center justify-center rounded-full text-white">
             <Plus size={16} />
           </button>
         </PopoverTrigger>
@@ -112,7 +118,7 @@ const EditableEntry = ({ entries, setEntries, fieldNames, renderLabel }) => {
             {fieldNames.map((field) => (
               <div key={field} className="flex flex-col gap-1">
                 <label className="text-primary text-lg">
-                  {field.replace(/([A-Z])/g, " $1")}
+                  {formatFieldName(field)}
                 </label>
                 <input
                   type="text"

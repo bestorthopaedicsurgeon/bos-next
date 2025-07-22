@@ -34,7 +34,12 @@ import {
 } from "@/components/ui/popover";
 import EditableEntry from "@/components/registration/EditableEntry";
 import { toast } from "sonner";
+import { auCities } from "@/lib/constants/auCities";
+import { useSession } from "next-auth/react";
 const Page = () => {
+  const { data: session } = useSession();
+  const doctorId = session?.user?.doctorId;
+
   const router = useRouter();
   const [selectedSpecialties, setSelectedSpecialties] = useState([]);
   const [form, setForm] = useState({
@@ -93,11 +98,35 @@ const Page = () => {
   // };
 
   const handleInputChange = (field) => (e) => {
-    setForm((prev) => ({ ...prev, [field]: e.target.value }));
+    const value = field === "image" ? e.target.files?.[0] : e.target.value;
+    setForm((prev) => ({ ...prev, [field]: value }));
   };
 
   const handleMultiInputChange = (field) => (e) => {
     setInputs((prev) => ({ ...prev, [field]: e.target.value }));
+  };
+
+  const handleImageUpload = async () => {
+    if (!form.image) return alert("Please upload an image");
+
+    const formData = new FormData();
+    formData.append("file", form.image);
+    formData.append("doctorId", doctorId);
+
+    const res = await fetch("/api/doctors/upload-image", {
+      method: "POST",
+      body: formData,
+    });
+
+    const result = await res.json();
+
+    if (!res.ok) return alert("Upload failed");
+
+    console.log("Public URL:", result.url);
+    return true;
+
+    // optionally: update doctor profile with the image URL
+    // await updateDoctor({ imageUrl: result.url });
   };
 
   const handleKeyDown = (field) => (e) => {
@@ -290,6 +319,7 @@ const Page = () => {
       if (form.exp) data.experience = parseInt(form.exp);
       if (form.desig) data.designation = form.desig;
       if (form.about_self) data.about = form.about_self;
+      if (form.location) data.location = form.location;
 
       // Arrays: check if defined AND has at least one item
       if (
@@ -330,7 +360,7 @@ const Page = () => {
       if (Array.isArray(practiceEntries) && practiceEntries.length > 0) {
         data.practices = practiceEntries;
       }
-      
+
       if (Array.isArray(doctorAvailability) && doctorAvailability.length > 0) {
         data.doctorAvailability = doctorAvailability;
       }
@@ -376,6 +406,13 @@ const Page = () => {
         // });
         // setAvailability(base);
         console.log("Registration successful:", data);
+        toast.success("Registration successful!");
+        const imageUploaded = await handleImageUpload(doctorId);
+        if (imageUploaded) {
+          console.log("Image uploaded successfully");
+        } else {
+          console.error("Image upload failed");
+        }
         router.push("/doctor");
       } else {
         setError(result.error || "Registration failed");
@@ -387,6 +424,7 @@ const Page = () => {
       setLoading(false);
     }
   };
+
   const selectStyle = {
     backgroundImage: `url("data:image/svg+xml,%3Csvg width='18' height='11' viewBox='0 0 18 11' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath fill-rule='evenodd' clip-rule='evenodd' d='M9.53026 9.88407C9.23736 10.177 8.76256 10.177 8.46966 9.88407L0.823183 2.23757C0.530293 1.94467 0.530293 1.46987 0.823183 1.17697L1.17674 0.823374C1.46963 0.530474 1.9445 0.530474 2.2374 0.823374L8.99996 7.58597L15.7626 0.823374C16.0555 0.530474 16.5303 0.530474 16.8232 0.823374L17.1768 1.17697C17.4697 1.46987 17.4697 1.94467 17.1768 2.23757L9.53026 9.88407Z' fill='%23033333'/%3E%3C/svg%3E")`,
   };
@@ -445,13 +483,13 @@ const Page = () => {
 
   // Utility to map day short name to DayOfWeek enum
   const dayMap = {
-    Mon: 'MONDAY',
-    Tue: 'TUESDAY',
-    Wed: 'WEDNESDAY',
-    Thu: 'THURSDAY',
-    Fri: 'FRIDAY',
-    Sat: 'SATURDAY',
-    Sun: 'SUNDAY',
+    Mon: "MONDAY",
+    Tue: "TUESDAY",
+    Wed: "WEDNESDAY",
+    Thu: "THURSDAY",
+    Fri: "FRIDAY",
+    Sat: "SATURDAY",
+    Sun: "SUNDAY",
   };
 
   // Helpers for calendar days
@@ -537,8 +575,8 @@ const Page = () => {
     schedule_date.map((item) => ({
       startTime: item.startTime.replace("am", "").replace("pm", "").trim(),
       endTime: item.endTime.replace("am", "").replace("pm", "").trim(),
-      location: 'ONLINE'// default to Online or Clinic
-    }))
+      location: "ONLINE", // default to Online or Clinic
+    })),
   );
 
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -550,9 +588,9 @@ const Page = () => {
       const dayOfWeek = dayMap[dayShort];
       let location = entry.location;
       // If location is not ONLINE, treat as CLINIC
-      if (location !== 'ONLINE') location = 'CLINIC';
+      if (location !== "ONLINE") location = "CLINIC";
       // If location is CLINIC, set clinicName to the selected hospital/clinic name
-      const clinicName = location === 'CLINIC' ? entry.location : 'ONLINE';
+      const clinicName = location === "CLINIC" ? entry.location : "ONLINE";
       return {
         dayOfWeek,
         startTime: entry.startTime,
@@ -606,16 +644,16 @@ const Page = () => {
           </select>
         </div>
         <div className={formField}>
-          <label htmlFor="pic">Upload Profile Picture</label>
+          <label htmlFor="image">Upload Profile Picture</label>
           <input
             type="file"
-            name="pic"
-            id="pic"
+            name="image"
+            id="image"
             className="hidden"
-            onChange={handleInputChange("pic")}
+            onChange={handleInputChange("image")}
           />
           <label
-            htmlFor="pic"
+            htmlFor="image"
             className="flex cursor-pointer items-center justify-center gap-2 rounded-md bg-[#83C5BE] px-4 py-2 text-white"
           >
             <span>Click to upload</span>
@@ -684,6 +722,27 @@ const Page = () => {
             <option value="DOCTOR">Doctor</option>
             <option value="SURGEON">Surgeon</option>
             <option value="GENERAL">General Physician</option>
+          </select>
+        </div>
+        <div className={formField}>
+          <label htmlFor="desig">City</label>
+          <select
+            name="location"
+            id="location"
+            className={dropDown}
+            style={selectStyle}
+            value={form.location}
+            placeholder="Select your city"
+            onChange={handleInputChange("location")}
+          >
+            {auCities.map((cityObj, index) => {
+              // console.log("cityObj", cityObj);
+              return (
+                <option key={index} value={cityObj.city}>
+                  {cityObj.city}
+                </option>
+              );
+            })}
           </select>
         </div>
         {/* Practice/Clinic Entries Tag Box */}
@@ -929,20 +988,27 @@ const Page = () => {
         </div>
         <div className={formField}>
           <label htmlFor="avail">Set Your Availability</label>
-          <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen} className="max-w-full overflow-auto">
+          <Dialog
+            open={isDialogOpen}
+            onOpenChange={setIsDialogOpen}
+            className="max-w-full overflow-auto"
+          >
             <button
               type="button"
               className="flex h-[48px] items-center justify-center gap-2 rounded-md bg-[#83C5BE] px-4 py-4 text-white"
               onClick={() => {
                 if (hospitalAffiliations.length === 0) {
-                  toast.error("Please add at least one hospital affiliation before setting availability.");
+                  toast.error(
+                    "Please add at least one hospital affiliation before setting availability.",
+                  );
                 } else {
                   setIsDialogOpen(true);
                 }
               }}
               style={{
                 opacity: hospitalAffiliations.length === 0 ? 0.5 : 1,
-                cursor: hospitalAffiliations.length === 0 ? 'not-allowed' : 'pointer'
+                cursor:
+                  hospitalAffiliations.length === 0 ? "not-allowed" : "pointer",
               }}
             >
               <span>Click to set availability</span>
@@ -1064,7 +1130,7 @@ const Page = () => {
                             newTimes[key].startTime = e.target.value;
                             setScheduleTimes(newTimes);
                           }}
-                          className="border rounded px-2 py-1"
+                          className="rounded border px-2 py-1"
                         >
                           {timeOptions.map((time) => (
                             <option key={time} value={time}>
@@ -1080,7 +1146,7 @@ const Page = () => {
                             newTimes[key].endTime = e.target.value;
                             setScheduleTimes(newTimes);
                           }}
-                          className="border rounded px-2 py-1"
+                          className="rounded border px-2 py-1"
                         >
                           {timeOptions.map((time) => (
                             <option key={time} value={time}>
@@ -1098,19 +1164,22 @@ const Page = () => {
                             newTimes[key].location = e.target.value;
                             setScheduleTimes(newTimes);
                           }}
-                          className="border rounded px-2 py-1"
+                          className="rounded border px-2 py-1"
                         >
                           <option value="ONLINE">Online</option>
-                          {hospitalAffiliations && hospitalAffiliations.map((affil, idx) => (
-                            <option key={affil.name + idx} value={affil.name}>{affil.name}</option>
-                          ))}
+                          {hospitalAffiliations &&
+                            hospitalAffiliations.map((affil, idx) => (
+                              <option key={affil.name + idx} value={affil.name}>
+                                {affil.name}
+                              </option>
+                            ))}
                         </select>
                       </div>
                     </div>
                     <button
                       type="button"
-                      className="ml-4 rounded bg-[#83C5BE] px-6 py-2 text-white hover:bg-[#2F797B] transition-colors"
-                      onClick={() => toast.success('Schedule saved!')}
+                      className="ml-4 rounded bg-[#83C5BE] px-6 py-2 text-white transition-colors hover:bg-[#2F797B]"
+                      onClick={() => toast.success("Schedule saved!")}
                     >
                       Save
                     </button>

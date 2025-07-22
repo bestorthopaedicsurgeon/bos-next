@@ -7,9 +7,7 @@ export async function POST(req: Request): Promise<NextResponse> {
   try {
     const session = await getServerSession(authOptions);
     const body = await req.json();
-    let {
-      userId: bodyUserId,
-    } = body;
+    let { userId: bodyUserId } = body;
 
     // const { practiceName, clinicAddress, state, practicePhone } = //   practices[0] || {};
 
@@ -73,6 +71,7 @@ export async function POST(req: Request): Promise<NextResponse> {
       data.hospitalAffiliations = body.hospitalAffiliations;
     if ("doctorAvailability" in body)
       data.DoctorAvailability = { create: body.doctorAvailability };
+    if ("location" in body) data.location = body.location;
 
     let profile;
 
@@ -192,6 +191,7 @@ export async function PATCH(req: Request) {
       data.awardsPublications = body.awardsPublications;
     if ("hospitalAffiliations" in body)
       data.hospitalAffiliations = body.hospitalAffiliations;
+    if ("location" in body) data.location = body.location;
 
     // 6. Perform update
     const updatedProfile = await prisma.doctorProfile.update({

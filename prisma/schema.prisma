@@ -92,15 +92,13 @@ model DoctorProfile {
   id                        Int          @id @default(autoincrement())
   userId                    String?      @unique
   user                      User?        @relation("UserDoctorProfile", fields: [userId], references: [id])
+  image                     String?
   title                     String?
   name                      String?
   experience                Int?
   designation               Designation?
   practices                 Json?
-  practiceName              String?
-  clinicAddress             String?
-  state                     String?
-  practicePhone             String?
+  location                  String?
   subspecialities           String[]     @default([])
   about                     String?
   registrationsAssociations String[]     @default([])
@@ -108,8 +106,9 @@ model DoctorProfile {
   awardsPublications        String[]     @default([])
   hospitalAffiliations      Json?
 
-  featured Boolean        @default(false)
-  reviews  DoctorReview[]
+  registrationCompleted Boolean        @default(false)
+  featured              Boolean        @default(false)
+  reviews               DoctorReview[]
 
   DoctorAvailability     DoctorAvailabilityTime[]
   DoctorAvailabilityDays String[]

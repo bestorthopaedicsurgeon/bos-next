@@ -5,6 +5,7 @@ declare module "next-auth" {
     user: {
       id: string; // updated from number → string
       role: string;
+      doctorId?: number | null;
     } & DefaultSession["user"];
     token: {
       id: string; // updated from number → string
