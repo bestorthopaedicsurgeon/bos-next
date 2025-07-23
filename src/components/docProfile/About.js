@@ -1,7 +1,7 @@
 "use client";
 
 export default function About({ className, doctData }) {
-  const data = doctData?.doctorProfile;
+  const data = doctData;
   return (
     <div className={`rounded-lg bg-white p-6 shadow-md ${className}`}>
       <p className="text-primary mb-6 font-[700]">About doctor</p>

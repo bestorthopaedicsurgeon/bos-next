@@ -6,7 +6,7 @@ const { Popover, PopoverTrigger, PopoverContent } = require("@/components/ui/pop
 
 const DocProfile = ({ docProfile_Details }) => {
   const [data, setData] = useState(docProfile_Details);
-  const doctorProfile = data?.doctorProfile || {};
+  const doctorProfile = data || {};
   const [editField, setEditField] = useState(null); // which field is being edited
   const [editValue, setEditValue] = useState("");
   const [loading, setLoading] = useState(false);
@@ -121,11 +121,11 @@ const DocProfile = ({ docProfile_Details }) => {
             {renderEditable("Designation", "designation", doctorProfile?.designation)}
           </div>
           <div className="text-primary text-[16px] font-[700]">
-            {renderEditable("Qualification", "qualification", doctorProfile?.qualification)}
+            {renderEditable("Qualification", "qualifications", doctorProfile?.qualifications?.[0])}
           </div>
           <div className="flex items-center gap-3 text-[13px]">
             <MapPin className="text-primary h-5 w-5" />
-            {renderEditable("Clinic Address", "clinicAddress", doctorProfile?.clinicAddress)}
+            {renderEditable("Clinic Address", "clinicAddress", doctorProfile?.location)}
           </div>
           <p className="flex items-center gap-3 text-[13px]">
             <svg

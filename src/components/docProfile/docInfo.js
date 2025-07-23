@@ -3,7 +3,7 @@ import Image from "next/image";
 import { MapPin, Star } from "lucide-react";
 const DocInfo = ({ docProfile_Details, showLocation = true }) => {
   const data = docProfile_Details;
-  const doctorProfile = data?.doctorProfile || {};
+  const doctorProfile = data || {};
 
   const heading_style = "text-[14px] text-gray-500";
   const info_style = "text-[13px] font-[600] mt-2";
@@ -33,31 +33,33 @@ const DocInfo = ({ docProfile_Details, showLocation = true }) => {
           </div>
           <div>
             <p className={`${heading_style}`}>Subspeciality</p>
-            <p className={`${info_style}`}>{doctorProfile?.subspecialities?.join(", ")}</p>
+            <p className={`${info_style}`}>
+              {doctorProfile?.subspecialities?.join(", ")}
+            </p>
           </div>
           <div>
             <p className={`${heading_style}`}>Hospital</p>
-            <p className={`${info_style}`}>{doctorProfile.clinicAddress}</p>
+            <p className={`${info_style}`}>{doctorProfile?.clinicAddress}</p>
           </div>
           <div>
             <p className={`${heading_style}`}>Email Address</p>
-            <p className={`${info_style}`}>{data.email}</p>
+            <p className={`${info_style}`}>{data?.email}</p>
           </div>
           <div>
             <p className={`${heading_style}`}>Designation</p>
-            <p className={`${info_style}`}>{doctorProfile.designation}</p>
+            <p className={`${info_style}`}>{doctorProfile?.designation}</p>
           </div>
           <div>
             <p className={`${heading_style}`}>Qualification</p>
-            <p className={`${info_style}`}>{doctorProfile.qualification}</p>
+            <p className={`${info_style}`}>{doctorProfile?.qualification}</p>
           </div>
           <div>
             <p className={`${heading_style}`}>Consultation Fee</p>
-            <p className={`${info_style}`}>EURO {doctorProfile.fee}</p>
+            <p className={`${info_style}`}>EURO {doctorProfile?.fee}</p>
           </div>
           <div>
             <p className={`${heading_style}`}>Consultation Fee (Online)</p>
-            <p className={`${info_style}`}>EURO {doctorProfile.onlineFee}</p>
+            <p className={`${info_style}`}>EURO {doctorProfile?.onlineFee}</p>
           </div>
         </div>
       </div>
@@ -69,11 +71,13 @@ const DocInfo = ({ docProfile_Details, showLocation = true }) => {
           <div className="px-3 py-4 min-md:px-11">
             <p className={`${main_heading}`}>Clinic Location</p>
             <p className={`${heading_style}`}>Address</p>
-            <p className={`${info_style}`}>{doctorProfile.hospitalAffiliations[0].address}</p>
+            <p className={`${info_style}`}>
+              {doctorProfile?.hospitalAffiliations?.[0]?.address}
+            </p>
           </div>
           <div>
             <iframe
-              src={`https://www.google.com/maps?q=${encodeURIComponent(doctorProfile.hospitalAffiliations[0].address)}&output=embed&z=15&t=m`}
+              src={`https://www.google.com/maps?q=${encodeURIComponent(doctorProfile?.hospitalAffiliations?.[0]?.address)}&output=embed&z=15&t=m`}
               className="w-full min-lg:w-[315px]"
               height="152"
               style={{ border: "0", borderRadius: "9px" }}

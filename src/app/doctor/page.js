@@ -12,13 +12,13 @@ import { DocTabs } from "@/components/docProfile/tabs";
 import { authOptions } from "@/lib/auth";
 import { getServerSession } from "next-auth";
 import { redirect } from "next/navigation";
-import { getDoctorProfile } from "@/lib/apiCalls/doctor";
+import { getDoctorProfileSelf } from "@/lib/apiCalls/doctor";
 const Page = async () => {
   const session = await getServerSession(authOptions);
 
   // console.log("Session in doctor profile page:", session);
 
-  const res = await getDoctorProfile();
+  const res = await getDoctorProfileSelf();
   // console.log("Doctor Profile Data:", doctorProfile);
 
   if (!res || !res.success) {

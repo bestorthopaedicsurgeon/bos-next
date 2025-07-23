@@ -67,7 +67,10 @@ export async function GET() {
           id: doc.id,
           title: doc.title,
           name: doc.name,
+          image: doc.image,
+          featured: doc.featured,
           designation: doc.designation, 
+          location: doc.location,
           avgRating:
             doc.reviews.length === 0
               ? null
@@ -82,6 +85,7 @@ export async function GET() {
                   0,
                 ) / doc.reviews.length,
           subspecialities: doc.subspecialities,
+          
         })),
       },
       { status: 200 },
