@@ -9,11 +9,11 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { auCities } from "@/lib/constants/auCities";
 import Image from "next/image";
 import React from "react";
 
 export const HeroSection = () => {
-
   const subspecialities = [
     { value: "UPPER_LIMB", label: "Upper Limb" },
     { value: "LOWER_LIMB", label: "Lower Limb" },
@@ -27,8 +27,8 @@ export const HeroSection = () => {
 
   return (
     <section className="mb-40">
-      <div className="bg-primary text-primary-foreground gap-10 flex mb-8 rounded-4xl px-20 max-md:px-10 py-16 max-lg:justify-center">
-        <div className="max-w-[570px] max-md:max-w-full w-full flex flex-col">
+      <div className="bg-primary text-primary-foreground mb-8 flex gap-10 rounded-4xl px-20 py-16 max-lg:justify-center max-md:px-10">
+        <div className="flex w-full max-w-[570px] flex-col max-md:max-w-full">
           {/* <p className="mb-4">Find your surgeon!</p>
             <div className="bg-primary-foreground mb-4 h-[2px] w-full" /> */}
           <div className="mb-4 inline-block">
@@ -38,15 +38,15 @@ export const HeroSection = () => {
           <h1 className="font-syne mb-4">
             Unlocking Your Body For Optimal Wellness
           </h1>
-          <div className="hidden max-lg:flex max-lg:justify-center max-lg:mx-auto h-[352px] w-[308px]">
-          <Image
-            src="/home/hero-skeleton-image.png"
-            alt="hero"
-            width={500}
-            height={500}
-            className="h-full w-full"
-          />
-        </div>
+          <div className="hidden h-[352px] w-[308px] max-lg:mx-auto max-lg:flex max-lg:justify-center">
+            <Image
+              src="/home/hero-skeleton-image.png"
+              alt="hero"
+              width={500}
+              height={500}
+              className="h-full w-full"
+            />
+          </div>
           <p className="mb-4">
             At our hospital, we are dedicated to providing exceptional medical
             care to our patients and their families. Our experienced team of
@@ -60,7 +60,7 @@ export const HeroSection = () => {
               Learn More
             </Button>
           </div>
-          <div className="flex items-center flex-wrap gap-4 ">
+          <div className="flex flex-wrap items-center gap-4">
             <Image
               src="/home/doctors.png"
               alt="logo"
@@ -74,7 +74,7 @@ export const HeroSection = () => {
             </div>
           </div>
         </div>
-        <div className="mt-[-120px] max-h-[607px] max-w-[456px] w-full max-lg:hidden">
+        <div className="mt-[-120px] max-h-[607px] w-full max-w-[456px] max-lg:hidden">
           <Image
             src="/home/hero-skeleton-image.png"
             alt="hero"
@@ -111,9 +111,13 @@ export const HeroSection = () => {
               <SelectValue placeholder="Location" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="light">Light</SelectItem>
-              <SelectItem value="dark">Dark</SelectItem>
-              <SelectItem value="system">System</SelectItem>
+              <SelectContent>
+                {auCities.map((item) => (
+                  <SelectItem key={item.city} value={item.city}>
+                    {item.city}
+                  </SelectItem>
+                ))}
+              </SelectContent>
             </SelectContent>
           </Select>
           <Button className={"w-36"} variant={"primary"} size={"primary"}>

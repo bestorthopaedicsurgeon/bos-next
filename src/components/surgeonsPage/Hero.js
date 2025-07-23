@@ -9,14 +9,25 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { auCities } from "@/lib/constants/auCities";
 import Image from "next/image";
 import React from "react";
 
 export const HeroSection = () => {
+  const subspecialities = [
+    { value: "UPPER_LIMB", label: "Upper Limb" },
+    { value: "LOWER_LIMB", label: "Lower Limb" },
+    { value: "SPINE", label: "Spine" },
+    { value: "PEDIATRICS", label: "Paediatrics" },
+    { value: "ONCOLOGY", label: "Oncology" },
+    { value: "TRAUMA", label: "Trauma" },
+    { value: "SPORTS", label: "Sports" },
+    { value: "ARTHROPLASTY", label: "Arthroplasty" },
+  ];
   return (
     <section className="mb-20">
-      <div className="bg-primary text-primary-foreground gap-10 flex mb-8 rounded-4xl px-20 max-md:px-10 py-16 max-lg:justify-center">
-        <div className="max-w-[570px] max-md:max-w-full w-full flex flex-col">
+      <div className="bg-primary text-primary-foreground mb-8 flex gap-10 rounded-4xl px-20 py-16 max-lg:justify-center max-md:px-10">
+        <div className="flex w-full max-w-[570px] flex-col max-md:max-w-full">
           {/* <p className="mb-4">Find your surgeon!</p>
             <div className="bg-primary-foreground mb-4 h-[2px] w-full" /> */}
           <div className="mb-4 inline-block">
@@ -26,7 +37,7 @@ export const HeroSection = () => {
           <h1 className="font-syne mb-4">
             Find the Right Orthopedic Specialist
           </h1>
-          <div className="hidden max-lg:flex max-lg:justify-center max-lg:mx-auto h-[352px] w-[308px]">
+          <div className="hidden h-[352px] w-[308px] max-lg:mx-auto max-lg:flex max-lg:justify-center">
             <Image
               src="/surgeons/doctors.png"
               alt="hero"
@@ -48,7 +59,7 @@ export const HeroSection = () => {
               Need Help?
             </Button>
           </div>
-          <div className="flex items-center flex-wrap gap-4 ">
+          <div className="flex flex-wrap items-center gap-4">
             <Image
               src="/home/doctors.png"
               alt="logo"
@@ -62,7 +73,7 @@ export const HeroSection = () => {
             </div>
           </div>
         </div>
-        <div className=" max-h-[607px] max-w-[456px] w-full max-lg:hidden mb-[-64px]">
+        <div className="mb-[-64px] max-h-[607px] w-full max-w-[456px] max-lg:hidden">
           <Image
             src="/surgeons/doctors.png"
             alt="hero"
@@ -74,29 +85,36 @@ export const HeroSection = () => {
       </div>
       <div className="rounded-4xl bg-white px-20 py-8">
         <h1 className="font-syne text-primary">Find A Surgeon</h1>
-        <div className="flex gap-4">
+        <div className="flex gap-4 max-md:flex-wrap">
           <input
             className="border-primary min-h-[56px] w-full rounded-md border px-4 py-3.5"
             placeholder="Email"
           />
           <Select>
             <SelectTrigger className="border-primary h-[52px] min-h-[56px] w-full rounded-md border px-4 py-3.5">
-              <SelectValue placeholder="Theme" />
+              <SelectValue placeholder="Subspecialty" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="light">Light</SelectItem>
-              <SelectItem value="dark">Dark</SelectItem>
-              <SelectItem value="system">System</SelectItem>
+              {subspecialities.map((item) => (
+                <SelectItem key={item.value} value={item.value}>
+                  {item.label}
+                </SelectItem>
+              ))}
+              {/* <SelectItem value="light">Light</SelectItem>
+                    <SelectItem value="dark">Dark</SelectItem>
+                    <SelectItem value="system">System</SelectItem> */}
             </SelectContent>
           </Select>
           <Select>
             <SelectTrigger className="border-primary h-[52px] min-h-[56px] w-full rounded-md border px-4 py-3.5">
-              <SelectValue placeholder="Theme" />
+              <SelectValue placeholder="Location" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="light">Light</SelectItem>
-              <SelectItem value="dark">Dark</SelectItem>
-              <SelectItem value="system">System</SelectItem>
+              {auCities.map((item) => (
+                <SelectItem key={item.city} value={item.city}>
+                  {item.city}
+                </SelectItem>
+              ))}
             </SelectContent>
           </Select>
           <Button className={"w-36"} variant={"primary"} size={"primary"}>
