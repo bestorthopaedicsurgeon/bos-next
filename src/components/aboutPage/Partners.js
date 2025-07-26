@@ -6,7 +6,7 @@ import React from "react";
 export const Partners = () => {
   return (
     <section className="mb-40">
-      <div className="bg-primary relative right-1/2 left-1/2 -mx-[50vw] flex w-screen flex-col items-center justify-center py-16 px-48">
+      <div className="bg-primary flex w-full  flex-col items-center justify-center py-16 px-8">
         <h1 className="font-syne text-primary-foreground">
           Feel Something Wrong With Your Bones?
         </h1>

@@ -19,9 +19,13 @@ const AboutPage = () => {
       <AboutUsSection />
       <WhoWeAre />
       <WhyChooseUs />
+      </div>
       <CtaSectionAbout />
+      <div className="container">
       <FeaturedSurgeonsSection />
+      </div>
       <Partners />
+      <div className="container">
       <CtaSection />
       </div>
       <TestimonialsSection />

@@ -1,6 +1,8 @@
 "use client";
 import { MapPin, Pencil } from "lucide-react";
 import Image from "next/image";
+import Link from "next/link";
+import { useParams } from "next/navigation";
 import React, { useState } from "react";
 const {
   Popover,
@@ -15,7 +17,10 @@ const DocProfile = ({ docProfile_Details }) => {
   const [editValue, setEditValue] = useState("");
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
+  const id = useParams().slug;
 
+
+console.log("this is the doctor profile",doctorProfile)
   // Helper to open popover for a field
   const handleEditClick = (field, value) => {
     setEditField(field);
@@ -173,6 +178,7 @@ const DocProfile = ({ docProfile_Details }) => {
             {5}
           </p>
         </div>
+        <Link href={`/doctor/edit/${id}`}>
         <button className="bg-primary text-secondary flex cursor-pointer items-center gap-4 self-end rounded-full px-8 py-4 text-[12px] font-[500]">
           Edit Profile
           <svg
@@ -200,6 +206,7 @@ const DocProfile = ({ docProfile_Details }) => {
             </defs>
           </svg>
         </button>
+        </Link>
       </div>
     </div>
   );

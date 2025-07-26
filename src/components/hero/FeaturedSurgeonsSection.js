@@ -14,7 +14,7 @@ export const FeaturedSurgeonsSection = async () => {
 
   return (
     <section className="mb-40">
-      <div className="mb-8 flex items-center justify-between">
+      <div className="mb-8 flex max-sm:flex-wrap items-center justify-between">
         <h1 className="font-syne text-primary">
           Featured Orthopaedic Surgeons
         </h1>

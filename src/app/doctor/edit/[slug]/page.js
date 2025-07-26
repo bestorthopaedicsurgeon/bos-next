@@ -1,6 +1,6 @@
 "use client";
 import ProfileHeader from "@/components/reusable/profileHeader";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { profileHeader } from "@/data/profileHeader";
 import WelcomeTxt from "@/components/reusable/welcomeTxt";
 import {
@@ -23,7 +23,7 @@ import {
 } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
 import UsePresenceData from "@/components/ui/slider.jsx";
-import { ChevronLeft, ChevronRight, Edit, Check, Plus } from "lucide-react";
+import { ChevronLeft, ChevronRight, Edit, Check, Plus, X } from "lucide-react";
 // import { Pencil } from "lucide";
 import { Clock3, PencilIcon, User } from "lucide-react";
 import { redirect, useRouter } from "next/navigation";
@@ -34,16 +34,34 @@ import {
 } from "@/components/ui/popover";
 import EditableEntry from "@/components/registration/EditableEntry";
 import { toast } from "sonner";
-const Page = () => {
+import { auCities } from "@/lib/constants/auCities";
+import { useSession } from "next-auth/react";
+
+const Page = ({ params }) => {
+  const { data: session } = useSession();
+  const doctorId = session?.user?.doctorId;
   const router = useRouter();
+  const [slug, setSlug] = useState(null);
+  
   const [selectedSpecialties, setSelectedSpecialties] = useState([]);
   const [form, setForm] = useState({
+    title: "",
+    fname: "",
+    lname: "",
+    exp: "",
+    desig: "",
+    about_self: "",
+    location: "",
     qualifications: [],
     awardsPublications: [],
     registrationsAssociations: [],
     hospitalAffiliation: [],
   });
-  const [inputs, setInputs] = useState();
+  const [inputs, setInputs] = useState({
+    qualifications: "",
+    awardsPublications: "",
+    registrationsAssociations: "",
+  });
 
   // Qualifications as tags
   const [qualifications, setQualifications] = useState([]); // array of strings
@@ -69,8 +87,157 @@ const Page = () => {
   });
   const [practiceError, setPracticeError] = useState("");
   const [loading, setLoading] = useState(false);
+  const [dataLoading, setDataLoading] = useState(true);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
+
+  const [customSpecialties, setCustomSpecialties] = useState([]);
+  const [customInput, setCustomInput] = useState("");
+
+  // Extract slug from params
+  useEffect(() => {
+    const getSlug = async () => {
+      const resolvedParams = await params;
+      setSlug(resolvedParams.slug);
+    };
+    getSlug();
+  }, [params]);
+
+  // Fetch existing doctor data
+  useEffect(() => {
+    const fetchDoctorData = async () => {
+      if (!slug) return;
+      
+      try {
+        setDataLoading(true);
+        const res = await fetch(`/api/doctors/${slug}`, {
+          method: "GET",
+          headers: { "Content-Type": "application/json" },
+        });
+        
+        if (res.ok) {
+          const result = await res.json();
+          if (result.success && result.data) {
+            const doctorData = result.data;
+            console.log("Fetched doctor data:", doctorData);
+            
+            // Parse name into first and last name
+            const nameParts = doctorData.name ? doctorData.name.split(" ") : ["", ""];
+            const firstName = nameParts[0] || "";
+            const lastName = nameParts.slice(1).join(" ") || "";
+            
+            // Pre-populate form fields
+            setForm({
+              title: doctorData.title || "",
+              fname: firstName,
+              lname: lastName,
+              exp: doctorData.experience ? doctorData.experience.toString() : "",
+              desig: doctorData.designation || "",
+              about_self: doctorData.about || "",
+              location: doctorData.location || "",
+              qualifications: doctorData.qualifications || [],
+              awardsPublications: doctorData.awardsPublications || [],
+              registrationsAssociations: doctorData.registrationsAssociations || [],
+              hospitalAffiliation: doctorData.hospitalAffiliations || [],
+            });
+
+            // Set subspecialties
+            if (doctorData.subspecialities && Array.isArray(doctorData.subspecialities)) {
+              const mappedSpecialties = doctorData.subspecialities.map(specialty => {
+                const found = subspecialities.find(s => s.label === specialty);
+                if (found) {
+                  return found;
+                } else {
+                  // Handle custom specialties
+                  return { value: "Other", label: specialty };
+                }
+              });
+              setSelectedSpecialties(mappedSpecialties);
+              
+              // Extract custom specialties
+              const customSpecs = doctorData.subspecialities.filter(specialty => 
+                !subspecialities.some(s => s.label === specialty)
+              );
+              setCustomSpecialties(customSpecs);
+            }
+
+            // Set practice entries
+            if (doctorData.practices && Array.isArray(doctorData.practices)) {
+              setPracticeEntries(doctorData.practices);
+            }
+
+            // Set hospital affiliations
+            if (doctorData.hospitalAffiliations && Array.isArray(doctorData.hospitalAffiliations)) {
+              setHospitalAffiliations(doctorData.hospitalAffiliations);
+            }
+
+            // Set doctor availability if it exists
+            if (doctorData.DoctorAvailabilityTime && Array.isArray(doctorData.DoctorAvailabilityTime)) {
+              setDoctorAvailability(doctorData.DoctorAvailabilityTime);
+              
+              // Map to schedule times format
+              const scheduleMap = {};
+              doctorData.DoctorAvailabilityTime.forEach(avail => {
+                const dayIndex = schedule_date.findIndex(d => dayMap[d.day] === avail.dayOfWeek);
+                if (dayIndex !== -1) {
+                  scheduleMap[dayIndex] = {
+                    startTime: avail.startTime,
+                    endTime: avail.endTime,
+                    location: avail.location === 'CLINIC' ? avail.clinicName : avail.location
+                  };
+                }
+              });
+              
+              // Update schedule times with existing data
+              setScheduleTimes(prev => prev.map((item, idx) => ({
+                ...item,
+                ...scheduleMap[idx]
+              })));
+            }
+            
+          } else {
+            console.error("No doctor profile found");
+            toast.error("No doctor profile found");
+          }
+        } else {
+          console.error("Failed to fetch doctor data");
+          toast.error("Failed to fetch doctor data");
+        }
+      } catch (error) {
+        console.error("Error fetching doctor data:", error);
+        toast.error("Error loading doctor data");
+      } finally {
+        setDataLoading(false);
+      }
+    };
+
+    fetchDoctorData();
+  }, [slug]);
+
+  const handleAddCustomSpecialty = () => {
+    const trimmed = customInput.trim();
+    if (trimmed !== "" && !customSpecialties.includes(trimmed)) {
+      const updatedCustom = [...customSpecialties, trimmed];
+      setCustomSpecialties(updatedCustom);
+      setCustomInput("");
+      setSelectedSpecialties([
+        ...selectedSpecialties.filter((s) => s.value !== "Other"),
+        ...updatedCustom.map((label) => ({ value: "Other", label })),
+      ]);
+    }
+  };
+
+  const handleRemoveCustomSpecialty = (labelToRemove) => {
+    const updatedCustom = customSpecialties.filter(
+      (label) => label !== labelToRemove,
+    );
+    setCustomSpecialties(updatedCustom);
+    setSelectedSpecialties([
+      ...selectedSpecialties.filter(
+        (s) => !(s.value === "Other" && s.label === labelToRemove),
+      ),
+    ]);
+  };
 
   const subspecialities = [
     { value: "UPPER_LIMB", label: "Upper Limb" },
@@ -84,24 +251,40 @@ const Page = () => {
     { value: "Other", label: "Other" },
   ];
 
-  // const handleInputChange = (e) => {
-  //   const { name, value, type, files } = e.target;
-  //   setForm((prev) => ({
-  //     ...prev,
-  //     [name]: type === "file" ? files[0] : value,
-  //   }));
-  // };
-
   const handleInputChange = (field) => (e) => {
-    setForm((prev) => ({ ...prev, [field]: e.target.value }));
+    const value = field === "image" ? e.target.files?.[0] : e.target.value;
+    setForm((prev) => ({ ...prev, [field]: value }));
   };
 
   const handleMultiInputChange = (field) => (e) => {
     setInputs((prev) => ({ ...prev, [field]: e.target.value }));
   };
 
+  const handleImageUpload = async () => {
+    if (!form.image) return alert("Please upload an image");
+
+    const formData = new FormData();
+    formData.append("file", form.image);
+    formData.append("doctorId", doctorId);
+
+    const res = await fetch("/api/doctors/upload-image", {
+      method: "POST",
+      body: formData,
+    });
+
+    const result = await res.json();
+
+    if (!res.ok) return alert("Upload failed");
+
+    console.log("Public URL:", result.url);
+    return true;
+
+    // optionally: update doctor profile with the image URL
+    // await updateDoctor({ imageUrl: result.url });
+  };
+
   const handleKeyDown = (field) => (e) => {
-    if (e.key === "Enter" && inputs[field].trim()) {
+    if (e.key === "Enter" && inputs[field]?.trim()) {
       e.preventDefault();
       console.log(inputs);
       console.log("form", form);
@@ -176,109 +359,11 @@ const Page = () => {
     setPracticeEntries((prev) => prev.filter((_, i) => i !== idx));
   };
 
-  const handleRegister = async (e) => {
+  const handleUpdate = async (e) => {
     e.preventDefault();
-    // setError("");
-    // setSuccess("");
-
-    // Validation
-    // if (!form.title) return setError("Please select your title.");
-    // if (!form.fname.trim()) return setError("First name is required.");
-    // if (!form.lname.trim()) return setError("Last name is required.");
-    // if (isNaN(parseInt(form.exp)))
-    //   return setError("Please select your years of experience.");
-    // if (!form.desig) return setError("Please select your designation.");
-    // if (!form.prac_name.trim()) return setError("Practice name is required.");
-    // if (!form.clinic_name.trim())
-    //   return setError("Clinic address is required.");
-    // if (!form.post_code.trim())
-    //   return setError("Suburb/State/Postcode is required.");
-    // if (!form.phone.trim()) return setError("Phone number is required.");
-    // if (selectedSpecialties.length === 0)
-    //   return setError("Please select at least one subspeciality.");
-    // if (!form.about_self.trim())
-    //   return setError("Please tell us about yourself.");
-    // if (!form.reg_assoc.trim())
-    //   return setError("Registrations & Associations are required.");
-    // if (!form.qual.trim()) return setError("Qualifications are required.");
-    // if (!form.awd_pub.trim())
-    //   return setError("Awards & Publications are required.");
-    // if (!form.hosp_aff)
-    //   return setError("Please select your hospital affiliation.");
-    // if (!form.email.trim()) return setError("Email is required.");
-    // // Simple email regex
-    // if (!/^\S+@\S+\.\S+$/.test(form.email))
-    //   return setError("Please enter a valid email address.");
-    // if (!form.password) return setError("Password is required.");
-    // if (form.password.length < 6)
-    //   return setError("Password must be at least 6 characters.");
-    // const termsCheckbox = document.getElementById("terms");
-    // if (!termsCheckbox || !termsCheckbox.checked)
-    //   return setError("You must accept the terms.");
 
     setLoading(true);
     try {
-      // Helper to get day of week string from a date
-      // function getDayOfWeekString(year, month, day) {
-      //   const days = [
-      //     "SUNDAY",
-      //     "MONDAY",
-      //     "TUESDAY",
-      //     "WEDNESDAY",
-      //     "THURSDAY",
-      //     "FRIDAY",
-      //     "SATURDAY",
-      //   ];
-      //   return days[new Date(year, month, day).getDay()];
-      // }
-
-      // Build DoctorAvailabilityDays (all selected days, as strings: 'YYYY-MM-DD')
-      let DoctorAvailabilityDays = [];
-      let DoctorAvailability = [];
-
-      // Object.entries(availability).forEach(([monthKey, types]) => {
-      //   const [year, month] = monthKey.split("-").map(Number);
-      //   Object.entries(types).forEach(([type, days]) => {
-      //     days.forEach((day) => {
-      //       // DoctorAvailabilityDays: ISO string for each selected day
-      //       const dateObj = new Date(year, month, day);
-      //       DoctorAvailabilityDays.push(dateObj.toISOString().split("T")[0]);
-      //       // DoctorAvailability: slot for each day (example: 09:00-09:30, location from type)
-      //       DoctorAvailability.push({
-      //         dayOfWeek: getDayOfWeekString(year, month, day),
-      //         startTime: "09:00", // You can make this dynamic if needed
-      //         endTime: "09:30",
-      //         location: type.toUpperCase(), // 'ONLINE' or 'CLINIC'
-      //         clinicName: type === "clinic" ? form.clinic_name : null,
-      //       });
-      //     });
-      //   });
-      // });
-
-      // Prepare doctor registration data
-      // const data = {
-      //   // email: form.email,
-      //   // password: form.password,
-      //   name: form.fname && form.lname && `${form.fname} ${form.lname}`,
-      //   title: form.title,
-      //   phone: form.phone,
-      //   experience: parseInt(form.exp),
-      //   designation: form.desig,
-      //   practiceName: form.prac_name,
-      //   clinicAddress: form.clinic_name,
-      //   state: form.post_code,
-      //   practicePhone: form.phone,
-      //   subspecialities: selectedSpecialties.map((s) => s.label),
-      //   about: form.about_self,
-      //   registrationsAssociations: form.registrationsAssociations,
-      //   qualifications: form.qualifications, // send as array
-      //   awardsPublications: form.awardsPublications,
-      //   hospitalAffiliations: hospitalAffiliations,
-      //   practices: practiceEntries,
-      //   // DoctorAvailability: { create: DoctorAvailability }, // <-- wrap in create
-      //   // DoctorAvailabilityDays,
-      // };
-
       const data = {};
 
       // Add only if value is non-empty / defined
@@ -290,6 +375,7 @@ const Page = () => {
       if (form.exp) data.experience = parseInt(form.exp);
       if (form.desig) data.designation = form.desig;
       if (form.about_self) data.about = form.about_self;
+      if (form.location) data.location = form.location;
 
       // Arrays: check if defined AND has at least one item
       if (
@@ -330,58 +416,48 @@ const Page = () => {
       if (Array.isArray(practiceEntries) && practiceEntries.length > 0) {
         data.practices = practiceEntries;
       }
-      
+
       if (Array.isArray(doctorAvailability) && doctorAvailability.length > 0) {
         data.doctorAvailability = doctorAvailability;
       }
-      console.log("data", data);
-      console.log(form);
+
+      // Add the doctor ID for the specific doctor being edited
+      if (slug) {
+        data.id = parseInt(slug);
+      }
+      
+      console.log("Updating with data:", data);
+      
       const res = await fetch("/api/doctors", {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(data),
       });
+      
       if (res.ok) {
-        const data = await res.json();
-        // setSuccess("Registration successful!");
-        // // Optionally redirect or clear form
-        // // Reset form and availability after successful registration
-        // setForm({
-        //   title: "",
-        //   pic: null,
-        //   fname: "",
-        //   lname: "",
-        //   exp: "",
-        //   desig: "",
-        //   prac_name: "",
-        //   clinic_name: "",
-        //   post_code: "",
-        //   phone: "",
-        //   about_self: "",
-        //   reg_assoc: "",
-        //   qual: "",
-        //   awd_pub: "",
-        //   hosp_aff: "",
-        //   email: "",
-        //   password: "",
-        // });
-        // setSelectedSpecialties([]);
-        // // Reset availability to empty for current month
-        // const base = {};
-        // const year = today.getFullYear();
-        // const month = today.getMonth();
-        // calendar.forEach((item) => {
-        //   base[`${year}-${month}`] = base[`${year}-${month}`] || {};
-        //   base[`${year}-${month}`][item.type] = [];
-        // });
-        // setAvailability(base);
-        console.log("Registration successful:", data);
-        router.push("/doctor");
+        const result = await res.json();
+        console.log("Update successful:", result);
+        toast.success("Profile updated successfully!");
+        
+        // Handle image upload if there's an image
+        if (form.image) {
+          const imageUploaded = await handleImageUpload();
+          if (imageUploaded) {
+            console.log("Image uploaded successfully");
+          } else {
+            console.error("Image upload failed");
+          }
+        }
+        
+        router.push(`/doctor/${slug}`);
       } else {
-        setError(result.error || "Registration failed");
+        const result = await res.json();
+        setError(result.error || "Update failed");
+        toast.error(result.error || "Update failed");
       }
     } catch (err) {
       setError("Something went wrong");
+      toast.error("Something went wrong");
       console.log(err);
     } finally {
       setLoading(false);
@@ -565,12 +641,25 @@ const Page = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [scheduleTimes]);
 
+  if (dataLoading) {
+    return (
+      <div className="container m-auto">
+        <div className="flex items-center justify-center min-h-screen">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#83C5BE] mx-auto mb-4"></div>
+            <p className="text-lg text-gray-600">Loading your profile...</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="container m-auto">
       {profileHeader.createProfile.map((data) => (
         <ProfileHeader
           key={data.heading}
-          heading={data.heading}
+          heading={"Edit Profile"}
           step1={data.step1}
           step2={data.step2}
           step3={data.step3}
@@ -579,8 +668,8 @@ const Page = () => {
       {/*need to check size */}
       {profileHeader.welcome.map((data, key) => (
         <div key={key} className="mt-[77px] text-center">
-          <h3 className="text-(--primary)">{data.heading}</h3>
-          <span>{data.subTxt}</span>
+          <h3 className="text-(--primary)">Update Your Profile</h3>
+          <span>Edit your professional information and availability</span>
         </div>
       ))}
 
@@ -612,7 +701,7 @@ const Page = () => {
             name="pic"
             id="pic"
             className="hidden"
-            onChange={handleInputChange("pic")}
+            onChange={handleInputChange("image")}
           />
           <label
             htmlFor="pic"
@@ -686,6 +775,27 @@ const Page = () => {
             <option value="GENERAL">GENERAL</option>
           </select>
         </div>
+        <div className={formField}>
+          <label htmlFor="location">City</label>
+          <select
+            name="location"
+            id="location"
+            className={dropDown}
+            style={selectStyle}
+            value={form.location}
+            placeholder="Select your city"
+            onChange={handleInputChange("location")}
+          >
+            <option value="">Select your city</option>
+            {auCities.map((cityObj, index) => {
+              return (
+                <option key={index} value={cityObj.city}>
+                  {cityObj.city}
+                </option>
+              );
+            })}
+          </select>
+        </div>
         {/* Practice/Clinic Entries Tag Box */}
         <div className={`${formField} col-span-2`}>
           <label>Practice/Clinic Details</label>
@@ -714,25 +824,44 @@ const Page = () => {
                 scrollbarColor: "#2F797B #D9D9D9",
               }}
             >
-              {subspecialities.map((specialty) => {
+              {subspecialities.map((specialty, idx) => {
                 if (specialty.value === "Other") {
                   return (
-                    <div key="other" className="mt-2">
-                      <input
-                        type="text"
-                        placeholder="Enter other specialty"
-                        className="w-full rounded border border-gray-300 px-3 py-2 text-sm"
-                        onChange={(e) => {
-                          const value = e.target.value;
-                          const updated = selectedSpecialties.filter(
-                            (s) => s.value !== "Other",
-                          );
-                          if (value.trim() !== "") {
-                            updated.push({ value: "Other", label: value });
-                          }
-                          setSelectedSpecialties(updated);
-                        }}
-                      />
+                    <div key={idx} className="mt-2 space-y-2">
+                      {/* Show added custom specialties above the input */}
+                      {customSpecialties.map((label, idx) => (
+                        <div
+                          key={idx}
+                          className="flex items-center justify-between rounded border px-3 py-2 text-sm shadow-sm"
+                        >
+                          <span>{label}</span>
+                          <button
+                            type="button"
+                            onClick={() => handleRemoveCustomSpecialty(label)}
+                            className="text-red-500 hover:text-red-700"
+                          >
+                            <X size={18} />
+                          </button>
+                        </div>
+                      ))}
+
+                      {/* Input field + Add button */}
+                      <div className="flex gap-2">
+                        <input
+                          type="text"
+                          value={customInput}
+                          onChange={(e) => setCustomInput(e.target.value)}
+                          placeholder="Enter other specialty"
+                          className="w-full rounded border border-gray-300 px-3 py-2 text-sm"
+                        />
+                        <button
+                          type="button"
+                          onClick={handleAddCustomSpecialty}
+                          className="rounded bg-blue-500 p-2 text-white hover:bg-blue-600"
+                        >
+                          <Plus size={18} />
+                        </button>
+                      </div>
                     </div>
                   );
                 }
@@ -745,7 +874,10 @@ const Page = () => {
                       checked={selectedSpecialties.some(
                         (s) => s.value === specialty.value,
                       )}
-                      onChange={() => handleSpecialtyChange(specialty)}
+                      onChange={() => {
+                        console.log(selectedSpecialties);
+                        handleSpecialtyChange(specialty);
+                      }}
                       className="hidden"
                     />
                     <label
@@ -996,7 +1128,10 @@ const Page = () => {
                 </div>
                 {/* Calendar for online and clinic */}
                 <div className="mt-6 flex flex-col space-y-4 max-sm:gap-[30px]">
-                  {["online", "clinic"].map((type) => {
+                  {[
+                    "online",
+                    ...practiceEntries.map((entry) => entry.practiceName),
+                  ].map((type) => {
                     const selectedDays = getSelectedDays(type);
                     const meta = getMeta(type);
                     const days = getDaysInMonth(currentYear, currentMonth);
@@ -1101,9 +1236,12 @@ const Page = () => {
                           className="border rounded px-2 py-1"
                         >
                           <option value="ONLINE">Online</option>
-                          {hospitalAffiliations && hospitalAffiliations.map((affil, idx) => (
-                            <option key={affil.name + idx} value={affil.name}>{affil.name}</option>
-                          ))}
+                          {practiceEntries &&
+                            practiceEntries.map((practice, idx) => (
+                              <option key={idx} value={practice.practiceName}>
+                                {practice.practiceName}
+                              </option>
+                            ))}
                         </select>
                       </div>
                     </div>
@@ -1137,14 +1275,14 @@ const Page = () => {
       <div className="flex items-center justify-center">
         <button
           className="btn_fill col-span-2 m-auto mt-10 mb-10 flex cursor-pointer justify-center px-14 py-2 max-sm:w-full"
-          onClick={handleRegister}
-          disabled={loading}
+          onClick={handleUpdate}
+          disabled={loading || dataLoading}
         >
-          {loading ? "Registering..." : "Confirm Registration"}
+          {loading ? "Updating..." : dataLoading ? "Loading..." : "Update Profile"}
         </button>
         <button
           className="btn_fill col-span-2 m-auto mt-10 mb-10 flex cursor-pointer justify-center px-14 py-2 max-sm:w-full"
-          onClick={() => router.push("/doctor")}
+          onClick={() => router.push(`/doctor/${slug}`)}
           disabled={loading}
         >
           Complete Later

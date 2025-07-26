@@ -26,7 +26,7 @@ export const HeroSection = () => {
           <h1 className="font-syne mb-4">
             Find the Right Orthopedic Specialist
           </h1>
-          <div className="hidden max-lg:flex max-lg:justify-center max-lg:mx-auto h-[352px] w-[308px]">
+          <div className="hidden max-lg:flex max-lg:justify-center max-lg:mx-auto h-[352px] w-full max-w-[308px]">
             <Image
               src="/about/intro.png"
               alt="hero"
