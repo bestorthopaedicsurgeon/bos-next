@@ -9,7 +9,7 @@ import React from "react";
 
 export const FeaturedSurgeonsSection = async () => {
   const res = await getFeaturedDoctors();
-  const featuredDoctorsApi = res.success ? res.data : null;
+  const featuredDoctorsApi = res?.success ? res.data : null;
   console.log("Featured Doctors:", featuredDoctorsApi);
 
   return (
@@ -34,7 +34,7 @@ export const FeaturedSurgeonsSection = async () => {
         {/* <div className="bg-primary text-primary-foreground flex cursor-pointer items-center gap-2 rounded-full px-10 py-5 text-sm"></div> */}
       </div>
       <div className="grid grid-cols-1 gap-8 lg:grid-cols-2">
-        {featuredDoctorsApi.map((doctor, index) => (
+        {featuredDoctorsApi?.map((doctor, index) => (
           <DoctorCard key={index} {...doctor} />
         ))}
       </div>

@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import { editAppointment } from "@/data/editAppointment";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import AvailabilityCalendar from "@/components/calendar";
+import { DialogTitle } from "@radix-ui/react-dialog";
 
 const formField = "flex flex-col gap-2 max-md:col-span-2";
 const inputField =
@@ -285,6 +286,7 @@ const Page = () => {
         className="!w-auto"
       >
         <DialogContent className="bg-white p-0">
+          <DialogTitle></DialogTitle>
           <div className="!m-0 !rounded-none bg-white p-4 !shadow-none">
             <AvailabilityCalendar className="!m-w-sm !m-0 !border-none !bg-white !p-0" />
           </div>
