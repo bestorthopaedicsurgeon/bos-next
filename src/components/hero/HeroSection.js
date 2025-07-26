@@ -1,3 +1,4 @@
+"use client";
 import InputField from "@/components/reusable/inputField";
 import SelectField from "@/components/reusable/selectField";
 import { Button } from "@/components/ui/button";
@@ -11,6 +12,7 @@ import {
 } from "@/components/ui/select";
 import { auCities } from "@/lib/constants/auCities";
 import Image from "next/image";
+import { redirect } from "next/navigation";
 import React from "react";
 
 export const HeroSection = () => {
@@ -56,9 +58,16 @@ export const HeroSection = () => {
             <Button variant={"primaryForeground"} size={"primaryForeground"}>
               Find Your Doctor
             </Button>
-            <Button variant={"primaryForeground"} size={"primaryForeground"}>
-              Learn More
-            </Button>
+            <div
+              onClick={() => {
+                redirect("/about");
+              }}
+              className="cursor-pointer"
+            >
+              <Button variant={"primaryForeground"} size={"primaryForeground"}>
+                Learn More
+              </Button>
+            </div>
           </div>
           <div className="flex flex-wrap items-center gap-4">
             <Image
