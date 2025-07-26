@@ -18,7 +18,7 @@ const ProfileDropdown = () => {
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <div className="bg-primary cursor-pointer rounded-full p-3">
-          <User className="text-primary-foreground h-8 w-8" />
+          <User className="text-primary-foreground h-8 w-8 max-sm:h-5 max-sm:w-5" />
         </div>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">

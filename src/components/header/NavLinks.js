@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
-export function NavLinks() {
+export function NavLinks({ isMobile = false }) {
   const pathname = usePathname();
 
   const navLinks = [
@@ -24,6 +24,10 @@ export function NavLinks() {
             pathname === link.href
               ? "text-primary font-bold"
               : "hover:text-primary/90 text-gray-700"
+          } ${
+            isMobile 
+              ? "block px-6 py-3 text-lg border-b border-gray-100 last:border-b-0 hover:bg-gray-50" 
+              : ""
           }`}
         >
           {link.label}
