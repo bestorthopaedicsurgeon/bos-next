@@ -21,13 +21,16 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 //   },
 // ];
 
-export default function HospitalAffiliations({hospitals}) {
-  console.log('hospitals',hospitals);
+export default function HospitalAffiliations({ hospitals }) {
+  console.log("hospitals", hospitals);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [animateDirection, setAnimateDirection] = useState(null);
 
+  if (!hospitals || hospitals.length === 0) {
+    return <div className=""></div>;
+  }
   // Show 2 hospitals at a time
-  const visibleHospitals = hospitals.slice(currentIndex, currentIndex + 2);
+  const visibleHospitals = hospitals?.slice(currentIndex, currentIndex + 2);
 
   const nextSlide = () => {
     if (currentIndex + 2 < hospitals.length) {

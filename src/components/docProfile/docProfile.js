@@ -1,8 +1,12 @@
-"use client"
+"use client";
 import { MapPin, Pencil } from "lucide-react";
 import Image from "next/image";
 import React, { useState } from "react";
-const { Popover, PopoverTrigger, PopoverContent } = require("@/components/ui/popover");
+const {
+  Popover,
+  PopoverTrigger,
+  PopoverContent,
+} = require("@/components/ui/popover");
 
 const DocProfile = ({ docProfile_Details }) => {
   const [data, setData] = useState(docProfile_Details);
@@ -56,12 +60,15 @@ const DocProfile = ({ docProfile_Details }) => {
   const renderEditable = (label, field, value, isRoot = false) => (
     <div className="flex items-center gap-2">
       <span>{value}</span>
-      <Popover open={editField === field} onOpenChange={(open) => {
-        if (!open) setEditField(null);
-      }}>
+      <Popover
+        open={editField === field}
+        onOpenChange={(open) => {
+          if (!open) setEditField(null);
+        }}
+      >
         <PopoverTrigger asChild>
           <button
-            className="ml-1 p-1 hover:bg-gray-100 rounded"
+            className="ml-1 rounded p-1 hover:bg-gray-100"
             onClick={() => handleEditClick(field, value)}
             aria-label={`Edit ${label}`}
             type="button"
@@ -71,23 +78,31 @@ const DocProfile = ({ docProfile_Details }) => {
         </PopoverTrigger>
         <PopoverContent className="w-64">
           <div className="flex flex-col gap-2">
-            <label className="text-primary text-sm font-medium">Edit {label}</label>
+            <label className="text-primary text-sm font-medium">
+              Edit {label}
+            </label>
             <input
               type="text"
-              className="border border-primary rounded-md p-2"
+              className="border-primary rounded-md border p-2"
               value={editValue}
-              onChange={e => setEditValue(e.target.value)}
+              onChange={(e) => setEditValue(e.target.value)}
               disabled={loading}
             />
             <button
-              className="bg-primary text-white rounded px-3 py-1 mt-2 disabled:opacity-60"
+              className="bg-primary mt-2 rounded px-3 py-1 text-white disabled:opacity-60"
               onClick={handleSave}
               disabled={loading || !editValue}
               type="button"
             >
               {loading ? "Saving..." : "Save"}
             </button>
-            {message && <span className={`text-xs ${message === "Saved!" ? "text-green-600" : "text-red-600"}`}>{message}</span>}
+            {message && (
+              <span
+                className={`text-xs ${message === "Saved!" ? "text-green-600" : "text-red-600"}`}
+              >
+                {message}
+              </span>
+            )}
           </div>
         </PopoverContent>
       </Popover>
@@ -109,8 +124,7 @@ const DocProfile = ({ docProfile_Details }) => {
           />
         </div>
         <div className="flex flex-col flex-wrap gap-2 min-lg:w-[200px]">
-          <h3 className="font-[500]">
-            {renderEditable(
+          {/* {renderEditable(
               "Name",
               "name",
               `${doctorProfile?.title ? `${doctorProfile?.title}. ` : ""}${data.name}`,
@@ -126,7 +140,23 @@ const DocProfile = ({ docProfile_Details }) => {
           <div className="flex items-center gap-3 text-[13px]">
             <MapPin className="text-primary h-5 w-5" />
             {renderEditable("Clinic Address", "clinicAddress", doctorProfile?.location)}
-          </div>
+          </div> */}
+          <h3 className="font-[500]">
+            {`${doctorProfile?.title ? `${doctorProfile?.title}. ` : ""}${data.name}`}
+          </h3>
+          <p className="text-primary text-[16px] font-[700]">
+            {doctorProfile?.designation}
+          </p>
+          <p className="text-primary text-[16px] font-[700]">
+            {doctorProfile?.qualification}
+          </p>
+          {doctorProfile?.location && (
+            <p className="flex items-center gap-3 text-[13px]">
+              {" "}
+              <MapPin className="text-primary h-5 w-5" />
+              {doctorProfile?.location}, Australia
+            </p>
+          )}
           <p className="flex items-center gap-3 text-[13px]">
             <svg
               width="20"

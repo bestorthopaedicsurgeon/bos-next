@@ -23,7 +23,7 @@ import {
 } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
 import UsePresenceData from "@/components/ui/slider.jsx";
-import { ChevronLeft, ChevronRight, Edit, Check, Plus } from "lucide-react";
+import { ChevronLeft, ChevronRight, Edit, Check, Plus, X } from "lucide-react";
 // import { Pencil } from "lucide";
 import { Clock3, PencilIcon, User } from "lucide-react";
 import { redirect, useRouter } from "next/navigation";
@@ -76,6 +76,34 @@ const Page = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
+
+  const [customSpecialties, setCustomSpecialties] = useState([]);
+  const [customInput, setCustomInput] = useState("");
+
+  const handleAddCustomSpecialty = () => {
+    const trimmed = customInput.trim();
+    if (trimmed !== "" && !customSpecialties.includes(trimmed)) {
+      const updatedCustom = [...customSpecialties, trimmed];
+      setCustomSpecialties(updatedCustom);
+      setCustomInput("");
+      setSelectedSpecialties([
+        ...selectedSpecialties.filter((s) => s.value !== "Other"),
+        ...updatedCustom.map((label) => ({ value: "Other", label })),
+      ]);
+    }
+  };
+
+  const handleRemoveCustomSpecialty = (labelToRemove) => {
+    const updatedCustom = customSpecialties.filter(
+      (label) => label !== labelToRemove,
+    );
+    setCustomSpecialties(updatedCustom);
+    setSelectedSpecialties([
+      ...selectedSpecialties.filter(
+        (s) => !(s.value === "Other" && s.label === labelToRemove),
+      ),
+    ]);
+  };
 
   const subspecialities = [
     { value: "UPPER_LIMB", label: "Upper Limb" },
@@ -525,6 +553,7 @@ const Page = () => {
   function toggleDay(type, day) {
     if (!isEditing) return;
     const key = `${currentYear}-${currentMonth}`;
+    console.log("Toggling", availability);
     setAvailability((prev) => {
       const monthData = { ...(prev[key] || {}) };
       const days = new Set(monthData[type] || []);
@@ -773,25 +802,44 @@ const Page = () => {
                 scrollbarColor: "#2F797B #D9D9D9",
               }}
             >
-              {subspecialities.map((specialty) => {
+              {subspecialities.map((specialty, idx) => {
                 if (specialty.value === "Other") {
                   return (
-                    <div key="other" className="mt-2">
-                      <input
-                        type="text"
-                        placeholder="Enter other specialty"
-                        className="w-full rounded border border-gray-300 px-3 py-2 text-sm"
-                        onChange={(e) => {
-                          const value = e.target.value;
-                          const updated = selectedSpecialties.filter(
-                            (s) => s.value !== "Other",
-                          );
-                          if (value.trim() !== "") {
-                            updated.push({ value: "Other", label: value });
-                          }
-                          setSelectedSpecialties(updated);
-                        }}
-                      />
+                    <div key={idx} className="mt-2 space-y-2">
+                      {/* Show added custom specialties above the input */}
+                      {customSpecialties.map((label, idx) => (
+                        <div
+                          key={idx}
+                          className="flex items-center justify-between rounded border px-3 py-2 text-sm shadow-sm"
+                        >
+                          <span>{label}</span>
+                          <button
+                            type="button"
+                            onClick={() => handleRemoveCustomSpecialty(label)}
+                            className="text-red-500 hover:text-red-700"
+                          >
+                            <X size={18} />
+                          </button>
+                        </div>
+                      ))}
+
+                      {/* Input field + Add button */}
+                      <div className="flex gap-2">
+                        <input
+                          type="text"
+                          value={customInput}
+                          onChange={(e) => setCustomInput(e.target.value)}
+                          placeholder="Enter other specialty"
+                          className="w-full rounded border border-gray-300 px-3 py-2 text-sm"
+                        />
+                        <button
+                          type="button"
+                          onClick={handleAddCustomSpecialty}
+                          className="rounded bg-blue-500 p-2 text-white hover:bg-blue-600"
+                        >
+                          <Plus size={18} />
+                        </button>
+                      </div>
                     </div>
                   );
                 }
@@ -804,7 +852,10 @@ const Page = () => {
                       checked={selectedSpecialties.some(
                         (s) => s.value === specialty.value,
                       )}
-                      onChange={() => handleSpecialtyChange(specialty)}
+                      onChange={() => {
+                        console.log(selectedSpecialties);
+                        handleSpecialtyChange(specialty);
+                      }}
                       className="hidden"
                     />
                     <label
@@ -837,8 +888,8 @@ const Page = () => {
                 scrollbarColor: "#2F797B #D9D9D9",
               }}
             >
-              {selectedSpecialties.map((specialty) => (
-                <div key={specialty.value}>
+              {selectedSpecialties.map((specialty, idx) => (
+                <div key={idx}>
                   <label
                     className={`flex cursor-pointer items-center rounded-full py-2 select-none`}
                   >
@@ -1062,7 +1113,10 @@ const Page = () => {
                 </div>
                 {/* Calendar for online and clinic */}
                 <div className="mt-6 flex flex-col space-y-4 max-sm:gap-[30px]">
-                  {["online", "clinic"].map((type) => {
+                  {[
+                    "online",
+                    ...practiceEntries.map((entry) => entry.practiceName),
+                  ].map((type) => {
                     const selectedDays = getSelectedDays(type);
                     const meta = getMeta(type);
                     const days = getDaysInMonth(currentYear, currentMonth);
@@ -1167,10 +1221,10 @@ const Page = () => {
                           className="rounded border px-2 py-1"
                         >
                           <option value="ONLINE">Online</option>
-                          {hospitalAffiliations &&
-                            hospitalAffiliations.map((affil, idx) => (
-                              <option key={affil.name + idx} value={affil.name}>
-                                {affil.name}
+                          {practiceEntries &&
+                            practiceEntries.map((practice, idx) => (
+                              <option key={idx} value={practice.practiceName}>
+                                {practice.practiceName}
                               </option>
                             ))}
                         </select>

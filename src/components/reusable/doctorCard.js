@@ -38,7 +38,7 @@ const DoctorCard = ({
             width={24}
             height={24}
           />
-          <p className="text-lg text-neutral-800">
+          <p className="text-lg text-neutral-800 max-w-64">
             {subspecialities[0].split(", ")[0]}
           </p>
         </div>

@@ -112,8 +112,8 @@ export const HeroSection = () => {
             </SelectTrigger>
             <SelectContent>
               <SelectContent>
-                {auCities.map((item) => (
-                  <SelectItem key={item.city} value={item.city}>
+                {auCities.map((item, index) => (
+                  <SelectItem key={index} value={item.city}>
                     {item.city}
                   </SelectItem>
                 ))}
