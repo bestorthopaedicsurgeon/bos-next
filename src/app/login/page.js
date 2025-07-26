@@ -75,7 +75,7 @@ const Page = () => {
           />
         </Link>
       </div>
-      <div className="w-[100%] max-xl:mx-[20px] min-lg:w-[40%]">
+      <div className="w-[100%] max-md:mt-30 max-xl:mx-[20px] min-lg:w-[40%]">
         <WelcomeTxt
           header="Welcome Back"
           cta="Sign up"

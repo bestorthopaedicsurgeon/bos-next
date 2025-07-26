@@ -81,7 +81,7 @@ const Page = () => {
           />
         </Link>
       </div>
-      <div className="w-[100%] max-xl:mx-[20px] min-lg:w-[35%]">
+      <div className="w-[100%] max-md:mt-30 max-xl:mx-[20px] min-lg:w-[35%]">
         <WelcomeTxt
           header="Sign up"
           cta="Login"
