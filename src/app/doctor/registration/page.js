@@ -74,7 +74,6 @@ const Page = () => {
   });
   const [practiceError, setPracticeError] = useState("");
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
 
   const [customSpecialties, setCustomSpecialties] = useState([]);
@@ -235,43 +234,41 @@ const Page = () => {
 
   const handleRegister = async (e) => {
     e.preventDefault();
-    // setError("");
-    // setSuccess("");
 
     // Validation
-    // if (!form.title) return setError("Please select your title.");
-    // if (!form.fname.trim()) return setError("First name is required.");
-    // if (!form.lname.trim()) return setError("Last name is required.");
-    // if (isNaN(parseInt(form.exp)))
-    //   return setError("Please select your years of experience.");
-    // if (!form.desig) return setError("Please select your designation.");
-    // if (!form.prac_name.trim()) return setError("Practice name is required.");
-    // if (!form.clinic_name.trim())
-    //   return setError("Clinic address is required.");
-    // if (!form.post_code.trim())
-    //   return setError("Suburb/State/Postcode is required.");
-    // if (!form.phone.trim()) return setError("Phone number is required.");
-    // if (selectedSpecialties.length === 0)
-    //   return setError("Please select at least one subspeciality.");
-    // if (!form.about_self.trim())
-    //   return setError("Please tell us about yourself.");
-    // if (!form.reg_assoc.trim())
-    //   return setError("Registrations & Associations are required.");
-    // if (!form.qual.trim()) return setError("Qualifications are required.");
-    // if (!form.awd_pub.trim())
-    //   return setError("Awards & Publications are required.");
-    // if (!form.hosp_aff)
-    //   return setError("Please select your hospital affiliation.");
-    // if (!form.email.trim()) return setError("Email is required.");
-    // // Simple email regex
-    // if (!/^\S+@\S+\.\S+$/.test(form.email))
-    //   return setError("Please enter a valid email address.");
-    // if (!form.password) return setError("Password is required.");
-    // if (form.password.length < 6)
-    //   return setError("Password must be at least 6 characters.");
-    // const termsCheckbox = document.getElementById("terms");
-    // if (!termsCheckbox || !termsCheckbox.checked)
-    //   return setError("You must accept the terms.");
+    if (!form.title) return toast.error("Please select your title.");
+    if (!form.fname) return toast.error("First name is required.");
+    if (!form.lname) return toast.error("Last name is required.");
+    if (isNaN(parseInt(form.exp)))
+      return toast.error("Please select your years of experience.");
+    if (!form.desig) return toast.error("Please select your designation.");
+    if (!form.prac_name) return toast.error("Practice name is required.");
+    if (!form.clinic_name)
+      return toast.error("Clinic address is required.");
+    if (!form.post_code)
+      return toast.error("Suburb/State/Postcode is required.");
+    if (!form.phone) return toast.error("Phone number is required.");
+    if (selectedSpecialties.length === 0)
+      return toast.error("Please select at least one subspeciality.");
+    if (!form.about_self)
+      return toast.error("Please tell us about yourself.");
+    if (!form.reg_assoc)
+      return toast.error("Registrations & Associations are required.");
+    if (!form.qual) return toast.error("Qualifications are required.");
+    if (!form.awd_pub)
+      return toast.error("Awards & Publications are required.");
+    if (!form.hosp_aff)
+      return toast.error("Please select your hospital affiliation.");
+    if (!form.email) return toast.error("Email is required.");
+    // Simple email regex
+    if (!/^\S+@\S+\.\S+$/.test(form.email))
+      return toast.error("Please enter a valid email address.");
+    if (!form.password) return toast.error("Password is required.");
+    if (form.password.length < 6)
+      return toast.error("Password must be at least 6 characters.");
+    const termsCheckbox = document.getElementById("terms");
+    if (!termsCheckbox || !termsCheckbox.checked)
+      return toast.error("You must accept the terms.");
 
     setLoading(true);
     try {
@@ -443,10 +440,11 @@ const Page = () => {
         }
         router.push("/doctor");
       } else {
-        setError(result.error || "Registration failed");
+        const result = await res.json();
+        toast.error(result.error || "Registration failed");
       }
     } catch (err) {
-      setError("Something went wrong");
+      toast.error("Something went wrong");
       console.log(err);
     } finally {
       setLoading(false);
@@ -1257,9 +1255,9 @@ const Page = () => {
           <label htmlFor="terms">I accept the terms</label>
         </div>
       </div>
-      <div className="flex items-center justify-center">
+      <div className="flex items-center justify-center max-sm:flex-col">
         <button
-          className="btn_fill col-span-2 m-auto mt-10 mb-10 flex cursor-pointer justify-center px-14 py-2 max-sm:w-full"
+          className="btn_fill col-span-2 m-auto mt-10 mb-10 max-sm:mb-0 flex cursor-pointer justify-center px-14 py-2 max-sm:w-full"
           onClick={handleRegister}
           disabled={loading}
         >
