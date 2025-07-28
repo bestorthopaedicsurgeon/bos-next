@@ -242,33 +242,18 @@ const Page = () => {
     if (isNaN(parseInt(form.exp)))
       return toast.error("Please select your years of experience.");
     if (!form.desig) return toast.error("Please select your designation.");
-    if (!form.prac_name) return toast.error("Practice name is required.");
-    if (!form.clinic_name)
-      return toast.error("Clinic address is required.");
-    if (!form.post_code)
-      return toast.error("Suburb/State/Postcode is required.");
-    if (!form.phone) return toast.error("Phone number is required.");
+    if (practiceEntries.length === 0) return toast.error("Practice/Clinic Details is required.");
     if (selectedSpecialties.length === 0)
       return toast.error("Please select at least one subspeciality.");
     if (!form.about_self)
       return toast.error("Please tell us about yourself.");
-    if (!form.reg_assoc)
+    if (!form.hospitalAffiliation)
       return toast.error("Registrations & Associations are required.");
-    if (!form.qual) return toast.error("Qualifications are required.");
-    if (!form.awd_pub)
+    if (!form.qualifications) return toast.error("Qualifications are required.");
+    if (!form.awardsPublications)
       return toast.error("Awards & Publications are required.");
-    if (!form.hosp_aff)
+    if (!form.hospitalAffiliation)
       return toast.error("Please select your hospital affiliation.");
-    if (!form.email) return toast.error("Email is required.");
-    // Simple email regex
-    if (!/^\S+@\S+\.\S+$/.test(form.email))
-      return toast.error("Please enter a valid email address.");
-    if (!form.password) return toast.error("Password is required.");
-    if (form.password.length < 6)
-      return toast.error("Password must be at least 6 characters.");
-    const termsCheckbox = document.getElementById("terms");
-    if (!termsCheckbox || !termsCheckbox.checked)
-      return toast.error("You must accept the terms.");
 
     setLoading(true);
     try {

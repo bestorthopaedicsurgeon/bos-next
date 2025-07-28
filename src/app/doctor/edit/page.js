@@ -215,7 +215,7 @@ const Page = ({ params }) => {
 
     fetchDoctorData();
   }, []);
-
+ console.log("this is a practice" , practiceEntries)
   const handleAddCustomSpecialty = () => {
     const trimmed = customInput.trim();
     if (trimmed !== "" && !customSpecialties.includes(trimmed)) {
@@ -363,6 +363,26 @@ const Page = ({ params }) => {
 
   const handleUpdate = async (e) => {
     e.preventDefault();
+     // Validation
+     if (!form.title) return toast.error("Please select your title.");
+     if (!form.fname) return toast.error("First name is required.");
+     if (!form.lname) return toast.error("Last name is required.");
+     if (isNaN(parseInt(form.exp)))
+       return toast.error("Please select your years of experience.");
+     if (!form.desig) return toast.error("Please select your designation.");
+     if (practiceEntries.length === 0) return toast.error("Practice/Clinic Details is required.");
+     if (selectedSpecialties.length === 0)
+       return toast.error("Please select at least one subspeciality.");
+     if (!form.about_self)
+       return toast.error("Please tell us about yourself.");
+     if (!form.hospitalAffiliation)
+       return toast.error("Registrations & Associations are required.");
+     if (!form.qualifications) return toast.error("Qualifications are required.");
+     if (!form.awardsPublications)
+       return toast.error("Awards & Publications are required.");
+     if (!form.hospitalAffiliation)
+       return toast.error("Please select your hospital affiliation.");
+
 
     setLoading(true);
     try {
@@ -424,9 +444,9 @@ const Page = ({ params }) => {
       }
 
       // // Add the doctor ID for the specific doctor being edited
-      // if (doctorId) {
-      //   data.id = parseInt(doctorId);
-      // }
+      if (doctorId) {
+        data.id = parseInt(doctorId);
+      }
 
       console.log("Updating with data:", data);
 
@@ -451,7 +471,7 @@ const Page = ({ params }) => {
           }
         }
 
-        router.push(`/doctor/${doctorId}`);
+        router.push(`/doctor`);
       } else {
         const result = await res.json();
         setError(result.error || "Update failed");
@@ -912,8 +932,8 @@ const Page = ({ params }) => {
                 scrollbarColor: "#2F797B #D9D9D9",
               }}
             >
-              {selectedSpecialties.map((specialty) => (
-                <div key={specialty.value}>
+              {selectedSpecialties.map((specialty, idx) => (
+                <div key={idx}>
                   <label
                     className={`flex cursor-pointer items-center rounded-full py-2 select-none`}
                   >
@@ -1072,18 +1092,18 @@ const Page = ({ params }) => {
               type="button"
               className="flex h-[48px] items-center justify-center gap-2 rounded-md bg-[#83C5BE] px-4 py-4 text-white"
               onClick={() => {
-                if (hospitalAffiliations.length === 0) {
+                if (practiceEntries.length === 0) {
                   toast.error(
-                    "Please add at least one hospital affiliation before setting availability.",
+                    "Please add at least one Practice before setting availability.",
                   );
                 } else {
                   setIsDialogOpen(true);
                 }
               }}
               style={{
-                opacity: hospitalAffiliations.length === 0 ? 0.5 : 1,
+                opacity: practiceEntries.length === 0 ? 0.5 : 1,
                 cursor:
-                  hospitalAffiliations.length === 0 ? "not-allowed" : "pointer",
+                  practiceEntries.length === 0 ? "not-allowed" : "pointer",
               }}
             >
               <span>Click to set availability</span>
@@ -1295,7 +1315,7 @@ const Page = ({ params }) => {
         </button>
         <button
           className="btn_fill col-span-2 m-auto mt-10 mb-10 flex cursor-pointer justify-center px-14 py-2 max-sm:w-full"
-          onClick={() => router.push(`/doctor/${doctorId}`)}
+          onClick={() => router.push(`/doctor/`)}
           disabled={loading}
         >
           Back

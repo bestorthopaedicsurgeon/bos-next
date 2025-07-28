@@ -58,53 +58,53 @@ const data = {
         },
       ],
     },
-    {
-      title: "Patients",
-      icon: Users,
-      items: [
-        {
-          title: "All Patients",
-          url: "/admin/patients",
-        },
-        {
-          title: "Patient Reports",
-          url: "/admin/patients/reports",
-        },
-      ],
-    },
-    {
-      title: "Appointments",
-      icon: Calendar,
-      items: [
-        {
-          title: "All Appointments",
-          url: "/admin/appointments",
-        },
-        {
-          title: "Appointment Analytics",
-          url: "/admin/appointments/analytics",
-        },
-      ],
-    },
-    {
-      title: "Reviews",
-      url: "/admin/reviews",
-      icon: Star,
-    },
-    {
-      title: "Content Management",
-      icon: FileText,
-      items: [
-        {
-          title: "Blog Posts",
-          url: "/admin/content/blogs",
-        },
-        {
-          title: "Pages",
-          url: "/admin/content/pages",
-        },
-      ],
-    },
+    // {
+    //   title: "Patients",
+    //   icon: Users,
+    //   items: [
+    //     {
+    //       title: "All Patients",
+    //       url: "/admin/patients",
+    //     },
+    //     {
+    //       title: "Patient Reports",
+    //       url: "/admin/patients/reports",
+    //     },
+    //   ],
+    // },
+    // {
+    //   title: "Appointments",
+    //   icon: Calendar,
+    //   items: [
+    //     {
+    //       title: "All Appointments",
+    //       url: "/admin/appointments",
+    //     },
+    //     {
+    //       title: "Appointment Analytics",
+    //       url: "/admin/appointments/analytics",
+    //     },
+    //   ],
+    // },
+    // {
+    //   title: "Reviews",
+    //   url: "/admin/reviews",
+    //   icon: Star,
+    // },
+    // {
+    //   title: "Content Management",
+    //   icon: FileText,
+    //   items: [
+    //     {
+    //       title: "Blog Posts",
+    //       url: "/admin/content/blogs",
+    //     },
+    //     {
+    //       title: "Pages",
+    //       url: "/admin/content/pages",
+    //     },
+    //   ],
+    // },
     {
       title: "Analytics",
       url: "/admin/analytics",
