@@ -13,6 +13,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { getAllDoctors } from "@/lib/apiCalls/client/allDoctor"
+import Image from "next/image"
 
 const DoctorsPage = () => {
   const [doctors, setDoctors] = useState([])
@@ -221,9 +222,11 @@ const DoctorsPage = () => {
                 <div className="flex items-center gap-3">
                   <div className="w-12 h-12 bg-gray-200 rounded-full flex items-center justify-center">
                     {doctor.image || doctor.user?.image ? (
-                      <img 
+                      <Image
                         src={doctor.image || doctor.user?.image} 
                         alt={doctor.name || doctor.user?.name}
+                        width={48}
+                        height={48}
                         className="w-12 h-12 rounded-full object-cover"
                       />
                     ) : (
