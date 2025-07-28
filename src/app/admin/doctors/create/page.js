@@ -163,13 +163,32 @@ const CreateDoctorPage = () => {
     });
   };
 
+  const emptyAllFields = () => {
+    setForm({});
+    setQualifications([]);
+    setQualificationInput("");
+    setPracticeEntries([]);
+    setHospitalAffiliations([]);
+    setRegistrationsAssociations([]);
+    setSelectedSpecialties([]);
+    setPracticeForm({
+      practiceName: "",
+      clinicAddress: "",
+      postCode: "",
+      phone: "",
+    });
+  };
+
   // Remove a practice entry
   const handleRemovePractice = (idx) => {
     setPracticeEntries((prev) => prev.filter((_, i) => i !== idx));
   };
 
   const handleImageUpload = async (doctorId) => {
-    if (!form.image) return alert("Please upload an image");
+    if (!form.image) {
+      toast.error("Please upload an image");
+      return;
+    }
 
     const formData = new FormData();
     formData.append("file", form.image);
@@ -264,7 +283,7 @@ const CreateDoctorPage = () => {
             console.log("Image uploaded successfully");
           }
           toast.success("Doctor created successfully!");
-          router.push("/admin/doctors");
+          router.refresh();
         }
       } else {
         setError("Registration failed");
@@ -394,16 +413,17 @@ const CreateDoctorPage = () => {
   }
 
   return (
-    <div className="w-full max-w-6xl mx-auto">
+    <div className="mx-auto w-full max-w-6xl">
       <div className="mb-8">
-        <h1 className="text-2xl font-bold text-primary mb-2">Create New Doctor Profile</h1>
-        <p className="text-gray-600">Add a new doctor to the system with their professional details.</p>
+        <h1 className="text-primary mb-2 text-2xl font-bold">
+          Create New Doctor Profile
+        </h1>
+        <p className="text-gray-600">
+          Add a new doctor to the system with their professional details.
+        </p>
       </div>
 
-      <div
-        className="grid grid-cols-2 gap-[32px]"
-        autoComplete="off"
-      >
+      <div className="grid grid-cols-2 gap-[32px]" autoComplete="off">
         <div className={formField}>
           <label htmlFor="title">Title</label>
           <select
@@ -891,7 +911,7 @@ const CreateDoctorPage = () => {
           <label htmlFor="terms">I accept the terms</label>
         </div>
       </div>
-      <div className="flex items-center justify-center mt-8">
+      <div className="mt-8 flex items-center justify-center">
         <button
           className="btn_fill col-span-2 m-auto flex cursor-pointer justify-center px-14 py-2 max-sm:w-full"
           onClick={handleRegister}
@@ -904,4 +924,4 @@ const CreateDoctorPage = () => {
   );
 };
 
-export default CreateDoctorPage; 
+export default CreateDoctorPage;

@@ -12,7 +12,7 @@ import { DocTabs } from "@/components/docProfile/tabs";
 import { authOptions } from "@/lib/auth";
 import { getServerSession } from "next-auth";
 import { redirect } from "next/navigation";
-import { getDoctorProfileSelf } from "@/lib/apiCalls/doctor";
+import { getDoctorProfileSelf } from "@/lib/apiCalls/server/doctor";
 const Page = async () => {
   const session = await getServerSession(authOptions);
 
@@ -46,7 +46,7 @@ const Page = async () => {
       <div className="mt-30 flex flex-wrap justify-center min-lg:gap-10">
         {/* left area    */}
         <div>
-          <DocProfile docProfile_Details={doctData} />
+          <DocProfile docProfile_Details={doctData} editProfile={true} />
           <DocInfo docProfile_Details={doctData} />
         </div>
         {/* right area */}

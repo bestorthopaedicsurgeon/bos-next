@@ -33,7 +33,7 @@ export async function GET(request: NextRequest) {
     return NextResponse.json(
       {
         success: true,
-        data: user,
+        data: user.doctorProfile,
         message: "Doctor fetched successfully",
       },
       { status: 200 },

@@ -1,7 +1,7 @@
 import DoctorCard from "@/components/reusable/doctorCard";
 import { Button } from "@/components/ui/button";
 import { allDoctors, featuredDoctors } from "@/data/doctors";
-import { getFeaturedDoctors } from "@/lib/apiCalls/doctor";
+import { getFeaturedDoctors } from "@/lib/apiCalls/server/doctor";
 import { ExternalLink } from "lucide-react";
 import Image from "next/image";
 import React from "react";
@@ -17,7 +17,7 @@ export const AllSurgeons = async () => {
           Featured Orthopaedic Surgeons
         </h1>
       </div>
-      <div className="grid grid-cols-1 gap-8 lg:grid-cols-2">
+      <div className="grid grid-cols-1 gap-8 lg:grid-cols-2"> 
         {AllDoctorsApi.map((doctor, index) => (
           <DoctorCard key={index} {...doctor} reviewButton={true} />
         ))}

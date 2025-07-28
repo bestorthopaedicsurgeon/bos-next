@@ -10,17 +10,16 @@ const {
   PopoverContent,
 } = require("@/components/ui/popover");
 
-const DocProfile = ({ docProfile_Details }) => {
+const DocProfile = ({ docProfile_Details, editProfile }) => {
   const [data, setData] = useState(docProfile_Details);
   const doctorProfile = data || {};
   const [editField, setEditField] = useState(null); // which field is being edited
   const [editValue, setEditValue] = useState("");
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
-  const id = useParams().slug;
+  const id = doctorProfile.id;
 
-
-console.log("this is the doctor profile",doctorProfile)
+  console.log("this is the doctor profile", doctorProfile);
   // Helper to open popover for a field
   const handleEditClick = (field, value) => {
     setEditField(field);
@@ -178,35 +177,37 @@ console.log("this is the doctor profile",doctorProfile)
             {5}
           </p>
         </div>
-        <Link href={`/doctor/edit/${id}`}>
-        <button className="bg-primary text-secondary flex cursor-pointer items-center gap-4 self-end rounded-full px-8 py-4 text-[12px] font-[500]">
-          Edit Profile
-          <svg
-            width="21"
-            height="21"
-            viewBox="0 0 21 21"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <g clipPath="url(#clip0_427_5656)">
-              <path
-                d="M20.2703 10.3071C20.2703 4.76773 15.7716 0.269073 10.2322 0.269073C4.69281 0.269073 0.194151 4.76773 0.194151 10.3071C0.194151 15.8465 4.69281 20.3452 10.2322 20.3452C15.7716 20.3452 20.2703 15.8465 20.2703 10.3071ZM19.4921 10.3071C19.4934 11.5235 19.2547 12.7282 18.7898 13.8522C18.3249 14.9763 17.6429 15.9976 16.7828 16.8577C15.9227 17.7178 14.9014 18.3998 13.7773 18.8647C12.6533 19.3297 11.4486 19.5683 10.2322 19.567C5.11039 19.567 0.946604 15.4289 0.946604 10.3071C0.946604 5.18531 5.11039 1.04722 10.2322 1.04722C11.4486 1.04596 12.6533 1.28461 13.7773 1.74951C14.9014 2.21441 15.9227 2.89645 16.7828 3.75656C17.6429 4.61667 18.3249 5.63798 18.7898 6.76202C19.2547 7.88605 19.4934 9.09074 19.4921 10.3071ZM12.2398 8.29952H8.80198V9.10256H10.8345L7.37096 12.5661L7.94915 13.1178L11.4368 9.62936V11.7374H12.2398V8.29952Z"
-                fill="white"
-              />
-            </g>
-            <defs>
-              <clipPath id="clip0_427_5656">
-                <rect
-                  width="20.0761"
-                  height="20.0761"
-                  fill="white"
-                  transform="matrix(0 1 -1 0 20.2701 0.269043)"
-                />
-              </clipPath>
-            </defs>
-          </svg>
-        </button>
-        </Link>
+        {editProfile && (
+          <Link href={`/doctor/edit/`}>
+            <button className="bg-primary text-secondary flex cursor-pointer items-center gap-4 self-end rounded-full px-8 py-4 text-[12px] font-[500]">
+              Edit Profile
+              <svg
+                width="21"
+                height="21"
+                viewBox="0 0 21 21"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <g clipPath="url(#clip0_427_5656)">
+                  <path
+                    d="M20.2703 10.3071C20.2703 4.76773 15.7716 0.269073 10.2322 0.269073C4.69281 0.269073 0.194151 4.76773 0.194151 10.3071C0.194151 15.8465 4.69281 20.3452 10.2322 20.3452C15.7716 20.3452 20.2703 15.8465 20.2703 10.3071ZM19.4921 10.3071C19.4934 11.5235 19.2547 12.7282 18.7898 13.8522C18.3249 14.9763 17.6429 15.9976 16.7828 16.8577C15.9227 17.7178 14.9014 18.3998 13.7773 18.8647C12.6533 19.3297 11.4486 19.5683 10.2322 19.567C5.11039 19.567 0.946604 15.4289 0.946604 10.3071C0.946604 5.18531 5.11039 1.04722 10.2322 1.04722C11.4486 1.04596 12.6533 1.28461 13.7773 1.74951C14.9014 2.21441 15.9227 2.89645 16.7828 3.75656C17.6429 4.61667 18.3249 5.63798 18.7898 6.76202C19.2547 7.88605 19.4934 9.09074 19.4921 10.3071ZM12.2398 8.29952H8.80198V9.10256H10.8345L7.37096 12.5661L7.94915 13.1178L11.4368 9.62936V11.7374H12.2398V8.29952Z"
+                    fill="white"
+                  />
+                </g>
+                <defs>
+                  <clipPath id="clip0_427_5656">
+                    <rect
+                      width="20.0761"
+                      height="20.0761"
+                      fill="white"
+                      transform="matrix(0 1 -1 0 20.2701 0.269043)"
+                    />
+                  </clipPath>
+                </defs>
+              </svg>
+            </button>
+          </Link>
+        )}
       </div>
     </div>
   );

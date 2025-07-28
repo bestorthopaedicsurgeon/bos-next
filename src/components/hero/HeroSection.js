@@ -29,7 +29,7 @@ export const HeroSection = () => {
 
   return (
     <section className="mb-40">
-      <div className="bg-primary text-primary-foreground mb-8 flex gap-10 rounded-4xl px-20 py-16 max-lg:justify-center max-md:px-10">
+      <div className="bg-primary text-primary-foreground mb-8 flex items-center gap-10 rounded-4xl px-20 py-16 max-lg:justify-center max-md:px-10">
         <div className="flex w-full max-w-[570px] flex-col max-md:max-w-full">
           {/* <p className="mb-4">Find your surgeon!</p>
             <div className="bg-primary-foreground mb-4 h-[2px] w-full" /> */}
@@ -42,11 +42,12 @@ export const HeroSection = () => {
           </h1>
           <div className="hidden h-[352px] w-[308px] max-lg:mx-auto max-lg:flex max-lg:justify-center">
             <Image
-              src="/home/hero-skeleton-image.png"
+              src="/home/hero.png"
               alt="hero"
               width={500}
               height={500}
               className="h-full w-full"
+              fluid
             />
           </div>
           <p className="mb-4">
@@ -83,12 +84,12 @@ export const HeroSection = () => {
             </div>
           </div>
         </div>
-        <div className="mt-[-120px] max-h-[607px] w-full max-w-[456px] max-lg:hidden">
+        <div className="max-h-[367px] w-full max-w-[488px] scale-125 max-lg:hidden">
           <Image
-            src="/home/hero-skeleton-image.png"
+            src="/home/hero.png"
             alt="hero"
-            width={607}
-            height={456}
+            width={488}
+            height={367}
             className="h-full w-full"
           />
         </div>

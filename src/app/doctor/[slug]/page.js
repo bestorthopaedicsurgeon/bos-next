@@ -12,7 +12,7 @@ import { DocTabs } from "@/components/docProfile/tabs";
 import { authOptions } from "@/lib/auth";
 import { getServerSession } from "next-auth";
 import { redirect } from "next/navigation";
-import { getDoctorProfile } from "@/lib/apiCalls/doctor";
+import { getDoctorProfile } from "@/lib/apiCalls/server/doctor";
 const Page = async ({ params }) => {
   // const session = await getServerSession(authOptions);
   const { slug } = await params

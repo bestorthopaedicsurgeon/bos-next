@@ -137,7 +137,7 @@ export default function HospitalAffiliations({ hospitals }) {
                 animateDirection === "left" ? "-translate-x-full opacity-0" : ""
               } ${index === 1 ? "min-md:pl-4" : "min-md:pr-4"}`}
             >
-              <div className="h-full py-4">
+              <div className="h-full w-full max-w-[220px] overflow-hidden py-4">
                 <h3 className="mb-2 text-lg font-semibold text-[#82889C]">
                   {hospital.name}
                 </h3>

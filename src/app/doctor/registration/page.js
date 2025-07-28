@@ -1046,9 +1046,9 @@ const Page = () => {
               type="button"
               className="flex h-[48px] items-center justify-center gap-2 rounded-md bg-[#83C5BE] px-4 py-4 text-white"
               onClick={() => {
-                if (hospitalAffiliations.length === 0) {
+                if (practiceEntries.length === 0) {
                   toast.error(
-                    "Please add at least one hospital affiliation before setting availability.",
+                    "Please add at least one Practice before setting availability.",
                   );
                 } else {
                   setIsDialogOpen(true);

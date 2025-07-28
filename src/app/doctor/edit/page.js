@@ -36,13 +36,13 @@ import EditableEntry from "@/components/registration/EditableEntry";
 import { toast } from "sonner";
 import { auCities } from "@/lib/constants/auCities";
 import { useSession } from "next-auth/react";
+import { getDoctorProfileSelf } from "@/lib/apiCalls/client/doctor";
 
 const Page = ({ params }) => {
   const { data: session } = useSession();
   const doctorId = session?.user?.doctorId;
   const router = useRouter();
-  const [slug, setSlug] = useState(null);
-  
+
   const [selectedSpecialties, setSelectedSpecialties] = useState([]);
   const [form, setForm] = useState({
     title: "",
@@ -94,114 +94,116 @@ const Page = ({ params }) => {
   const [customSpecialties, setCustomSpecialties] = useState([]);
   const [customInput, setCustomInput] = useState("");
 
-  // Extract slug from params
-  useEffect(() => {
-    const getSlug = async () => {
-      const resolvedParams = await params;
-      setSlug(resolvedParams.slug);
-    };
-    getSlug();
-  }, [params]);
-
   // Fetch existing doctor data
   useEffect(() => {
     const fetchDoctorData = async () => {
-      if (!slug) return;
-      
       try {
         setDataLoading(true);
-        const res = await fetch(`/api/doctors/${slug}`, {
-          method: "GET",
-          headers: { "Content-Type": "application/json" },
-        });
-        
-        if (res.ok) {
-          const result = await res.json();
-          if (result.success && result.data) {
-            const doctorData = result.data;
-            console.log("Fetched doctor data:", doctorData);
-            
-            // Parse name into first and last name
-            const nameParts = doctorData.name ? doctorData.name.split(" ") : ["", ""];
-            const firstName = nameParts[0] || "";
-            const lastName = nameParts.slice(1).join(" ") || "";
-            
-            // Pre-populate form fields
-            setForm({
-              title: doctorData.title || "",
-              fname: firstName,
-              lname: lastName,
-              exp: doctorData.experience ? doctorData.experience.toString() : "",
-              desig: doctorData.designation || "",
-              about_self: doctorData.about || "",
-              location: doctorData.location || "",
-              qualifications: doctorData.qualifications || [],
-              awardsPublications: doctorData.awardsPublications || [],
-              registrationsAssociations: doctorData.registrationsAssociations || [],
-              hospitalAffiliation: doctorData.hospitalAffiliations || [],
-            });
+        const doctorData = await getDoctorProfileSelf();
 
-            // Set subspecialties
-            if (doctorData.subspecialities && Array.isArray(doctorData.subspecialities)) {
-              const mappedSpecialties = doctorData.subspecialities.map(specialty => {
-                const found = subspecialities.find(s => s.label === specialty);
+        if (doctorData) {
+          console.log("Fetched doctor data:", doctorData);
+
+          // Parse name into first and last name
+          const nameParts = doctorData.name
+            ? doctorData.name.split(" ")
+            : ["", ""];
+          const firstName = nameParts[0] || "";
+          const lastName = nameParts.slice(1).join(" ") || "";
+
+          // Pre-populate form fields
+          setForm({
+            title: doctorData.title || "",
+            fname: firstName,
+            lname: lastName,
+            exp: doctorData.experience ? doctorData.experience.toString() : "",
+            desig: doctorData.designation || "",
+            about_self: doctorData.about || "",
+            location: doctorData.location || "",
+            qualifications: doctorData.qualifications || [],
+            awardsPublications: doctorData.awardsPublications || [],
+            registrationsAssociations:
+              doctorData.registrationsAssociations || [],
+            hospitalAffiliation: doctorData.hospitalAffiliations || [],
+          });
+
+          // Set subspecialties
+          if (
+            doctorData.subspecialities &&
+            Array.isArray(doctorData.subspecialities)
+          ) {
+            const mappedSpecialties = doctorData.subspecialities.map(
+              (specialty) => {
+                const found = subspecialities.find(
+                  (s) => s.label === specialty,
+                );
                 if (found) {
                   return found;
                 } else {
                   // Handle custom specialties
                   return { value: "Other", label: specialty };
                 }
-              });
-              setSelectedSpecialties(mappedSpecialties);
-              
-              // Extract custom specialties
-              const customSpecs = doctorData.subspecialities.filter(specialty => 
-                !subspecialities.some(s => s.label === specialty)
+              },
+            );
+            setSelectedSpecialties(mappedSpecialties);
+
+            // Extract custom specialties
+            const customSpecs = doctorData.subspecialities.filter(
+              (specialty) =>
+                !subspecialities.some((s) => s.label === specialty),
+            );
+            setCustomSpecialties(customSpecs);
+          }
+
+          // Set practice entries
+          if (doctorData.practices && Array.isArray(doctorData.practices)) {
+            setPracticeEntries(doctorData.practices);
+          }
+
+          // Set hospital affiliations
+          if (
+            doctorData.hospitalAffiliations &&
+            Array.isArray(doctorData.hospitalAffiliations)
+          ) {
+            setHospitalAffiliations(doctorData.hospitalAffiliations);
+          }
+
+          // Set doctor availability if it exists
+          if (
+            doctorData.DoctorAvailabilityTime &&
+            Array.isArray(doctorData.DoctorAvailabilityTime)
+          ) {
+            setDoctorAvailability(doctorData.DoctorAvailabilityTime);
+
+            // Map to schedule times format
+            const scheduleMap = {};
+            doctorData.DoctorAvailabilityTime.forEach((avail) => {
+              const dayIndex = schedule_date.findIndex(
+                (d) => dayMap[d.day] === avail.dayOfWeek,
               );
-              setCustomSpecialties(customSpecs);
-            }
+              if (dayIndex !== -1) {
+                scheduleMap[dayIndex] = {
+                  startTime: avail.startTime,
+                  endTime: avail.endTime,
+                  location:
+                    avail.location === "CLINIC"
+                      ? avail.clinicName
+                      : avail.location,
+                };
+              }
+            });
 
-            // Set practice entries
-            if (doctorData.practices && Array.isArray(doctorData.practices)) {
-              setPracticeEntries(doctorData.practices);
-            }
-
-            // Set hospital affiliations
-            if (doctorData.hospitalAffiliations && Array.isArray(doctorData.hospitalAffiliations)) {
-              setHospitalAffiliations(doctorData.hospitalAffiliations);
-            }
-
-            // Set doctor availability if it exists
-            if (doctorData.DoctorAvailabilityTime && Array.isArray(doctorData.DoctorAvailabilityTime)) {
-              setDoctorAvailability(doctorData.DoctorAvailabilityTime);
-              
-              // Map to schedule times format
-              const scheduleMap = {};
-              doctorData.DoctorAvailabilityTime.forEach(avail => {
-                const dayIndex = schedule_date.findIndex(d => dayMap[d.day] === avail.dayOfWeek);
-                if (dayIndex !== -1) {
-                  scheduleMap[dayIndex] = {
-                    startTime: avail.startTime,
-                    endTime: avail.endTime,
-                    location: avail.location === 'CLINIC' ? avail.clinicName : avail.location
-                  };
-                }
-              });
-              
-              // Update schedule times with existing data
-              setScheduleTimes(prev => prev.map((item, idx) => ({
+            // Update schedule times with existing data
+            setScheduleTimes((prev) =>
+              prev.map((item, idx) => ({
                 ...item,
-                ...scheduleMap[idx]
-              })));
-            }
-            
-          } else {
-            console.error("No doctor profile found");
-            toast.error("No doctor profile found");
+                ...scheduleMap[idx],
+              })),
+            );
           }
         } else {
-          console.error("Failed to fetch doctor data");
-          toast.error("Failed to fetch doctor data");
+          console.error("No doctor profile found");
+          toast.error("No doctor profile found");
         }
       } catch (error) {
         console.error("Error fetching doctor data:", error);
@@ -212,7 +214,7 @@ const Page = ({ params }) => {
     };
 
     fetchDoctorData();
-  }, [slug]);
+  }, []);
 
   const handleAddCustomSpecialty = () => {
     const trimmed = customInput.trim();
@@ -421,24 +423,24 @@ const Page = ({ params }) => {
         data.doctorAvailability = doctorAvailability;
       }
 
-      // Add the doctor ID for the specific doctor being edited
-      if (slug) {
-        data.id = parseInt(slug);
-      }
-      
+      // // Add the doctor ID for the specific doctor being edited
+      // if (doctorId) {
+      //   data.id = parseInt(doctorId);
+      // }
+
       console.log("Updating with data:", data);
-      
+
       const res = await fetch("/api/doctors", {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(data),
       });
-      
+
       if (res.ok) {
         const result = await res.json();
         console.log("Update successful:", result);
         toast.success("Profile updated successfully!");
-        
+
         // Handle image upload if there's an image
         if (form.image) {
           const imageUploaded = await handleImageUpload();
@@ -448,8 +450,8 @@ const Page = ({ params }) => {
             console.error("Image upload failed");
           }
         }
-        
-        router.push(`/doctor/${slug}`);
+
+        router.push(`/doctor/${doctorId}`);
       } else {
         const result = await res.json();
         setError(result.error || "Update failed");
@@ -521,13 +523,13 @@ const Page = ({ params }) => {
 
   // Utility to map day short name to DayOfWeek enum
   const dayMap = {
-    Mon: 'MONDAY',
-    Tue: 'TUESDAY',
-    Wed: 'WEDNESDAY',
-    Thu: 'THURSDAY',
-    Fri: 'FRIDAY',
-    Sat: 'SATURDAY',
-    Sun: 'SUNDAY',
+    Mon: "MONDAY",
+    Tue: "TUESDAY",
+    Wed: "WEDNESDAY",
+    Thu: "THURSDAY",
+    Fri: "FRIDAY",
+    Sat: "SATURDAY",
+    Sun: "SUNDAY",
   };
 
   // Helpers for calendar days
@@ -613,8 +615,8 @@ const Page = ({ params }) => {
     schedule_date.map((item) => ({
       startTime: item.startTime.replace("am", "").replace("pm", "").trim(),
       endTime: item.endTime.replace("am", "").replace("pm", "").trim(),
-      location: 'ONLINE'// default to Online or Clinic
-    }))
+      location: "ONLINE", // default to Online or Clinic
+    })),
   );
 
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -626,9 +628,9 @@ const Page = ({ params }) => {
       const dayOfWeek = dayMap[dayShort];
       let location = entry.location;
       // If location is not ONLINE, treat as CLINIC
-      if (location !== 'ONLINE') location = 'CLINIC';
+      if (location !== "ONLINE") location = "CLINIC";
       // If location is CLINIC, set clinicName to the selected hospital/clinic name
-      const clinicName = location === 'CLINIC' ? entry.location : 'ONLINE';
+      const clinicName = location === "CLINIC" ? entry.location : "ONLINE";
       return {
         dayOfWeek,
         startTime: entry.startTime,
@@ -644,9 +646,9 @@ const Page = ({ params }) => {
   if (dataLoading) {
     return (
       <div className="container m-auto">
-        <div className="flex items-center justify-center min-h-screen">
+        <div className="flex min-h-screen items-center justify-center">
           <div className="text-center">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#83C5BE] mx-auto mb-4"></div>
+            <div className="mx-auto mb-4 h-12 w-12 animate-spin rounded-full border-b-2 border-[#83C5BE]"></div>
             <p className="text-lg text-gray-600">Loading your profile...</p>
           </div>
         </div>
@@ -1061,20 +1063,27 @@ const Page = ({ params }) => {
         </div>
         <div className={formField}>
           <label htmlFor="avail">Set Your Availability</label>
-          <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen} className="max-w-full overflow-auto">
+          <Dialog
+            open={isDialogOpen}
+            onOpenChange={setIsDialogOpen}
+            className="max-w-full overflow-auto"
+          >
             <button
               type="button"
               className="flex h-[48px] items-center justify-center gap-2 rounded-md bg-[#83C5BE] px-4 py-4 text-white"
               onClick={() => {
                 if (hospitalAffiliations.length === 0) {
-                  toast.error("Please add at least one hospital affiliation before setting availability.");
+                  toast.error(
+                    "Please add at least one hospital affiliation before setting availability.",
+                  );
                 } else {
                   setIsDialogOpen(true);
                 }
               }}
               style={{
                 opacity: hospitalAffiliations.length === 0 ? 0.5 : 1,
-                cursor: hospitalAffiliations.length === 0 ? 'not-allowed' : 'pointer'
+                cursor:
+                  hospitalAffiliations.length === 0 ? "not-allowed" : "pointer",
               }}
             >
               <span>Click to set availability</span>
@@ -1199,7 +1208,7 @@ const Page = ({ params }) => {
                             newTimes[key].startTime = e.target.value;
                             setScheduleTimes(newTimes);
                           }}
-                          className="border rounded px-2 py-1"
+                          className="rounded border px-2 py-1"
                         >
                           {timeOptions.map((time) => (
                             <option key={time} value={time}>
@@ -1215,7 +1224,7 @@ const Page = ({ params }) => {
                             newTimes[key].endTime = e.target.value;
                             setScheduleTimes(newTimes);
                           }}
-                          className="border rounded px-2 py-1"
+                          className="rounded border px-2 py-1"
                         >
                           {timeOptions.map((time) => (
                             <option key={time} value={time}>
@@ -1233,7 +1242,7 @@ const Page = ({ params }) => {
                             newTimes[key].location = e.target.value;
                             setScheduleTimes(newTimes);
                           }}
-                          className="border rounded px-2 py-1"
+                          className="rounded border px-2 py-1"
                         >
                           <option value="ONLINE">Online</option>
                           {practiceEntries &&
@@ -1247,8 +1256,8 @@ const Page = ({ params }) => {
                     </div>
                     <button
                       type="button"
-                      className="ml-4 rounded bg-[#83C5BE] px-6 py-2 text-white hover:bg-[#2F797B] transition-colors"
-                      onClick={() => toast.success('Schedule saved!')}
+                      className="ml-4 rounded bg-[#83C5BE] px-6 py-2 text-white transition-colors hover:bg-[#2F797B]"
+                      onClick={() => toast.success("Schedule saved!")}
                     >
                       Save
                     </button>
@@ -1262,7 +1271,7 @@ const Page = ({ params }) => {
         {success && (
           <div className="col-span-2 mt-2 text-green-500">{success}</div>
         )}
-        <div className="col-span-2 flex items-center gap-3">
+        {/* <div className="col-span-2 flex items-center gap-3">
           <input
             type="checkbox"
             name="terms"
@@ -1270,7 +1279,7 @@ const Page = ({ params }) => {
             className="checked:border-primary checked:bg-primary h-3 w-3 appearance-none border-2 border-(--primary) focus:outline-none"
           />
           <label htmlFor="terms">I accept the terms</label>
-        </div>
+        </div> */}
       </div>
       <div className="flex items-center justify-center">
         <button
@@ -1278,14 +1287,18 @@ const Page = ({ params }) => {
           onClick={handleUpdate}
           disabled={loading || dataLoading}
         >
-          {loading ? "Updating..." : dataLoading ? "Loading..." : "Update Profile"}
+          {loading
+            ? "Updating..."
+            : dataLoading
+              ? "Loading..."
+              : "Update Profile"}
         </button>
         <button
           className="btn_fill col-span-2 m-auto mt-10 mb-10 flex cursor-pointer justify-center px-14 py-2 max-sm:w-full"
-          onClick={() => router.push(`/doctor/${slug}`)}
+          onClick={() => router.push(`/doctor/${doctorId}`)}
           disabled={loading}
         >
-          Complete Later
+          Back
         </button>
       </div>
     </div>
