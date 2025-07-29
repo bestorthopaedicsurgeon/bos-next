@@ -242,14 +242,15 @@ const Page = () => {
     if (isNaN(parseInt(form.exp)))
       return toast.error("Please select your years of experience.");
     if (!form.desig) return toast.error("Please select your designation.");
-    if (practiceEntries.length === 0) return toast.error("Practice/Clinic Details is required.");
+    if (practiceEntries.length === 0)
+      return toast.error("Practice/Clinic Details is required.");
     if (selectedSpecialties.length === 0)
       return toast.error("Please select at least one subspeciality.");
-    if (!form.about_self)
-      return toast.error("Please tell us about yourself.");
+    if (!form.about_self) return toast.error("Please tell us about yourself.");
     if (!form.hospitalAffiliation)
       return toast.error("Registrations & Associations are required.");
-    if (!form.qualifications) return toast.error("Qualifications are required.");
+    if (!form.qualifications)
+      return toast.error("Qualifications are required.");
     if (!form.awardsPublications)
       return toast.error("Awards & Publications are required.");
     if (!form.hospitalAffiliation)
@@ -1029,7 +1030,7 @@ const Page = () => {
           >
             <button
               type="button"
-              className="flex h-[48px] items-center justify-center gap-2 rounded-md bg-[#83C5BE] px-4 py-4 text-white"
+              className={`flex h-[48px] items-center justify-center gap-2 rounded-md px-4 py-4 text-white ${practiceEntries.length === 0 ? "cursor-not-allowed bg-[#83C5BE]" : "bg-primary cursor-pointer"} `}
               onClick={() => {
                 if (practiceEntries.length === 0) {
                   toast.error(
@@ -1038,11 +1039,6 @@ const Page = () => {
                 } else {
                   setIsDialogOpen(true);
                 }
-              }}
-              style={{
-                opacity: hospitalAffiliations.length === 0 ? 0.5 : 1,
-                cursor:
-                  hospitalAffiliations.length === 0 ? "not-allowed" : "pointer",
               }}
             >
               <span>Click to set availability</span>
@@ -1242,7 +1238,7 @@ const Page = () => {
       </div>
       <div className="flex items-center justify-center max-sm:flex-col">
         <button
-          className="btn_fill col-span-2 m-auto mt-10 mb-10 max-sm:mb-0 flex cursor-pointer justify-center px-14 py-2 max-sm:w-full"
+          className="btn_fill col-span-2 m-auto mt-10 mb-10 flex cursor-pointer justify-center px-14 py-2 max-sm:mb-0 max-sm:w-full"
           onClick={handleRegister}
           disabled={loading}
         >
