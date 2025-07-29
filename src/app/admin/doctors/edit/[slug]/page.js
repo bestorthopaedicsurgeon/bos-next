@@ -378,8 +378,8 @@ const AdminEditDoctorPage = ({ params }) => {
     if (!form.title) return toast.error("Please select your title.");
     if (!form.fname) return toast.error("First name is required.");
     if (!form.lname) return toast.error("Last name is required.");
-    if (isNaN(parseInt(form.exp)))
-      return toast.error("Please select your years of experience.");
+    // if (isNaN(parseInt(form.exp)))
+    //   return toast.error("Please select your years of experience.");
     if (!form.desig) return toast.error("Please select your designation.");
     if (practiceEntries.length === 0)
       return toast.error("Practice/Clinic Details is required.");

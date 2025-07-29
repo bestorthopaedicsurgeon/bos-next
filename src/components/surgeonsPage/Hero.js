@@ -11,6 +11,7 @@ import {
 } from "@/components/ui/select";
 import { auCities } from "@/lib/constants/auCities";
 import Image from "next/image";
+import Link from "next/link";
 import React from "react";
 
 export const HeroSection = () => {
@@ -43,7 +44,9 @@ export const HeroSection = () => {
               alt="hero"
               width={500}
               height={500}
-              className="h-full w-full"
+              quality={100}
+              priority
+              className="h-full w-full object-cover"
             />
           </div>
           <p className="mb-4">
@@ -52,9 +55,11 @@ export const HeroSection = () => {
             click away.
           </p>
           <div className="mb-4 flex flex-wrap gap-4">
+            <Link href="#all_surgeons">
             <Button variant={"primaryForeground"} size={"primaryForeground"}>
               Find Your Doctor
             </Button>
+            </Link>
             <Button variant={"primaryForeground"} size={"primaryForeground"}>
               Need Help?
             </Button>
@@ -65,7 +70,8 @@ export const HeroSection = () => {
               alt="logo"
               width={172}
               height={42}
-              className="flex-shrink-0"
+              quality={100}
+              className="flex-shrink-0 w-[172px] h-[42px]"
             />
             <div>
               <p>More than 52k</p>
@@ -73,13 +79,15 @@ export const HeroSection = () => {
             </div>
           </div>
         </div>
-        <div className="mb-[-64px] max-h-[607px] w-full max-w-[456px] max-lg:hidden">
+        <div className="mb-[-64px] max-h-[607px] w-full max-w-[596px] max-lg:hidden">
           <Image
             src="/surgeons/doctors.png"
             alt="hero"
             width={500}
             height={500}
-            className="h-full w-full"
+            quality={100}
+            priority
+            className="h-full w-full object-cover"
           />
         </div>
       </div>

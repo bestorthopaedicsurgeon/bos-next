@@ -11,7 +11,7 @@ export const AllSurgeons = async () => {
     const AllDoctorsApi = res.success ? res.data : null;
     console.log("All Doctors:", AllDoctorsApi);
   return (
-    <section className="mb-40">
+    <section className="mb-40" id="all_surgeons">
       <div className="mb-8 flex items-center justify-between">
         <h1 className="font-syne text-primary">
           Featured Orthopaedic Surgeons

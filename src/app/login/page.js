@@ -65,7 +65,7 @@ const Page = () => {
   // }, [status, router]);
 
   return (
-    <div className="flex items-center justify-center min-xl:pr-[200px]">
+    <div className="flex items-center justify-center min-xl:pr-[200px] min-h-screen">
       <div className="max-lg:hidden min-lg:w-[60%]">
         <Link href="#">
           <Image
@@ -75,7 +75,7 @@ const Page = () => {
           />
         </Link>
       </div>
-      <div className="w-[100%] max-md:mt-30 max-xl:mx-[20px] min-lg:w-[40%]">
+      <div className="w-[100%] max-md:mt-30 max-xl:mx-[20px] min-lg:w-[40%] max-w-md mx-auto">
         <WelcomeTxt
           header="Welcome Back"
           cta="Sign up"

@@ -136,7 +136,8 @@ export default function QuestionsAndAnswers({ className }) {
               alt="doc"
               height={100}
               width={100}
-              className="h-7 w-7 rounded-full"
+              quality={100}
+              className="h-7 w-7 rounded-full object-cover"
             />
             <p className="text-primary text-[14px] font-[700]">
               Dr Smith answered

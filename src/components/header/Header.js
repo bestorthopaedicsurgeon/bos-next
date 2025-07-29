@@ -19,7 +19,7 @@ export default function Header() {
   };
 
   return (
-    <header className="mb-8 w-full border-b py-4 relative">
+    <header className="mb-8 w-full py-4 relative">
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between">
           {/* Left: Logo */}
