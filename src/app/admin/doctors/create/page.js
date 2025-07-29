@@ -23,7 +23,7 @@ import {
 } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
 import UsePresenceData from "@/components/ui/slider.jsx";
-import { ChevronLeft, ChevronRight, Edit, Check, Plus } from "lucide-react";
+import { ChevronLeft, ChevronRight, Edit, Check, Plus, X } from "lucide-react";
 // import { Pencil } from "lucide";
 import { Clock3, PencilIcon, User } from "lucide-react";
 import { redirect, useRouter } from "next/navigation";
@@ -34,8 +34,12 @@ import {
 } from "@/components/ui/popover";
 import EditableEntry from "@/components/registration/EditableEntry";
 import { toast } from "sonner";
+import { auCities } from "@/lib/constants/auCities";
+import { useSession } from "next-auth/react";
+const Page = () => {
+  const { data: session } = useSession();
+  const doctorId = session?.user?.doctorId;
 
-const CreateDoctorPage = () => {
   const router = useRouter();
   const [selectedSpecialties, setSelectedSpecialties] = useState([]);
   const [form, setForm] = useState({
@@ -57,6 +61,8 @@ const CreateDoctorPage = () => {
     [],
   );
 
+  //for availability time
+  const [doctorAvailability, setDoctorAvailability] = useState([]);
   const [editEntry, setEditEntry] = useState(null);
   const [activeIndex, setActiveIndex] = useState(null);
 
@@ -68,8 +74,35 @@ const CreateDoctorPage = () => {
   });
   const [practiceError, setPracticeError] = useState("");
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
+
+  const [customSpecialties, setCustomSpecialties] = useState([]);
+  const [customInput, setCustomInput] = useState("");
+
+  const handleAddCustomSpecialty = () => {
+    const trimmed = customInput.trim();
+    if (trimmed !== "" && !customSpecialties.includes(trimmed)) {
+      const updatedCustom = [...customSpecialties, trimmed];
+      setCustomSpecialties(updatedCustom);
+      setCustomInput("");
+      setSelectedSpecialties([
+        ...selectedSpecialties.filter((s) => s.value !== "Other"),
+        ...updatedCustom.map((label) => ({ value: "Other", label })),
+      ]);
+    }
+  };
+
+  const handleRemoveCustomSpecialty = (labelToRemove) => {
+    const updatedCustom = customSpecialties.filter(
+      (label) => label !== labelToRemove,
+    );
+    setCustomSpecialties(updatedCustom);
+    setSelectedSpecialties([
+      ...selectedSpecialties.filter(
+        (s) => !(s.value === "Other" && s.label === labelToRemove),
+      ),
+    ]);
+  };
 
   const subspecialities = [
     { value: "UPPER_LIMB", label: "Upper Limb" },
@@ -83,6 +116,14 @@ const CreateDoctorPage = () => {
     { value: "Other", label: "Other" },
   ];
 
+  // const handleInputChange = (e) => {
+  //   const { name, value, type, files } = e.target;
+  //   setForm((prev) => ({
+  //     ...prev,
+  //     [name]: type === "file" ? files[0] : value,
+  //   }));
+  // };
+
   const handleInputChange = (field) => (e) => {
     const value = field === "image" ? e.target.files?.[0] : e.target.value;
     setForm((prev) => ({ ...prev, [field]: value }));
@@ -90,6 +131,29 @@ const CreateDoctorPage = () => {
 
   const handleMultiInputChange = (field) => (e) => {
     setInputs((prev) => ({ ...prev, [field]: e.target.value }));
+  };
+
+  const handleImageUpload = async () => {
+    if (!form.image) return alert("Please upload an image");
+
+    const formData = new FormData();
+    formData.append("file", form.image);
+    formData.append("doctorId", doctorId);
+
+    const res = await fetch("/api/doctors/upload-image", {
+      method: "POST",
+      body: formData,
+    });
+
+    const result = await res.json();
+
+    if (!res.ok) return alert("Upload failed");
+
+    console.log("Public URL:", result.url);
+    return true;
+
+    // optionally: update doctor profile with the image URL
+    // await updateDoctor({ imageUrl: result.url });
   };
 
   const handleKeyDown = (field) => (e) => {
@@ -163,76 +227,98 @@ const CreateDoctorPage = () => {
     });
   };
 
-  const emptyAllFields = () => {
-    setForm({});
-    setQualifications([]);
-    setQualificationInput("");
-    setPracticeEntries([]);
-    setHospitalAffiliations([]);
-    setRegistrationsAssociations([]);
-    setSelectedSpecialties([]);
-    setPracticeForm({
-      practiceName: "",
-      clinicAddress: "",
-      postCode: "",
-      phone: "",
-    });
-  };
-
   // Remove a practice entry
   const handleRemovePractice = (idx) => {
     setPracticeEntries((prev) => prev.filter((_, i) => i !== idx));
   };
 
-  const handleImageUpload = async (doctorId) => {
-    if (!form.image) {
-      toast.error("Please upload an image");
-      return;
-    }
-
-    const formData = new FormData();
-    formData.append("file", form.image);
-    formData.append("doctorId", doctorId);
-
-    const res = await fetch("/api/doctors/upload-image", {
-      method: "POST",
-      body: formData,
-    });
-
-    const result = await res.json();
-
-    if (!res.ok) return alert("Upload failed");
-
-    console.log("Public URL:", result.url);
-    return true;
-
-    // optionally: update doctor profile with the image URL
-    // await updateDoctor({ imageUrl: result.url });
-  };
-
   const handleRegister = async (e) => {
     e.preventDefault();
-     // Validation
-     if (!form.title) return toast.error("Please select your title.");
-     if (!form.fname) return toast.error("First name is required.");
-     if (!form.lname) return toast.error("Last name is required.");
-    //  if (isNaN(parseInt(form.exp)))
-    //    return toast.error("Please select your years of experience.");
-     if (!form.desig) return toast.error("Please select your designation.");
-     if (practiceEntries.length === 0) return toast.error("Practice/Clinic Details is required.");
-     if (selectedSpecialties.length === 0)
-       return toast.error("Please select at least one subspeciality.");
-     if (!form.about_self)
-       return toast.error("Please tell us about yourself.");
-     if (!form.hospitalAffiliation)
-       return toast.error("Registrations & Associations are required.");
-     if (!form.qualifications) return toast.error("Qualifications are required.");
-     if (!form.awardsPublications)
-       return toast.error("Awards & Publications are required.");
-     if (!form.hospitalAffiliation)
-       return toast.error("Please select your hospital affiliation.");
+
+    // Validation
+    if (!form.title) return toast.error("Please select your title.");
+    if (!form.fname) return toast.error("First name is required.");
+    if (!form.lname) return toast.error("Last name is required.");
+    if (isNaN(parseInt(form.exp)))
+      return toast.error("Please select your years of experience.");
+    if (!form.desig) return toast.error("Please select your designation.");
+    if (practiceEntries.length === 0)
+      return toast.error("Practice/Clinic Details is required.");
+    if (selectedSpecialties.length === 0)
+      return toast.error("Please select at least one subspeciality.");
+    if (!form.about_self) return toast.error("Please tell us about yourself.");
+    if (!form.hospitalAffiliation)
+      return toast.error("Registrations & Associations are required.");
+    if (!form.qualifications)
+      return toast.error("Qualifications are required.");
+    if (!form.awardsPublications)
+      return toast.error("Awards & Publications are required.");
+    if (!form.hospitalAffiliation)
+      return toast.error("Please select your hospital affiliation.");
+
     setLoading(true);
     try {
+      // Helper to get day of week string from a date
+      // function getDayOfWeekString(year, month, day) {
+      //   const days = [
+      //     "SUNDAY",
+      //     "MONDAY",
+      //     "TUESDAY",
+      //     "WEDNESDAY",
+      //     "THURSDAY",
+      //     "FRIDAY",
+      //     "SATURDAY",
+      //   ];
+      //   return days[new Date(year, month, day).getDay()];
+      // }
+
+      // Build DoctorAvailabilityDays (all selected days, as strings: 'YYYY-MM-DD')
+      let DoctorAvailabilityDays = [];
+      let DoctorAvailability = [];
+
+      // Object.entries(availability).forEach(([monthKey, types]) => {
+      //   const [year, month] = monthKey.split("-").map(Number);
+      //   Object.entries(types).forEach(([type, days]) => {
+      //     days.forEach((day) => {
+      //       // DoctorAvailabilityDays: ISO string for each selected day
+      //       const dateObj = new Date(year, month, day);
+      //       DoctorAvailabilityDays.push(dateObj.toISOString().split("T")[0]);
+      //       // DoctorAvailability: slot for each day (example: 09:00-09:30, location from type)
+      //       DoctorAvailability.push({
+      //         dayOfWeek: getDayOfWeekString(year, month, day),
+      //         startTime: "09:00", // You can make this dynamic if needed
+      //         endTime: "09:30",
+      //         location: type.toUpperCase(), // 'ONLINE' or 'CLINIC'
+      //         clinicName: type === "clinic" ? form.clinic_name : null,
+      //       });
+      //     });
+      //   });
+      // });
+
+      // Prepare doctor registration data
+      // const data = {
+      //   // email: form.email,
+      //   // password: form.password,
+      //   name: form.fname && form.lname && `${form.fname} ${form.lname}`,
+      //   title: form.title,
+      //   phone: form.phone,
+      //   experience: parseInt(form.exp),
+      //   designation: form.desig,
+      //   practiceName: form.prac_name,
+      //   clinicAddress: form.clinic_name,
+      //   state: form.post_code,
+      //   practicePhone: form.phone,
+      //   subspecialities: selectedSpecialties.map((s) => s.label),
+      //   about: form.about_self,
+      //   registrationsAssociations: form.registrationsAssociations,
+      //   qualifications: form.qualifications, // send as array
+      //   awardsPublications: form.awardsPublications,
+      //   hospitalAffiliations: hospitalAffiliations,
+      //   practices: practiceEntries,
+      //   // DoctorAvailability: { create: DoctorAvailability }, // <-- wrap in create
+      //   // DoctorAvailabilityDays,
+      // };
+
       const data = {};
 
       // Add only if value is non-empty / defined
@@ -244,6 +330,7 @@ const CreateDoctorPage = () => {
       if (form.exp) data.experience = parseInt(form.exp);
       if (form.desig) data.designation = form.desig;
       if (form.about_self) data.about = form.about_self;
+      if (form.location) data.location = form.location;
 
       // Arrays: check if defined AND has at least one item
       if (
@@ -285,6 +372,9 @@ const CreateDoctorPage = () => {
         data.practices = practiceEntries;
       }
 
+      if (Array.isArray(doctorAvailability) && doctorAvailability.length > 0) {
+        data.doctorAvailability = doctorAvailability;
+      }
       console.log("data", data);
       console.log(form);
       const res = await fetch("/api/doctors", {
@@ -294,21 +384,53 @@ const CreateDoctorPage = () => {
       });
       if (res.ok) {
         const data = await res.json();
+        // setSuccess("Registration successful!");
+        // // Optionally redirect or clear form
+        // // Reset form and availability after successful registration
+        // setForm({
+        //   title: "",
+        //   pic: null,
+        //   fname: "",
+        //   lname: "",
+        //   exp: "",
+        //   desig: "",
+        //   prac_name: "",
+        //   clinic_name: "",
+        //   post_code: "",
+        //   phone: "",
+        //   about_self: "",
+        //   reg_assoc: "",
+        //   qual: "",
+        //   awd_pub: "",
+        //   hosp_aff: "",
+        //   email: "",
+        //   password: "",
+        // });
+        // setSelectedSpecialties([]);
+        // // Reset availability to empty for current month
+        // const base = {};
+        // const year = today.getFullYear();
+        // const month = today.getMonth();
+        // calendar.forEach((item) => {
+        //   base[`${year}-${month}`] = base[`${year}-${month}`] || {};
+        //   base[`${year}-${month}`][item.type] = [];
+        // });
+        // setAvailability(base);
         console.log("Registration successful:", data);
-        if (data.success) {
-          const imageUploaded = await handleImageUpload(data?.profile?.id);
-          if (imageUploaded) {
-            console.log("Image uploaded successfully");
-          }
-          toast.success("Doctor created successfully!");
-          router.refresh();
+        toast.success("Registration successful!");
+        const imageUploaded = await handleImageUpload(doctorId);
+        if (imageUploaded) {
+          console.log("Image uploaded successfully");
+        } else {
+          console.error("Image upload failed");
         }
+        router.refresh();
       } else {
-        setError("Registration failed");
-        toast.error("Registration failed!");
+        const result = await res.json();
+        toast.error(result.error || "Registration failed");
       }
     } catch (err) {
-      setError("Something went wrong");
+      toast.error("Something went wrong");
       console.log(err);
     } finally {
       setLoading(false);
@@ -371,6 +493,17 @@ const CreateDoctorPage = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  // Utility to map day short name to DayOfWeek enum
+  const dayMap = {
+    Mon: "MONDAY",
+    Tue: "TUESDAY",
+    Wed: "WEDNESDAY",
+    Thu: "THURSDAY",
+    Fri: "FRIDAY",
+    Sat: "SATURDAY",
+    Sun: "SUNDAY",
+  };
+
   // Helpers for calendar days
   function getDaysInMonth(year, month) {
     const lastDay = new Date(year, month + 1, 0).getDate();
@@ -404,6 +537,7 @@ const CreateDoctorPage = () => {
   function toggleDay(type, day) {
     if (!isEditing) return;
     const key = `${currentYear}-${currentMonth}`;
+    console.log("Toggling", availability);
     setAvailability((prev) => {
       const monthData = { ...(prev[key] || {}) };
       const days = new Set(monthData[type] || []);
@@ -430,18 +564,81 @@ const CreateDoctorPage = () => {
     setIsEditing((v) => !v);
   }
 
-  return (
-    <div className="mx-auto w-full max-w-6xl">
-      <div className="mb-8">
-        <h1 className="text-primary mb-2 text-2xl font-bold">
-          Create New Doctor Profile
-        </h1>
-        <p className="text-gray-600">
-          Add a new doctor to the system with their professional details.
-        </p>
-      </div>
+  // Utility to generate 30-min interval time options
+  const generateTimeOptions = (start = "00:00", end = "23:30") => {
+    const options = [];
+    let [hour, minute] = start.split(":").map(Number);
+    const [endHour, endMinute] = end.split(":").map(Number);
+    while (hour < endHour || (hour === endHour && minute <= endMinute)) {
+      const h = hour.toString().padStart(2, "0");
+      const m = minute.toString().padStart(2, "0");
+      options.push(`${h}:${m}`);
+      minute += 30;
+      if (minute >= 60) {
+        minute = 0;
+        hour += 1;
+      }
+    }
+    return options;
+  };
+  const timeOptions = generateTimeOptions("06:00", "22:00"); // 6am to 10pm
 
-      <div className="grid grid-cols-2 gap-[32px]" autoComplete="off">
+  // Add state for schedule times
+  const [scheduleTimes, setScheduleTimes] = useState(
+    schedule_date.map((item) => ({
+      startTime: item.startTime.replace("am", "").replace("pm", "").trim(),
+      endTime: item.endTime.replace("am", "").replace("pm", "").trim(),
+      location: "ONLINE", // default to Online or Clinic
+    })),
+  );
+
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+
+  // Sync doctorAvailability with scheduleTimes
+  React.useEffect(() => {
+    const updatedAvailability = scheduleTimes.map((entry, idx) => {
+      const dayShort = schedule_date[idx].day;
+      const dayOfWeek = dayMap[dayShort];
+      let location = entry.location;
+      // If location is not ONLINE, treat as CLINIC
+      if (location !== "ONLINE") location = "CLINIC";
+      // If location is CLINIC, set clinicName to the selected hospital/clinic name
+      const clinicName = location === "CLINIC" ? entry.location : "ONLINE";
+      return {
+        dayOfWeek,
+        startTime: entry.startTime,
+        endTime: entry.endTime,
+        location,
+        clinicName,
+      };
+    });
+    setDoctorAvailability(updatedAvailability);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [scheduleTimes]);
+
+  return (
+    <div className="container m-auto">
+      {profileHeader.createProfile.map((data) => (
+        <ProfileHeader
+          key={data.heading}
+          heading={data.heading}
+          step1={data.step1}
+          step2={data.step2}
+          step3={data.step3}
+        />
+      ))}
+      {/*need to check size */}
+      {profileHeader.welcome.map((data, key) => (
+        <div key={key} className="mt-[77px] text-center">
+          <h3 className="text-(--primary)">{data.heading}</h3>
+          <span>{data.subTxt}</span>
+        </div>
+      ))}
+
+      <div
+        className="container m-auto grid grid-cols-2 gap-[32px] pt-16"
+        autoComplete="off"
+      >
         <div className={formField}>
           <label htmlFor="title">Title</label>
           <select
@@ -460,7 +657,7 @@ const CreateDoctorPage = () => {
           </select>
         </div>
         <div className={formField}>
-          <label htmlFor="image">Upload Profile picture</label>
+          <label htmlFor="image">Upload Profile Picture</label>
           <input
             type="file"
             name="image"
@@ -474,6 +671,7 @@ const CreateDoctorPage = () => {
           >
             <span>Click to upload</span>
             <span>
+              {/* ...existing svg... */}
               <svg
                 width="32"
                 height="33"
@@ -539,6 +737,27 @@ const CreateDoctorPage = () => {
             <option value="GENERAL">General Physician</option>
           </select>
         </div>
+        <div className={formField}>
+          <label htmlFor="desig">City</label>
+          <select
+            name="location"
+            id="location"
+            className={dropDown}
+            style={selectStyle}
+            value={form.location}
+            placeholder="Select your city"
+            onChange={handleInputChange("location")}
+          >
+            {auCities.map((cityObj, index) => {
+              // console.log("cityObj", cityObj);
+              return (
+                <option key={index} value={cityObj.city}>
+                  {cityObj.city}
+                </option>
+              );
+            })}
+          </select>
+        </div>
         {/* Practice/Clinic Entries Tag Box */}
         <div className={`${formField} col-span-2`}>
           <label>Practice/Clinic Details</label>
@@ -567,25 +786,44 @@ const CreateDoctorPage = () => {
                 scrollbarColor: "#2F797B #D9D9D9",
               }}
             >
-              {subspecialities.map((specialty) => {
+              {subspecialities.map((specialty, idx) => {
                 if (specialty.value === "Other") {
                   return (
-                    <div key="other" className="mt-2">
-                      <input
-                        type="text"
-                        placeholder="Enter other specialty"
-                        className="w-full rounded border border-gray-300 px-3 py-2 text-sm"
-                        onChange={(e) => {
-                          const value = e.target.value;
-                          const updated = selectedSpecialties.filter(
-                            (s) => s.value !== "Other",
-                          );
-                          if (value.trim() !== "") {
-                            updated.push({ value: "Other", label: value });
-                          }
-                          setSelectedSpecialties(updated);
-                        }}
-                      />
+                    <div key={idx} className="mt-2 space-y-2">
+                      {/* Show added custom specialties above the input */}
+                      {customSpecialties.map((label, idx) => (
+                        <div
+                          key={idx}
+                          className="flex items-center justify-between rounded border px-3 py-2 text-sm shadow-sm"
+                        >
+                          <span>{label}</span>
+                          <button
+                            type="button"
+                            onClick={() => handleRemoveCustomSpecialty(label)}
+                            className="text-red-500 hover:text-red-700"
+                          >
+                            <X size={18} />
+                          </button>
+                        </div>
+                      ))}
+
+                      {/* Input field + Add button */}
+                      <div className="flex gap-2">
+                        <input
+                          type="text"
+                          value={customInput}
+                          onChange={(e) => setCustomInput(e.target.value)}
+                          placeholder="Enter other specialty"
+                          className="w-full rounded border border-gray-300 px-3 py-2 text-sm"
+                        />
+                        <button
+                          type="button"
+                          onClick={handleAddCustomSpecialty}
+                          className="rounded bg-blue-500 p-2 text-white hover:bg-blue-600"
+                        >
+                          <Plus size={18} />
+                        </button>
+                      </div>
                     </div>
                   );
                 }
@@ -598,7 +836,10 @@ const CreateDoctorPage = () => {
                       checked={selectedSpecialties.some(
                         (s) => s.value === specialty.value,
                       )}
-                      onChange={() => handleSpecialtyChange(specialty)}
+                      onChange={() => {
+                        console.log(selectedSpecialties);
+                        handleSpecialtyChange(specialty);
+                      }}
                       className="hidden"
                     />
                     <label
@@ -631,8 +872,8 @@ const CreateDoctorPage = () => {
                 scrollbarColor: "#2F797B #D9D9D9",
               }}
             >
-              {selectedSpecialties.map((specialty) => (
-                <div key={specialty.value}>
+              {selectedSpecialties.map((specialty, idx) => (
+                <div key={idx}>
                   <label
                     className={`flex cursor-pointer items-center rounded-full py-2 select-none`}
                   >
@@ -692,6 +933,14 @@ const CreateDoctorPage = () => {
               Press Enter to add each qualification as a tag.
             </span>
           </div>
+          {/* <textarea
+            name="reg_assoc"
+            id="reg_assoc"
+            className={`h-[240px] ${inputField}`}
+            placeholder="Enter your registrations and any professional memberships (AHPRA, AHPRA, AOA, FRACS etc. )"
+            value={form.reg_assoc}
+            onChange={handleInputChange}
+          ></textarea> */}
         </div>
         <div className={formField}>
           <label htmlFor="qual">Qualifications</label>
@@ -774,15 +1023,26 @@ const CreateDoctorPage = () => {
         </div>
         <div className={formField}>
           <label htmlFor="avail">Set Your Availability</label>
-          <Dialog className="max-w-full overflow-auto">
-            <DialogTrigger asChild>
-              <Button
-                variant="outline"
-                className="flex h-[48px] cursor-pointer items-center justify-center gap-2 rounded-md bg-[#83C5BE] px-4 py-4 text-white"
-              >
-                <span>Click to set availability</span>
-              </Button>
-            </DialogTrigger>
+          <Dialog
+            open={isDialogOpen}
+            onOpenChange={setIsDialogOpen}
+            className="max-w-full overflow-auto"
+          >
+            <button
+              type="button"
+              className={`flex h-[48px] items-center justify-center gap-2 rounded-md px-4 py-4 text-white ${practiceEntries.length === 0 ? "cursor-not-allowed bg-[#83C5BE]" : "cursor-pointer bg-primary"} `}
+              onClick={() => {
+                if (practiceEntries.length === 0) {
+                  toast.error(
+                    "Please add at least one Practice before setting availability.",
+                  );
+                } else {
+                  setIsDialogOpen(true);
+                }
+              }}
+            >
+              <span>Click to set availability</span>
+            </button>
             <DialogContent className="h-full w-full max-w-[90%] overflow-y-auto">
               <DialogHeader>
                 <DialogTitle>My Availability</DialogTitle>
@@ -832,7 +1092,10 @@ const CreateDoctorPage = () => {
                 </div>
                 {/* Calendar for online and clinic */}
                 <div className="mt-6 flex flex-col space-y-4 max-sm:gap-[30px]">
-                  {["online", "clinic"].map((type) => {
+                  {[
+                    "online",
+                    ...practiceEntries.map((entry) => entry.practiceName),
+                  ].map((type) => {
                     const selectedDays = getSelectedDays(type);
                     const meta = getMeta(type);
                     const days = getDaysInMonth(currentYear, currentMonth);
@@ -893,53 +1156,91 @@ const CreateDoctorPage = () => {
                     <div className="flex flex-col justify-center gap-5 max-sm:gap-2">
                       <div className="flex items-center gap-3">
                         <Clock3 className="max-sm:h-[15px] max-sm:w-[15px]" />
-                        <p className="text-wrap">{data.time}</p>
+                        <select
+                          value={scheduleTimes[key].startTime}
+                          onChange={(e) => {
+                            const newTimes = [...scheduleTimes];
+                            newTimes[key].startTime = e.target.value;
+                            setScheduleTimes(newTimes);
+                          }}
+                          className="rounded border px-2 py-1"
+                        >
+                          {timeOptions.map((time) => (
+                            <option key={time} value={time}>
+                              {time}
+                            </option>
+                          ))}
+                        </select>
+                        <span>-</span>
+                        <select
+                          value={scheduleTimes[key].endTime}
+                          onChange={(e) => {
+                            const newTimes = [...scheduleTimes];
+                            newTimes[key].endTime = e.target.value;
+                            setScheduleTimes(newTimes);
+                          }}
+                          className="rounded border px-2 py-1"
+                        >
+                          {timeOptions.map((time) => (
+                            <option key={time} value={time}>
+                              {time}
+                            </option>
+                          ))}
+                        </select>
                       </div>
                       <div className="flex items-center gap-3">
                         <User className="max-sm:h-[15px] max-sm:w-[15px]" />
-                        <p>{data.location}</p>
+                        <select
+                          value={scheduleTimes[key].location}
+                          onChange={(e) => {
+                            const newTimes = [...scheduleTimes];
+                            newTimes[key].location = e.target.value;
+                            setScheduleTimes(newTimes);
+                          }}
+                          className="rounded border px-2 py-1"
+                        >
+                          <option value="ONLINE">Online</option>
+                          {practiceEntries &&
+                            practiceEntries.map((practice, idx) => (
+                              <option key={idx} value={practice.practiceName}>
+                                {practice.practiceName}
+                              </option>
+                            ))}
+                        </select>
                       </div>
                     </div>
-                    <select
-                      name="edit"
-                      id="edit"
-                      className={`${dropDown} bg-background cursor-pointer !border-none px-[20px]`}
-                      style={selectStyle}
+                    <button
+                      type="button"
+                      className="ml-4 rounded bg-[#83C5BE] px-6 py-2 text-white transition-colors hover:bg-[#2F797B]"
+                      onClick={() => toast.success("Schedule saved!")}
                     >
-                      <option value="">Edit</option>
-                      <option value="">Delete</option>
-                    </select>
+                      Save
+                    </button>
                   </div>
                 ))}
               </div>
             </DialogContent>
           </Dialog>
         </div>
-        {/* {error && <div className="col-span-2 mt-2 text-red-500">{error}</div>} */}
-        {success && (
-          <div className="col-span-2 mt-2 text-green-500">{success}</div>
-        )}
-        <div className="col-span-2 flex items-center gap-3">
-          <input
-            type="checkbox"
-            name="terms"
-            id="terms"
-            className="checked:border-primary checked:bg-primary h-3 w-3 appearance-none border-2 border-(--primary) focus:outline-none"
-          />
-          <label htmlFor="terms">I accept the terms</label>
-        </div>
       </div>
-      <div className="mt-8 flex items-center justify-center">
+      <div className="flex items-center justify-center max-sm:flex-col">
         <button
-          className="btn_fill col-span-2 m-auto flex cursor-pointer justify-center px-14 py-2 max-sm:w-full"
+          className="btn_fill col-span-2 m-auto mt-10 mb-10 flex cursor-pointer justify-center px-14 py-2 max-sm:mb-0 max-sm:w-full"
           onClick={handleRegister}
           disabled={loading}
         >
-          {loading ? "Creating..." : "Create Doctor Profile"}
+          {loading ? "Registering..." : "Create Doctor Profile"}
         </button>
+        {/* <button
+          className="btn_fill col-span-2 m-auto mt-10 mb-10 flex cursor-pointer justify-center px-14 py-2 max-sm:w-full"
+          onClick={() => router.push("/doctor")}
+          disabled={loading}
+        >
+          Complete Later
+        </button> */}
       </div>
     </div>
   );
 };
 
-export default CreateDoctorPage;
+export default Page;
