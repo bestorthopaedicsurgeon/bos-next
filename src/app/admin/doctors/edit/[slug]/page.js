@@ -892,7 +892,7 @@ const AdminEditDoctorPage = ({ params }) => {
                         <button
                           type="button"
                           onClick={handleAddCustomSpecialty}
-                          className="rounded bg-blue-500 p-2 text-white hover:bg-blue-600"
+                          className="rounded bg-primary p-2 text-white hover:bg-primary/80"
                         >
                           <Plus size={18} />
                         </button>
@@ -924,7 +924,7 @@ const AdminEditDoctorPage = ({ params }) => {
                           selectedSpecialties.some(
                             (s) => s.value === specialty.value,
                           )
-                            ? "border-blue-500 bg-blue-500"
+                            ? "border-primary bg-primary"
                             : "border-gray-400 bg-white"
                         }`}
                       ></span>
@@ -951,7 +951,7 @@ const AdminEditDoctorPage = ({ params }) => {
                     className={`flex cursor-pointer items-center rounded-full py-2 select-none`}
                   >
                     <span
-                      className={`mr-2 inline-block h-4 w-4 rounded-full border border-blue-500 bg-blue-500`}
+                      className={`mr-2 inline-block h-4 w-4 rounded-full border border-primary bg-primary`}
                     ></span>
                     {specialty.label}
                   </label>

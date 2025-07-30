@@ -122,7 +122,7 @@ export function AdminSidebar({ ...props }) {
   const pathname = usePathname()
 
   return (
-    <Sidebar collapsible="icon" {...props}>
+    <Sidebar collapsible="icon" sticky {...props}>
       <SidebarHeader>
         <SidebarMenu>
           <SidebarMenuItem>

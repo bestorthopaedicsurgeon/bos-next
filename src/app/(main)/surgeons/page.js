@@ -1,5 +1,4 @@
-import { AllSurgeons } from "@/components/surgeonsPage/AllSurgeons";
-import { HeroSection } from "@/components/surgeonsPage/Hero";
+import { SearchableSurgeonsWrapper } from "@/components/surgeonsPage/SearchableSurgeonsWrapper";
 import InfoSectionLeft from "@/components/surgeonsPage/InfoSectionLeft";
 import InfoSectionRight from "@/components/surgeonsPage/InfoSectionRight";
 import Types from "@/components/surgeonsPage/Types";
@@ -8,8 +7,7 @@ import React from "react";
 const SurgeonsPage = () => {
   return (
     <div className="container">
-      <HeroSection />
-      <AllSurgeons />
+      <SearchableSurgeonsWrapper />
       <InfoSectionLeft image={"/surgeons/info1.png"} />
       <InfoSectionRight image={"/surgeons/info2.png"} />
       <Types />

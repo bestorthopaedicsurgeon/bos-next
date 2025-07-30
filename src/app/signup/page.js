@@ -59,9 +59,9 @@ const Page = () => {
       if (result?.ok) {
         // ✅ Redirect manually — e.g., to profile or dashboard
         if (data.role === "PATIENT") {
-          redirect("/profile");
+          redirect("/");
         } else if (data.role === "DOCTOR") {
-          redirect("/doctor-registration");
+          redirect("/doctor/registration");
         }
       } else {
         setError("Sign-in failed");

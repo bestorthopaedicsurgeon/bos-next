@@ -77,7 +77,7 @@ const SidebarProvider = React.forwardRef(({ defaultOpen = true, open, onOpenChan
 })
 SidebarProvider.displayName = "SidebarProvider"
 
-const Sidebar = React.forwardRef(({ side = "left", variant = "sidebar", collapsible = "icon", className, children, ...props }, ref) => {
+const Sidebar = React.forwardRef(({ side = "left", variant = "sidebar", collapsible = "icon", sticky = false, className, children, ...props }, ref) => {
   const { isMobile, state, openMobile, setOpenMobile } = useSidebar()
 
   if (isMobile) {
@@ -105,6 +105,7 @@ const Sidebar = React.forwardRef(({ side = "left", variant = "sidebar", collapsi
           ? "w-[--sidebar-width-icon]" 
           : "w-[--sidebar-width]",
         "transition-all duration-200 ease-linear",
+        sticky && "sticky top-0 h-screen",
         className
       )}
       data-state={state}
@@ -113,7 +114,10 @@ const Sidebar = React.forwardRef(({ side = "left", variant = "sidebar", collapsi
       data-side={side}
       {...props}
     >
-      <div className="flex h-full w-full flex-col bg-sidebar border-r border-sidebar-border">
+      <div className={cn(
+        "flex w-full flex-col bg-sidebar border-r border-sidebar-border",
+        sticky ? "h-screen overflow-y-auto" : "h-full"
+      )}>
         {children}
       </div>
     </div>

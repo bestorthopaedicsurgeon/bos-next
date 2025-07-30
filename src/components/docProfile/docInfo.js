@@ -34,7 +34,7 @@ const DocInfo = ({ docProfile_Details, showLocation = true }) => {
           <div>
             <p className={`${heading_style}`}>Subspeciality</p>
             <p className={`${info_style} max-w-52`}>
-              {doctorProfile?.subspecialities?.[0].split(",")[0]}
+              {doctorProfile?.subspecialities?.[0]?.split(",")[0] || "Not specified"}
             </p>
           </div>
           <div>

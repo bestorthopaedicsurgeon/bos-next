@@ -130,12 +130,25 @@ const Page = () => {
         </div>
         {/* Accept Terms */}
         <div className="col-span-2 mt-2 flex items-center gap-2">
-          <input
-            id="accept_terms"
-            name="accept_terms"
-            type="checkbox"
-            className="checked:border-primary checked:bg-primary h-4 w-4 appearance-none rounded border-2 border-(--primary) focus:outline-none"
-          />
+          <div className="relative">
+            <input
+              id="accept_terms"
+              name="accept_terms"
+              type="checkbox"
+              className="peer h-4 w-4 appearance-none rounded border-2 border-primary bg-white checked:bg-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
+            />
+            <svg
+              className="pointer-events-none absolute inset-0 h-4 w-4 text-white opacity-0 peer-checked:opacity-100"
+              fill="currentColor"
+              viewBox="0 0 20 20"
+            >
+              <path
+                fillRule="evenodd"
+                d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                clipRule="evenodd"
+              />
+            </svg>
+          </div>
           <label htmlFor="accept_terms" className="text-sm">
             I accept the terms
           </label>

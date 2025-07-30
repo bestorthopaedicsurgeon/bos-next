@@ -12,6 +12,7 @@ import {
   DialogClose,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import { Checkbox } from "@/components/ui/checkbox";
 import AvailabilityCalendar from "@/components/calendar";
 
 const formField = "flex flex-col gap-2 max-md:col-span-2";
@@ -214,13 +215,10 @@ const Page = () => {
         </div>
         {/* Accept Terms */}
         <div className="col-span-2 mt-2 flex items-center gap-2">
-          <input
+          <Checkbox
             id="accept_terms"
-            name="accept_terms"
-            type="checkbox"
             checked={acceptTerms}
-            onChange={(e) => setAcceptTerms(e.target.checked)}
-            className="checked:border-primary checked:bg-primary h-4 w-4 appearance-none rounded border-2 border-(--primary) focus:outline-none"
+            onCheckedChange={setAcceptTerms}
           />
           <label htmlFor="accept_terms" className="text-sm">
             I accept the terms

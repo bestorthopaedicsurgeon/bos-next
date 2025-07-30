@@ -1,5 +1,7 @@
+"use client";
 import InputField from "@/components/reusable/inputField";
 import SelectField from "@/components/reusable/selectField";
+import { SearchableSelect } from "@/components/reusable/SearchableSelect";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -10,12 +12,21 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { auCities } from "@/lib/constants/auCities";
+import { getAllDoctors } from "@/lib/apiCalls/client/allDoctor";
 import Image from "next/image";
 import Link from "next/link";
-import React from "react";
+import React, { useState, useCallback, useMemo } from "react";
 
-export const HeroSection = () => {
-  const subspecialities = [
+export const HeroSection = ({ onSearchResults, onSearchStateChange }) => {
+  const [searchForm, setSearchForm] = useState({
+    email: "",
+    subspecialty: "",
+    location: ""
+  });
+  const [isSearching, setIsSearching] = useState(false);
+  const [hasSearched, setHasSearched] = useState(false);
+
+  const subspecialities = useMemo(() => [
     { value: "UPPER_LIMB", label: "Upper Limb" },
     { value: "LOWER_LIMB", label: "Lower Limb" },
     { value: "SPINE", label: "Spine" },
@@ -24,7 +35,78 @@ export const HeroSection = () => {
     { value: "TRAUMA", label: "Trauma" },
     { value: "SPORTS", label: "Sports" },
     { value: "ARTHROPLASTY", label: "Arthroplasty" },
-  ];
+  ], []);
+
+  const locationOptions = useMemo(() => auCities.map((city) => ({
+    value: city.city,
+    label: city.city,
+  })), []);
+
+  const handleSearch = useCallback(async () => {
+    setIsSearching(true);
+    onSearchStateChange?.(true);
+    try {
+      const allDoctors = await getAllDoctors();
+      if (!allDoctors) {
+        onSearchResults([]);
+        return;
+      }
+
+      // Filter doctors based on search criteria
+      let filteredDoctors = allDoctors;
+
+      // Filter by email if provided
+      if (searchForm.email.trim()) {
+        filteredDoctors = filteredDoctors.filter((doctor) =>
+          doctor.user?.email?.toLowerCase().includes(searchForm.email.toLowerCase())
+        );
+      }
+
+      // Filter by subspecialty if provided
+      if (searchForm.subspecialty.trim()) {
+        filteredDoctors = filteredDoctors.filter((doctor) => {
+          if (!doctor.subspecialities || !Array.isArray(doctor.subspecialities)) {
+            return false;
+          }
+          return doctor.subspecialities.some((subspecialty) =>
+            subspecialty.toLowerCase().includes(searchForm.subspecialty.toLowerCase()) ||
+            subspecialities.find(sub => 
+              sub.value.toLowerCase() === searchForm.subspecialty.toLowerCase() &&
+              subspecialty.toLowerCase().includes(sub.label.toLowerCase())
+            )
+          );
+        });
+      }
+
+      // Filter by location if provided
+      if (searchForm.location.trim()) {
+        filteredDoctors = filteredDoctors.filter((doctor) =>
+          doctor.location?.toLowerCase().includes(searchForm.location.toLowerCase())
+        );
+      }
+
+      onSearchResults(filteredDoctors);
+      setHasSearched(true);
+    } catch (error) {
+      console.error("Search error:", error);
+      onSearchResults([]);
+      setHasSearched(true);
+    } finally {
+      setIsSearching(false);
+      onSearchStateChange?.(false);
+    }
+  }, [searchForm, onSearchResults, onSearchStateChange, subspecialities]);
+
+  const handleClearSearch = useCallback(() => {
+    setSearchForm({
+      email: "",
+      subspecialty: "",
+      location: ""
+    });
+    setHasSearched(false);
+    onSearchResults(null); // null indicates show all doctors
+    onSearchStateChange?.(false);
+  }, [onSearchResults, onSearchStateChange]);
   return (
     <section className="mb-20">
       <div className="bg-primary text-primary-foreground mb-8 flex gap-10 rounded-4xl px-20 py-16 max-lg:justify-center max-md:px-10">
@@ -92,41 +174,44 @@ export const HeroSection = () => {
         </div>
       </div>
       <div className="rounded-4xl bg-white px-20 py-8">
-        <h1 className="font-syne text-primary">Find A Surgeon</h1>
+        <div className="mb-4">
+          <h1 className="font-syne text-primary">Find A Surgeon</h1>
+        </div>
         <div className="flex gap-4 max-md:flex-wrap">
           <input
             className="border-primary min-h-[56px] w-full rounded-md border px-4 py-3.5"
-            placeholder="Email"
+            placeholder="Doctor Email"
+            value={searchForm.email}
+            onChange={(e) =>
+              setSearchForm({ ...searchForm, email: e.target.value })
+            }
           />
-          <Select>
-            <SelectTrigger className="border-primary h-[52px] min-h-[56px] w-full rounded-md border px-4 py-3.5">
-              <SelectValue placeholder="Subspecialty" />
-            </SelectTrigger>
-            <SelectContent>
-              {subspecialities.map((item) => (
-                <SelectItem key={item.value} value={item.value}>
-                  {item.label}
-                </SelectItem>
-              ))}
-              {/* <SelectItem value="light">Light</SelectItem>
-                    <SelectItem value="dark">Dark</SelectItem>
-                    <SelectItem value="system">System</SelectItem> */}
-            </SelectContent>
-          </Select>
-          <Select>
-            <SelectTrigger className="border-primary h-[52px] min-h-[56px] w-full rounded-md border px-4 py-3.5">
-              <SelectValue placeholder="Location" />
-            </SelectTrigger>
-            <SelectContent>
-              {auCities.map((item) => (
-                <SelectItem key={item.city} value={item.city}>
-                  {item.city}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-          <Button className={"w-36"} variant={"primary"} size={"primary"}>
-            Search
+          <SearchableSelect
+            options={subspecialities}
+            placeholder="Subspecialty"
+            value={searchForm.subspecialty}
+            onChange={(value) =>
+              setSearchForm({ ...searchForm, subspecialty: value })
+            }
+            className="w-full"
+          />
+          <SearchableSelect
+            options={locationOptions}
+            placeholder="Location"
+            value={searchForm.location}
+            onChange={(value) =>
+              setSearchForm({ ...searchForm, location: value })
+            }
+            className="w-full"
+          />
+          <Button
+            className={"w-36"}
+            variant={"primary"}
+            size={"primary"}
+            onClick={hasSearched ? handleClearSearch : handleSearch}
+            disabled={isSearching}
+          >
+            {isSearching ? "Searching..." : hasSearched ? "Clear Search" : "Search"}
           </Button>
         </div>
       </div>

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { Checkbox } from "@/components/ui/checkbox";
 
 export default function ReviewForm({ className }) {
   const [formData, setFormData] = useState({
@@ -152,13 +153,12 @@ export default function ReviewForm({ className }) {
         </div>
 
         <div className="mb-6">
-          <label className="flex items-center">
-            <input
-              type="checkbox"
-              name="acceptTerms"
+          <label className="flex items-center gap-2">
+            <Checkbox
               checked={formData.acceptTerms}
-              onChange={handleChange}
-              className="mr-2"
+              onCheckedChange={(checked) =>
+                setFormData((prev) => ({ ...prev, acceptTerms: checked }))
+              }
               required
             />
             <span className="text-[14px]">I accept the terms</span>

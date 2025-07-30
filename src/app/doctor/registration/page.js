@@ -3,6 +3,7 @@ import ProfileHeader from "@/components/reusable/profileHeader";
 import React, { useState } from "react";
 import { profileHeader } from "@/data/profileHeader";
 import WelcomeTxt from "@/components/reusable/welcomeTxt";
+import { Checkbox } from "@/components/ui/checkbox";
 import {
   doc_reg,
   calendar_data,
@@ -75,6 +76,7 @@ const Page = () => {
   const [practiceError, setPracticeError] = useState("");
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState("");
+  const [acceptTerms, setAcceptTerms] = useState(false);
 
   const [customSpecialties, setCustomSpecialties] = useState([]);
   const [customInput, setCustomInput] = useState("");
@@ -819,7 +821,7 @@ const Page = () => {
                         <button
                           type="button"
                           onClick={handleAddCustomSpecialty}
-                          className="rounded bg-blue-500 p-2 text-white hover:bg-blue-600"
+                          className="rounded bg-primary p-2 text-white hover:bg-primary/80"
                         >
                           <Plus size={18} />
                         </button>
@@ -851,7 +853,7 @@ const Page = () => {
                           selectedSpecialties.some(
                             (s) => s.value === specialty.value,
                           )
-                            ? "border-blue-500 bg-blue-500"
+                            ? "border-primary bg-primary"
                             : "border-gray-400 bg-white"
                         }`}
                       ></span>
@@ -878,7 +880,7 @@ const Page = () => {
                     className={`flex cursor-pointer items-center rounded-full py-2 select-none`}
                   >
                     <span
-                      className={`mr-2 inline-block h-4 w-4 rounded-full border border-blue-500 bg-blue-500`}
+                      className={`mr-2 inline-block h-4 w-4 rounded-full border border-primary bg-primary`}
                     ></span>
                     {specialty.label}
                   </label>
@@ -1227,11 +1229,10 @@ const Page = () => {
           <div className="col-span-2 mt-2 text-green-500">{success}</div>
         )}
         <div className="col-span-2 flex items-center gap-3">
-          <input
-            type="checkbox"
-            name="terms"
+          <Checkbox
             id="terms"
-            className="checked:border-primary checked:bg-primary h-3 w-3 appearance-none border-2 border-(--primary) focus:outline-none"
+            checked={acceptTerms}
+            onCheckedChange={setAcceptTerms}
           />
           <label htmlFor="terms">I accept the terms</label>
         </div>
