@@ -1,0 +1,42 @@
+'use client';
+
+import { Editor } from '@tinymce/tinymce-react';
+import { useRef } from 'react';
+
+export default function RichTextEditor({ value, onChange }) {
+  const editorRef = useRef(null);
+
+  return (
+    <Editor
+      apiKey='rcceemhbfcl8bw35vd591k3bm8oncf0s8k8op2kswp0aze0w' // or your actual key
+      onInit={(evt, editor) => (editorRef.current = editor)}
+      value={value}
+      init={{
+        height: 500,
+        menubar: false,
+        plugins: [
+          'lists', // 🟢 This enables bullet/numbered lists
+          'advlist', // improves list formatting options
+          'autolink',
+          'link',
+          'charmap',
+          'preview',
+          'visualblocks',
+          'code',
+          'fullscreen',
+          'insertdatetime',
+          'table',
+          'paste',
+          'help',
+          'wordcount',
+          'table',
+        ],
+        toolbar:
+          'undo redo | formatselect | bold italic underline | ' +
+          'alignleft aligncenter alignright alignjustify | ' +
+          'bullist numlist outdent indent | blockquote | removeformat | table | help',
+      }}
+      onEditorChange={(content) => onChange(content)}
+    />
+  );
+}

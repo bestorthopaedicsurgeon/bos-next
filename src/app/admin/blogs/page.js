@@ -1,6 +1,7 @@
 "use client";
 import BlogHeader from "@/components/blogPage/BlogHeader";
 import ProfileHeader from "@/components/reusable/profileHeader";
+import RichTextEditor from "@/components/reusable/RichTextEditor";
 import { SearchableSelect } from "@/components/reusable/SearchableSelect";
 import {
   Select,
@@ -15,6 +16,7 @@ import React, { useEffect, useState } from "react";
 
 const Page = () => {
   const [blogs, setBlogs] = useState();
+  const [editData, setEditData] = useState();
 
   useEffect(() => {
     fetchBlogs();
@@ -77,6 +79,12 @@ const Page = () => {
         <p>Author</p>
       </div>
       <div dangerouslySetInnerHTML={{ __html: "" }}></div>
+      <RichTextEditor
+        value={blogs[0].content || ""}
+        onChange={(content) => {
+          setEditData({ ...editData, content: content });
+        }}
+      />
     </div>
   );
 };
