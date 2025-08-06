@@ -177,3 +177,18 @@ enum LocationType {
   ONLINE
   CLINIC
 }
+
+model Blog {
+  id         String   @id @default(cuid())
+  title      String
+  authorName String
+  date       DateTime @default(now())
+  image      String?   // Store URL or path to the image
+  content    String  
+  slug       String   @unique
+
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+}
+
+

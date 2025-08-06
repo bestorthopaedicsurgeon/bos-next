@@ -111,6 +111,11 @@ const data = {
       icon: BarChart3,
     },
     {
+      title: "Blogs",
+      url: "/admin/blogs",
+      icon: BarChart3,
+    },
+    {
       title: "Settings",
       url: "/admin/settings",
       icon: Settings,
