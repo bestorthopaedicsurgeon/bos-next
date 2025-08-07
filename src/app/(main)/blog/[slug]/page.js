@@ -1,36 +1,48 @@
-import BlogHeader from "@/components/blogPage/BlogHeader";
 import ProfileHeader from "@/components/reusable/profileHeader";
+import { getBlogBySlugApi } from "@/lib/apiCalls/server/blogs";
 import Image from "next/image";
 import React from "react";
 
-const Page = () => {
+export async function generateMetadata({ params }) {
+  return {
+    title: `Read Blog: ${params.slug}`,
+  };
+}
+
+const Page = async ({ params }) => {
+  const { slug } = params;
+  const response = await getBlogBySlugApi(slug);
+  const blog = response?.data;
+
+  if (!blog) {
+    return <div className="container">Blog not found.</div>;
+  }
+
   return (
     <div className="container">
-      <ProfileHeader
-        // key={data.heading}
-        heading={"Read Blog"}
-        step1={"blog"}
-        step2={"Slug"}
-      />
-      <h1 className="font-syne text-primary my-20">Blog Name</h1>
+      <ProfileHeader heading={"Read Blog"} step1={"blog"} step2={slug} />
+      <h1 className="font-syne text-primary my-20">{blog.title}</h1>
+
       <Image
-        src="/blog1.png"
+        src={blog.image + `?v=${Date.now()}`}
         width={1000}
         height={1000}
         alt="blog"
         className="w-full"
       />
-      <div className="flex items-center gap-4 my-4">
+
+      <div className="my-4 flex items-center gap-4">
         <Image
           src="/profile.png"
           width={50}
           height={50}
           alt="profile"
-          className="w-12 h-12 rounded-full"
+          className="h-12 w-12 rounded-full"
         />
-        <p>Author</p>
+        <p>{blog.authorName || "Author"}</p>
       </div>
-      <div dangerouslySetInnerHTML={{ __html: "" }}></div>
+
+      <div dangerouslySetInnerHTML={{ __html: blog.content }}></div>
     </div>
   );
 };

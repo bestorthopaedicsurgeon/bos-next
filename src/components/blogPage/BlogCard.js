@@ -1,11 +1,14 @@
+"use client"
+import { ca } from "date-fns/locale";
 import Image from "next/image";
+import { redirect } from "next/navigation";
 import React from "react";
 
 export const BlogCard = (card) => {
   return (
     <div className="flex flex-col items-start rounded-lg border bg-white p-10">
       <Image
-        src={"/blog/blog-preview.png"}
+        src={card.image}
         alt={card.title}
         width={343}
         height={220}
@@ -16,7 +19,14 @@ export const BlogCard = (card) => {
         April 14, 2025 • 11 min read
       </p>
       <p className="mb-4 line-clamp-3">{card.description}</p>
-      <button className="text-primary text-lg font-bold cursor-pointer">Read More →</button>
+      <button
+        onClick={() => {
+          redirect(`/blog/${card.slug}`);
+        }}
+        className="text-primary cursor-pointer text-lg font-bold"
+      >
+        Read More →
+      </button>
     </div>
   );
 };

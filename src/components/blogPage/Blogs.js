@@ -1,5 +1,6 @@
 import { BlogCard } from "@/components/blogPage/BlogCard";
 import { Button } from "@/components/ui/button";
+import { getAllBlogsApi } from "@/lib/apiCalls/server/blogs";
 import React from "react";
 
 const cards = [
@@ -41,12 +42,15 @@ const cards = [
   },
 ];
 
-export const Blogs = () => {
+export const Blogs = async () => {
+
+  const fetchedBlogs = await getAllBlogsApi();
+
   return (
     <section id="blogs">
       <h1 className="font-syne text-primary text-center mb-8">Types Of Orthopaedic Surgeons</h1>
       <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
-        {cards.map((card, index) => (
+        {fetchedBlogs?.data?.map((card, index) => (
           <BlogCard key={index} {...card} />
         ))}
       </div>
