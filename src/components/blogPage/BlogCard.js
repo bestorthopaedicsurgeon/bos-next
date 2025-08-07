@@ -20,7 +20,7 @@ export const BlogCard = (card) => {
     <div className="flex flex-col items-start rounded-lg border bg-white p-10">
       {card?.image && (
         <div
-          className="mb-4 h-[200px] w-full rounded-lg bg-cover bg-center bg-no-repeat sm:h-[220px] md:h-[240px]"
+          className="mb-4 h-[200px] w-full rounded-lg bg-contain bg-center bg-no-repeat sm:h-[220px] md:h-[240px]"
           style={{
             backgroundImage: `url(${card.image})`,
           }}
