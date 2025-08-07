@@ -178,7 +178,9 @@
   background-color: transparent;
   background: transparent !important;
 }
-
+.tox-statusbar{
+  display: none !important;
+}
 .btn_fill {
   @apply text-secondary rounded-sm bg-(--primary) text-[20px];
 }

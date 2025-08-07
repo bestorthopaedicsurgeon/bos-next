@@ -7,7 +7,7 @@ export default function RichTextEditor({ value, onChange }) {
   const editorRef = useRef(null);
 
   return (
-    <Editor
+    <Editor 
       apiKey='rcceemhbfcl8bw35vd591k3bm8oncf0s8k8op2kswp0aze0w' // or your actual key
       onInit={(evt, editor) => (editorRef.current = editor)}
       value={value}
@@ -30,11 +30,13 @@ export default function RichTextEditor({ value, onChange }) {
           'help',
           'wordcount',
           'table',
+          
         ],
         toolbar:
           'undo redo | formatselect | bold italic underline | ' +
           'alignleft aligncenter alignright alignjustify | ' +
-          'bullist numlist outdent indent | blockquote | removeformat | table | help',
+          'bullist numlist outdent indent | blockquote , p , h1 , h2 , h3 , h4 , h5 , h6 , link',
+          block_formats: 'Paragraph=p; Heading 1=h1; Heading 2=h2',  
       }}
       onEditorChange={(content) => onChange(content)}
     />
