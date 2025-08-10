@@ -12,16 +12,41 @@ import Image from "next/image";
 import Link from "next/link";
 import { signIn, useSession } from "next-auth/react";
 import { redirect, useRouter } from "next/navigation";
+import { toast } from "sonner";
 
 const Page = () => {
   const { data: session, status } = useSession();
   const router = useRouter();
 
   const [form, setForm] = useState({ email: "", password: "" });
-
+  const [rememberMe, setRememberMe] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-  const [success, setSuccess] = useState("");
+
+  // Load remembered credentials on component mount
+  useEffect(() => {
+    try {
+      const rememberedData = localStorage.getItem("rememberMeData");
+      
+      if (rememberedData) {
+        const parsedData = JSON.parse(rememberedData);
+        const { email, password, rememberMe: remembered } = parsedData;
+        
+        if (remembered && email && password) {
+          setForm({ email: email, password: password });
+          setRememberMe(true);
+        }
+      }
+    } catch (error) {
+      console.error("Error loading remembered data:", error);
+      // Clear corrupted data
+      try {
+        localStorage.removeItem("rememberMeData");
+      } catch (e) {
+        console.error("Error clearing corrupted data:", e);
+      }
+    }
+  }, []);
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -31,7 +56,6 @@ const Page = () => {
     e.preventDefault();
     setLoading(true);
     setError("");
-    setSuccess("");
 
     if (form.email === "" || form.password === "") {
       setError("Please fill in email and password.");
@@ -40,21 +64,45 @@ const Page = () => {
     }
 
     console.log("Form Data:", form);
-    await signIn("credentials", {
-      redirect: true,
-      email: form.email,
-      password: form.password,
-      callbackUrl: "/",
-    });
+    
+    try {
+      const result = await signIn("credentials", {
+        redirect: false,
+        email: form.email,
+        password: form.password,
+        callbackUrl: "/",
+      });
 
-    console.log("SignIn Data:", signInData);
-
-    if (signInData.error) {
-      setError(signInData.error);
-    } else {
-      // setSuccess("Login successful!");
-      // redirect("/");
+      if (result?.error) {
+        setError(result.error);
+      } else if (result?.ok) {
+        // Handle remember me functionality
+        try {
+          if (rememberMe) {
+            // Save credentials to localStorage
+            const dataToRemember = {
+              email: form.email,
+              password: form.password,
+              rememberMe: true,
+            };
+            localStorage.setItem("rememberMeData", JSON.stringify(dataToRemember));
+          } else {
+            // Clear remembered data if remember me is unchecked
+            localStorage.removeItem("rememberMeData");
+          }
+        } catch (error) {
+          console.error("Error handling remember me data:", error);
+          // Continue with login even if localStorage fails
+        }
+        
+        toast.success("Login successful!");
+        router.push("/");
+      }
+    } catch (error) {
+      setError("An error occurred during login.");
+      console.error("Login error:", error);
     }
+    
     setLoading(false);
   };
 
@@ -80,7 +128,7 @@ const Page = () => {
           header="Welcome Back"
           cta="Sign up"
           ctaLink="/signup"
-          subTxt="Don’t have an account?"
+          subTxt="Don't have an account?"
           color="--primary"
         />
         {/* input form start */}
@@ -133,10 +181,15 @@ const Page = () => {
           />
         </div>
         {error && <div className="mt-2 text-red-500">{error}</div>}
-        {success && <div className="mt-2 text-green-500">{success}</div>}
-        <div className="flex items-center space-x-2">
-          <Checkbox id="terms" />
-          <label htmlFor="terms">Remember me</label>
+        <div className="flex items-center space-x-2 mt-4">
+          <Checkbox 
+            id="rememberMe" 
+            checked={rememberMe}
+            onCheckedChange={(checked) => setRememberMe(checked)}
+          />
+          <label htmlFor="rememberMe" className="text-sm text-gray-600 cursor-pointer">
+            Remember me
+          </label>
         </div>
         {/* </form> */}
         {/* input form end */}

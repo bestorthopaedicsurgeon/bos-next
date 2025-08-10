@@ -14,7 +14,8 @@ import {
   Stethoscope,
   ClipboardList,
   Star,
-  MessageSquare
+  MessageSquare,
+  NotebookPen
 } from "lucide-react"
 
 import { cn } from "@/lib/utils"
@@ -113,7 +114,7 @@ const data = {
     {
       title: "Blogs",
       url: "/admin/blogs",
-      icon: BarChart3,
+      icon: NotebookPen,
     },
     {
       title: "Settings",
