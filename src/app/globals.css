@@ -100,23 +100,262 @@
   --muted-foreground: oklch(0.704 0.04 256.788);
   --accent: oklch(0.279 0.041 260.031);
   --accent-foreground: oklch(0.984 0.003 247.858);
-  --destructive: oklch(0.704 0.191 22.216);
-  --border: oklch(1 0 0 / 10%);
-  --input: oklch(1 0 0 / 15%);
-  --ring: oklch(0.551 0.027 264.364);
-  --chart-1: oklch(0.488 0.243 264.376);
-  --chart-2: oklch(0.696 0.17 162.48);
-  --chart-3: oklch(0.769 0.188 70.08);
-  --chart-4: oklch(0.627 0.265 303.9);
-  --chart-5: oklch(0.645 0.246 16.439);
-  --sidebar: oklch(0.208 0.042 265.755);
+  --destructive: oklch(0.208 0.042 265.755);
+  --destructive-foreground: oklch(0.984 0.003 247.858);
+  --border: oklch(0.279 0.041 260.031);
+  --input: oklch(0.279 0.041 260.031);
+  --ring: oklch(0.279 0.041 260.031);
+  --chart-1: oklch(0.646 0.222 41.116);
+  --chart-2: oklch(0.6 0.118 184.704);
+  --chart-3: oklch(0.398 0.07 227.392);
+  --chart-4: oklch(0.828 0.189 84.429);
+  --chart-5: oklch(0.769 0.188 70.08);
+  --sidebar: oklch(0.129 0.042 264.695);
   --sidebar-foreground: oklch(0.984 0.003 247.858);
-  --sidebar-primary: oklch(0.488 0.243 264.376);
-  --sidebar-primary-foreground: oklch(0.984 0.003 247.858);
+  --sidebar-primary: oklch(0.279 0.041 260.031);
+  --sidebar-primary-foreground: oklch(0.129 0.042 264.695);
   --sidebar-accent: oklch(0.279 0.041 260.031);
   --sidebar-accent-foreground: oklch(0.984 0.003 247.858);
-  --sidebar-border: oklch(1 0 0 / 10%);
-  --sidebar-ring: oklch(0.551 0.027 264.364);
+  --sidebar-border: oklch(0.279 0.041 260.031);
+  --sidebar-ring: oklch(0.279 0.041 260.031);
+}
+
+/* Global table styling for all tables in the application */
+table {
+  border-collapse: collapse;
+  width: 100%;
+  margin: 1.5em 0;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  background: white;
+  border: 1px solid #e5e7eb;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+}
+
+/* Tables in editor should remain editable */
+.editor-content table,
+.editor-content table *,
+.editor-content table th,
+.editor-content table td {
+  /* Allow editing in editor - no restrictions */
+}
+
+/* Tables outside editor (published content) should be read-only */
+.prose table,
+.prose table *,
+.prose table th,
+.prose table td {
+  -webkit-user-modify: read-only !important;
+  -moz-user-modify: read-only !important;
+  -ms-user-modify: read-only !important;
+  user-modify: read-only !important;
+  outline: none !important;
+  cursor: default !important;
+}
+
+table th {
+  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+  font-weight: 700;
+  color: #1f2937;
+  text-transform: uppercase;
+  font-size: 0.875rem;
+  letter-spacing: 0.05em;
+  border-bottom: 2px solid #d1d5db;
+  padding: 16px;
+  text-align: left;
+  white-space: nowrap;
+  position: relative;
+}
+
+table td {
+  background-color: #ffffff;
+  border-bottom: 1px solid #f3f4f6;
+  padding: 16px;
+  text-align: left;
+  vertical-align: top;
+  min-width: 120px;
+  word-wrap: break-word;
+  color: #000000;
+  transition: background-color 0.2s ease;
+  position: relative;
+  min-height: 3em;
+}
+
+table tr:nth-child(even) td {
+  background-color: #fafafa;
+}
+
+table tr:hover td {
+  background-color: #f8fafc;
+}
+
+/* Table wrapper styling */
+div[style*="margin: 20px 0"] {
+  margin: 20px 0 !important;
+  width: 100%;
+  overflow-x: auto;
+}
+
+/* Ensure tables are responsive */
+table {
+  min-width: 100%;
+  table-layout: auto;
+}
+
+/* Medical content blocks styling */
+.medical-block {
+  background-color: #f8f9fa;
+  border: 1px solid #e9ecef;
+  border-radius: 6px;
+  padding: 1em;
+  margin: 1em 0;
+}
+
+.medical-block.pros {
+  background-color: #dcfce7;
+  border-left: 4px solid #16a34a;
+}
+
+.medical-block.cons {
+  background-color: #fef2f2;
+  border-left: 4px solid #dc2626;
+}
+
+.medical-block.keypoints {
+  background-color: #f1f5f9;
+  border-left: 4px solid #64748b;
+}
+
+/* Image styling */
+.editor-image {
+  max-width: 100%;
+  height: auto;
+  margin: 1em 0;
+  border-radius: 6px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Link styling */
+.editor-link {
+  color: #3b82f6;
+  text-decoration: underline;
+  transition: color 0.2s;
+}
+
+.editor-link:hover {
+  color: #2563eb;
+}
+
+/* Prose content styling for blog content */
+.prose table {
+  border-collapse: collapse;
+  width: 100%;
+  margin: 2em 0;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  background: white;
+  border: 1px solid #e5e7eb;
+}
+
+/* Force prose tables to be non-editable */
+.prose table,
+.prose table *,
+.prose table th,
+.prose table td {
+  -webkit-user-modify: read-only !important;
+  -moz-user-modify: read-only !important;
+  -ms-user-modify: read-only !important;
+  user-modify: read-only !important;
+  -webkit-user-select: text !important;
+  -moz-user-select: text !important;
+  -ms-user-select: text !important;
+  user-select: text !important;
+  pointer-events: auto !important;
+}
+
+.prose table th,
+.prose table td {
+  outline: none !important;
+  cursor: default !important;
+}
+
+.prose table th {
+  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+  font-weight: 700;
+  color: #1f2937;
+  text-transform: uppercase;
+  font-size: 0.875rem;
+  letter-spacing: 0.05em;
+  border-bottom: 2px solid #d1d5db;
+  padding: 16px;
+  text-align: left;
+  white-space: nowrap;
+}
+
+.prose table td {
+  background-color: #ffffff;
+  border-bottom: 1px solid #f3f4f6;
+  padding: 16px;
+  text-align: left;
+  vertical-align: top;
+  min-width: 120px;
+  word-wrap: break-word;
+  color: #000000;
+  transition: background-color 0.2s ease;
+}
+
+.prose table tr:nth-child(even) td {
+  background-color: #fafafa;
+}
+
+.prose table tr:hover td {
+  background-color: #f8fafc;
+}
+
+/* Prose medical content blocks */
+.prose .medical-block {
+  background-color: #f8f9fa;
+  border: 1px solid #e9ecef;
+  border-radius: 6px;
+  padding: 1em;
+  margin: 1em 0;
+}
+
+.prose .medical-block.pros {
+  background-color: #dcfce7;
+  border-left: 4px solid #16a34a;
+}
+
+.prose .medical-block.cons {
+  background-color: #fef2f2;
+  border-left: 4px solid #dc2626;
+}
+
+.prose .medical-block.keypoints {
+  background-color: #f1f5f9;
+  border-left: 4px solid #64748b;
+}
+
+/* Prose image styling */
+.prose .editor-image {
+  max-width: 100%;
+  height: auto;
+  margin: 1em 0;
+  border-radius: 6px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Prose link styling */
+.prose .editor-link {
+  color: #3b82f6;
+  text-decoration: underline;
+  transition: color 0.2s;
+}
+
+.prose .editor-link:hover {
+  color: #2563eb;
 }
 
 @layer base {

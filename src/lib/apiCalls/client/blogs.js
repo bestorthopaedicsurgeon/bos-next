@@ -26,13 +26,17 @@ export const getBlogBySlugApi = async (slug) => {
     const data = await res.json();
 
     if (!res.ok) {
+      if (res.status === 404) {
+        // Blog not found - this is expected for slug availability checking
+        return null;
+      }
       throw new Error(data?.error || "Failed to fetch blog");
     }
 
     return data.data;
   } catch (error) {
     console.error("API error (blog):", error);
-    return null;
+    throw error; // Re-throw the error to be handled by the caller
   }
 };
 
@@ -74,12 +78,20 @@ export const updateBlogApi = async (blogData) => {
     formData.append("title", blogData.title);
     formData.append("authorName", blogData.authorName);
     formData.append("content", blogData.content);
+    
+    // Add the new slug to the form data
+    if (blogData.newSlug) {
+      formData.append("newSlug", blogData.newSlug);
+    }
 
     if (blogData.imageFile) {
       formData.append("image", blogData.imageFile); // actual File object
     }
 
-    const res = await fetch(`/api/blogs/${blogData.slug}`, {
+    // Use the old slug to find the blog to update
+    const slugToUpdate = blogData.oldSlug || blogData.slug;
+    
+    const res = await fetch(`/api/blogs/${slugToUpdate}`, {
       method: "PATCH",
       body: formData,
     });
