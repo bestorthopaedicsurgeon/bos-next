@@ -115,7 +115,7 @@ export const HeroSection = ({ onSearchResults, onSearchStateChange }) => {
           {/* <p className="mb-4">Find your surgeon!</p>
             <div className="bg-primary-foreground mb-4 h-[2px] w-full" /> */}
           <div className="mb-4 inline-block">
-            <p className="mb-4">Welcome to Best Orthopaedic Surgeon (BOS) – Your Trusted Orthopaedic Surgeon Directory</p>
+            <p className="mb-4">Welcome to Best Orthopaedic Surgeon (BOS)</p>
             <div className="bg-primary-foreground mx-auto h-[2px] w-full" />
           </div>
           <h1 className="font-syne mb-4">
