@@ -128,7 +128,7 @@ export function AdminSidebar({ ...props }) {
   const pathname = usePathname()
 
   return (
-    <Sidebar collapsible="icon" sticky {...props}>
+    <Sidebar collapsible="icon" sticky {...props} className="admin_sidebar">
       <SidebarHeader>
         <SidebarMenu>
           <SidebarMenuItem>
