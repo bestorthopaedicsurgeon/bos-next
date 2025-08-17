@@ -37,7 +37,7 @@ export const HeroSection = () => {
             />
           </div>
           <p className="mb-4 max-lg:mt-10">
-          At BOS, we're committed to helping you stay informed, empowered, and connected when it comes to your bone, joint, and muscle health. Our blog is your go-to resource for expert advice, the latest orthopaedic news, patient stories, recovery tips, and guides to finding the right specialists near you.
+          At BOS, we&apos;re committed to helping you stay informed, empowered, and connected when it comes to your bone, joint, and muscle health. Our blog is your go-to resource for expert advice, the latest orthopaedic news, patient stories, recovery tips, and guides to finding the right specialists near you.
           </p>
           <div className="mb-4 flex flex-wrap gap-4">
             <Link href="#blogs">
