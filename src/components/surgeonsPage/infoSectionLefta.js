@@ -1,0 +1,60 @@
+import Image from "next/image";
+import React from "react";
+
+const InfoSectionLefta = ({image}) => {
+  return (
+    <section className="grid grid-cols-1 gap-8 px-4 py-8 md:grid-cols-[1.4fr_1fr] items-center">
+      <div className="min-lg:max-w-[600px]">
+        <h1 className="font-syne text-primary">What Makes Us Different
+        </h1>
+        <p className="mt-4 text-lg text-gray-700">
+       <b> Exclusive Focus on Orthopaedics </b>
+No GPs, dentists, or unrelated fields — just dedicated Orthopaedic professionals. <br />
+<br />
+<b>WA-Centric Directory </b>
+We focus specifically on the needs of patients and providers across Western Australia, with tailored location filters and search tools. <br />
+<br />
+<b>Verified Listings Only </b>
+All profiles are screened to ensure the accuracy of qualifications, specialties, and practice details. <br />
+<br />
+<b>Built for Patients & Professionals </b>
+Whether you&apos;re seeking care or offering it, our platform is designed to serve both sides of the orthopaedic journey. <br />
+        </p>
+        {/* <h5 className="text-primary mt-8">Are You an Orthopaedic Surgeon Practicing in WA?</h5> */}
+        {/* <p className="mt-4 text-sm text-gray-700">
+          An Orthopaedic Specialist is a medical doctor trained to diagnose and
+          treat disorders of the bones, joints, muscles, ligaments, and tendons.
+          Whether it’s a sports injury, arthritis, fractures, or spine issues,
+          orthopaedic doctors are skilled in providing comprehensive care — from
+          physical therapies to complex surgeries.
+        </p> */}
+        {/* <h5 className="text-primary mt-8">
+        Are You an Orthopaedic Surgeon Practicing in WA?
+        </h5>
+        <p className="mt-4 text-lg text-gray-700">
+        Join the only directory in Western Australia dedicated solely to Orthopaedic professionals.
+        Claim your profile or join and list your profile today to showcase your expertise
+        </p>
+        <ul className="mt-4 text-lg text-gray-700">
+          <li>
+          Grow your online visibility
+          </li>
+          <li>
+          Attract new patients
+          </li>
+          <li>Strengthen your local presence</li>
+          <li>Be part of a trusted, surgeon-only platform</li>
+        </ul>
+        <p className="mt-4 text-lg text-gray-700">Boost visibility. Build trust. Grow your practice.</p> */}
+      </div>
+      <Image
+        src={image}
+        alt="Orthopaedic Specialist"
+        width={579}
+        height={720}
+      />
+    </section>
+  );
+};
+
+export default InfoSectionLefta;

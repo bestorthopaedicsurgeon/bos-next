@@ -115,11 +115,11 @@ export const HeroSection = ({ onSearchResults, onSearchStateChange }) => {
           {/* <p className="mb-4">Find your surgeon!</p>
             <div className="bg-primary-foreground mb-4 h-[2px] w-full" /> */}
           <div className="mb-4 inline-block">
-            <p className="mb-4">Find your surgeon!</p>
+            <p className="mb-4">Welcome to Best Orthopaedic Surgeon (BOS) – Your Trusted Orthopaedic Surgeon Directory</p>
             <div className="bg-primary-foreground mx-auto h-[2px] w-full" />
           </div>
           <h1 className="font-syne mb-4">
-            Unlocking Your Body For Optimal Wellness
+          Built for Orthopaedic Surgeons. Trusted by Patients!
           </h1>
           <div className="hidden h-[352px] w-[308px] max-lg:mx-auto max-lg:flex max-lg:justify-center">
             <Image
@@ -132,9 +132,8 @@ export const HeroSection = ({ onSearchResults, onSearchStateChange }) => {
             />
           </div>
           <p className="mb-4">
-            At our hospital, we are dedicated to providing exceptional medical
-            care to our patients and their families. Our experienced team of
-            medical professionalsh make us a leader in the healthcare industry
+          Find the Right Orthopaedic Specialist, Fast
+BOS is the one and only online directory dedicated exclusively to Orthopaedic surgeons throughout Perth, Fremantle, Bunbury, Geraldton, and beyond.
           </p>
           <div className="mb-4 flex flex-wrap gap-4">
             <Button variant={"primaryForeground"} size={"primaryForeground"}>

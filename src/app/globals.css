@@ -423,3 +423,6 @@ table {
 .btn_fill {
   @apply text-secondary rounded-sm bg-(--primary) text-[20px];
 }
+ul{
+  @apply list-disc list-inside;
+}

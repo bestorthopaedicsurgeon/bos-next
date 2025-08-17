@@ -37,9 +37,7 @@ export const HeroSection = () => {
             />
           </div>
           <p className="mb-4">
-            Get online or in-person consultations. Choose the best doctor based
-            on ratings, experience, and detailed profiles. Expert care is just a
-            click away.
+          At BOS, we're committed to helping you stay informed, empowered, and connected when it comes to your bone, joint, and muscle health. Our blog is your go-to resource for expert advice, the latest orthopaedic news, patient stories, recovery tips, and guides to finding the right specialists near you.
           </p>
           <div className="mb-4 flex flex-wrap gap-4">
             <Link href="#blogs">

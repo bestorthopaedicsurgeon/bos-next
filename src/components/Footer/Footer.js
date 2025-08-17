@@ -15,8 +15,9 @@ const Footer = () => {
         <div>
           <h2 className="text-xl font-semibold mb-4">Best Orthopedic Surgeon</h2>
           <p className="mb-6 text-base text-[#F1F8F6]">
-            B.O.S simplifies healthcare with an easy-to-use platform for booking appointments, telehealth services, and managing patient records.
+          Built for Orthopaedic Surgeons. Trusted by Patients!  <br />Your Trusted Orthopaedic Surgeon Directory
           </p>
+          
           <div className="flex gap-4 mt-4">
             {socialIcons.map((icon) => (
               <a

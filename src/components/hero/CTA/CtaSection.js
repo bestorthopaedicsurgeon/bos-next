@@ -29,8 +29,8 @@ export const CtaSection = () => {
     <section className="mb-40">
       <div className="mb-24 grid grid-cols-[1.1fr_1fr] gap-4 max-md:grid-cols-1">
         <h2 className="font-syne text-primary w-full">
-          Experience Exceptional Healthcare In The Australia With Best
-          Orthopedic Surgeon
+        Rate & Review Your Experience
+        We believe that patient feedback matters 
         </h2>
         <p className="w-full">
           Discover the pinnacle of healthcare services in the United States,

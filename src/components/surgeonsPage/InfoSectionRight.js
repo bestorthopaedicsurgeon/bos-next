@@ -3,45 +3,29 @@ import React from "react";
 
 const InfoSectionRight = ({image}) => {
   return (
-    <section className="grid grid-cols-1 gap-8 px-4 py-8 md:grid-cols-[1.4fr_1fr]">
+    <section className="grid grid-cols-1 gap-8 px-4 py-8 md:grid-cols-[1.4fr_1fr] items-center">
       <Image
         src={image}
         alt="Orthopaedic Specialist"
         width={579}
         height={720}
       />
-      <div>
-        <h5 className="text-primary mt-8">What conditions does an Orthopaedic Specialist treat?</h5>
-        <p className="mt-4 text-sm text-gray-700">
-          Orthopaedics is a medical specialty dedicated to diagnosing, treating,
-          preventing, and rehabilitating conditions affecting the
-          musculoskeletal system — including bones, joints, ligaments, tendons,
-          muscles, and nerves. Orthopaedic care covers both surgical and
-          non-surgical approaches to restore mobility, relieve pain, and improve
-          quality of life.
+      <div className="min-lg:max-w-[600px]">
+        <h5 className="text-primary mt-8">Your Trusted Source for Orthopaedic Care in Western Australia</h5>
+        <p className="mt-4 text-lg text-gray-700">
+        At BOS, our mission is simple: to make it easier for patients across Western Australia to connect with qualified, trusted Orthopaedic surgeons — all in one place.
+        We are a purpose-built directory, exclusively focused on Orthopaedic specialists, designed to serve both patients seeking care and surgeons looking to grow their presence and impact in the community.
         </p>
-        <h5 className="text-primary mt-8">Services Offered by Orthopaedic Specialists</h5>
-        <p className="mt-4 text-sm text-gray-700">
-          An Orthopaedic Specialist is a medical doctor trained to diagnose and
-          treat disorders of the bones, joints, muscles, ligaments, and tendons.
-          Whether it’s a sports injury, arthritis, fractures, or spine issues,
-          orthopaedic doctors are skilled in providing comprehensive care — from
-          physical therapies to complex surgeries.
+        <h5 className="text-primary mt-8">Why We Exist?</h5>
+        <p className="mt-4 text-lg text-gray-700">
+        Orthopaedic conditions affect thousands of Australians each year — from sports injuries and fractures to chronic joint pain and spinal disorders. Yet, finding the right specialist can be overwhelming, especially when navigating countless general directories with mixed listings.
+BOS was created to solve that.
+We bring together verified Orthopaedic surgeons in a single, streamlined platform to ensure:
         </p>
-        <h5 className="text-primary mt-8">
-          What does an Orthopaedic Specialist do?
-        </h5>
-        <p className="mt-4 text-sm text-gray-700">
-          An Orthopaedic Specialist in Australia offers expert services for
-          musculoskeletal health. Their work includes both surgical and
-          non-surgical treatment plans to restore mobility, reduce pain, and
-          improve the structural integrity of bones and joints. Common services
-          offered by orthopaedic doctors include: Diagnosing and treating bone,
-          joint, and muscle disorders. Performing surgeries to repair fractures
-          or replace joints. Prescribing physical therapy, braces, or
-          medications. Providing injury prevention advice and rehabilitation
-          programs..
-        </p>
+        <ul className="mt-4 text-lg text-gray-700">
+        <li>Patients find the care they need, faster.</li>
+        <li>SSurgeons can focus on what they do best — helping people move better.</li>
+        </ul>
       </div>
     </section>
   );
