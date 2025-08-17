@@ -128,7 +128,7 @@ export const HeroSection = ({ onSearchResults, onSearchStateChange }) => {
               height={500}
               quality={100}
               priority
-              className="h-full w-full object-cover"
+              className="h-full w-full object-contain"
             />
           </div>
           <p className="mb-4">
@@ -169,7 +169,7 @@ export const HeroSection = ({ onSearchResults, onSearchStateChange }) => {
             height={500}
             quality={100}
             priority
-            className="h-full w-full object-cover"
+            className="h-full w-full object-contain"
           />
         </div>
       </div>

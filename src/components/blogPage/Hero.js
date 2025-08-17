@@ -27,7 +27,7 @@ export const HeroSection = () => {
           <h1 className="font-syne mb-4">
             Find the Right Orthopedic Specialist
           </h1>
-          <div className="hidden max-lg:flex max-lg:justify-center max-lg:mx-auto h-[352px] max-w-[308px] w-full">
+          <div className="hidden max-lg:flex max-lg:justify-center max-lg:mx-auto h-full max-h-[352px] max-w-[308px] w-full">
             <Image
               src="/blog/blog-image.png"
               alt="hero"
@@ -36,7 +36,7 @@ export const HeroSection = () => {
               className="h-full w-full"
             />
           </div>
-          <p className="mb-4">
+          <p className="mb-4 max-lg:mt-10">
           At BOS, we're committed to helping you stay informed, empowered, and connected when it comes to your bone, joint, and muscle health. Our blog is your go-to resource for expert advice, the latest orthopaedic news, patient stories, recovery tips, and guides to finding the right specialists near you.
           </p>
           <div className="mb-4 flex flex-wrap gap-4">
@@ -63,7 +63,7 @@ export const HeroSection = () => {
             </div>
           </div>
         </div>
-        <div className="max-h-[487px] max-w-[456px] w-full max-lg:hidden">
+        <div className="max-h-[487px] max-w-[596px] w-full max-lg:hidden">
           <Image
             src="/blog/blog-image.png"
             alt="hero"
