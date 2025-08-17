@@ -110,7 +110,7 @@ export const HeroSection = ({ onSearchResults, onSearchStateChange }) => {
 
   return (
     <section className="mb-40">
-      <div className="bg-primary text-primary-foreground mb-8 flex items-center gap-10 rounded-4xl px-20 py-16 max-lg:justify-center max-md:px-10">
+      <div className="bg-primary justify-between text-primary-foreground mb-8 flex items-center gap-10 rounded-4xl px-20 py-16 max-lg:justify-center max-md:px-10">
         <div className="flex w-full max-w-[570px] flex-col max-md:max-w-full">
           {/* <p className="mb-4">Find your surgeon!</p>
             <div className="bg-primary-foreground mb-4 h-[2px] w-full" /> */}
@@ -123,10 +123,11 @@ export const HeroSection = ({ onSearchResults, onSearchStateChange }) => {
           </h1>
           <div className="hidden h-[352px] w-[308px] max-lg:mx-auto max-lg:flex max-lg:justify-center">
             <Image
-              src="/home/hero.png"
+              src="/home/bones.png"
               alt="hero"
               width={500}
               height={500}
+              quality={100}
               className="h-full w-full"
               fluid
             />
@@ -156,6 +157,7 @@ BOS is the one and only online directory dedicated exclusively to Orthopaedic su
               alt="logo"
               width={172}
               height={42}
+              quality={100}
               className="flex-shrink-0"
             />
             <div>
@@ -164,12 +166,12 @@ BOS is the one and only online directory dedicated exclusively to Orthopaedic su
             </div>
           </div>
         </div>
-        <div className="max-h-[367px] w-full max-w-[488px] scale-125 max-lg:hidden">
+        <div className="max-h-[507px] w-full max-w-[350px] scale-125 max-lg:hidden">
           <Image
-            src="/home/hero.png"
+            src="/home/bones.png"
             alt="hero"
-            width={488}
-            height={367}
+            width={1000}
+            height={1000}
             className="h-full w-full"
           />
         </div>
