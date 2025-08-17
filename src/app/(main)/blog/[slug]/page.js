@@ -220,7 +220,7 @@ const Page = async ({ params }) => {
       {/* Hero Image */}
       {blog?.image && (
         <div
-          className="mb-8 h-[300px] w-full rounded-xl bg-contain bg-center bg-no-repeat sm:h-[400px] md:h-[500px] lg:h-[600px] xl:h-[700px]"
+          className="mb-8 h-[300px] w-full rounded-xl bg-contain bg-center bg-no-repeat sm:h-[400px] md:h-[500px] lg:h-[500px] xl:h-[500px]"
           style={{
             backgroundImage: `url(${blog?.image}?v=${Date.now()})`,
           }}

@@ -16,11 +16,19 @@ export const BlogCard = (card) => {
     }
   };
 
+  // Function to truncate title to specified word count
+  const truncateTitle = (title, maxWords = 10) => {
+    if (!title) return "";
+    const words = title.split(" ");
+    if (words.length <= maxWords) return title;
+    return words.slice(0, maxWords).join(" ") + "...";
+  };
+
   return (
     <div className="flex flex-col items-start rounded-lg border bg-white">
       {card?.image && (
         <div
-          className="mb-4 h-[200px] w-full rounded-t-lg bg-cover bg-center bg-no-repeat sm:h-[220px] md:h-[240px]"
+          className="mb-4 h-[200px] w-full rounded-t-lg bg-cover object-fill bg-center bg-no-repeat sm:h-[220px] md:h-[240px]"
           style={{
             backgroundImage: `url(${card.image})`,
           }}
@@ -28,7 +36,7 @@ export const BlogCard = (card) => {
           aria-label={card.title}
         />
       )}
-      <h3 className="text-primary p-5">{card.title}</h3>
+      <h3 className="text-primary p-5">{truncateTitle(card.title, 5)}</h3>
       <p className="mb-4 text-sm text-[#515151] px-5">
         {formatDate(card.createdAt)} • 11 min read
       </p>
