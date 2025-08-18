@@ -7,41 +7,44 @@ export default function RichTextEditor({ value, onChange }) {
   const editorRef = useRef(null);
 
   return (
-    <Editor 
-      apiKey='rcceemhbfcl8bw35vd591k3bm8oncf0s8k8op2kswp0aze0w'
-      onInit={(evt, editor) => (editorRef.current = editor)}
-      value={value}
-      init={{
+    <div style={{ width: '100%', maxWidth: '100%' }}>
+      <Editor 
+        apiKey='rcceemhbfcl8bw35vd591k3bm8oncf0s8k8op2kswp0aze0w'
+        onInit={(evt, editor) => (editorRef.current = editor)}
+        value={value}
+        init={{
         height: 600,
+        width: '100%',
         menubar: true,
+        resize: true,
         plugins: [
           'advlist', 'autolink', 'lists', 'link', 'image', 'charmap', 'preview',
           'anchor', 'searchreplace', 'visualblocks', 'code', 'fullscreen',
-          'insertdatetime', 'media', 'table', 'advtable', 'help', 'wordcount',
-          'emoticons', 'template', 'paste', 'textpattern', 'nonbreaking'
+          'insertdatetime', 'table', 'help', 'wordcount',
+          'paste', 'textpattern', 'nonbreaking'
         ],
         toolbar: 'undo redo | formatselect | ' +
           'bold italic underline strikethrough | forecolor backcolor | ' +
           'alignleft aligncenter alignright alignjustify | ' +
           'bullist numlist outdent indent | removeformat | ' +
-          'table tabledelete | tableprops tablerowprops tablecellprops | ' +
-          'tableinsertrowbefore tableinsertrowafter tabledeleterow | ' +
-          'tableinsertcolbefore tableinsertcolafter tabledeletecol | ' +
-          'cellBordersNone cellBordersThin cellBordersMedium cellBordersThick | ' +
-          'link image media | code fullscreen help',
-        contextmenu: 'link table tableprops tablecellprops tablerowprops',
-        table_advtab: true,
-        table_cell_advtab: true,
-        table_toolbar: 'tableprops tabledelete | tablerowprops tablecellprops | tableinsertrowbefore tableinsertrowafter tabledeleterow | tableinsertcolbefore tableinsertcolafter tabledeletecol',
+          'table | link image | code fullscreen help',
+        contextmenu: 'link table',
+        table_default_styles: {
+          width: '100%'
+        },
+        table_default_attributes: {
+          border: '1'
+        },
         content_style: `
           body { 
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; 
             font-size: 14px; 
             line-height: 1.6; 
             color: #333; 
-            max-width: 800px; 
-            margin: 0 auto; 
+            width: 100%; 
+            margin: 0; 
             padding: 20px; 
+            box-sizing: border-box;
           }
           h1 { font-size: 2em; font-weight: bold; margin: 1em 0 0.5em 0; color: #2c3e50; }
           h2 { font-size: 1.5em; font-weight: bold; margin: 1em 0 0.5em 0; color: #34495e; }
@@ -104,12 +107,6 @@ export default function RichTextEditor({ value, onChange }) {
         paste_enable_default_filters: true,
         paste_word_valid_elements: "b,strong,i,em,h1,h2,h3,h4,h5,h6",
         paste_retain_style_properties: "color background-color font-size font-weight",
-        table_default_styles: {
-          width: '100%'
-        },
-        table_default_attributes: {
-          border: '1'
-        },
         link_list: [
           { title: 'My page 1', value: 'https://www.example.com' },
           { title: 'My page 2', value: 'https://www.example.com' }
@@ -135,38 +132,7 @@ export default function RichTextEditor({ value, onChange }) {
           }
         },
         setup: function (editor) {
-          // Quick actions to apply borders to selected cells
-          const applyCellBorder = (width) => {
-            const value = width === 0 ? '0' : `${width}px`;
-            editor.execCommand('mceTableApplyCellStyle', false, {
-              'border-width': value,
-              'border-style': width === 0 ? 'none' : 'solid',
-              'border-color': '#cccccc'
-            });
-          };
-
-          editor.ui.registry.addButton('cellBordersNone', {
-            tooltip: 'No cell borders',
-            text: 'Cell Borders: None',
-            onAction: () => applyCellBorder(0)
-          });
-          editor.ui.registry.addButton('cellBordersThin', {
-            tooltip: 'Thin cell borders',
-            text: 'Cell Borders: 1px',
-            onAction: () => applyCellBorder(1)
-          });
-          editor.ui.registry.addButton('cellBordersMedium', {
-            tooltip: 'Medium cell borders',
-            text: 'Cell Borders: 2px',
-            onAction: () => applyCellBorder(2)
-          });
-          editor.ui.registry.addButton('cellBordersThick', {
-            tooltip: 'Thick cell borders',
-            text: 'Cell Borders: 3px',
-            onAction: () => applyCellBorder(3)
-          });
-
-          // Existing medical content helpers
+          // Medical content helpers
           editor.ui.registry.addButton('pros', {
             text: 'Pros',
             onAction: function () {
@@ -189,5 +155,6 @@ export default function RichTextEditor({ value, onChange }) {
       }}
       onEditorChange={(content) => onChange(content)}
     />
+    </div>
   );
 }

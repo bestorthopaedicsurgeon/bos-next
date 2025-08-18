@@ -848,7 +848,7 @@ const Page = () => {
             </div>
           </div>
           
-                     {/* Custom Rich Text Editor - Full Featured */}
+          {/* Custom Rich Text Editor - Commented for testing
            <CustomRichTextEditor
              key={selectedBlog || 'new-blog'} // Force re-render when switching blogs
              value={editData?.content || ""}
@@ -857,55 +857,59 @@ const Page = () => {
              }}
              placeholder="Start writing your blog content here... Use the toolbar above for formatting, tables, and medical content blocks."
            />
+          */}
           
-          {/* Original RichTextEditor - Commented for testing
+          {/* Original RichTextEditor - Full Featured */}
           <RichTextEditor
+            key={selectedBlog || 'new-blog'} // Force re-render when switching blogs
             value={editData?.content || ""}
             onChange={(content) => {
               setEditData({ ...editData, content: content });
             }}
           />
-          */}
           
           {/* Editor Features Guide */}
           <div className="mt-4 p-4 bg-blue-50 border border-blue-200 rounded-lg">
-            <h4 className="text-sm font-semibold text-blue-800 mb-2">🎯 Custom Editor Features:</h4>
+            <h4 className="text-sm font-semibold text-blue-800 mb-2">🎯 TinyMCE Rich Editor Features:</h4>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs text-blue-700">
               <div>
                 <p className="font-medium mb-1">📝 Text Formatting:</p>
                 <ul className="space-y-1 ml-2">
                   <li>• Bold, italic, underline, strikethrough</li>
+                  <li>• Text and background colors</li>
                   <li>• Text alignment (left, center, right, justify)</li>
                   <li>• Headings (H1, H2, H3, H4)</li>
                   <li>• Lists and blockquotes</li>
                 </ul>
               </div>
               <div>
-                <p className="font-medium mb-1">📊 Table Features:</p>
+                <p className="font-medium mb-1">📊 Advanced Table Features:</p>
                 <ul className="space-y-1 ml-2">
-                  <li>• Create tables with custom rows/columns</li>
+                  <li>• Full table creation and editing</li>
                   <li>• Add/remove rows and columns</li>
-                  <li>• Edit cell content directly</li>
-                  <li>• <strong>Easy deletion: Backspace at start or Delete at end</strong></li>
-                  <li>• <strong>Right-click to delete entire table</strong></li>
+                  <li>• Cell borders and styling</li>
+                  <li>• Table properties and cell properties</li>
+                  <li>• Right-click context menu for tables</li>
                 </ul>
               </div>
               <div>
-                <p className="font-medium mb-1">🎨 Advanced Features:</p>
+                <p className="font-medium mb-1">🎨 Professional Features:</p>
                 <ul className="space-y-1 ml-2">
-                  <li>• Color picker for text and background</li>
-                  <li>• Image insertion with drag & drop</li>
-                  <li>• Link creation</li>
+                  <li>• Image insertion and management</li>
+                  <li>• Link creation and management</li>
+                  <li>• Code view and fullscreen mode</li>
+                  <li>• Template insertion</li>
+                  <li>• Word count and character count</li>
+                </ul>
+              </div>
+              <div>
+                <p className="font-medium mb-1">🏥 Medical Content:</p>
+                <ul className="space-y-1 ml-2">
+                  <li>• Pros/Cons sections with styling</li>
+                  <li>• Key Points highlighted sections</li>
                   <li>• Medical content templates</li>
-                </ul>
-              </div>
-              <div>
-                <p className="font-medium mb-1">⚡ Quick Actions:</p>
-                <ul className="space-y-1 ml-2">
-                  <li>• Use toolbar buttons above editor</li>
-                  <li>• Click 📊 to insert tables</li>
-                  <li>• Use ✅❌💡 for medical content</li>
-                  <li>• Drag & drop images directly</li>
+                  <li>• Professional formatting styles</li>
+                  <li>• Custom medical block formats</li>
                 </ul>
               </div>
             </div>
