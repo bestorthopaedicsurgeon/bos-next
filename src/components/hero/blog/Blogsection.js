@@ -1,45 +1,15 @@
 import { BlogCarousel } from "@/components/hero/blog/BlogCarousel";
 import { Button } from "@/components/ui/button";
+import { getAllBlogsApi } from "@/lib/apiCalls/server/blogs";
+import Link from "next/link";
 import React from "react";
 
-export const Blogsection = () => {
-  const blogs = [
-    {
-      id: 1,
-      title: "Dental treatments",
-      description:
-        "Lorem ipsum dolor sit amet consecte tur adipiscing elit semper dalaracc lacus vel facilisis volutpat est velitolm.",
-      image: "/home/blog-image.png",
-    },
-    {
-      id: 2,
-      title: "Dental treatments",
-      description:
-        "Lorem ipsum dolor sit amet consecte tur adipiscing elit semper dalaracc lacus vel facilisis volutpat est velitolm.",
-      image: "/home/blog-image.png",
-    },
-    {
-      id: 3,
-      title: "Dental treatments",
-      description:
-        "Lorem ipsum dolor sit amet consecte tur adipiscing elit semper dalaracc lacus vel facilisis volutpat est velitolm.",
-      image: "/home/blog-image.png",
-    },
-    {
-      id: 4,
-      title: "Dental treatments",
-      description:
-        "Lorem ipsum dolor sit amet consecte tur adipiscing elit semper dalaracc lacus vel facilisis volutpat est velitolm.",
-      image: "/home/blog-image.png",
-    },
-    {
-      id: 5,
-      title: "Dental treatments",
-      description:
-        "Lorem ipsum dolor sit amet consecte tur adipiscing elit semper dalaracc lacus vel facilisis volutpat est velitolm.",
-      image: "/home/blog-image.png",
-    },
-  ];
+export const Blogsection = async () => {
+  // Fetch real blog data from API
+  const fetchedBlogs = await getAllBlogsApi();
+  
+  // Get first 5 blogs for the carousel (limit for performance)
+  const blogs = fetchedBlogs?.data?.slice(0, 5) || [];
   return (
     <section className="mb-40">
       <div className="bg-primary relative right-1/2 left-1/2 -mx-[50vw] flex w-screen flex-col items-center justify-center py-16">
@@ -54,13 +24,15 @@ export const Blogsection = () => {
             tellus libero accumsan.
           </p>
           <BlogCarousel blogs={blogs} />
-          <Button
-            variant={"primaryForeground"}
-            size={"primaryForeground"}
-            className="mt-8 flex items-center gap-2"
-          >
-            Rate your doctor
-          </Button>
+          <Link href="/blog">
+            <Button
+              variant={"primaryForeground"}
+              size={"primaryForeground"}
+              className="mt-8 flex items-center gap-2"
+            >
+              Read More Blogs
+            </Button>
+          </Link>
         </div>
       </div>
     </section>

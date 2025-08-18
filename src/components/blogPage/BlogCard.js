@@ -4,6 +4,8 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import React from "react";
 import { format } from "date-fns";
+import Image from "next/image";
+import { ArrowRight } from "lucide-react";
 
 export const BlogCard = (card) => {
   // Format the date from API
@@ -24,32 +26,89 @@ export const BlogCard = (card) => {
     return words.slice(0, maxWords).join(" ") + "...";
   };
 
+  // Function to extract clean text from HTML content and truncate
+  const extractDescription = (htmlContent, maxWords = 25) => {
+    if (!htmlContent) return "Explore this comprehensive medical blog post covering important health topics and professional insights.";
+    
+    // Remove HTML tags using regex (safer for SSR)
+    const textContent = htmlContent
+      .replace(/<[^>]*>/g, '') // Remove HTML tags
+      .replace(/&nbsp;/g, ' ') // Replace HTML entities
+      .replace(/&amp;/g, '&')
+      .replace(/&lt;/g, '<')
+      .replace(/&gt;/g, '>')
+      .replace(/&quot;/g, '"')
+      .replace(/&#39;/g, "'");
+    
+    // Remove extra whitespace and split into words
+    const cleanText = textContent.replace(/\s+/g, ' ').trim();
+    const words = cleanText.split(' ');
+    
+    // If content is too short, return as is
+    if (words.length <= maxWords) return cleanText;
+    
+    // Truncate and add ellipsis
+    return words.slice(0, maxWords).join(' ') + '...';
+  };
+
+  // Function to calculate estimated reading time
+  const calculateReadingTime = (htmlContent) => {
+    if (!htmlContent) return "5 min read";
+    
+    // Remove HTML tags using regex
+    const textContent = htmlContent
+      .replace(/<[^>]*>/g, '') // Remove HTML tags
+      .replace(/&nbsp;/g, ' ') // Replace HTML entities
+      .replace(/&amp;/g, '&')
+      .replace(/&lt;/g, '<')
+      .replace(/&gt;/g, '>')
+      .replace(/&quot;/g, '"')
+      .replace(/&#39;/g, "'");
+    
+    // Count words
+    const words = textContent.trim().split(/\s+/).filter(word => word.length > 0);
+    const wordCount = words.length;
+    
+    // Average reading speed is 200-250 words per minute
+    // Using 200 WPM for more conservative estimate
+    const readingSpeed = 200;
+    const minutes = Math.ceil(wordCount / readingSpeed);
+    
+    // Ensure minimum of 1 minute
+    const readingTime = Math.max(1, minutes);
+    
+    return `${readingTime} min read`;
+  };
+
   return (
-    <div className="flex flex-col items-start rounded-lg border bg-white">
+    <div className="bg-white p-7 rounded-lg shadow-sm hover:shadow-md transition-shadow h-full flex flex-col">
       {card?.image && (
-        <div
-          className="mb-4 h-[200px] w-full rounded-t-lg bg-cover object-fill bg-center bg-no-repeat sm:h-[220px] md:h-[240px]"
-          style={{
-            backgroundImage: `url(${card.image})`,
-          }}
-          role="img"
-          aria-label={card.title}
+        <Image
+          src={card.image}
+          alt={card.title || "Blog"}
+          width={343}
+          height={220}
+          className="mb-4 rounded-md object-cover w-full h-[220px]"
         />
       )}
-      <h3 className="text-primary p-5">{truncateTitle(card.title, 5)}</h3>
-      <p className="mb-4 text-sm text-[#515151] px-5">
-        {formatDate(card.createdAt)} • 11 min read
+      <h3 className="font-dm-sans text-primary mb-2 text-[20px] font-medium h-[60px] flex items-center">
+        {truncateTitle(card.title, 8)}
+      </h3>
+      <p className="text-[14px] text-neutral-700 mb-2">
+        {formatDate(card.createdAt)} • {calculateReadingTime(card.content)}
+      </p>
+      <p className="text-[16px] text-neutral-700 mb-4 line-clamp-3 flex-grow min-h-[72px] overflow-hidden">
+        {extractDescription(card.content, 25)}
       </p>
       <Link
-          // onClick={() => {
-          //   redirect(`/blog/${card.slug}`);
-          // }}
         href={`/blog/${card.slug}`}
-        className="text-primary cursor-pointer text-lg font-bold px-5 pb-10"
+        className="mt-auto flex items-center gap-4 cursor-pointer group"
         target="_blank"
-
       >
-        Read More →
+        <p className="font-dm-sans text-[16px] font-bold text-[#3A506B] group-hover:text-primary transition-colors">
+          Read More
+        </p>
+        <ArrowRight className="text-primary h-4 w-4 group-hover:translate-x-1 transition-transform" />
       </Link>
     </div>
   );
