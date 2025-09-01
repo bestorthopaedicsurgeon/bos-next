@@ -27,7 +27,7 @@ export const HeroSection = () => {
           <h1 className="font-syne mb-4">
             Find the Right Orthopedic Specialist
           </h1>
-          <div className="hidden max-lg:flex max-lg:justify-center max-lg:mx-auto h-[352px] w-full max-w-[308px]">
+          <div className="hidden max-lg:flex max-lg:justify-center max-lg:mx-auto max-h-[352px] w-full max-w-[348px] h-full mb-6">
             <Image
               src="/about/intro.png"
               alt="hero"
@@ -68,7 +68,7 @@ export const HeroSection = () => {
             </div>
           </div>
         </div>
-        <div className="mt-[-120px] max-h-[642px] max-w-[579px] w-full max-lg:hidden mb-[-100px]">
+        <div className="mt-[-79px] h-full max-h-[600px] max-w-[579px] w-full max-lg:hidden mb-[-59px] max-[1367px]:mb-0 max-[1367px]:mt-0">
           <Image
             src="/about/intro.png"
             alt="hero"
