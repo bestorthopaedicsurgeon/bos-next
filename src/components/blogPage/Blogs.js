@@ -1,62 +1,84 @@
+"use client";
+
 import { BlogCard } from "@/components/blogPage/BlogCard";
 import { Button } from "@/components/ui/button";
-import { getAllBlogsApi } from "@/lib/apiCalls/server/blogs";
-import React from "react";
+import { getAllBlogsApi } from "@/lib/apiCalls/client/blogs";
+import React, { useState, useEffect } from "react";
 
-const cards = [
-  {
-    icon: "/surgeons/types/1.png",
-    title: "Dental treatments",
-    description:
-      "A general orthopaedic surgeon handles a wide variety of musculoskeletal problems. They treat fractures, joint pain, arthritis, and minor deformities. These specialists offer both surgical and non-surgical care for bone and joint issues.",
-  },
-  {
-    icon: "/surgeons/types/2.png",
-    title: "Bone treatments",
-    description:
-      "This specialist focuses on replacing damaged joints like the hip, knee, or shoulder. They help restore mobility and relieve chronic joint pain caused by arthritis or injury. Joint replacement surgery greatly improves the patient’s quality of life.",
-  },
-  {
-    icon: "/surgeons/types/3.png",
-    title: "Diagnosis",
-    description:
-      "These doctors treat injuries from sports, exercise, and physical activities. They manage ligament tears, sprains, fractures, and joint dislocations. Their goal is to help athletes recover and return to peak performance.",
-  },
-  {
-    icon: "/surgeons/types/1.png",
-    title: "Cardiology",
-    description:
-      "A general orthopaedic surgeon handles a wide variety of musculoskeletal problems. They treat fractures, joint pain, arthritis, and minor deformities. These specialists offer both surgical and non-surgical care for bone and joint issues.",
-  },
-  {
-    icon: "/surgeons/types/2.png",
-    title: "Surgery",
-    description:
-      "This specialist focuses on replacing damaged joints like the hip, knee, or shoulder. They help restore mobility and relieve chronic joint pain caused by arthritis or injury. Joint replacement surgery greatly improves the patient’s quality of life.",
-  },
-  {
-    icon: "/surgeons/types/3.png",
-    title: "Eye care",
-    description:
-      "These doctors treat injuries from sports, exercise, and physical activities. They manage ligament tears, sprains, fractures, and joint dislocations. Their goal is to help athletes recover and return to peak performance.",
-  },
-];
+export const Blogs = () => {
+  const [allBlogs, setAllBlogs] = useState([]);
+  const [visibleCount, setVisibleCount] = useState(3);
+  const [loading, setLoading] = useState(true);
+  const [loadingMore, setLoadingMore] = useState(false);
 
-export const Blogs = async () => {
+  const BLOGS_PER_PAGE = 3;
 
-  const fetchedBlogs = await getAllBlogsApi();
+  useEffect(() => {
+    const fetchBlogs = async () => {
+      try {
+        setLoading(true);
+        const blogs = await getAllBlogsApi();
+        setAllBlogs(blogs || []);
+      } catch (error) {
+        console.error("Error fetching blogs:", error);
+        setAllBlogs([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchBlogs();
+  }, []);
+
+  const handleLoadMore = async () => {
+    setLoadingMore(true);
+    // Simulate a small delay for better UX
+    setTimeout(() => {
+      setVisibleCount(prev => prev + BLOGS_PER_PAGE);
+      setLoadingMore(false);
+    }, 300);
+  };
+
+  const visibleBlogs = allBlogs.slice(0, visibleCount);
+  const hasMoreBlogs = visibleCount < allBlogs.length;
+
+  if (loading) {
+    return (
+      <section id="blogs">
+        <h1 className="font-syne text-primary text-center mb-8">Types Of Orthopaedic Surgeons</h1>
+        <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
+          {/* Loading skeleton */}
+          {[...Array(3)].map((_, index) => (
+            <div key={index} className="animate-pulse">
+              <div className="bg-gray-300 h-48 rounded-lg mb-4"></div>
+              <div className="bg-gray-300 h-4 rounded mb-2"></div>
+              <div className="bg-gray-300 h-4 rounded w-3/4"></div>
+            </div>
+          ))}
+        </div>
+      </section>
+    );
+  }
 
   return (
     <section id="blogs">
       <h1 className="font-syne text-primary text-center mb-8">Types Of Orthopaedic Surgeons</h1>
       <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
-        {fetchedBlogs?.data?.map((card, index) => (
-          <BlogCard key={index} {...card} />
+        {visibleBlogs.map((card, index) => (
+          <BlogCard key={card.id || index} {...card} />
         ))}
       </div>
-      <Button className="mt-8 mb-20 mx-auto block" variant="primary" size="primary">
-        Load More Blogs
-      </Button>
+      {hasMoreBlogs && (
+        <Button 
+          className="mt-8 mb-20 mx-auto block" 
+          variant="primary" 
+          size="primary"
+          onClick={handleLoadMore}
+          disabled={loadingMore}
+        >
+          {loadingMore ? "Loading..." : "Load More Blogs"}
+        </Button>
+      )}
     </section>
   );
 };

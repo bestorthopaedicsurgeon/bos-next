@@ -19,7 +19,7 @@ import React, { useState, useCallback, useMemo } from "react";
 
 export const HeroSection = ({ onSearchResults, onSearchStateChange }) => {
   const [searchForm, setSearchForm] = useState({
-    email: "",
+    name: "",
     subspecialty: "",
     location: ""
   });
@@ -55,11 +55,13 @@ export const HeroSection = ({ onSearchResults, onSearchStateChange }) => {
       // Filter doctors based on search criteria
       let filteredDoctors = allDoctors;
 
-      // Filter by email if provided
-      if (searchForm.email.trim()) {
-        filteredDoctors = filteredDoctors.filter((doctor) =>
-          doctor.user?.email?.toLowerCase().includes(searchForm.email.toLowerCase())
-        );
+      // Filter by name if provided
+      if (searchForm.name.trim()) {
+        filteredDoctors = filteredDoctors.filter((doctor) => {
+          const doctorName = doctor.name?.toLowerCase() || '';
+          const searchTerm = searchForm.name.toLowerCase();
+          return  doctorName.includes(searchTerm);
+        });
       }
 
       // Filter by subspecialty if provided
@@ -99,7 +101,7 @@ export const HeroSection = ({ onSearchResults, onSearchStateChange }) => {
 
   const handleClearSearch = useCallback(() => {
     setSearchForm({
-      email: "",
+      name: "",
       subspecialty: "",
       location: ""
     });
@@ -142,9 +144,11 @@ export const HeroSection = ({ onSearchResults, onSearchStateChange }) => {
               Find Your Doctor
             </Button>
             </Link>
+            <Link href="/contactUs">
             <Button variant={"primaryForeground"} size={"primaryForeground"}>
               Need Help?
             </Button>
+            </Link>
           </div>
           <div className="flex flex-wrap items-center gap-4">
             <Image
@@ -180,10 +184,10 @@ export const HeroSection = ({ onSearchResults, onSearchStateChange }) => {
         <div className="flex gap-4 max-md:flex-wrap">
           <input
             className="border-primary min-h-[56px] w-full rounded-md border px-4 py-3.5"
-            placeholder="Doctor Email"
-            value={searchForm.email}
+            placeholder="Doctor Name"
+            value={searchForm.name}
             onChange={(e) =>
-              setSearchForm({ ...searchForm, email: e.target.value })
+              setSearchForm({ ...searchForm, name: e.target.value })
             }
           />
           <SearchableSelect

@@ -105,7 +105,7 @@ export const BlogCard = (card) => {
         className="mt-auto flex items-center gap-4 cursor-pointer group"
         target="_blank"
       >
-        <p className="font-dm-sans text-[16px] font-bold text-[#3A506B] group-hover:text-primary transition-colors">
+        <p className="font-dm-sans text-[16px] font-bold text-primary transition-colors">
           Read More
         </p>
         <ArrowRight className="text-primary h-4 w-4 group-hover:translate-x-1 transition-transform" />

@@ -24,14 +24,15 @@ const AboutPage = () => {
       <div className="container">
       <FeaturedSurgeonsSection />
       </div>
-      <Partners />
+      <TestimonialsSection />
+      {/* <Partners /> */}
       <div className="container">
       <CtaSection />
       </div>
-      <TestimonialsSection />
-      <div className="container">
+      
+      {/* <div className="container">
       <ServicesSection />
-      </div>
+      </div> */}
     </div>
   );
 };

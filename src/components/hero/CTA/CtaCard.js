@@ -1,5 +1,6 @@
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
+import Link from "next/link";
 import React from "react";
 
 export const CtaCard = ({ icon, title, description, button }) => {
@@ -14,13 +15,17 @@ export const CtaCard = ({ icon, title, description, button }) => {
       />
       <h2 className="font-dm-sans mb-2 text-[20px]">{title}</h2>
       <p className="text-center text-[16px]">{description}</p>
+      
       <Button
         className={"absolute bottom-[-28px]"}
         variant={"primary"}
         size={"primary"}
       >
+        <Link href='/surgeons'>
         {button}
+        </Link>
       </Button>
+    
     </div>
   );
 };

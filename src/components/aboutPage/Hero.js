@@ -49,9 +49,11 @@ export const HeroSection = () => {
               Find Your Doctor
             </Button>
             </Link>
+            <Link href="/contactUs">
             <Button variant={"primaryForeground"} size={"primaryForeground"}>
               Need Help?
             </Button>
+            </Link>
           </div>
           <div className="flex items-center flex-wrap gap-4 ">
             <Image
