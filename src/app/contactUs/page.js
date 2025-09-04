@@ -1,14 +1,14 @@
 "use client";
 import React, { useState, useCallback } from "react";
 import { Checkbox } from "@/components/ui/checkbox";
-
+import { submitContactForm } from '@/lib/apiCalls/client/ContactUs';
+import { toast } from "sonner";
 // Utility functions for sanitization and validation
 const sanitizeInput = (input) => {
   if (typeof input !== 'string') return '';
   return input
-    .trim()
     .replace(/[<>\"'&]/g, '') // Remove potentially harmful characters
-    .replace(/\s+/g, ' ') // Replace multiple spaces with single space
+    .replace(/\s{3,}/g, '  ') // Replace 3+ consecutive spaces with 2 spaces (less aggressive)
     .substring(0, 500); // Limit length
 };
 
@@ -33,8 +33,8 @@ const inputField = "border border-gray-300 rounded-md p-3 focus:outline-none foc
 const Page = () => {
   // Form state with original field names
   const [formData, setFormData] = useState({
-    fname: '',
-    lname: '',
+    firstName: '',
+    lastName: '',
     email: '',
     phone: '',
     message: ''
@@ -43,7 +43,8 @@ const Page = () => {
   const [acceptTerms, setAcceptTerms] = useState(false);
   const [errors, setErrors] = useState({});
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [submitMessage, setSubmitMessage] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [success, setSuccess] = useState(false);
 
   // Handle input changes with sanitization
   const handleInputChange = useCallback((field, value) => {
@@ -66,16 +67,16 @@ const Page = () => {
   const validateForm = () => {
     const newErrors = {};
 
-    if (!formData.fname) {
-      newErrors.fname = 'First name is required';
-    } else if (!validateName(formData.fname)) {
-      newErrors.fname = 'Please enter a valid first name';
+    if (!formData.firstName) {
+      newErrors.firstName = 'First name is required';
+    } else if (!validateName(formData.firstName)) {
+      newErrors.firstName = 'Please enter a valid first name';
     }
 
-    if (!formData.lname) {
-      newErrors.lname = 'Last name is required';
-    } else if (!validateName(formData.lname)) {
-      newErrors.lname = 'Please enter a valid last name';
+    if (!formData.lastName) {
+      newErrors.lastName = 'Last name is required';
+    } else if (!validateName(formData.lastName)) {
+      newErrors.lastName = 'Please enter a valid last name';
     }
 
     if (!formData.email) {
@@ -104,54 +105,37 @@ const Page = () => {
     return Object.keys(newErrors).length === 0;
   };
 
-  // Handle form submission
+ 
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     
+    // Validate form before submission
     if (!validateForm()) {
-      setSubmitMessage('Please fix the errors and try again.');
       return;
     }
-
+    
+    setLoading(true);
     setIsSubmitting(true);
-    setSubmitMessage('');
-
+    
     try {
-      // Simulate API call - replace with actual endpoint
-      const response = await fetch('/api/contact', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          firstName: formData.fname,
-          lastName: formData.lname,
-          email: formData.email,
-          phone: formData.phone,
-          message: formData.message,
-          timestamp: new Date().toISOString()
-        }),
+      await submitContactForm(formData);
+      setSuccess(true);
+      toast.success('Message sent successfully');
+      
+      setFormData({
+        firstName: '',
+        lastName: '',
+        email: '',
+        phone: '',
+        message: ''
       });
-
-      if (response.ok) {
-        setSubmitMessage('Message sent successfully! We\'ll get back to you soon.');
-        // Reset form
-        setFormData({
-          fname: '',
-          lname: '',
-          email: '',
-          phone: '',
-          message: ''
-        });
-        setAcceptTerms(false);
-        setErrors({});
-      } else {
-        throw new Error('Failed to send message');
-      }
+      setAcceptTerms(false); // Reset terms checkbox
     } catch (error) {
-      console.error('Contact form error:', error);
-      setSubmitMessage('Failed to send message. Please try again.');
+      console.error('Error:', error.message);
+      toast.error(error.message);
     } finally {
+      setLoading(false);
       setIsSubmitting(false);
     }
   };
@@ -173,53 +157,42 @@ const Page = () => {
           Facing any problem or have a query? Fill the form to get contacted
         </p>
 
-        {/* Submit Message */}
-        {submitMessage && (
-          <div className={`mb-4 p-3 rounded-md text-center ${
-            submitMessage.includes('successfully') 
-              ? 'bg-green-50 text-green-800 border border-green-200' 
-              : 'bg-red-50 text-red-800 border border-red-200'
-          }`}>
-            {submitMessage}
-          </div>
-        )}
-
         <form
           className="grid grid-cols-2 gap-6 md:gap-8"
           onSubmit={handleSubmit}
         >
           {/* First Name & Last Name */}
           <div className={formField}>
-            <label htmlFor="fname">First name</label>
+            <label htmlFor="firstName">First name</label>
             <input
-              id="fname"
-              name="fname"
-              value={formData.fname}
-              onChange={(e) => handleInputChange('fname', e.target.value)}
+              id="firstName"
+              name="firstName"
+              value={formData.firstName}
+              onChange={(e) => handleInputChange('firstName', e.target.value)}
               className={inputField}
               placeholder="Enter your first name"
               maxLength={50}
               disabled={isSubmitting}
             />
-            {errors.fname && (
-              <span className="text-red-500 text-sm">{errors.fname}</span>
+            {errors.firstName && (
+              <span className="text-red-500 text-sm">{errors.firstName}</span>
             )}
           </div>
           
           <div className={formField}>
-            <label htmlFor="lname">Last name</label>
+            <label htmlFor="lastName">Last name</label>
             <input
-              id="lname"
-              name="lname"
-              value={formData.lname}
-              onChange={(e) => handleInputChange('lname', e.target.value)}
+              id="lastName"
+              name="lastName"
+              value={formData.lastName}
+              onChange={(e) => handleInputChange('lastName', e.target.value)}
               className={inputField}
               placeholder="Enter your last name"
               maxLength={50}
               disabled={isSubmitting}
             />
-            {errors.lname && (
-              <span className="text-red-500 text-sm">{errors.lname}</span>
+            {errors.lastName && (
+              <span className="text-red-500 text-sm">{errors.lastName}</span>
             )}
           </div>
           
@@ -299,7 +272,7 @@ const Page = () => {
             <button
               type="submit"
               disabled={isSubmitting}
-              className="btn_fill w-full rounded-md bg-[#217B7E] px-6 py-2 text-white disabled:bg-gray-400"
+              className="btn_fill w-full rounded-md bg-[#217B7E] px-6 py-2 text-white  hover:cursor-pointer"
               style={{ background: isSubmitting ? "#9CA3AF" : "#217B7E" }}
             >
               {isSubmitting ? "Sending..." : "Send message"}
