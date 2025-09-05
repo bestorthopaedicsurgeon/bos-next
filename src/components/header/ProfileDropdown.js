@@ -10,6 +10,7 @@ import { User } from "lucide-react";
 import { useRouter } from "next/navigation";
 import React from "react";
 import { signOut, useSession } from "next-auth/react";
+import Link from "next/link";
 
 const ProfileDropdown = () => {
   const { data: session, status } = useSession();
@@ -23,21 +24,15 @@ const ProfileDropdown = () => {
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
         {!session && (
-          <DropdownMenuItem
-            className="cursor-pointer"
-            onClick={() => router.push("/login")}
-          >
-            Login
+          <DropdownMenuItem asChild className="cursor-pointer">
+            <Link href="/login" className="w-full">Login</Link>
           </DropdownMenuItem>
         )}
 
         {session?.user?.role === "PATIENT" && (
           <>
-            <DropdownMenuItem
-              className="cursor-pointer"
-              onClick={() => router.push("/patient-profile")}
-            >
-              View Profile
+            <DropdownMenuItem asChild className="cursor-pointer">
+              <Link href="/patient-profile" className="w-full">View Profile</Link>
             </DropdownMenuItem>
             <DropdownMenuSeparator />
             <DropdownMenuItem
@@ -51,11 +46,8 @@ const ProfileDropdown = () => {
 
         {session?.user?.role === "DOCTOR" && (
           <>
-            <DropdownMenuItem
-              className="cursor-pointer"
-              onClick={() => router.push("/doctor")}
-            >
-              View Profile
+            <DropdownMenuItem asChild className="cursor-pointer">
+              <Link href="/doctor" className="w-full">View Profile</Link>
             </DropdownMenuItem>
             <DropdownMenuSeparator />
             <DropdownMenuItem
@@ -69,11 +61,8 @@ const ProfileDropdown = () => {
 
         {session?.user?.role === "ADMIN" && (
           <>
-            <DropdownMenuItem
-              className="cursor-pointer"
-              onClick={() => router.push("/admin")}
-            >
-              Dashboard
+            <DropdownMenuItem asChild className="cursor-pointer">
+              <Link href="/admin" className="w-full">Dashboard</Link>
             </DropdownMenuItem>
             <DropdownMenuSeparator />
             <DropdownMenuItem

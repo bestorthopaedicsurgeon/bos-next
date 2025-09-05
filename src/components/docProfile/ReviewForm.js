@@ -1,9 +1,18 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useSession } from "next-auth/react";
 import { Checkbox } from "@/components/ui/checkbox";
+import { submitDoctorReview } from "@/lib/apiCalls/client/doctor";
+import { toast } from "sonner";
 
-export default function ReviewForm({ className }) {
+export default function ReviewForm({ className, doctorId, onReviewSubmit }) {
+  const { data: session, status } = useSession();
+  const isLoggedIn = status === 'authenticated';
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [error, setError] = useState('');
+  const [success, setSuccess] = useState('');
+
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -12,8 +21,18 @@ export default function ReviewForm({ className }) {
     punctuality: 1,
     helpfulness: 1,
     knowledge: 1,
-    acceptTerms: false,
   });
+
+  // Update form data when session is available
+  useEffect(() => {
+    if (isLoggedIn && session?.user) {
+      setFormData(prev => ({
+        ...prev,
+        name: session.user.name || "",
+        email: session.user.email || "",
+      }));
+    }
+  }, [isLoggedIn, session]);
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -30,30 +49,82 @@ export default function ReviewForm({ className }) {
     }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Handle form submission here
-    console.log(formData);
+    if (!isLoggedIn) {
+      setError('Please log in to submit a review');
+      return;
+    }
+
+    setIsSubmitting(true);
+    setError('');
+    setSuccess('');
+
+    // console.log(formData);
+
+    try {
+      const reviewData = {
+        professionalism: formData.professionalism,
+        punctuality: formData.punctuality,
+        helpfulness: formData.helpfulness,
+        knowledge: formData.knowledge,
+        review: formData.review,
+      };
+      console.log('asdasd',doctorId);
+      const res = await submitDoctorReview(doctorId, reviewData);
+
+      // Reset form on success
+      setFormData({
+        name: session?.user?.name || "",
+        email: session?.user?.email || "",
+        review: "",
+        professionalism: 1,
+        punctuality: 1,
+        helpfulness: 1,
+        knowledge: 1,
+      });
+
+      // setSuccess('Thank you for your review!');
+      toast.success('Thank you for your review!');
+      if (onReviewSubmit) {
+        onReviewSubmit();
+      }
+    } catch (error) {
+      console.log(error);
+      // console.error('Error submitting review:', error);
+      toast.error(error.message || 'Failed to submit review. Please try again.');
+      // setError(error.message || 'Failed to submit review. Please try again.');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const renderStars = (category, currentRating) => {
     return (
-      <div className="flex">
+      <div className="flex items-center gap-1">
         {[1, 2, 3, 4, 5].map((star) => (
           <button
             key={star}
             type="button"
             onClick={() => handleRatingChange(category, star)}
-            className="text-2xl focus:outline-none"
-            style={{
-              color: star <= currentRating ? "#F3CD03" : "transparent",
-              WebkitTextStroke: star > currentRating ? "1.5px #F3CD03" : "none",
-              textStroke: star > currentRating ? "1.5px #F3CD03" : "none",
-              transition: "color 0.2s, -webkit-text-stroke 0.2s",
-              cursor: "pointer",
-            }}
+            className="focus:outline-none cursor-pointer"
           >
-            ★
+            <svg
+              width="18"
+              height="18"
+              viewBox="0 0 18 18"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M9 1L11.5 6L17 6.75L13 10.75L14 16L9 13.5L4 16L5 10.75L1 6.75L6.5 6L9 1Z"
+                fill={star <= currentRating ? "#F3CD03" : "#E2E8F0"}
+                stroke={star <= currentRating ? "#F3CD03" : "#E2E8F0"}
+                strokeWidth="1.5"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+            </svg>
           </button>
         ))}
       </div>
@@ -80,7 +151,8 @@ export default function ReviewForm({ className }) {
               value={formData.name}
               onChange={handleChange}
               placeholder="Enter your full name"
-              className="border-primary w-full rounded border p-2"
+              className="border-primary bg-gray-200 w-full rounded border p-2"
+              disabled
               required
             />
           </div>
@@ -92,7 +164,8 @@ export default function ReviewForm({ className }) {
               value={formData.email}
               onChange={handleChange}
               placeholder="Enter your email"
-              className="border-primary w-full rounded border p-2"
+              className="border-primary bg-gray-200 w-full rounded border p-2"
+              disabled
               required
             />
           </div>
@@ -152,24 +225,15 @@ export default function ReviewForm({ className }) {
           </div>
         </div>
 
-        <div className="mb-6">
-          <label className="flex items-center gap-2">
-            <Checkbox
-              checked={formData.acceptTerms}
-              onCheckedChange={(checked) =>
-                setFormData((prev) => ({ ...prev, acceptTerms: checked }))
-              }
-              required
-            />
-            <span className="text-[14px]">I accept the terms</span>
-          </label>
-        </div>
+        {/* {error && <p className="text-red-500">{error}</p>}
+        {success && <p className="text-green-500">{success}</p>} */}
 
         <button
           type="submit"
           className="bg-primary mx-auto flex cursor-pointer justify-center rounded px-20 py-3 text-white transition"
+          disabled={isSubmitting}
         >
-          Submit
+          {isSubmitting ? 'Submitting...' : 'Submit'}
         </button>
       </form>
     </div>

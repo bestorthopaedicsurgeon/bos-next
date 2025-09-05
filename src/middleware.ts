@@ -11,8 +11,16 @@ const PUBLIC_ROUTES = [
   "/surgeons",
   "/blog",
   "/contactUs",
+  "/doctor/[slug]",  
   ...AUTH_PAGES,
 ];
+
+const isDoctorSlugRoute = (pathname: string) => {
+  // Match /doctor/ followed by one or more characters that are not slashes
+  // and ensure it's not /doctor/edit or /doctor/registration
+  return /^\/doctor\/[^\/]+$/.test(pathname) && 
+         !['/doctor/edit', '/doctor/registration'].some(blocked => pathname.startsWith(blocked));
+};
 
 export async function middleware(req: NextRequest) {
   const token = await getToken({
@@ -24,14 +32,21 @@ export async function middleware(req: NextRequest) {
 
   const { pathname } = req.nextUrl;
 
-  // 🔒 Authenticated users trying to visit /login or /register → redirect to home
+  // Authenticated users trying to visit /login or /register → redirect to home
   if (token && AUTH_PAGES.includes(pathname)) {
     return NextResponse.redirect(new URL("/", req.url));
   }
 
+  // Check if the current path matches any public route or is a doctor slug route
+  const isPublicRoute = PUBLIC_ROUTES.some(route => {
+    if (route === '/doctor/[slug]') {
+      return isDoctorSlugRoute(pathname);
+    }
+    return pathname === route;
+  });
+
   // Unauthenticated users trying to access protected routes
-  const isProtected = !PUBLIC_ROUTES.includes(pathname);
-  if (!token && isProtected) {
+  if (!token && !isPublicRoute) {
     return NextResponse.redirect(new URL("/login", req.url));
   }
 

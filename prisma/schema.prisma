@@ -1,12 +1,5 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
-  // output   = "../src/generated/prisma"
 }
 
 datasource db {
@@ -26,11 +19,9 @@ model Account {
   scope             String?
   id_token          String?
   session_state     String?
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+  user              User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([provider, providerAccountId])
 }
@@ -39,10 +30,9 @@ model Session {
   sessionToken String   @unique
   userId       String
   expires      DateTime
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
   user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
 }
 
 model VerificationToken {
@@ -54,23 +44,95 @@ model VerificationToken {
 }
 
 model User {
-  id        String  @id @default(cuid())
-  email     String  @unique
-  password  String
-  name      String
-  firstName String?
-  lastName  String?
-  image     String?
-
-  reviews DoctorReview[]
-
-  phone String?
-  role  Role
-
-  doctorProfile DoctorProfile? @relation("UserDoctorProfile")
+  id            String         @id @default(cuid())
+  email         String         @unique
+  emailVerified DateTime?      @map("email_verified")
+  password      String?
+  name          String
+  firstName     String?
+  lastName      String?
+  image         String?
+  phone         String?
+  role          Role
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
   accounts      Account[]
+  doctorProfile DoctorProfile? @relation("UserDoctorProfile")
+  reviews       DoctorReview[]
   sessions      Session[]
+}
 
+model DoctorProfile {
+  id                        Int                      @id @default(autoincrement())
+  userId                    String?                  @unique
+  title                     String?
+  experience                Int?
+  designation               Designation?
+  about                     String?
+  DoctorAvailabilityDays    String[]
+  name                      String?
+  practices                 Json?
+  subspecialities           String[]                 @default([])
+  registrationsAssociations String[]                 @default([])
+  qualifications            String[]                 @default([])
+  awardsPublications        String[]                 @default([])
+  hospitalAffiliations      Json?
+  featured                  Boolean                  @default(false)
+  location                  String?
+  registrationCompleted     Boolean                  @default(false)
+  image                     String?
+  DoctorAvailability        DoctorAvailabilityTime[]
+  user                      User?                    @relation("UserDoctorProfile", fields: [userId], references: [id])
+  reviews                   DoctorReview[]
+}
+
+model DoctorReview {
+  id              Int           @id @default(autoincrement())
+  professionalism Int
+  punctuality     Int
+  helpfulness     Int
+  knowledge       Int
+  review          String
+  doctorId        Int
+  userId          String
+  createdAt       DateTime      @default(now())
+  doctor          DoctorProfile @relation(fields: [doctorId], references: [id])
+  user            User          @relation(fields: [userId], references: [id])
+
+  @@unique([userId, doctorId])
+}
+
+model DoctorAvailabilityTime {
+  id         Int           @id @default(autoincrement())
+  doctorId   Int
+  dayOfWeek  DayOfWeek
+  startTime  String
+  endTime    String
+  location   LocationType
+  clinicName String?
+  createdAt  DateTime      @default(now())
+  doctor     DoctorProfile @relation(fields: [doctorId], references: [id])
+}
+
+model Blog {
+  id         String   @id @default(cuid())
+  title      String
+  authorName String
+  date       DateTime @default(now())
+  image      String?
+  content    String
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  slug       String   @unique
+}
+
+model ContactUs {
+  id        String   @id @default(cuid())
+  firstName String
+  lastName  String
+  email     String
+  phone     String
+  message   String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
@@ -88,79 +150,10 @@ enum Title {
   PROF
 }
 
-model DoctorProfile {
-  id                        Int          @id @default(autoincrement())
-  userId                    String?      @unique
-  user                      User?        @relation("UserDoctorProfile", fields: [userId], references: [id])
-  image                     String?
-  title                     String?
-  name                      String?
-  experience                Int?
-  designation               Designation?
-  practices                 Json?
-  location                  String?
-  subspecialities           String[]     @default([])
-  about                     String?
-  registrationsAssociations String[]     @default([])
-  qualifications            String[]     @default([])
-  awardsPublications        String[]     @default([])
-  hospitalAffiliations      Json?
-
-  registrationCompleted Boolean        @default(false)
-  featured              Boolean        @default(false)
-  reviews               DoctorReview[]
-
-  DoctorAvailability     DoctorAvailabilityTime[]
-  DoctorAvailabilityDays String[]
-}
-
-model DoctorReview {
-  id              Int    @id @default(autoincrement())
-  professionalism Int
-  punctuality     Int
-  helpfulness     Int
-  knowledge       Int
-  review          String
-
-  doctor   DoctorProfile @relation(fields: [doctorId], references: [id])
-  doctorId Int
-
-  user   User   @relation(fields: [userId], references: [id])
-  userId String
-
-  createdAt DateTime @default(now())
-
-  @@unique([userId, doctorId])
-}
-
-// enum Subspeciality {
-//   FOOT_AND_ANKLE
-//   PEDIATRIC_ORTHOPEDICS
-//   JOINT_REPLACEMENT
-//   SPINE_SURGERY
-//   HAND_SURGERY
-//   SHOULDER_AND_ELBOW
-//   SPORTS_MEDICINE
-// }
-
 enum Designation {
   DOCTOR
   SURGEON
   GENERAL
-}
-
-model DoctorAvailabilityTime {
-  id       Int           @id @default(autoincrement())
-  doctor   DoctorProfile @relation(fields: [doctorId], references: [id])
-  doctorId Int
-
-  dayOfWeek  DayOfWeek
-  startTime  String // format: "09:00"
-  endTime    String // format: "12:30"
-  location   LocationType
-  clinicName String? // Only if location = CLINIC
-
-  createdAt DateTime @default(now())
 }
 
 enum DayOfWeek {
@@ -176,30 +169,4 @@ enum DayOfWeek {
 enum LocationType {
   ONLINE
   CLINIC
-}
-
-model Blog {
-  id         String   @id @default(cuid())
-  title      String
-  authorName String
-  date       DateTime @default(now())
-  image      String?   // Store URL or path to the image
-  content    String  
-  slug       String   @unique
-
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
-}
-
-
-// contactUs  
-model ContactUs {
-  id String @id @default(cuid())
-  firstName String
-  lastName String
-  email String
-  phone String
-  message String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
 }

@@ -18,7 +18,17 @@ import ReviewForm from "./ReviewForm";
 import About from "./About";
 import QuestionsAndAnswers from "./QA";
 
-export function DocTabs({doctData}) {
+export function DocTabs({ doctData, ownProfile }) {
+
+  const handleReviewSubmit = () => {
+    console.log("Review submitted");
+    // This will be called after a successful review submission
+    // You can use it to refresh the reviews list if needed
+    // if (fetchReviews) {
+    //   fetchReviews();
+    // }
+  };
+
   const line = "h-5 w-[1px] bg-primary";
   return (
     <div className="mt-7 flex w-full flex-col gap-6">
@@ -49,20 +59,30 @@ export function DocTabs({doctData}) {
           value="reviews"
           className="mt-3 flex gap-10 max-lg:flex-wrap"
         >
-          <Rating className="w-[60%] max-lg:w-full" />
+          <Rating doctorId={doctData.id} className={` ${ownProfile ? "w-full" : "w-[60%] max-lg:w-full"}`} />
           {/* <QuestionReview className="w-[40%] max-lg:w-full" /> */}
-          <ReviewForm className="w-[40%] max-lg:w-full" />
+          {!ownProfile && (
+            console.log("ownProfile"),
+            <ReviewForm doctorId={doctData.id}
+             /*  onReviewSubmit={handleReviewSubmit} */ />
+          )}
         </TabsContent>
         <TabsContent
           value="about"
           className="mt-3 flex gap-10 max-lg:flex-wrap"
         >
-          <About className="w-[60%] max-lg:w-full" doctData={doctData} />
-          <ReviewForm className="w-[40%] max-lg:w-full" />
+          <About className={` ${ownProfile ? "w-full" : "w-[60%] max-lg:w-full"}`} doctData={doctData} />
+          {!ownProfile && (
+            <ReviewForm doctorId={doctData.id}
+             /*  onReviewSubmit={handleReviewSubmit} */ />
+          )}
         </TabsContent>
         <TabsContent value="qa" className="mt-3 flex gap-10 max-lg:flex-wrap">
-          <QuestionsAndAnswers className="w-[60%] max-lg:w-full" />
-          <ReviewForm className="w-[40%] max-lg:w-full" />
+          <QuestionsAndAnswers className={` ${ownProfile ? "w-full" : "w-[60%] max-w-4xl max-lg:w-full"}`} />
+          {!ownProfile && (
+            <ReviewForm doctorId={doctData.id}
+             /*  onReviewSubmit={handleReviewSubmit} */ />
+          )}
         </TabsContent>
       </Tabs>
     </div>

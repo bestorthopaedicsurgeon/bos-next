@@ -55,7 +55,7 @@ const Page = async () => {
           <HospitalAffiliations hospitals={doctData?.doctorProfile?.hospitalAffiliations} />
         </div>
       </div>
-      <DocTabs doctData={doctData} />
+      <DocTabs doctData={doctData} ownProfile={true} />
     </div>
   );
 };
