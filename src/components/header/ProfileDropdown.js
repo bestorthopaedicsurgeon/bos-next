@@ -31,10 +31,10 @@ const ProfileDropdown = () => {
 
         {session?.user?.role === "PATIENT" && (
           <>
-            <DropdownMenuItem asChild className="cursor-pointer">
+            {/* <DropdownMenuItem asChild className="cursor-pointer">
               <Link href="/patient-profile" className="w-full">View Profile</Link>
-            </DropdownMenuItem>
-            <DropdownMenuSeparator />
+            </DropdownMenuItem> */}
+            {/* <DropdownMenuSeparator /> */}
             <DropdownMenuItem
               className="cursor-pointer"
               onClick={() => signOut({ callbackUrl: "/login" })}
