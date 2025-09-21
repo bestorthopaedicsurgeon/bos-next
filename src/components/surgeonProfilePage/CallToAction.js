@@ -15,7 +15,7 @@ export const CallToAction = () => {
       <div className="container mx-auto px-4">
         <div className="max-w-4xl mx-auto text-center">
           <h2 className="font-syne text-3xl md:text-4xl mb-6">
-            Join WA's Leading Orthopaedic Directory Today
+            Join WA &apos;s Leading Orthopaedic Directory Today
           </h2>
           <p className="text-xl mb-8 opacity-90">
             Be part of a network that truly understands your specialty.
@@ -56,11 +56,11 @@ export const CallToAction = () => {
             <div className="bg-white/10 rounded-lg p-6 text-left max-w-2xl mx-auto">
               <h4 className="font-bold mb-3">Welcome to BOS – Your Profile Is Live!</h4>
               <p className="mb-4 text-sm opacity-90">
-                Thank you for joining BOS, Western Australia's only directory dedicated exclusively to Orthopaedic surgeons.
+                Thank you for joining BOS, Western Australia &apos;s only directory dedicated exclusively to Orthopaedic surgeons.
               </p>
               <p className="mb-4 text-sm opacity-90">
                 Your profile is now live and accessible to patients searching for trusted orthopaedic care. 
-                You're now part of a growing network of specialists committed to improving mobility and musculoskeletal health across WA.
+                You &apos;re now part of a growing network of specialists committed to improving mobility and musculoskeletal health across WA.
               </p>
               <div className="text-sm opacity-80">
                 <p><strong>📧 Email:</strong> support@bestorthopaedicsurgeon.com</p>
