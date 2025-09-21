@@ -20,9 +20,9 @@ export async function PATCH(request: Request, { params }: Params) {
         const { id } = await params;
         const { status, userId } = await request.json();
 
-        if (!['APPROVED', 'REJECTED'].includes(status)) {
+        if (!['APPROVED', 'REJECTED', 'PENDING'].includes(status)) {
             return NextResponse.json(
-                { error: 'Invalid status. Must be either APPROVED or REJECTED' },
+                { error: 'Invalid status. Must be either APPROVED, REJECTED, or PENDING' },
                 { status: 400 }
             );
         }
@@ -86,6 +86,16 @@ export async function PATCH(request: Request, { params }: Params) {
                     where: { id: claimRequest.doctorId },
                     data: {
                         userId,
+                    },
+                });
+            }
+            
+            // If changing to pending (unapprove), unlink the doctor profile
+            if (status === 'PENDING' && claimRequest.doctor.userId) {
+                await prisma.doctorProfile.update({
+                    where: { id: claimRequest.doctorId },
+                    data: {
+                        userId: null,
                     },
                 });
             }
