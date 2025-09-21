@@ -3,11 +3,7 @@ import { prisma } from '@/lib/prisma';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
 
-type Params = {
-    params: {
-        id: string;
-    };
-};
+type Params = { params: Promise<{ id: string }>; };
 
 export async function PATCH(request: Request, { params }: Params) {
     try {
@@ -21,7 +17,7 @@ export async function PATCH(request: Request, { params }: Params) {
             );
         }
 
-        const { id } = params;
+        const { id } = await params;
         const { status, userId } = await request.json();
 
         if (!['APPROVED', 'REJECTED'].includes(status)) {
@@ -120,7 +116,7 @@ export async function DELETE(request: Request, { params }: Params) {
             );
         }
 
-        const { id } = params;
+        const { id } = await params; 
 
         // Delete the claim request
         await prisma.doctorClaimRequest.delete({
