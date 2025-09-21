@@ -36,11 +36,16 @@ model Session {
 }
 
 model VerificationToken {
-  identifier String
+  identifier String   @id
   token      String
   expires    DateTime
+  otp        String
+  attempts   Int      @default(0)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
 
-  @@id([identifier, token])
+  @@index([identifier, token])
+  @@map("verification_tokens")
 }
 
 model User {
@@ -60,6 +65,8 @@ model User {
   doctorProfile DoctorProfile? @relation("UserDoctorProfile")
   reviews       DoctorReview[]
   sessions      Session[]
+
+  DoctorClaimRequest DoctorClaimRequest[]
 }
 
 model DoctorProfile {
@@ -84,6 +91,8 @@ model DoctorProfile {
   DoctorAvailability        DoctorAvailabilityTime[]
   user                      User?                    @relation("UserDoctorProfile", fields: [userId], references: [id])
   reviews                   DoctorReview[]
+
+  DoctorClaimRequest DoctorClaimRequest[]
 }
 
 model DoctorReview {
@@ -137,6 +146,23 @@ model ContactUs {
   updatedAt DateTime @updatedAt
 }
 
+model DoctorClaimRequest {
+  id          Int       @id @default(autoincrement())
+  doctorId    Int
+  name        String
+  email       String    @db.VarChar(255)
+  phone       String
+  ahpraNumber String
+  status      ClaimStatus @default(PENDING)
+  userId      String?    // Will be set when admin approves and connects to a user
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  doctor      DoctorProfile @relation(fields: [doctorId], references: [id])
+  user        User?     @relation(fields: [userId], references: [id])
+
+  @@unique([doctorId, email])
+}
+
 enum Role {
   ADMIN
   DOCTOR
@@ -169,4 +195,10 @@ enum DayOfWeek {
 enum LocationType {
   ONLINE
   CLINIC
+}
+
+enum ClaimStatus {
+  PENDING
+  APPROVED
+  REJECTED
 }
