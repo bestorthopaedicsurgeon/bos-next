@@ -4,6 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import React, { useState } from "react";
+import ClaimProfileModal from "../ClaimProfileModal";
 const {
   Popover,
   PopoverTrigger,
@@ -161,6 +162,7 @@ const DocProfile = ({ docProfile_Details, editProfile }) => {
               {doctorProfile?.location}, Australia
             </p>
           )}
+          
           <p className="flex items-center gap-3 text-[13px]">
             <svg
               width="20"
@@ -176,6 +178,11 @@ const DocProfile = ({ docProfile_Details, editProfile }) => {
             </svg>
             {5}
           </p>
+          <ClaimProfileModal doctorId={doctorProfile.id}>
+            <button className="text-primary hover:text-[#e55a2b] underline text-sm font-medium transition-colors hover:cursor-pointer">
+              Is this you? Claim your profile
+            </button>
+          </ClaimProfileModal>
         </div>
         {editProfile && (
           <Link href={`/doctor/edit/`}>

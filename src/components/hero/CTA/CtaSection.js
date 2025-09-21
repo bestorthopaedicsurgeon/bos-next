@@ -5,38 +5,37 @@ export const CtaSection = () => {
   const ctaCards = [
     {
       icon: "/icons/CtaCard-1.png",
-      title: "Rate Your Surgeon",
+      title: "Rate & Review Your Experience",
       description:
-        "When facing a serious, life-changing illness, we understand the critical importance of obtaining expert advice.",
+        "We believe that patient feedback matters — and it helps others make more informed choices about their healthcare.",
       button: "Rate Now",
     },
     {
       icon: "/icons/CtaCard-2.png",
-      title: "Get Consultation",
+      title: "Leave a Review",
       description:
-        "Get help from the best chosen hospitals and specialists that excel in providing premium healthcare directly from the United States.",
-      button: "Find Your Suegeon",
+        "After your appointment, you can rate your Orthopaedic surgeon based on your experience, including professionalism, bedside manner, clarity of diagnosis, wait times, and overall satisfaction.",
+      button: "Leave Review",
     },
     {
       icon: "/icons/CtaCard-3.png",
-      title: "Book Appointments",
+      title: "Help Others Find the Right Surgeon",
       description:
-        "Get help from the best chosen hospitals and specialists that excel in providing premium healthcare directly from the United States.",
-      button: "Book Now",
+        "Your honest feedback provides valuable insights for other patients in WA who are seeking trusted care.",
+      button: "Find Now",
     },
   ];
   return (
     <section className="mb-40">
       <div className="mb-24 grid grid-cols-[1.1fr_1fr] gap-4 max-md:grid-cols-1">
         <h2 className="font-syne text-primary w-full">
-        Rate & Review Your Experience
-        We believe that patient feedback matters 
+        Experience Exceptional Healthcare In The Australia With Best Orthopedic Surgeon
         </h2>
         <p className="w-full">
-          Discover the pinnacle of healthcare services in the United States,
+          Discover the pinnacle of healthcare services in the Australia,
           where advancements, quality, cutting edge research, expert doctors and
           a commitment to patient success, combine to provide an unparalleled
-          medical tourism experience. Omnicure USA is your dedicated partner,
+          medical tourism experience. Omnicure Australia is your dedicated partner,
           guiding you towards improved health and wellness.
         </p>
       </div>

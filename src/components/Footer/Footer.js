@@ -31,34 +31,34 @@ const Footer = () => {
             ))}
           </div>
         </div>
-        {/* Services */}
+        {/* Pages */}
         <div>
-          <h3 className="font-semibold text-lg mb-4">Services</h3>
+          <h3 className="font-semibold text-lg mb-4">Pages</h3>
           <ul className="space-y-2">
-            <li><Link href="#" className="hover:underline">Primary Care</Link></li>
-            <li><Link href="#" className="hover:underline">Specialist Care</Link></li>
-            <li><Link href="#" className="hover:underline">Mental Health Services</Link></li>
-            <li><Link href="#" className="hover:underline">Telehealth</Link></li>
+            <li><Link href="/" className="hover:underline">Home</Link></li>
+            <li><Link href="/about" className="hover:underline">About Us</Link></li>
+            <li><Link href="/surgeons" className="hover:underline">Find Surgeons</Link></li>
+            <li><Link href="/blog" className="hover:underline">Blog</Link></li>
           </ul>
         </div>
-        {/* Find a Doctor */}
+        {/* For Patients */}
         <div>
-          <h3 className="font-semibold text-lg mb-4">Find a Doctor</h3>
+          <h3 className="font-semibold text-lg mb-4">For Patients</h3>
           <ul className="space-y-2">
-            <li><Link href="#" className="hover:underline">Top-Rated Doctors</Link></li>
-            <li><Link href="#" className="hover:underline">Appointment Scheduling</Link></li>
-            <li><Link href="#" className="hover:underline">Patient Reviews</Link></li>
-            <li><Link href="#" className="hover:underline">Doctor Profiles</Link></li>
+            <li><Link href="/book-appointment" className="hover:underline">Book Appointment</Link></li>
+            {/* <li><Link href="/patient-registration" className="hover:underline">Patient Registration</Link></li> */}
+            <li><Link href="/how-to-leave-review" className="hover:underline">How to Leave Review</Link></li>
+            {/* <li><Link href="/patient-profile" className="hover:underline">Patient Profile</Link></li> */}
           </ul>
         </div>
-        {/* About Us */}
+        {/* For Surgeons */}
         <div>
-          <h3 className="font-semibold text-lg mb-4">About Us</h3>
+          <h3 className="font-semibold text-lg mb-4">For Surgeons</h3>
           <ul className="space-y-2">
-            <li><Link href="#" className="hover:underline">News and Updates</Link></li>
-            <li><Link href="#" className="hover:underline">Careers</Link></li>
-            <li><Link href="#" className="hover:underline">Community Involvement</Link></li>
-            <li><Link href="#" className="hover:underline">Contact Us</Link></li>
+            <li><Link href="/how-to-make-surgeons-profile" className="hover:underline">How to Create Profile</Link></li>
+            {/* <li><Link href="/doctor/registration" className="hover:underline">Surgeon Registration</Link></li> */}
+            {/* <li><Link href="/doctor-profile" className="hover:underline">Manage Profile</Link></li> */}
+            <li><Link href="/contactUs" className="hover:underline">Contact Us</Link></li>
           </ul>
         </div>
       </div>

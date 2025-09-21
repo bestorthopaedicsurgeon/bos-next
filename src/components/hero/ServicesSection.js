@@ -6,7 +6,7 @@ export const ServicesSection = () => {
     {
       number: "01",
       title: "Find A Surgeon",
-      description: "Consectetur adipiscing elit sed do eiusmod tempor incididunt labore et dolore magna aliqua enim minim veniam.",
+      description: "Quickly connect with the right surgeon for your needs.",
       icon: Search,
       bgColor: "bg-[#0D9488]", // Teal-600
       iconColor: "text-white"
@@ -14,7 +14,7 @@ export const ServicesSection = () => {
     {
       number: "02", 
       title: "Make Appointment",
-      description: "Consectetur adipiscing elit sed do eiusmod tempor incididunt labore et dolore magna aliqua enim minim veniam.",
+      description: "Book your appointment in just a few clicks.",
       icon: Calendar,
       bgColor: "bg-[#83C5BE]", // Light blue
       iconColor: "text-white"
@@ -22,7 +22,7 @@ export const ServicesSection = () => {
     {
       number: "03",
       title: "Upload History", 
-      description: "Consectetur adipiscing elit sed do eiusmod tempor incididunt labore et dolore magna aliqua enim minim veniam.",
+      description: "Easily upload your medical history in one place.",
       icon: Upload,
       bgColor: "bg-[#0D9488]", // Teal-600
       iconColor: "text-white"
@@ -30,7 +30,7 @@ export const ServicesSection = () => {
     {
       number: "04",
       title: "Get Consultation",
-      description: "Consectetur adipiscing elit sed do eiusmod tempor incididunt labore et dolore magna aliqua enim minim veniam.",
+      description: "Talk to experts and get the right guidance.",
       icon: UserCheck,
       bgColor: "bg-[#83C5BE]", // Light blue
       iconColor: "text-white"
@@ -43,8 +43,7 @@ export const ServicesSection = () => {
         Easy Steps To Get Our Services
       </h1>
       <p className="mb-12 text-center text-gray-600 max-w-2xl">
-        Consectetur adipiscing elit sed do eiusmod tempor incididunt labore et
-        dolore magna aliqua enim minim veniam.
+      We believe in making things simple for you. With just a few easy steps, you can access our services and start experiencing the value we bring.
       </p>
       
       {/* Mobile Layout - Clean Vertical Stack */}

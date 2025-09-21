@@ -18,10 +18,7 @@ export const Blogsection = async () => {
             Blogs & Health Tips
           </h1>
           <p className="text-primary-foreground mb-8 text-center">
-            Lorem ipsum dolor sit amet consectetur adipiscing elit semper dalar
-            elementum tempus hac tellus libero accumsan. Lorem ipsum dolor sit
-            amet consectetur adipiscing elit semper dalar elementum tempus hac
-            tellus libero accumsan.
+          Explore insightful blogs and practical health tips designed to help you live a healthier, happier life. From nutrition and fitness to mental well-being, we share everything you need to stay on track.
           </p>
           <BlogCarousel blogs={blogs} />
           <Link href="/blog">
