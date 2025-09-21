@@ -36,3 +36,31 @@ export async function sendOTP(email: string, otp: string): Promise<void> {
     throw new Error('Failed to send verification email');
   }
 }
+
+export interface EmailOptions {
+  to: string;
+  subject: string;
+  message: string;
+}
+
+export async function sendEmail({ to, subject, message }: EmailOptions): Promise<void> {
+  const mailOptions = {
+    from: `"Best Orthopedic Surgeons" <${process.env.EMAIL_USERNAME}>`,
+    to,
+    subject,
+    text: message,
+    html: `
+      <div>
+        <h2>${subject}</h2>
+        <div>${message.replace(/\n/g, '<br>')}</div>
+      </div>
+    `,
+  };
+
+  try {
+    await transporter.sendMail(mailOptions);
+  } catch (error) {
+    console.error('Error sending email:', error);
+    throw new Error('Failed to send email');
+  }
+}
