@@ -24,7 +24,7 @@ We bring together verified Orthopaedic surgeons in a single, streamlined platfor
         </p>
         <ul className="mt-4 text-lg text-gray-700">
         <li>Patients find the care they need, faster.</li>
-        <li>SSurgeons can focus on what they do best — helping people move better.</li>
+        <li>Surgeons can focus on what they do best — helping people move better.</li>
         </ul>
       </div>
     </section>
