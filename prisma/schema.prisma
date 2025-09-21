@@ -91,6 +91,7 @@ model DoctorProfile {
   DoctorAvailability        DoctorAvailabilityTime[]
   user                      User?                    @relation("UserDoctorProfile", fields: [userId], references: [id])
   reviews                   DoctorReview[]
+  hidden                    Boolean                  @default(false)
 
   DoctorClaimRequest DoctorClaimRequest[]
 }

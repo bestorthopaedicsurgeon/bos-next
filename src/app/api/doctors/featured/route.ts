@@ -6,7 +6,7 @@ export async function GET() {
   try {
     // 1. Get manually featured doctors
     let featuredDoctors = await prisma.doctorProfile.findMany({
-      where: { featured: true },
+      where: { featured: true, hidden: false },
       include: { reviews: true },
       take: 4,
     });
