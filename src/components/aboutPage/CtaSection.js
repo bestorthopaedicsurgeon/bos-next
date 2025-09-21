@@ -11,9 +11,7 @@ export const CtaSectionAbout = () => {
           Feel Something Wrong With Your Bones?
         </h1>
         <p className="text-primary-foreground text-center">
-          Maecenas dictum fringilla nisi ac malesuada. Donec ac quam non diam
-          elementum ultricies. In hac habitasse platea dictumst. Nullam eu elit
-          sed metus convallis lobortis.
+        Bone pain, stiffness, or unusual swelling could be early warning signs of an underlying condition. Don’t delay—consult a specialist today and protect your mobility.
         </p>
         <Button className="mt-8" variant="primaryForeground" size="primaryForeground">
           Get Consultation
