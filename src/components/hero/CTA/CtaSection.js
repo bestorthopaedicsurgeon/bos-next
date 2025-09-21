@@ -15,14 +15,14 @@ export const CtaSection = () => {
       title: "Leave a Review",
       description:
         "After your appointment, you can rate your Orthopaedic surgeon based on your experience, including professionalism, bedside manner, clarity of diagnosis, wait times, and overall satisfaction.",
-      button: "Find Your Suegeon",
+      button: "Leave Review",
     },
     {
       icon: "/icons/CtaCard-3.png",
       title: "Help Others Find the Right Surgeon",
       description:
         "Your honest feedback provides valuable insights for other patients in WA who are seeking trusted care.",
-      button: "Book Now",
+      button: "Find Now",
     },
   ];
   return (
