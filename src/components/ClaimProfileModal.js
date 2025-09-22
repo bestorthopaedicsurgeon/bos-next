@@ -111,8 +111,7 @@ const ClaimProfileModal = ({ children, doctorId }) => {
             ensure your profile is confirmed.
           </DialogDescription>
           <DialogDescription className="text-gray-600 text-left mb-6">
-            Simply fill out the form below or confirm your profile by calling 1300 533
-            433 during business hours.
+            Simply fill out the form below or confirm your profile.
           </DialogDescription>
         </DialogHeader>
 
@@ -128,7 +127,7 @@ const ClaimProfileModal = ({ children, doctorId }) => {
               value={formData.name}
               onChange={handleInputChange}
               placeholder="Prof Piers Yates"
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#FF6B35] focus:border-transparent"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
               required
             />
           </div>
@@ -146,7 +145,7 @@ const ClaimProfileModal = ({ children, doctorId }) => {
               name="email"
               value={formData.email}
               onChange={handleInputChange}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#FF6B35] focus:border-transparent"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
               required
             />
           </div>
@@ -164,7 +163,7 @@ const ClaimProfileModal = ({ children, doctorId }) => {
               name="phone"
               value={formData.phone}
               onChange={handleInputChange}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#FF6B35] focus:border-transparent"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
               required
             />
           </div>
@@ -181,64 +180,9 @@ const ClaimProfileModal = ({ children, doctorId }) => {
               value={formData.ahpraNumber}
               onChange={handleInputChange}
               placeholder="MED0123456789"
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#FF6B35] focus:border-transparent"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
               required
             />
-          </div>
-
-          {/* Waiting Time Field */}
-          <div>
-            <label className="block text-gray-700 font-medium mb-3">
-              What is the average waiting time to book an appointment with you?
-              <span className="text-red-500">*</span>
-            </label>
-            <div className="grid grid-cols-2 gap-4">
-              <label className="flex items-center">
-                <input
-                  type="radio"
-                  name="waitingTime"
-                  value="< 2 weeks"
-                  checked={formData.waitingTime === "< 2 weeks"}
-                  onChange={handleInputChange}
-                  className="mr-2 text-[#FF6B35] focus:ring-[#FF6B35]"
-                  required
-                />
-                &lt; 2 weeks
-              </label>
-              <label className="flex items-center">
-                <input
-                  type="radio"
-                  name="waitingTime"
-                  value="2 - 4 weeks"
-                  checked={formData.waitingTime === "2 - 4 weeks"}
-                  onChange={handleInputChange}
-                  className="mr-2 text-[#FF6B35] focus:ring-[#FF6B35]"
-                />
-                2 - 4 weeks
-              </label>
-              <label className="flex items-center">
-                <input
-                  type="radio"
-                  name="waitingTime"
-                  value="1 - 2 months"
-                  checked={formData.waitingTime === "1 - 2 months"}
-                  onChange={handleInputChange}
-                  className="mr-2 text-[#FF6B35] focus:ring-[#FF6B35]"
-                />
-                1 - 2 months
-              </label>
-              <label className="flex items-center">
-                <input
-                  type="radio"
-                  name="waitingTime"
-                  value="3 months +"
-                  checked={formData.waitingTime === "3 months +"}
-                  onChange={handleInputChange}
-                  className="mr-2 text-[#FF6B35] focus:ring-[#FF6B35]"
-                />
-                3 months +
-              </label>
-            </div>
           </div>
 
           {/* Terms Agreement */}
@@ -252,7 +196,7 @@ const ClaimProfileModal = ({ children, doctorId }) => {
               required
             />
             <label className="text-sm text-gray-700">
-              I agree to HealthShare&apos;s{" "}
+              I agree to BOS{" "}
               <a
                 href="#"
                 className="text-primary hover:underline text-sm"
@@ -270,7 +214,7 @@ const ClaimProfileModal = ({ children, doctorId }) => {
             <button
               type="submit"
               disabled={isSubmitting}
-              className="bg-[#FF6B35] text-white px-8 py-3 rounded-md font-medium hover:bg-[#e55a2b] disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+              className="bg-primary text-white px-8 py-3 rounded-md font-medium hover:bg-primary-hover disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
             >
               {isSubmitting ? "Submitting..." : "Confirm"}
             </button>

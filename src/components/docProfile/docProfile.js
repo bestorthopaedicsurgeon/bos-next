@@ -128,7 +128,7 @@ const DocProfile = ({ docProfile_Details, editProfile }) => {
             className="object-cover"
           />
         </div>
-        <div className="flex flex-col flex-wrap gap-2 min-lg:w-[200px]">
+        <div className="flex flex-col flex-wrap gap-2 min-lg:w-[220px]">
           {/* {renderEditable(
               "Name",
               "name",
@@ -179,7 +179,7 @@ const DocProfile = ({ docProfile_Details, editProfile }) => {
             {5}
           </p>
           <ClaimProfileModal doctorId={doctorProfile.id}>
-            <button className="text-primary hover:text-[#e55a2b] underline text-sm font-medium transition-colors hover:cursor-pointer">
+            <button className="text-primary hover:text-primary-hover underline text-md font-medium transition-colors hover:cursor-pointer">
               Is this you? Claim your profile
             </button>
           </ClaimProfileModal>
