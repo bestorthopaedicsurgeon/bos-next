@@ -36,8 +36,9 @@ export const AllSurgeons = ({ searchResults = null, isSearching = false }) => {
     // Don't set loading to false here - let the fetch complete
   }, [searchResults]);
 
-  // Determine which doctors to display
-  const displayDoctors = searchResults !== null ? searchResults : allDoctorsApi;
+  // Determine which doctors to display and filter out hidden doctors
+  const rawDoctors = searchResults !== null ? searchResults : allDoctorsApi;
+  const displayDoctors = rawDoctors ? rawDoctors.filter(doctor => !doctor.hidden) : null;
   const isSearchMode = searchResults !== null;
   const hasResults = displayDoctors && displayDoctors.length > 0;
 

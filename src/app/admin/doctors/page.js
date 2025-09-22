@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from "react"
 import Link from "next/link"
-import { Search, Filter, MoreHorizontal, Edit, Trash2, Eye, Plus, ChevronLeft, ChevronRight } from "lucide-react"
+import { Search, Filter, MoreHorizontal, Edit, Trash2, Eye, EyeOff, Plus, ChevronLeft, ChevronRight } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Card, CardContent } from "@/components/ui/card"
@@ -66,6 +66,33 @@ const DoctorsPage = () => {
         ? { ...doctor, featured: !doctor.featured }
         : doctor
     ))
+  }
+
+  const handleToggleHidden = async (doctorId) => {
+    try {
+      const doctor = doctors.find(d => d.id === doctorId)
+      const newHiddenStatus = !doctor.hidden
+
+      const response = await fetch(`/api/doctors/${doctorId}/hide`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ hidden: newHiddenStatus }),
+      })
+
+      if (response.ok) {
+        setDoctors(prev => prev.map(doctor => 
+          doctor.id === doctorId 
+            ? { ...doctor, hidden: newHiddenStatus }
+            : doctor
+        ))
+      } else {
+        console.error('Failed to update doctor hidden status')
+      }
+    } catch (error) {
+      console.error('Error updating doctor hidden status:', error)
+    }
   }
 
   const handlePageChange = (page) => {
@@ -168,7 +195,7 @@ const DoctorsPage = () => {
       </Card>
 
       {/* Stats */}
-      <div className="grid grid-cols-1 sm:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-5 gap-4">
         <Card>
           <CardContent className="p-6 text-center">
             <div className="text-2xl font-bold text-gray-900">{doctors.length}</div>
@@ -197,6 +224,14 @@ const DoctorsPage = () => {
               {doctors.filter(d => d.featured).length}
             </div>
             <div className="text-sm text-gray-600">Featured</div>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardContent className="p-6 text-center">
+            <div className="text-2xl font-bold text-gray-600">
+              {doctors.filter(d => d.hidden).length}
+            </div>
+            <div className="text-sm text-gray-600">Hidden</div>
           </CardContent>
         </Card>
       </div>
@@ -264,6 +299,21 @@ const DoctorsPage = () => {
                     >
                       {doctor.featured ? "Remove from Featured" : "Add to Featured"}
                     </DropdownMenuItem>
+                    <DropdownMenuItem
+                      onClick={() => handleToggleHidden(doctor.id)}
+                    >
+                      {doctor.hidden ? (
+                        <>
+                          <Eye className="h-4 w-4 mr-2" />
+                          Unhide Doctor
+                        </>
+                      ) : (
+                        <>
+                          <EyeOff className="h-4 w-4 mr-2" />
+                          Hide Doctor
+                        </>
+                      )}
+                    </DropdownMenuItem>
                     <DropdownMenuItem className="text-red-600">
                       <Trash2 className="h-4 w-4 mr-2" />
                       Delete
@@ -312,6 +362,11 @@ const DoctorsPage = () => {
                     {doctor.featured && (
                       <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-purple-100 text-purple-800">
                         Featured
+                      </span>
+                    )}
+                    {doctor.hidden && (
+                      <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
+                        Hidden
                       </span>
                     )}
                   </div>
