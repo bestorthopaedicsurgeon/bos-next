@@ -67,6 +67,10 @@ model User {
   sessions      Session[]
 
   DoctorClaimRequest DoctorClaimRequest[]
+
+  Question Question[] @relation("PatientQuestions")
+
+  Answer Answer[]
 }
 
 model DoctorProfile {
@@ -94,6 +98,8 @@ model DoctorProfile {
   hidden                    Boolean                  @default(false)
 
   DoctorClaimRequest DoctorClaimRequest[]
+
+  Question Question[]
 }
 
 model DoctorReview {
@@ -162,6 +168,43 @@ model DoctorClaimRequest {
   user        User?     @relation(fields: [userId], references: [id])
 
   @@unique([doctorId, email])
+}
+
+model Question {
+  id          String   @id @default(cuid())
+  content     String
+  isConfidential Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  // Relationships
+  patientId   String
+  patient     User     @relation("PatientQuestions", fields: [patientId], references: [id])
+  
+  doctorId    Int
+  doctor      DoctorProfile @relation(fields: [doctorId], references: [id])
+  
+  answers     Answer[]
+  
+  @@index([patientId])
+  @@index([doctorId])
+}
+
+model Answer {
+  id          String   @id @default(cuid())
+  content     String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  // Relationships
+  questionId  String
+  question    Question @relation(fields: [questionId], references: [id], onDelete: Cascade)
+  
+  authorId    String
+  author      User     @relation(fields: [authorId], references: [id])
+  
+  @@index([questionId])
+  @@index([authorId])
 }
 
 enum Role {

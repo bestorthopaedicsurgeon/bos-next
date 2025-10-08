@@ -12,19 +12,18 @@ export async function POST(req: Request) {
     return NextResponse.json({
       success: true,
       message,
-      user: { id, email, name, role }
+      data: { id, email, name, role },
     });
-
   } catch (err: unknown) {
     if (err instanceof Error) {
       return NextResponse.json(
-        { error: err.message },
-        { status: 400 }
+        { success: false, error: err.message },
+        { status: 400 },
       );
     }
     return NextResponse.json(
-      { error: "Registration failed" },
-      { status: 400 }
+      { success: false, error: "Registration failed" },
+      { status: 400 },
     );
   }
 }

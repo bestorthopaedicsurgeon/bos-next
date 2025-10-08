@@ -65,6 +65,7 @@ export const authOptions: NextAuthOptions = {
           email: user.email,
           name: user.name,
           role: user.role,
+          image: user.image || undefined,
         };
       },
     }),
@@ -96,23 +97,25 @@ export const authOptions: NextAuthOptions = {
             where: { email: user.email! },
             update: {
               name: user.name!,
-              image: user.image,
+              image: user.image || undefined,
               emailVerified: new Date(),
             },
             create: {
               email: user.email!,
               name: user.name!,
               role: "PATIENT",
-              image: user.image,
+              image: user.image || undefined,
               emailVerified: new Date(),
               password: '', // Temporary password for OAuth users
             },
           });
           token.id = existingUser.id;
           token.role = existingUser.role;
+          token.image = existingUser.image!;
         } else {
           token.id = user.id as string;
           token.role = user.role as string;
+          token.image = user.image as string;
         }
       }
       return token;
@@ -126,6 +129,7 @@ export const authOptions: NextAuthOptions = {
 
         session.user.id = token.id;
         session.user.role = token.role;
+        session.user.image = token.image || undefined;
         session.user.doctorId = doctor?.id || null;
       }
 
