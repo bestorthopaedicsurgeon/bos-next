@@ -50,6 +50,7 @@ export async function GET(req: Request) {
     const patientId = searchParams.get("patientId");
 
     let questions;
+    // console.log(session);
 
     if (!session?.user) {
       if (!doctorId) {
@@ -107,7 +108,7 @@ export async function GET(req: Request) {
             // Show all questions to the doctor they're assigned to
             ...(session.user.role === "DOCTOR" &&
             session.user.doctorId === parseInt(doctorId)
-              ? [{}]
+              ? [{ doctorId: parseInt(doctorId) }]
               : []),
 
             // Show questions to the patient who asked them
@@ -117,7 +118,7 @@ export async function GET(req: Request) {
 
             // For everyone else, only show non-confidential questions
             { isConfidential: false },
-          ],
+          ].filter(condition => Object.keys(condition).length > 0),
         },
         include: {
           patient: {

@@ -18,9 +18,20 @@ export async function POST(req: NextRequest) {
 
   // Save to database
   
-  await prisma.doctorProfile.update({
-    where: { id: Number(doctorId) },
-    data: { image: imageUrl },
+  await prisma.$transaction(async (tx) => {
+    // 1. Update doctor image
+    const doctor = await tx.doctorProfile.update({
+      where: { id: Number(doctorId) },
+      data: { image: imageUrl },
+    });
+  
+    // 2. If doctor is linked to a user, update that user's image too
+    if (doctor.userId) {
+      await tx.user.update({
+        where: { id: doctor.userId },
+        data: { image: imageUrl },
+      });
+    }
   });
 
   return NextResponse.json({ success: true, imageUrl });
