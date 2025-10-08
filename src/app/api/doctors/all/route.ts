@@ -5,9 +5,10 @@ export async function GET(request: NextRequest) {
 
   try {
     const doctors = await prisma.doctorProfile.findMany({
-      where: {
-        hidden: false,
-      },
+      // We will handle it from the frontend
+      // where: {
+      //   hidden: false,
+      // },
       include: {
         user: {
           select: {
