@@ -11,15 +11,24 @@ const PUBLIC_ROUTES = [
   "/surgeons",
   "/blog",
   "/contactUs",
-  "/doctor/[slug]",  
+  "/doctor/[slug]",
+  "/blog/[slug]",
+  "/how-to-leave-review",
+  "/book-appointment",
+  "/how-to-make-surgeons-profile",
+  "/how-to-make-doctors-profile",
   ...AUTH_PAGES,
-];
+];  
 
 const isDoctorSlugRoute = (pathname: string) => {
   // Match /doctor/ followed by one or more characters that are not slashes
   // and ensure it's not /doctor/edit or /doctor/registration
-  return /^\/doctor\/[^\/]+$/.test(pathname) && 
-         !['/doctor/edit', '/doctor/registration'].some(blocked => pathname.startsWith(blocked));
+  return /^\/doctor\/[^\/]+$/.test(pathname) &&
+    !["/doctor/edit", "/doctor/registration"].some((blocked) => pathname.startsWith(blocked));
+};
+
+const isBlogSlugRoute = (pathname: string) => {
+  return /^\/blog\/[^\/]+$/.test(pathname);
 };
 
 export async function middleware(req: NextRequest) {
@@ -38,9 +47,12 @@ export async function middleware(req: NextRequest) {
   }
 
   // Check if the current path matches any public route or is a doctor slug route
-  const isPublicRoute = PUBLIC_ROUTES.some(route => {
-    if (route === '/doctor/[slug]') {
+  const isPublicRoute = PUBLIC_ROUTES.some((route) => {
+    if (route === "/doctor/[slug]") {
       return isDoctorSlugRoute(pathname);
+    }
+    if (route === "/blog/[slug]") {
+      return isBlogSlugRoute(pathname);
     }
     return pathname === route;
   });

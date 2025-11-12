@@ -3489,9 +3489,6 @@
 // ];
 export const auCities = [
   {
-    city: "Melbourne",
-  },
-  {
     city: "Alfred Cove",
   },
   {
