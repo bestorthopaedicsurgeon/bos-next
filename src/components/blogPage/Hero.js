@@ -21,11 +21,11 @@ export const HeroSection = () => {
           {/* <p className="mb-4">Find your surgeon!</p>
             <div className="bg-primary-foreground mb-4 h-[2px] w-full" /> */}
           <div className="mb-4 inline-block">
-            <p className="mb-4">Got a Bone Problem?</p>
+            <p className="mb-4">Health tips and blogs</p>
             <div className="bg-primary-foreground mx-auto h-[2px] w-full" />
           </div>
           <h1 className="font-syne mb-4">
-            Find the Right Orthopedic Specialist
+          Read Expert Blogs & Stay Informed
           </h1>
           <div className="hidden max-lg:flex max-lg:justify-center max-lg:mx-auto h-full max-h-[352px] max-w-[308px] w-full">
             <Image
@@ -37,7 +37,8 @@ export const HeroSection = () => {
             />
           </div>
           <p className="mb-4 max-lg:mt-10">
-          At BOS, we&apos;re committed to helping you stay informed, empowered, and connected when it comes to your bone, joint, and muscle health. Our blog is your go-to resource for expert advice, the latest orthopaedic news, patient stories, recovery tips, and guides to finding the right specialists near you.
+          Explore tips, insights, and research-backed advice from medical professionals. Stay ahead with trusted health knowledge for a better you.
+          New posts updated regularly!
           </p>
           <div className="mb-4 flex flex-wrap gap-4">
             <Link href="#blogs">
