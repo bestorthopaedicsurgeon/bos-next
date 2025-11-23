@@ -30,7 +30,7 @@ export const HeroSection = () => {
           </h1>
           <div className="hidden max-lg:flex max-lg:justify-center max-lg:mx-auto max-h-[352px] w-full max-w-[348px] h-full mb-6">
             <Image
-              src="/about/intro.png"
+              src="/about/about.png"
               alt="hero"
               width={500}
               height={500}
@@ -69,9 +69,9 @@ export const HeroSection = () => {
             </div>
           </div>
         </div>
-        <div className="mt-[-79px] h-full max-h-[600px] max-w-[579px] w-full max-lg:hidden mb-[-59px] max-[1367px]:mb-0 max-[1367px]:mt-0">
+        <div className="mt-[-170px] h-full max-h-[600px] max-w-[579px] w-full max-lg:hidden  max-[1367px]:mb-0 max-[1367px]:mt-0">
           <Image
-            src="/about/intro.png"
+            src="/about/about.png"
             alt="hero"
             width={500}
             height={500}
