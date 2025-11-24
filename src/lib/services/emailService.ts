@@ -1,11 +1,21 @@
 import nodemailer from 'nodemailer';
 
-// Configure nodemailer with your email service
+// Configure nodemailer with GoDaddy Email (Outlook/Office 365)
+// If you get authentication errors, try these alternatives:
+// Option 1: Office 365 (most common for GoDaddy Outlook)
+// Option 2: GoDaddy's direct SMTP - change host to 'smtp.secureserver.net'
+// Option 3: Use port 465 with secure: true instead of 587
+
 export const transporter = nodemailer.createTransport({
-  service: 'gmail', // or your email service
+  host: 'smtp.office365.com', // Try 'smtp.office365.com' if this doesn't work
+  port: 587,
+  secure: false, // Use true for port 465, false for port 587
   auth: {
-    user: process.env.EMAIL_USERNAME,
-    pass: process.env.EMAIL_PASSWORD,
+    user: process.env.EMAIL_USERNAME, // Your full GoDaddy email address (e.g., info@yourdomain.com)
+    pass: process.env.EMAIL_PASSWORD, // Your email password (NOT app-specific password for GoDaddy)
+  },
+  tls: {
+    rejectUnauthorized: false,
   },
 });
 
