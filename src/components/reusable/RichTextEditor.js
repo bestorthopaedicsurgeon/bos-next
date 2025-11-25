@@ -9,7 +9,7 @@ export default function RichTextEditor({ value, onChange }) {
   return (
     <div style={{ width: '100%', maxWidth: '100%' }}>
       <Editor 
-        apiKey='rcceemhbfcl8bw35vd591k3bm8oncf0s8k8op2kswp0aze0w'
+        apiKey={process.env.TINYMCE_API_KEY || 'no-api-key'}
         onInit={(evt, editor) => (editorRef.current = editor)}
         value={value}
         init={{

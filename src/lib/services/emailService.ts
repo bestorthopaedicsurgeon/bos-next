@@ -40,10 +40,20 @@ export async function sendOTP(email: string, otp: string): Promise<void> {
   };
 
   try {
+    console.log('Attempting to send email from:', process.env.EMAIL_USERNAME);
+    console.log('SMTP Host:', 'smtp.office365.com');
+    console.log('SMTP Port:', 587);
     await transporter.sendMail(mailOptions);
-  } catch (error) {
-    console.error('Error sending email:', error);
-    throw new Error('Failed to send verification email');
+    console.log('Email sent successfully!');
+  } catch (error: any) {
+    console.error('❌ DETAILED EMAIL ERROR:', {
+      message: error.message,
+      code: error.code,
+      command: error.command,
+      response: error.response,
+      responseCode: error.responseCode,
+    });
+    throw new Error(`Failed to send verification email: ${error.message}`);
   }
 }
 
@@ -68,9 +78,17 @@ export async function sendEmail({ to, subject, message }: EmailOptions): Promise
   };
 
   try {
+    console.log('Attempting to send email from:', process.env.EMAIL_USERNAME);
     await transporter.sendMail(mailOptions);
-  } catch (error) {
-    console.error('Error sending email:', error);
-    throw new Error('Failed to send email');
+    console.log('Email sent successfully!');
+  } catch (error: any) {
+    console.error('❌ DETAILED EMAIL ERROR:', {
+      message: error.message,
+      code: error.code,
+      command: error.command,
+      response: error.response,
+      responseCode: error.responseCode,
+    });
+    throw new Error(`Failed to send email: ${error.message}`);
   }
 }
