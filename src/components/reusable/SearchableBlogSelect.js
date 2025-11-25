@@ -28,7 +28,7 @@ export function SearchableBlogSelect({ blogs, value, onChange, className }) {
             variant="outline"
             role="combobox"
             aria-expanded={open}
-            className="w-full justify-between pr-10"
+            className="w-full justify-between pr-10 bg-white"
           >
             {selected ? selected.label : "Search by blog title"}
             <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />

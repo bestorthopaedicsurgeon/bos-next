@@ -120,11 +120,11 @@ export const HeroSection = ({ onSearchResults, onSearchStateChange }) => {
             <div className="bg-primary-foreground mx-auto h-[2px] w-full" />
           </div>
           <h1 className="font-syne mb-4">
-            Find the Right Orthopedic Specialist
+          Find the Right Orthopedic Specialist
           </h1>
           <div className="hidden h-[352px] w-full max-w-[308px] max-lg:mx-auto max-lg:flex max-lg:justify-center">
             <Image
-              src="/surgeons/doctors.png"
+              src="/surgeons/surgeons.png"
               alt="hero"
               width={500}
               height={500}
@@ -134,9 +134,7 @@ export const HeroSection = ({ onSearchResults, onSearchStateChange }) => {
             />
           </div>
           <p className="mb-4">
-            Get online or in-person consultations. Choose the best doctor based
-            on ratings, experience, and detailed profiles. Expert care is just a
-            click away.
+          Get online or in-person consultations. Choose the best doctor based on ratings, experience, and detailed profiles.Expert care is just a click away.
           </p>
           <div className="mb-4 flex flex-wrap gap-4">
             <Link href="#all_surgeons">
@@ -167,7 +165,7 @@ export const HeroSection = ({ onSearchResults, onSearchStateChange }) => {
         </div>
         <div className="mb-[-64px] max-h-[607px] w-full max-w-[596px] max-lg:hidden">
           <Image
-            src="/surgeons/doctors.png"
+            src="/surgeons/surgeons.png"
             alt="hero"
             width={500}
             height={500}

@@ -21,15 +21,16 @@ export const HeroSection = () => {
           {/* <p className="mb-4">Find your surgeon!</p>
             <div className="bg-primary-foreground mb-4 h-[2px] w-full" /> */}
           <div className="mb-4 inline-block">
-            <p className="mb-4">Got a Bone Problem?</p>
+            <p className="mb-4">About Us</p>
             <div className="bg-primary-foreground mx-auto h-[2px] w-full" />
           </div>
           <h1 className="font-syne mb-4">
-            Find the Right Orthopedic Specialist
+          We Help Discover a Pain Free Path 
+
           </h1>
           <div className="hidden max-lg:flex max-lg:justify-center max-lg:mx-auto max-h-[352px] w-full max-w-[348px] h-full mb-6">
             <Image
-              src="/about/intro.png"
+              src="/about/about.png"
               alt="hero"
               width={500}
               height={500}
@@ -39,9 +40,7 @@ export const HeroSection = () => {
             />
           </div>
           <p className="mb-4">
-            Get online or in-person consultations. Choose the best doctor based
-            on ratings, experience, and detailed profiles. Expert care is just a
-            click away.
+          Helping patients find the right orthopaedic surgeons with ease. Our platform lets you discover, review, and rate healthcare professionals based on real patient experiences.
           </p>
           <div className="mb-4 flex flex-wrap gap-4">
             <Link href="/surgeons">
@@ -70,9 +69,9 @@ export const HeroSection = () => {
             </div>
           </div>
         </div>
-        <div className="mt-[-79px] h-full max-h-[600px] max-w-[579px] w-full max-lg:hidden mb-[-59px] max-[1367px]:mb-0 max-[1367px]:mt-0">
+        <div className="mt-[-170px] h-full max-h-[600px] max-w-[579px] w-full max-lg:hidden  max-[1367px]:mb-0 max-[1367px]:mt-0">
           <Image
-            src="/about/intro.png"
+            src="/about/about.png"
             alt="hero"
             width={500}
             height={500}
