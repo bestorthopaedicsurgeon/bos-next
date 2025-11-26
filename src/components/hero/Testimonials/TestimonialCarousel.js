@@ -19,7 +19,7 @@ export function TestimonialCarousel({ testimonials }) {
         align: "start",
         loop: true,
       }}
-      className="w-full max-w-[1200px] flex justify-center items-center gap-5"
+      className="flex w-full max-w-[1200px] items-center justify-center gap-5"
     >
       <CarouselPrevious />
       <CarouselContent>
@@ -31,23 +31,25 @@ export function TestimonialCarousel({ testimonials }) {
               </div>
               <p className="mt-4 text-gray-700">{testimonial.text}</p>
               <div className="mt-4 flex items-center gap-4">
-                <div className="relative h-12 w-12">
+                {/* <div className="relative h-12 w-12">
                   <Image
                     src={testimonial.image || "/home/doctor-1.png"}
                     alt="Doctor"
                     fill
                     className="rounded-full object-cover object-top"
                   />
-                </div>
+                </div> */}
                 <div>
-                  <h3 className="text-lg font-semibold text-primary">{testimonial.name}</h3>
+                  <h3 className="text-primary text-lg font-semibold">
+                    {testimonial.name}
+                  </h3>
                 </div>
               </div>
             </div>
           </CarouselItem>
         ))}
       </CarouselContent>
-      
+
       <CarouselNext />
     </Carousel>
   );
