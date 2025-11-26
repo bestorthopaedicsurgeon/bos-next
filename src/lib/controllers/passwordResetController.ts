@@ -39,7 +39,7 @@ export async function requestPasswordReset(email: string): Promise<void> {
         identifier,
         token: hashedToken,
         expires,
-        otp: null, // Not used for password reset
+        otp: '', // Empty string since field is required (not used for password reset)
         attempts: 0,
       }
     });
