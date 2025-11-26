@@ -1,7 +1,7 @@
 import bcrypt from "bcryptjs";
 import { prisma } from "@/lib/prisma";
 import { User } from "@prisma/client";
-import { generateOTP, sendOTP } from "@/lib/services/emailService";
+import { generateOTP, sendOTP, sendWelcomeEmail } from "@/lib/services/emailService";
 
 // Helper: check expiry using VerificationToken.expires
 function isExpired(expires: Date): boolean {
@@ -155,6 +155,15 @@ export async function verifyOTP(email: string, otp: string): Promise<User> {
 
   // Clean up any pending records for this email
   await prisma.verificationToken.deleteMany({ where: { identifier: email } });
+
+  // Send welcome email (don't block registration if email fails)
+  try {
+    await sendWelcomeEmail(createdUser.email, createdUser.name || createdUser.firstName || 'User');
+    console.log('✅ Welcome email sent successfully');
+  } catch (emailError: any) {
+    console.error('⚠️ Failed to send welcome email (non-critical):', emailError.message);
+    // Continue - email failure shouldn't break registration
+  }
 
   return createdUser;
 }
