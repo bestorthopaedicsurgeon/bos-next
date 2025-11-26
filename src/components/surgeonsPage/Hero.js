@@ -21,26 +21,33 @@ export const HeroSection = ({ onSearchResults, onSearchStateChange }) => {
   const [searchForm, setSearchForm] = useState({
     name: "",
     subspecialty: "",
-    location: ""
+    location: "",
   });
   const [isSearching, setIsSearching] = useState(false);
   const [hasSearched, setHasSearched] = useState(false);
 
-  const subspecialities = useMemo(() => [
-    { value: "UPPER_LIMB", label: "Upper Limb" },
-    { value: "LOWER_LIMB", label: "Lower Limb" },
-    { value: "SPINE", label: "Spine" },
-    { value: "PEDIATRICS", label: "Paediatrics" },
-    { value: "ONCOLOGY", label: "Oncology" },
-    { value: "TRAUMA", label: "Trauma" },
-    { value: "SPORTS", label: "Sports" },
-    { value: "ARTHROPLASTY", label: "Arthroplasty" },
-  ], []);
+  const subspecialities = useMemo(
+    () => [
+      { value: "UPPER_LIMB", label: "Upper Limb" },
+      { value: "LOWER_LIMB", label: "Lower Limb" },
+      { value: "SPINE", label: "Spine" },
+      { value: "PEDIATRICS", label: "Paediatrics" },
+      { value: "ONCOLOGY", label: "Oncology" },
+      { value: "TRAUMA", label: "Trauma" },
+      { value: "SPORTS", label: "Sports" },
+      { value: "ARTHROPLASTY", label: "Arthroplasty" },
+    ],
+    [],
+  );
 
-  const locationOptions = useMemo(() => auCities.map((city) => ({
-    value: city.city,
-    label: city.city,
-  })), []);
+  const locationOptions = useMemo(
+    () =>
+      auCities.map((city) => ({
+        value: city.city,
+        label: city.city,
+      })),
+    [],
+  );
 
   const handleSearch = useCallback(async () => {
     setIsSearching(true);
@@ -58,24 +65,32 @@ export const HeroSection = ({ onSearchResults, onSearchStateChange }) => {
       // Filter by name if provided
       if (searchForm.name.trim()) {
         filteredDoctors = filteredDoctors.filter((doctor) => {
-          const doctorName = doctor.name?.toLowerCase() || '';
+          const doctorName = doctor.name?.toLowerCase() || "";
           const searchTerm = searchForm.name.toLowerCase();
-          return  doctorName.includes(searchTerm);
+          return doctorName.includes(searchTerm);
         });
       }
 
       // Filter by subspecialty if provided
       if (searchForm.subspecialty.trim()) {
         filteredDoctors = filteredDoctors.filter((doctor) => {
-          if (!doctor.subspecialities || !Array.isArray(doctor.subspecialities)) {
+          if (
+            !doctor.subspecialities ||
+            !Array.isArray(doctor.subspecialities)
+          ) {
             return false;
           }
-          return doctor.subspecialities.some((subspecialty) =>
-            subspecialty.toLowerCase().includes(searchForm.subspecialty.toLowerCase()) ||
-            subspecialities.find(sub => 
-              sub.value.toLowerCase() === searchForm.subspecialty.toLowerCase() &&
-              subspecialty.toLowerCase().includes(sub.label.toLowerCase())
-            )
+          return doctor.subspecialities.some(
+            (subspecialty) =>
+              subspecialty
+                .toLowerCase()
+                .includes(searchForm.subspecialty.toLowerCase()) ||
+              subspecialities.find(
+                (sub) =>
+                  sub.value.toLowerCase() ===
+                    searchForm.subspecialty.toLowerCase() &&
+                  subspecialty.toLowerCase().includes(sub.label.toLowerCase()),
+              ),
           );
         });
       }
@@ -83,7 +98,9 @@ export const HeroSection = ({ onSearchResults, onSearchStateChange }) => {
       // Filter by location if provided
       if (searchForm.location.trim()) {
         filteredDoctors = filteredDoctors.filter((doctor) =>
-          doctor.location?.toLowerCase().includes(searchForm.location.toLowerCase())
+          doctor.location
+            ?.toLowerCase()
+            .includes(searchForm.location.toLowerCase()),
         );
       }
 
@@ -103,7 +120,7 @@ export const HeroSection = ({ onSearchResults, onSearchStateChange }) => {
     setSearchForm({
       name: "",
       subspecialty: "",
-      location: ""
+      location: "",
     });
     setHasSearched(false);
     onSearchResults(null); // null indicates show all doctors
@@ -120,7 +137,7 @@ export const HeroSection = ({ onSearchResults, onSearchStateChange }) => {
             <div className="bg-primary-foreground mx-auto h-[2px] w-full" />
           </div>
           <h1 className="font-syne mb-4">
-          Find the Right Orthopedic Specialist
+            Find the Right Orthopedic Specialist
           </h1>
           <div className="hidden h-[352px] w-full max-w-[308px] max-lg:mx-auto max-lg:flex max-lg:justify-center">
             <Image
@@ -134,18 +151,19 @@ export const HeroSection = ({ onSearchResults, onSearchStateChange }) => {
             />
           </div>
           <p className="mb-4">
-          Get online or in-person consultations. Choose the best doctor based on ratings, experience, and detailed profiles.Expert care is just a click away.
+            Review and choose the best doctor based on ratings, experience, and
+            detailed profiles. Expert care is just a click away.
           </p>
           <div className="mb-4 flex flex-wrap gap-4">
             <Link href="#all_surgeons">
-            <Button variant={"primaryForeground"} size={"primaryForeground"}>
-              Find Your Doctor
-            </Button>
+              <Button variant={"primaryForeground"} size={"primaryForeground"}>
+                Find Your Doctor
+              </Button>
             </Link>
             <Link href="/contactUs">
-            <Button variant={"primaryForeground"} size={"primaryForeground"}>
-              Need Help?
-            </Button>
+              <Button variant={"primaryForeground"} size={"primaryForeground"}>
+                Need Help?
+              </Button>
             </Link>
           </div>
           <div className="flex flex-wrap items-center gap-4">
@@ -155,7 +173,7 @@ export const HeroSection = ({ onSearchResults, onSearchStateChange }) => {
               width={172}
               height={42}
               quality={100}
-              className="flex-shrink-0 w-[172px] h-[42px]"
+              className="h-[42px] w-[172px] flex-shrink-0"
             />
             <div>
               <p>More than 52k</p>
@@ -213,7 +231,11 @@ export const HeroSection = ({ onSearchResults, onSearchStateChange }) => {
             onClick={hasSearched ? handleClearSearch : handleSearch}
             disabled={isSearching}
           >
-            {isSearching ? "Searching..." : hasSearched ? "Clear Search" : "Search"}
+            {isSearching
+              ? "Searching..."
+              : hasSearched
+                ? "Clear Search"
+                : "Search"}
           </Button>
         </div>
       </div>

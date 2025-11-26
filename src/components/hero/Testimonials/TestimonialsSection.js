@@ -12,51 +12,51 @@ export const TestimonialsSection = () => {
   const testimonials = [
     {
       id: 1,
-      text: "This is the best service I've ever used!",
-      name: "John Doe",
-      image: "/home/doctor-1.jpg",
-      stars: 3,
+      text: "I’ve had knee pain on and off for years from playing footy. This site helped me finally understand what might be going on and which specialists actually deal with sports injuries. Really clear info, very handy.",
+      name: "Liam Carter",
+      image: "/home/doctor-4.jpg",
+      stars: 5,
     },
     {
       id: 2,
-      text: "I was so impressed with the quality of the service!",
-      name: "Jane Doe",
-      image: "/home/doctor-2.jpg",
+      text: "Moving to Australia from Spain, it was hard to figure out the healthcare options here. The explanations on this site made it much easier to understand my shoulder issue and who the top surgeons are. Super useful for someone new to the system.",
+      name: "María González",
+      image: "/home/doctor-5.jpg",
       stars: 5,
     },
     {
       id: 3,
-      text: "I couldn't be happier with the results!",
-      name: "Bob Smith",
-      image: "/home/doctor-3.jpg",
+      text: "I was looking up information for my mum who’s been struggling with arthritis. The articles were easy to read and actually made sense, unlike most medical websites. We both felt more confident about what steps to take next.",
+      name: "Ayesha Khan",
+      image: "/home/doctor-6.jpg",
       stars: 4,
     },
     {
       id: 4,
-      text: "The staff was really friendly and helpful!",
-      name: "Alice Johnson",
-      image: "/home/doctor-2.jpg",
-      stars: 4,
-    },
-    {
-      id: 5,
-      text: "I was so impressed with the quality of the service!",
-      name: "Jane Doe",
-      image: "/home/doctor-2.jpg",
+      text: "I’m originally from Brazil and didn’t know much about orthopaedic specialists here. The surgeon profiles were detailed and helped me compare experience levels and specialties. Really glad I found this website.",
+      name: "Gabriel Santos",
+      image: "/home/doctor-7.jpg",
       stars: 5,
     },
     {
-      id: 6,
-      text: "I couldn't be happier with the results!",
-      name: "Bob Smith",
-      image: "/home/doctor-3.jpg",
+      id: 5,
+      text: "After a fall during hiking, I wanted to understand my ankle injury better. The recovery guides here were straightforward and actually practical. It helped me avoid unnecessary stress while waiting for my GP appointment.",
+      name: "Hannah O’Connor",
+      image: "/home/doctor-8.jpg",
       stars: 4,
+    },
+    {
+      id: 6,
+      text: "As someone from the Philippines, I love that this site keeps things simple and easy to follow. I used it to learn more about hip pain and it helped me understand what questions to ask at my next check-up.",
+      name: "Jerome Dela Cruz",
+      image: "/home/doctor-9.jpg",
+      stars: 5,
     },
   ];
 
   return (
     <section className="mb-40">
-      <div className="bg-primary flex flex-col items-center justify-center py-16 px-5">
+      <div className="bg-primary flex flex-col items-center justify-center px-5 py-16">
         <h1 className="font-syne text-primary-foreground">Testimonials</h1>
         <p className="text-primary-foreground mb-8 text-center">
           Hear from our satisfied patients and their experiences with our
