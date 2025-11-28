@@ -33,12 +33,7 @@ function getEmailWrapper(content: string): string {
               <!-- Header -->
               <tr>
                 <td style="background: linear-gradient(135deg, ${PRIMARY_COLOR} 0%, ${PRIMARY_HOVER} 100%); padding: 40px 30px; text-align: center; border-radius: 12px 12px 0 0;">
-                  <h1 style="margin: 0; color: #ffffff; font-size: 28px; font-weight: 700; letter-spacing: -0.5px;">
-                    Best Orthopedic Surgeons
-                  </h1>
-                  <p style="margin: 8px 0 0 0; color: rgba(255, 255, 255, 0.9); font-size: 14px;">
-                    Your Trusted Healthcare Partner
-                  </p>
+                  <img src="/bos-logo-2.png" alt="Best Orthopedic Surgeons" style="max-width: 200px; height: auto; display: block; margin: 0 auto;" />
                 </td>
               </tr>
               
