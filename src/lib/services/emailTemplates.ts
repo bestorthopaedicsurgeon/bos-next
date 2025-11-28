@@ -32,9 +32,17 @@ function getEmailWrapper(content: string): string {
             <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="max-width: 600px; margin: 0 auto; background-color: #ffffff; border-radius: 12px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);">
               <!-- Header -->
               <tr>
-                <td style="background: linear-gradient(135deg, ${PRIMARY_COLOR} 0%, ${PRIMARY_HOVER} 100%); padding: 40px 30px; text-align: center; border-radius: 12px 12px 0 0;">
-                  <img src="/bos-logo-2.png" alt="Best Orthopedic Surgeons" style="max-width: 200px; height: auto; display: block; margin: 0 auto;" />
-                </td>
+                <td style="
+  background: linear-gradient(135deg, ${PRIMARY_COLOR} 0%, ${PRIMARY_HOVER} 100%);
+  padding: 20px 30px;
+  text-align: center;
+  border-radius: 12px 12px 0 0;
+">
+  <img src="https://juiziglmzcqnbaagsdrq.supabase.co/storage/v1/object/public/bos-logos/bos-logo-2.png"
+       alt="Best Orthopaedic Surgeon"
+       style="max-width: 150px; height: auto; display: block; margin: 0 auto;">
+</td>
+
               </tr>
               
               <!-- Content -->
@@ -46,14 +54,20 @@ function getEmailWrapper(content: string): string {
               
               <!-- Footer -->
               <tr>
-                <td style="background-color: #f8f9fa; padding: 30px; text-align: center; border-radius: 0 0 12px 12px; border-top: 1px solid #e9ecef;">
-                  <p style="margin: 0 0 10px 0; color: ${TEXT_SECONDARY}; font-size: 14px; line-height: 1.6;">
-                    This email was sent by Best Orthopedic Surgeons
-                  </p>
-                  <p style="margin: 0; color: ${TEXT_SECONDARY}; font-size: 12px;">
-                    © ${new Date().getFullYear()} Best Orthopedic Surgeons. All rights reserved.
-                  </p>
-                </td>
+                <td style="
+  background: linear-gradient(135deg, ${PRIMARY_COLOR} 0%, ${PRIMARY_HOVER} 100%);
+  padding: 24px;
+  text-align: center;
+  border-radius: 0 0 12px 12px;
+">
+  <p style="margin: 0 0 6px 0; color: rgba(255,255,255,0.9); font-size: 14px;">
+    This email was sent by Best Orthopaedic Surgeons
+  </p>
+  <p style="margin: 0; color: rgba(255,255,255,0.7); font-size: 12px;">
+    © ${new Date().getFullYear()} Best Orthopaedic Surgeons. All rights reserved.
+  </p>
+</td>
+
               </tr>
             </table>
           </td>
