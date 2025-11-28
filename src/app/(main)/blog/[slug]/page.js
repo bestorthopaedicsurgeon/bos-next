@@ -29,13 +29,102 @@ const Page = async ({ params }) => {
     }
   };
 
-  // CSS styles for published blog content, especially tables
+  // CSS styles for published blog content - Match TinyMCE editor styles
   const blogContentStyles = `
+    /* Base typography and spacing to match editor */
+    .prose {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      font-size: 16px;
+      line-height: 1.6;
+      color: #333;
+    }
+
+    /* Headings styling to match editor */
+    .prose h1 {
+      font-size: 2em !important;
+      font-weight: bold !important;
+      margin: 1em 0 0.5em 0 !important;
+      color: #2c3e50 !important;
+      line-height: 1.2 !important;
+    }
+
+    .prose h2 {
+      font-size: 1.5em !important;
+      font-weight: bold !important;
+      margin: 1em 0 0.5em 0 !important;
+      color: #34495e !important;
+      line-height: 1.2 !important;
+    }
+
+    .prose h3 {
+      font-size: 1.25em !important;
+      font-weight: bold !important;
+      margin: 1em 0 0.5em 0 !important;
+      color: #34495e !important;
+      line-height: 1.2 !important;
+    }
+
+    .prose h4 {
+      font-size: 1.1em !important;
+      font-weight: bold !important;
+      margin: 1em 0 0.5em 0 !important;
+      color: #34495e !important;
+      line-height: 1.2 !important;
+    }
+
+    /* Paragraph spacing to match editor */
+    .prose p {
+      margin: 0 0 1em 0 !important;
+      line-height: 1.6 !important;
+    }
+
+    /* Lists styling to match editor - THIS IS THE KEY FIX */
+    .prose ul,
+    .prose ol {
+      margin: 0 0 1em 0 !important;
+      padding-left: 1.5em !important;
+      list-style-position: outside !important;
+    }
+
+    .prose ul {
+      list-style-type: disc !important;
+    }
+
+    .prose ol {
+      list-style-type: decimal !important;
+    }
+
+    .prose li {
+      margin: 0.25em 0 !important;
+      line-height: 1.6 !important;
+      display: list-item !important;
+    }
+
+    /* Nested lists */
+    .prose ul ul {
+      margin: 0.25em 0 !important;
+      padding-left: 1.5em !important;
+    }
+
+    .prose ol ol {
+      margin: 0.25em 0 !important;
+      padding-left: 1.5em !important;
+    }
+
+    /* Blockquote styling to match editor */
+    .prose blockquote {
+      border-left: 4px solid #83C5BE !important;
+      margin: 1em 0 !important;
+      padding: 0.5em 1em !important;
+      background-color: #f8f9fa !important;
+      font-style: italic !important;
+    }
+
     /* Table styling for published blog content */
     .prose table {
-      border-collapse: collapse;
-      width: 100%;
-      margin: 2em 0;
+      border-collapse: collapse !important;
+      width: 100% !important;
+      margin: 1em 0 !important;
       border-radius: 8px;
       overflow: hidden;
       box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
@@ -44,93 +133,110 @@ const Page = async ({ params }) => {
     }
 
     .prose table th {
-      background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
-      font-weight: 700;
-      color: #1f2937;
+      background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%) !important;
+      font-weight: 700 !important;
+      color: #1f2937 !important;
       text-transform: uppercase;
-      font-size: 0.875rem;
+      font-size: 0.875rem !important;
       letter-spacing: 0.05em;
-      border-bottom: 2px solid #d1d5db;
-      padding: 16px;
-      text-align: left;
-      white-space: nowrap;
+      border: 1px solid #ddd !important;
+      padding: 12px !important;
+      text-align: left !important;
     }
 
     .prose table td {
-      background-color: #ffffff;
-      border-bottom: 1px solid #f3f4f6;
-      padding: 16px;
-      text-align: left;
+      background-color: #ffffff !important;
+      border: 1px solid #ddd !important;
+      padding: 12px !important;
+      text-align: left !important;
       vertical-align: top;
-      min-width: 120px;
-      word-wrap: break-word;
-      color: #000000;
+      color: #000000 !important;
       transition: background-color 0.2s ease;
     }
 
     .prose table tr:nth-child(even) td {
-      background-color: #fafafa;
+      background-color: #fafafa !important;
     }
 
     .prose table tr:hover td {
-      background-color: #f8fafc;
+      background-color: #f8fafc !important;
     }
 
-    /* Table wrapper styling */
-    .prose div[style*="margin: 20px 0"] {
-      margin: 20px 0 !important;
-      width: 100%;
-      overflow-x: auto;
+    /* Medical content blocks styling to match editor custom classes */
+    .prose .pros {
+      background-color: #d4edda !important;
+      border-left: 4px solid #28a745 !important;
+      padding: 1em !important;
+      margin: 1em 0 !important;
+      border-radius: 4px;
     }
 
-    /* Ensure tables are responsive */
-    .prose table {
-      min-width: 100%;
-      table-layout: auto;
+    .prose .cons {
+      background-color: #f8d7da !important;
+      border-left: 4px solid #dc3545 !important;
+      padding: 1em !important;
+      margin: 1em 0 !important;
+      border-radius: 4px;
     }
 
-    /* Medical content blocks styling */
+    .prose .key-points {
+      background-color: #e2e3e5 !important;
+      border-left: 4px solid #6c757d !important;
+      padding: 1em !important;
+      margin: 1em 0 !important;
+      border-radius: 4px;
+    }
+
+    /* Generic medical-block styling */
     .prose .medical-block {
-      background-color: #f8f9fa;
-      border: 1px solid #e9ecef;
+      background-color: #f8f9fa !important;
+      border: 1px solid #e9ecef !important;
       border-radius: 6px;
-      padding: 1em;
-      margin: 1em 0;
+      padding: 1em !important;
+      margin: 1em 0 !important;
     }
 
     .prose .medical-block.pros {
-      background-color: #dcfce7;
-      border-left: 4px solid #16a34a;
+      background-color: #dcfce7 !important;
+      border-left: 4px solid #16a34a !important;
     }
 
     .prose .medical-block.cons {
-      background-color: #fef2f2;
-      border-left: 4px solid #dc2626;
+      background-color: #fef2f2 !important;
+      border-left: 4px solid #dc2626 !important;
     }
 
     .prose .medical-block.keypoints {
-      background-color: #f1f5f9;
-      border-left: 4px solid #64748b;
+      background-color: #f1f5f9 !important;
+      border-left: 4px solid #64748b !important;
     }
 
     /* Image styling */
+    .prose img,
     .prose .editor-image {
-      max-width: 100%;
-      height: auto;
-      margin: 1em 0;
+      max-width: 100% !important;
+      height: auto !important;
+      margin: 1em 0 !important;
       border-radius: 6px;
       box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     }
 
     /* Link styling */
+    .prose a,
     .prose .editor-link {
-      color: #3b82f6;
-      text-decoration: underline;
+      color: #3b82f6 !important;
+      text-decoration: underline !important;
       transition: color 0.2s;
     }
 
+    .prose a:hover,
     .prose .editor-link:hover {
-      color: #2563eb;
+      color: #2563eb !important;
+    }
+
+    /* Ensure proper spacing between elements */
+    .prose > * + * {
+      margin-top: 0 !important;
     }
 
     /* Force all tables to be completely non-editable */
@@ -156,6 +262,26 @@ const Page = async ({ params }) => {
     .prose table th[contenteditable],
     .prose table td[contenteditable] {
       contenteditable: false !important;
+    }
+
+    /* Ensure whitespace is preserved where needed */
+    .prose pre {
+      white-space: pre-wrap !important;
+      word-wrap: break-word !important;
+    }
+
+    /* Strong and emphasis */
+    .prose strong {
+      font-weight: 700 !important;
+    }
+
+    .prose em {
+      font-style: italic !important;
+    }
+
+    /* Ensure proper display of all content */
+    .prose * {
+      box-sizing: border-box;
     }
   `;
 
