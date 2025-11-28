@@ -1200,7 +1200,7 @@ const Page = ({ params }) => {
               <div className="mt-6 border-t pt-4 text-center">
                 <p className="text-sm text-gray-600">
                   Note: Your availability settings will be saved when you click
-                  "Update Profile" on the main page.
+                  &quot;Update Profile&quot; on the main page.
                 </p>
               </div>
             </DialogContent>
