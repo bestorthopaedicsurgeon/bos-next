@@ -46,8 +46,15 @@ export async function sendOTP(email: string, otp: string): Promise<void> {
     console.log('Attempting to send email from:', process.env.EMAIL_USERNAME);
     console.log('SMTP Host:', 'smtp.office365.com');
     console.log('SMTP Port:', 587);
-    await transporter.sendMail(mailOptions);
-    console.log('Email sent successfully!');
+    
+    const info = await transporter.sendMail(mailOptions);
+    
+    console.log('✅ Email sent successfully!');
+    console.log('📨 SMTP Response:', info.response);
+    console.log('📨 Message ID:', info.messageId);
+    console.log('📨 Accepted:', info.accepted);
+    console.log('📨 Rejected:', info.rejected);
+    
   } catch (error: any) {
     console.error('❌ DETAILED EMAIL ERROR:', {
       message: error.message,

@@ -96,6 +96,43 @@ export async function POST(req: Request): Promise<NextResponse> {
   }
 }
 
+export async function GET(req: Request) {
+  try {
+    const { searchParams } = new URL(req.url);
+    const userId = searchParams.get("userId");
+
+    if (!userId) {
+      return NextResponse.json(
+        { success: false, error: "User ID is required" },
+        { status: 400 },
+      );
+    }
+
+    const profile = await prisma.doctorProfile.findFirst({
+      where: { userId },
+      include: {
+        DoctorAvailability: true,
+        specificAvailability: true,
+      },
+    });
+
+    if (!profile) {
+      return NextResponse.json(
+        { success: false, error: "Profile not found" },
+        { status: 404 },
+      );
+    }
+
+    return NextResponse.json({ success: true, data: profile }, { status: 200 });
+  } catch (error) {
+    console.error("Error fetching doctor profile:", error);
+    return NextResponse.json(
+      { success: false, error: "Something went wrong." },
+      { status: 500 },
+    );
+  }
+}
+
 export async function PATCH(req: Request) {
   try {
     const session = await getServerSession(authOptions);
@@ -154,27 +191,6 @@ export async function PATCH(req: Request) {
     }
 
     // 5. Prepare updatable data
-    // const data = {
-    //   title: body.title ?? undefined,
-    //   experience: body.experience ?? undefined,
-    //   designation: body.designation ?? undefined,
-    //   practices: body.practices ?? undefined,
-    //   // practiceName: body.practiceName ?? undefined,
-    //   // clinicAddress: body.clinicAddress ?? undefined,
-    //   // state: body.state ?? undefined,
-    //   // practicePhone: body.practicePhone ?? undefined,
-    //   subspecialities: body.subspecialities ?? undefined,
-    //   about: body.about ?? undefined,
-    //   registrationsAssociations: body.hasOwnProperty(
-    //     "registrationsAssociations",
-    //   )
-    //     ? body.registrationsAssociations
-    //     : undefined,
-    //   qualifications: body.qualifications ?? undefined,
-    //   awardsPublications: body.awardsPublications ?? undefined,
-    //   hospitalAffiliations: body.hospitalAffiliations ?? undefined,
-    // };
-
     const data: any = {};
 
     if ("title" in body) data.title = body.title;
@@ -199,44 +215,64 @@ export async function PATCH(req: Request) {
       data,
     });
 
+    // 7. Handle Doctor Availability (Weekly Schedule) - Delete + Create Strategy
     if (
       "doctorAvailability" in body &&
       Array.isArray(body.doctorAvailability)
     ) {
-      for (const item of body.doctorAvailability) {
-        if (item.id) {
-          // Existing record, update it
-          await prisma.doctorAvailabilityTime.upsert({
-            where: { id: item.id },
-            update: {
-              dayOfWeek: item.dayOfWeek,
-              startTime: item.startTime,
-              endTime: item.endTime,
-              location: item.location,
-              clinicName: item.location === "CLINIC" ? item.clinicName : null,
+      // Delete existing availability for this doctor
+      await prisma.doctorAvailabilityTime.deleteMany({
+        where: { doctorId: doctorId },
+      });
+
+      // Create new availability records
+      if (body.doctorAvailability.length > 0) {
+        await prisma.doctorAvailabilityTime.createMany({
+          data: body.doctorAvailability.map((item: any) => ({
+            doctorId: doctorId!,
+            dayOfWeek: item.dayOfWeek,
+            startTime: item.startTime,
+            endTime: item.endTime,
+            location: item.location,
+            clinicName: item.location === "CLINIC" ? item.clinicName : null,
+          })),
+        });
+      }
+    }
+
+    // 8. Handle Specific Availability (Date Overrides)
+    if (
+      "specificAvailability" in body &&
+      Array.isArray(body.specificAvailability)
+    ) {
+      for (const item of body.specificAvailability) {
+        const date = new Date(item.date);
+        date.setHours(0, 0, 0, 0); // Normalize to midnight
+        
+        await prisma.doctorSpecificAvailability.upsert({
+          where: {
+            doctorId_date: {
+              doctorId: doctorId!,
+              date: date,
             },
-            create: {
-              doctorId: doctorId,
-              dayOfWeek: item.dayOfWeek,
-              startTime: item.startTime,
-              endTime: item.endTime,
-              location: item.location,
-              clinicName: item.location === "CLINIC" ? item.clinicName : null,
-            },
-          });
-        } else {
-          // New record, just create
-          await prisma.doctorAvailabilityTime.create({
-            data: {
-              doctorId: doctorId,
-              dayOfWeek: item.dayOfWeek,
-              startTime: item.startTime,
-              endTime: item.endTime,
-              location: item.location,
-              clinicName: item.location === "CLINIC" ? item.clinicName : null,
-            },
-          });
-        }
+          },
+          update: {
+            isAvailable: item.isAvailable,
+            startTime: item.startTime,
+            endTime: item.endTime,
+            location: item.location,
+            clinicName: item.location === "CLINIC" ? item.clinicName : null,
+          },
+          create: {
+            doctorId: doctorId!,
+            date: date,
+            isAvailable: item.isAvailable,
+            startTime: item.startTime,
+            endTime: item.endTime,
+            location: item.location,
+            clinicName: item.location === "CLINIC" ? item.clinicName : null,
+          },
+        });
       }
     }
 

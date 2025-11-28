@@ -1,73 +1,34 @@
 'use client';
-import { useState, useEffect } from "react";
-import { Edit, ChevronLeft, ChevronRight, Save, Check } from "lucide-react";
-import { usePathname } from "next/navigation";
+import { useState } from "react";
+import { ChevronLeft, ChevronRight, Clock, MapPin } from "lucide-react";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 
-export default function AvailabilityCalendar({ className }) {
+export default function AvailabilityCalendar({ className, availability = [], specificAvailability = [], onDateClick }) {
   const [currentDate, setCurrentDate] = useState(new Date());
-  const [isEditing, setIsEditing] = useState(false);
-  const [availability, setAvailability] = useState({});
-  const [isLoading, setIsLoading] = useState(true);
-
-  // Detect current route
-  const pathname =
-    typeof window !== "undefined" ? window.location.pathname : "";
-  // const pathname = usePathname ? usePathname() : "";
-  const isDocRegistration = pathname.includes("/doctor_registration");
+  
+  // Debug logging
+  console.log('AvailabilityCalendar - availability:', availability);
+  console.log('AvailabilityCalendar - specificAvailability:', specificAvailability);
+  console.log('AvailabilityCalendar - onDateClick:', !!onDateClick);
 
   // Get month and year
   const month = currentDate.toLocaleString("default", { month: "long" });
   const year = currentDate.getFullYear();
-  const monthKey = `${currentDate.getFullYear()}-${currentDate.getMonth()}`;
 
-  // Load data from localStorage on initial render
-  useEffect(() => {
-    const loadAvailability = async () => {
-      try {
-        // Simulate API call for backend data
-        const backendData = await fetchAvailabilityFromAPI();
-
-        // Load user selections from localStorage
-        const savedData =
-          JSON.parse(localStorage.getItem("availability")) || {};
-
-        // Merge backend data with user selections (user selections take precedence)
-        setAvailability({
-          ...backendData,
-          ...savedData,
-        });
-      } catch (error) {
-        console.error("Error loading availability:", error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    loadAvailability();
-  }, []);
-
-  // Mock API function - replace with actual API call
-  const fetchAvailabilityFromAPI = async () => {
-    // This would be your actual API call in production
-    // const response = await fetch('/api/availability');
-    // return await response.json();
-
-    // Mock data - days 5, 10, 15 are available
-    return {
-      [monthKey]: {
-        5: true,
-        10: true,
-        15: true,
-      },
-    };
+  // Map day names to index (0-6)
+  const dayMap = {
+    SUNDAY: 0,
+    MONDAY: 1,
+    TUESDAY: 2,
+    WEDNESDAY: 3,
+    THURSDAY: 4,
+    FRIDAY: 5,
+    SATURDAY: 6,
   };
-
-  // Save to localStorage whenever availability changes
-  useEffect(() => {
-    if (!isLoading) {
-      localStorage.setItem("availability", JSON.stringify(availability));
-    }
-  }, [availability, isLoading]);
 
   // Generate calendar days
   const getDaysInMonth = () => {
@@ -93,10 +54,56 @@ export default function AvailabilityCalendar({ className }) {
 
     // Current month days
     for (let i = 1; i <= lastDay.getDate(); i++) {
+      const dateObj = new Date(year, month, i);
+      const dayOfWeekIndex = dateObj.getDay(); // 0-6
+      
+      // 1. Check for Specific Date Override
+      // Normalize date comparison to YYYY-MM-DD
+      const dateString = dateObj.toISOString().split('T')[0];
+      const override = specificAvailability.find(s => {
+        const sDate = new Date(s.date).toISOString().split('T')[0];
+        return sDate === dateString;
+      });
+
+      let dayAvailability = null;
+      let isOverride = false;
+
+      if (override) {
+        isOverride = true;
+        if (override.isAvailable) {
+          dayAvailability = {
+            startTime: override.startTime,
+            endTime: override.endTime,
+            location: override.location,
+            clinicName: override.clinicName,
+            dayOfWeek: Object.keys(dayMap).find(key => dayMap[key] === dayOfWeekIndex)
+          };
+        } else {
+          // Explicitly unavailable
+          dayAvailability = null; 
+        }
+      } else {
+        // 2. Fallback to Weekly Schedule
+        const weeklySlot = availability.find(
+          (slot) => dayMap[slot.dayOfWeek] === dayOfWeekIndex
+        );
+        
+        // Only consider it available if it has a valid location
+        if (weeklySlot && weeklySlot.location) {
+          dayAvailability = weeklySlot;
+        } else {
+          dayAvailability = null;
+        }
+      }
+
       days.push({
         date: i,
+        fullDate: dateObj,
         currentMonth: true,
         disabled: false,
+        availability: dayAvailability,
+        isOverride,
+        dayOfWeekIndex, // Store index to identify day of week
       });
     }
 
@@ -118,58 +125,28 @@ export default function AvailabilityCalendar({ className }) {
     weeks.push(days.slice(i, i + 7));
   }
 
-  const toggleAvailability = (date) => {
-    if (isEditing && date.currentMonth) {
-      setAvailability((prev) => {
-        const monthAvailability = prev[monthKey] || {};
-        const updated = {
-          ...prev,
-          [monthKey]: {
-            ...monthAvailability,
-            [date.date]: !monthAvailability[date.date],
-          },
-        };
-        return updated;
-      });
-    }
-  };
-
   const changeMonth = (increment) => {
     const newDate = new Date(currentDate);
     newDate.setMonth(newDate.getMonth() + increment);
     setCurrentDate(newDate);
   };
 
-  const daysOfWeek = ["Sun", "Mon", "Tues", "Wed", "Thurs", "Fri", "Sat"];
+  const daysOfWeek = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 
-  // Get availability for current month
-  const currentMonthAvailability = availability[monthKey] || {};
-
-  if (isLoading) {
-    return <div className="mx-auto max-w-md p-4 text-center">Loading...</div>;
-  }
+  // Handle click on a day
+  const handleDayClick = (day) => {
+    if (!day.currentMonth) return;
+    
+    // If onDateClick is provided (Edit Mode), call it with the FULL DATE object
+    if (onDateClick) {
+      onDateClick(day.fullDate, day.dayOfWeekIndex);
+    }
+  };
 
   return (
     <div
-      className={`border-primary h-[350px] max-w-full rounded-lg border-2 p-2 min-md:h-[450px] min-md:p-4 ${className}`}
+      className={`border-primary h-auto max-w-full rounded-lg border-2 p-2 min-md:p-4 ${className}`}
     >
-      {isDocRegistration && (
-        <div className="mb-4 flex items-center justify-center gap-3">
-          <h2 className="text-primary text-xl font-semibold">Availability</h2>
-          <button
-            onClick={() => setIsEditing(!isEditing)}
-            className={`rounded-full p-1 ${isEditing ? "bg-gray-200" : ""}`}
-            aria-label={isEditing ? "Stop editing" : "Edit availability"}
-          >
-            {!isEditing ? (
-              <Edit className="text-primary h-5 w-5 hover:text-gray-800" />
-            ) : (
-              <Check className="text-primary h-5 w-5 hover:text-gray-800" />
-            )}
-          </button>
-        </div>
-      )}
-
       <div className="mb-4 flex items-center justify-center gap-2">
         <button
           onClick={() => changeMonth(-1)}
@@ -201,33 +178,135 @@ export default function AvailabilityCalendar({ className }) {
         ))}
       </div>
 
-      <div className="grid grid-cols-7 min-md:gap-2">
+      <div className="grid grid-cols-7 gap-1 min-md:gap-2">
         {weeks.map((week, weekIndex) => (
           <div key={weekIndex} className="contents">
             {week.map((day, dayIndex) => {
-              const isAvailable = currentMonthAvailability[day.date];
-              const isFromAPI =
-                day.currentMonth &&
-                isAvailable &&
-                !localStorage
-                  .getItem("availability")
-                  ?.includes(`"${day.date}":true`);
+              const isAvailable = !!day.availability;
+              const location = day.availability?.location === "CLINIC" 
+                ? day.availability?.clinicName 
+                : day.availability?.location;
+              
+              const timeSlot = day.availability 
+                ? `${day.availability.startTime} - ${day.availability.endTime}`
+                : "";
 
+              // Base styling for the day cell
+              let bgClass = "";
+              let textClass = "text-gray-700";
+              let isDisabled = false;
+              
+              if (day.currentMonth) {
+                if (isAvailable) {
+                  // Available: Green (Weekly or Specific)
+                  bgClass = "bg-green-100 border-2 border-green-300";
+                  textClass = "text-green-900";
+                } else {
+                  // Unavailable
+                  if (onDateClick) {
+                    // Edit Mode: Show red for unavailable
+                    bgClass = "bg-red-100 border-2 border-red-300";
+                    textClass = "text-red-900";
+                    isDisabled = true; // Disable clicking on unavailable days
+                  } else {
+                    // View Mode: Show as regular gray date (no red)
+                    bgClass = "";
+                    textClass = "text-gray-700";
+                  }
+                }
+              } else {
+                textClass = "text-gray-300";
+              }
+
+              const cellClasses = `flex h-8 w-8 items-center justify-center rounded-full text-sm font-medium transition-colors min-md:h-10 min-md:w-10 
+                ${bgClass} ${textClass} 
+                ${day.currentMonth && onDateClick && !isDisabled ? "cursor-pointer" : ""}
+                ${day.currentMonth && onDateClick && isDisabled ? "cursor-not-allowed opacity-60" : ""}
+                ${day.currentMonth && !onDateClick && isAvailable ? "cursor-pointer" : ""}
+              `;
+
+              // Render logic
+              if (!day.currentMonth) {
+                return (
+                  <div key={`${weekIndex}-${dayIndex}`} className="flex justify-center">
+                    <div className={cellClasses}>{day.date}</div>
+                  </div>
+                );
+              }
+
+              // If Edit Mode (onDateClick provided), simpler render without Popover
+              if (onDateClick) {
+                return (
+                  <div key={`${weekIndex}-${dayIndex}`} className="flex justify-center">
+                    <div 
+                      className={cellClasses}
+                      onClick={() => handleDayClick(day)}
+                      title={day.isOverride ? "Specific Override" : "Weekly Schedule"}
+                    >
+                      {day.date}
+                    </div>
+                  </div>
+                );
+              }
+
+              // If View Mode (Profile), use Popover for available days
+              if (isAvailable) {
+                return (
+                  <div key={`${weekIndex}-${dayIndex}`} className="flex justify-center">
+                    <Popover>
+                      <PopoverTrigger asChild>
+                        <button className={cellClasses}>{day.date}</button>
+                      </PopoverTrigger>
+                      <PopoverContent className="w-auto p-3">
+                        <div className="flex flex-col gap-2">
+                          <div className="flex items-center gap-2">
+                            <MapPin className="h-4 w-4 text-[#2F797B]" />
+                            <span className="font-semibold text-sm">{location}</span>
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <Clock className="h-4 w-4 text-[#2F797B]" />
+                            <span className="text-xs">{timeSlot}</span>
+                          </div>
+                          {day.isOverride && (
+                             <span className="text-[10px] text-blue-600 font-medium">Specific Date</span>
+                          )}
+                        </div>
+                      </PopoverContent>
+                    </Popover>
+                  </div>
+                );
+              }
+
+              // View Mode but unavailable
               return (
-                <div
-                  key={`${weekIndex}-${dayIndex}`}
-                  onClick={() => toggleAvailability(day)}
-                  className={`cursor-pointer rounded-full py-1 text-center text-[#A6A6A6] transition-colors min-md:w-13 min-md:py-3 ${day.currentMonth ? "" : "text-gray-400"} ${day.disabled ? "cursor-default" : ""} ${isAvailable && day.currentMonth ? "bg-[#04434317] !text-black" : ""} ${isEditing && day.currentMonth ? "hover:bg-blue-200 hover:text-gray-800" : ""} relative text-sm font-medium`}
-                >
-                  {day.date}
-                  {isFromAPI && (
-                    <span className="absolute top-0 right-0 h-2 w-2 rounded-full bg-yellow-400"></span>
-                  )}
+                <div key={`${weekIndex}-${dayIndex}`} className="flex justify-center">
+                  <div className={cellClasses}>{day.date}</div>
                 </div>
               );
             })}
           </div>
         ))}
+      </div>
+      
+      <div className="mt-4 flex flex-wrap gap-4 justify-center text-xs text-gray-600">
+        {onDateClick && (
+          <>
+            <div className="flex items-center gap-2">
+              <span className="h-3 w-3 rounded-full bg-green-100 border border-green-300"></span>
+              <span>Available</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <span className="h-3 w-3 rounded-full bg-red-100 border border-red-300"></span>
+              <span>Unavailable</span>
+            </div>
+          </>
+        )}
+        {!onDateClick && (
+          <div className="flex items-center gap-2">
+            <span className="h-3 w-3 rounded-full bg-green-100 border border-green-300"></span>
+            <span>Available</span>
+          </div>
+        )}
       </div>
     </div>
   );

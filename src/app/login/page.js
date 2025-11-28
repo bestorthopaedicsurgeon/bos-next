@@ -13,6 +13,7 @@ import Link from "next/link";
 import { signIn, useSession } from "next-auth/react";
 import { redirect, useRouter } from "next/navigation";
 import { toast } from "sonner";
+import ForgotPasswordModal from "@/components/auth/ForgotPasswordModal";
 
 const Page = () => {
   const { data: session, status } = useSession();
@@ -132,7 +133,7 @@ const Page = () => {
           color="--primary"
         />
         {/* input form start */}
-        {/* <form onSubmit={handleSubmit}> */}
+        <form onSubmit={handleSubmit}>
         {/* <RadioGroup
             defaultValue="comfortable"
             className="m-auto mt-[40px] flex items-center justify-center gap-[40px]"
@@ -169,8 +170,28 @@ const Page = () => {
             onChange={handleChange}
           />
         ))}
+        
+
+
+        <div className="flex items-center justify-between mt-4">
+          <div className="flex items-center space-x-2">
+            <Checkbox 
+              id="rememberMe" 
+              checked={rememberMe}
+              onCheckedChange={(checked) => setRememberMe(checked)}
+            />
+            <label htmlFor="rememberMe" className="text-sm text-gray-600 cursor-pointer">
+              Remember me
+            </label>
+          </div>
+          <ForgotPasswordModal>
+            <button type="button" className="text-sm text-[--primary] hover:underline">
+              Forgot Password?
+            </button>
+          </ForgotPasswordModal>
+        </div>
+
         <div
-          onClick={handleSubmit}
           className="max-lg:mt-[17px] min-lg:mt-[27px]"
         >
           <CustomBtn
@@ -181,17 +202,7 @@ const Page = () => {
           />
         </div>
         {error && <div className="mt-2 text-red-500">{error}</div>}
-        <div className="flex items-center space-x-2 mt-4">
-          <Checkbox 
-            id="rememberMe" 
-            checked={rememberMe}
-            onCheckedChange={(checked) => setRememberMe(checked)}
-          />
-          <label htmlFor="rememberMe" className="text-sm text-gray-600 cursor-pointer">
-            Remember me
-          </label>
-        </div>
-        {/* </form> */}
+        </form>
         {/* input form end */}
 
         {/* social login */}

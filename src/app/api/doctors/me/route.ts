@@ -19,7 +19,12 @@ export async function GET(request: NextRequest) {
     const user = await prisma.user.findUnique({
       where: { id: id },
       include: {
-        doctorProfile: true,
+        doctorProfile: {
+          include: {
+            DoctorAvailability: true,
+            specificAvailability: true,
+          },
+        },
       },
     });
 

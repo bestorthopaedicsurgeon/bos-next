@@ -38,6 +38,7 @@ import { toast } from "sonner";
 import { auCities } from "@/lib/constants/auCities";
 import { useSession } from "next-auth/react";
 import { getDoctorProfileSelf } from "@/lib/apiCalls/client/doctor";
+import AvailabilityCalendar from "@/components/calendar";
 
 const Page = ({ params }) => {
   const { data: session } = useSession();
@@ -77,6 +78,7 @@ const Page = ({ params }) => {
 
   //for availability time
   const [doctorAvailability, setDoctorAvailability] = useState([]);
+  const [specificAvailability, setSpecificAvailability] = useState([]);
   const [editEntry, setEditEntry] = useState(null);
   const [activeIndex, setActiveIndex] = useState(null);
 
@@ -201,6 +203,14 @@ const Page = ({ params }) => {
                 ...scheduleMap[idx],
               })),
             );
+          }
+
+          // [NEW] Set specific availability
+          if (
+            doctorData.specificAvailability &&
+            Array.isArray(doctorData.specificAvailability)
+          ) {
+            setSpecificAvailability(doctorData.specificAvailability);
           }
         } else {
           console.error("No doctor profile found");
@@ -444,6 +454,11 @@ const Page = ({ params }) => {
         data.doctorAvailability = doctorAvailability;
       }
 
+      // [NEW] Add specific availability to payload
+      if (Array.isArray(specificAvailability) && specificAvailability.length > 0) {
+        data.specificAvailability = specificAvailability;
+      }
+
       // // Add the doctor ID for the specific doctor being edited
       if (doctorId) {
         data.id = parseInt(doctorId);
@@ -508,40 +523,6 @@ const Page = ({ params }) => {
     });
   };
 
-  // Calendar state for month slider and availability
-  const monthNames = [
-    "January",
-    "February",
-    "March",
-    "April",
-    "May",
-    "June",
-    "July",
-    "August",
-    "September",
-    "October",
-    "November",
-    "December",
-  ];
-  const today = new Date();
-  const [currentMonth, setCurrentMonth] = useState(today.getMonth());
-  const [currentYear, setCurrentYear] = useState(today.getFullYear());
-  const [isEditing, setIsEditing] = useState(false);
-  // availability: { ["2025-6"]: { online: [1,2,3], clinic: [4,5,6] } }
-  const [availability, setAvailability] = useState({});
-  // Initialize availability state from doc_reg.js calendar for current month (no preselected days)
-  React.useEffect(() => {
-    const base = {};
-    const year = today.getFullYear();
-    const month = today.getMonth();
-    calendar.forEach((item) => {
-      base[`${year}-${month}`] = base[`${year}-${month}`] || {};
-      base[`${year}-${month}`][item.type] = [];
-    });
-    setAvailability(base);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
   // Utility to map day short name to DayOfWeek enum
   const dayMap = {
     Mon: "MONDAY",
@@ -552,65 +533,6 @@ const Page = ({ params }) => {
     Sat: "SATURDAY",
     Sun: "SUNDAY",
   };
-
-  // Helpers for calendar days
-  function getDaysInMonth(year, month) {
-    const lastDay = new Date(year, month + 1, 0).getDate();
-    return Array.from({ length: lastDay }, (_, i) => i + 1);
-  }
-  // For UI: get disabled/holiday from doc_reg.js for current month
-  function getDocRegMeta(type) {
-    const item = calendar.find((c) => c.type === type);
-    return item
-      ? { disabled: item.disabled, holiday: item.holiday }
-      : { disabled: [], holiday: [] };
-  }
-
-  // Slider logic (month navigation)
-  function changeMonth(dir) {
-    let m = currentMonth + dir;
-    let y = currentYear;
-    if (m < 0) {
-      m = 11;
-      y--;
-    }
-    if (m > 11) {
-      m = 0;
-      y++;
-    }
-    setCurrentMonth(m);
-    setCurrentYear(y);
-  }
-
-  // Toggle day for a type (online/clinic)
-  function toggleDay(type, day) {
-    if (!isEditing) return;
-    const key = `${currentYear}-${currentMonth}`;
-    setAvailability((prev) => {
-      const monthData = { ...(prev[key] || {}) };
-      const days = new Set(monthData[type] || []);
-      if (days.has(day)) days.delete(day);
-      else days.add(day);
-      return { ...prev, [key]: { ...monthData, [type]: Array.from(days) } };
-    });
-  }
-
-  // For rendering: get days for type in current month
-  function getSelectedDays(type) {
-    const key = `${currentYear}-${currentMonth}`;
-    return new Set((availability[key] && availability[key][type]) || []);
-  }
-
-  // For rendering: get disabled/holiday for type in current month
-  function getMeta(type) {
-    // Optionally, you could make this dynamic per month
-    return getDocRegMeta(type);
-  }
-
-  // For UI: edit/save icon
-  function handleEditToggle() {
-    setIsEditing((v) => !v);
-  }
 
   // Utility to generate 30-min interval time options
   const generateTimeOptions = (start = "00:00", end = "23:30") => {
@@ -636,30 +558,96 @@ const Page = ({ params }) => {
     schedule_date.map((item) => ({
       startTime: item.startTime.replace("am", "").replace("pm", "").trim(),
       endTime: item.endTime.replace("am", "").replace("pm", "").trim(),
-      location: "ONLINE", // default to Online or Clinic
+      location: (item.day === "Sat" || item.day === "Sun") ? "" : "ONLINE", // default to Online for weekdays, Unavailable for weekends
     })),
   );
 
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
+  // Handle date click from calendar to toggle availability
+  const handleDateClick = (fullDate, dayOfWeekIndex) => {
+    // fullDate is a Date object
+    // dayOfWeekIndex: 0 (Sun) to 6 (Sat)
+    
+    // Map dayOfWeekIndex (0=Sun) to schedule_date index
+    // schedule_date: Mon(0), Tue(1)... Sat(5), Sun(6)
+    const scheduleIndex = dayOfWeekIndex === 0 ? 6 : dayOfWeekIndex - 1;
+    const weeklySlot = scheduleTimes[scheduleIndex];
+    const isWeeklyAvailable = weeklySlot.location && weeklySlot.location !== "";
+    
+    // If weekly schedule is unavailable, don't allow clicking on calendar dates
+    if (!isWeeklyAvailable) {
+      toast.error(`Cannot mark specific dates as available when ${schedule_date[scheduleIndex].day} is set to Unavailable in the weekly schedule below.`);
+      return;
+    }
+    
+    const dateString = fullDate.toISOString().split('T')[0];
+    
+    // Check if we already have an override for this date
+    const existingOverrideIndex = specificAvailability.findIndex(s => {
+      const sDate = new Date(s.date).toISOString().split('T')[0];
+      return sDate === dateString;
+    });
+
+    if (existingOverrideIndex !== -1) {
+      // Toggle existing override
+      setSpecificAvailability(prev => {
+        const newArr = [...prev];
+        const current = newArr[existingOverrideIndex];
+        
+        // If currently available, make unavailable
+        // If currently unavailable, remove override (revert to weekly)
+        
+        if (current.isAvailable) {
+          // Make unavailable
+          newArr[existingOverrideIndex] = { ...current, isAvailable: false };
+        } else {
+          // Remove override entirely to revert to weekly schedule
+          newArr.splice(existingOverrideIndex, 1);
+        }
+        return newArr;
+      });
+    } else {
+      // Create new override to mark this specific date as unavailable
+      const newOverride = {
+        date: fullDate,
+        isAvailable: false,
+        startTime: null,
+        endTime: null,
+        location: null,
+        clinicName: null
+      };
+      
+      setSpecificAvailability(prev => [...prev, newOverride]);
+    }
+  };
+
   // Sync doctorAvailability with scheduleTimes
   React.useEffect(() => {
-    const updatedAvailability = scheduleTimes.map((entry, idx) => {
-      const dayShort = schedule_date[idx].day;
-      const dayOfWeek = dayMap[dayShort];
-      let location = entry.location;
-      // If location is not ONLINE, treat as CLINIC
-      if (location !== "ONLINE") location = "CLINIC";
-      // If location is CLINIC, set clinicName to the selected hospital/clinic name
-      const clinicName = location === "CLINIC" ? entry.location : "ONLINE";
-      return {
-        dayOfWeek,
-        startTime: entry.startTime,
-        endTime: entry.endTime,
-        location,
-        clinicName,
-      };
-    });
+    const updatedAvailability = scheduleTimes
+      .map((entry, idx) => {
+        const dayShort = schedule_date[idx].day;
+        const dayOfWeek = dayMap[dayShort];
+        let location = entry.location;
+        
+        // Skip unavailable days (empty location)
+        if (!location || location === "") {
+          return null;
+        }
+        
+        // If location is not ONLINE, treat as CLINIC
+        if (location !== "ONLINE") location = "CLINIC";
+        // If location is CLINIC, set clinicName to the selected hospital/clinic name
+        const clinicName = location === "CLINIC" ? entry.location : "ONLINE";
+        return {
+          dayOfWeek,
+          startTime: entry.startTime,
+          endTime: entry.endTime,
+          location,
+          clinicName,
+        };
+      })
+      .filter(Boolean); // Remove null entries
     setDoctorAvailability(updatedAvailability);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [scheduleTimes]);
@@ -1121,84 +1109,13 @@ const Page = ({ params }) => {
                 <div className="grid flex-1 gap-2"></div>
               </div>
               <div>
-                {/* Month slider */}
-                <div className="mb-4 flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <span className="w-[150px] text-lg font-medium">
-                      {monthNames[currentMonth]} {currentYear}
-                    </span>
-                    <button
-                      onClick={() => changeMonth(-1)}
-                      className="cursor-pointer rounded-full p-1"
-                      aria-label="Previous month"
-                    >
-                      <ChevronLeft className="text-primary h-5 w-5" />
-                    </button>
-                    <button
-                      onClick={() => changeMonth(1)}
-                      className="cursor-pointer rounded-full p-1"
-                      aria-label="Next month"
-                    >
-                      <ChevronRight className="text-primary h-5 w-5" />
-                    </button>
-                  </div>
-                  <button
-                    onClick={handleEditToggle}
-                    className={`ml-4 rounded-full p-1 ${isEditing ? "bg-gray-200" : ""}`}
-                    aria-label={
-                      isEditing ? "Stop editing" : "Edit availability"
-                    }
-                  >
-                    {!isEditing ? (
-                      <Edit className="text-primary h-5 w-5 hover:text-gray-800" />
-                    ) : (
-                      <Check className="text-primary h-5 w-5 hover:text-gray-800" />
-                    )}
-                  </button>
-                </div>
-                {/* Calendar for online and clinic */}
-                <div className="mt-6 flex flex-col space-y-4 max-sm:gap-[30px]">
-                  {[
-                    "online",
-                    ...practiceEntries.map((entry) => entry.practiceName),
-                  ].map((type) => {
-                    const selectedDays = getSelectedDays(type);
-                    const meta = getMeta(type);
-                    const days = getDaysInMonth(currentYear, currentMonth);
-                    return (
-                      <div
-                        key={type}
-                        className="flex items-start justify-center max-sm:gap-[20px]"
-                      >
-                        <div className="w-[120px] font-semibold capitalize max-sm:w-[80px] max-sm:gap-[10px]">
-                          {type}
-                        </div>
-                        <div className="flex flex-wrap gap-1 max-sm:items-start">
-                          {days.map((day) => {
-                            // Calculate the weekday for this day (0=Sunday, 6=Saturday)
-                            const weekday = new Date(
-                              currentYear,
-                              currentMonth,
-                              day,
-                            ).getDay();
-                            const isDisabled = weekday === 0 || weekday === 6;
-                            const isHoliday = meta.holiday.includes(day);
-                            const isSelected = selectedDays.has(day);
-                            return (
-                              <button
-                                key={day}
-                                disabled={isDisabled}
-                                onClick={() => toggleDay(type, day)}
-                                className={`flex h-10 w-10 items-center justify-center border border-gray-300 ${isHoliday ? "rounded-full bg-[var(--primary)] text-white" : ""} ${isDisabled ? "cursor-not-allowed opacity-50" : isEditing ? "hover:bg-blue-200 hover:text-gray-800" : ""} ${isSelected ? "bg-[#04434317] !text-black" : ""}`}
-                              >
-                                {day}
-                              </button>
-                            );
-                          })}
-                        </div>
-                      </div>
-                    );
-                  })}
+                {/* Visual Calendar */}
+                <div className="mb-6">
+                  <AvailabilityCalendar
+                    availability={doctorAvailability}
+                    specificAvailability={specificAvailability}
+                    onDateClick={handleDateClick}
+                  />
                 </div>
               </div>
               {/* ...existing schedule_date UI... */}
@@ -1265,6 +1182,7 @@ const Page = ({ params }) => {
                           }}
                           className="rounded border px-2 py-1"
                         >
+                          <option value="">Unavailable</option>
                           <option value="ONLINE">Online</option>
                           {practiceEntries &&
                             practiceEntries.map((practice, idx) => (
@@ -1275,15 +1193,15 @@ const Page = ({ params }) => {
                         </select>
                       </div>
                     </div>
-                    <button
-                      type="button"
-                      className="ml-4 rounded bg-[#83C5BE] px-6 py-2 text-white transition-colors hover:bg-[#2F797B]"
-                      onClick={() => toast.success("Schedule saved!")}
-                    >
-                      Save
-                    </button>
+
                   </div>
                 ))}
+              </div>
+              <div className="mt-6 border-t pt-4 text-center">
+                <p className="text-sm text-gray-600">
+                  Note: Your availability settings will be saved when you click
+                  "Update Profile" on the main page.
+                </p>
               </div>
             </DialogContent>
           </Dialog>

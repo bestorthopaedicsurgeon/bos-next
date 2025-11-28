@@ -53,7 +53,9 @@ const Page = async ({ params }) => {
         </div>
         {/* right area */}
         <div>
-          <AvailabilityCalendar />
+          <AvailabilityCalendar
+            availability={doctData?.DoctorAvailabilityTime}
+          />
           <HospitalAffiliations
             hospitals={doctData?.hospitalAffiliations}
           />

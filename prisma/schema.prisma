@@ -49,33 +49,30 @@ model VerificationToken {
 }
 
 model User {
-  id            String         @id @default(cuid())
-  email         String         @unique
-  emailVerified DateTime?      @map("email_verified")
-  password      String?
-  name          String
-  firstName     String?
-  lastName      String?
-  image         String?
-  phone         String?
-  role          Role
-  createdAt     DateTime       @default(now())
-  updatedAt     DateTime       @updatedAt
-  accounts      Account[]
-  doctorProfile DoctorProfile? @relation("UserDoctorProfile")
-  reviews       DoctorReview[]
-  sessions      Session[]
-
+  id                 String               @id @default(cuid())
+  email              String               @unique
+  password           String?
+  name               String
+  firstName          String?
+  lastName           String?
+  image              String?
+  phone              String?
+  role               Role
+  createdAt          DateTime             @default(now())
+  updatedAt          DateTime             @updatedAt
+  emailVerified      DateTime?            @map("email_verified")
+  accounts           Account[]
+  Answer             Answer[]
   DoctorClaimRequest DoctorClaimRequest[]
-
-  Question Question[] @relation("PatientQuestions")
-
-  Answer Answer[]
+  doctorProfile      DoctorProfile?       @relation("UserDoctorProfile")
+  reviews            DoctorReview[]
+  Question           Question[]           @relation("PatientQuestions")
+  sessions           Session[]
 }
 
 model DoctorProfile {
-  id                        Int                      @id @default(autoincrement())
-  userId                    String?                  @unique
+  id                        Int                          @id @default(autoincrement())
+  userId                    String?                      @unique
   title                     String?
   experience                Int?
   designation               Designation?
@@ -83,23 +80,22 @@ model DoctorProfile {
   DoctorAvailabilityDays    String[]
   name                      String?
   practices                 Json?
-  subspecialities           String[]                 @default([])
-  registrationsAssociations String[]                 @default([])
-  qualifications            String[]                 @default([])
-  awardsPublications        String[]                 @default([])
+  subspecialities           String[]                     @default([])
+  registrationsAssociations String[]                     @default([])
+  qualifications            String[]                     @default([])
+  awardsPublications        String[]                     @default([])
   hospitalAffiliations      Json?
-  featured                  Boolean                  @default(false)
+  featured                  Boolean                      @default(false)
   location                  String?
-  registrationCompleted     Boolean                  @default(false)
+  registrationCompleted     Boolean                      @default(false)
   image                     String?
+  hidden                    Boolean                      @default(false)
   DoctorAvailability        DoctorAvailabilityTime[]
-  user                      User?                    @relation("UserDoctorProfile", fields: [userId], references: [id])
+  DoctorClaimRequest        DoctorClaimRequest[]
+  user                      User?                        @relation("UserDoctorProfile", fields: [userId], references: [id])
   reviews                   DoctorReview[]
-  hidden                    Boolean                  @default(false)
-
-  DoctorClaimRequest DoctorClaimRequest[]
-
-  Question Question[]
+  specificAvailability      DoctorSpecificAvailability[]
+  Question                  Question[]
 }
 
 model DoctorReview {
@@ -130,6 +126,21 @@ model DoctorAvailabilityTime {
   doctor     DoctorProfile @relation(fields: [doctorId], references: [id])
 }
 
+model DoctorSpecificAvailability {
+  id          Int           @id @default(autoincrement())
+  doctorId    Int
+  date        DateTime
+  isAvailable Boolean       @default(true)
+  startTime   String?
+  endTime     String?
+  location    LocationType?
+  clinicName  String?
+  createdAt   DateTime      @default(now())
+  doctor      DoctorProfile @relation(fields: [doctorId], references: [id])
+
+  @@unique([doctorId, date])
+}
+
 model Blog {
   id         String   @id @default(cuid())
   title      String
@@ -154,55 +165,48 @@ model ContactUs {
 }
 
 model DoctorClaimRequest {
-  id          Int       @id @default(autoincrement())
+  id          Int           @id @default(autoincrement())
   doctorId    Int
   name        String
-  email       String    @db.VarChar(255)
+  email       String        @db.VarChar(255)
   phone       String
   ahpraNumber String
-  status      ClaimStatus @default(PENDING)
-  userId      String?    // Will be set when admin approves and connects to a user
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
+  status      ClaimStatus   @default(PENDING)
+  userId      String?
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
   doctor      DoctorProfile @relation(fields: [doctorId], references: [id])
-  user        User?     @relation(fields: [userId], references: [id])
+  user        User?         @relation(fields: [userId], references: [id])
 
   @@unique([doctorId, email])
 }
 
 model Question {
-  id          String   @id @default(cuid())
-  content     String
-  isConfidential Boolean  @default(false)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-  
-  // Relationships
-  patientId   String
-  patient     User     @relation("PatientQuestions", fields: [patientId], references: [id])
-  
-  doctorId    Int
-  doctor      DoctorProfile @relation(fields: [doctorId], references: [id])
-  
-  answers     Answer[]
-  
+  id             String        @id @default(cuid())
+  content        String
+  isConfidential Boolean       @default(false)
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+  patientId      String
+  doctorId       Int
+  answers        Answer[]
+  doctor         DoctorProfile @relation(fields: [doctorId], references: [id])
+  patient        User          @relation("PatientQuestions", fields: [patientId], references: [id])
+
   @@index([patientId])
   @@index([doctorId])
 }
 
 model Answer {
-  id          String   @id @default(cuid())
-  content     String
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-  
-  // Relationships
-  questionId  String
-  question    Question @relation(fields: [questionId], references: [id], onDelete: Cascade)
-  
-  authorId    String
-  author      User     @relation(fields: [authorId], references: [id])
-  
+  id         String   @id @default(cuid())
+  content    String
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  questionId String
+  authorId   String
+  author     User     @relation(fields: [authorId], references: [id])
+  question   Question @relation(fields: [questionId], references: [id], onDelete: Cascade)
+
   @@index([questionId])
   @@index([authorId])
 }
