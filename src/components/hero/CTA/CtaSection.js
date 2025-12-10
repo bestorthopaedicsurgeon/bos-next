@@ -4,39 +4,43 @@ import React from "react";
 export const CtaSection = () => {
   const ctaCards = [
     {
+      icon: "/icons/CtaCard-3.png",
+      title: "Find the Right Surgeon",
+      description:
+        "Search verified orthopaedic surgeons across Perth and regional WA by subspecialty, location, and conditions treated.",
+      button: "Find Now",
+    },
+    {
+      icon: "/icons/CtaCard-2.png",
+      title: "Contact Surgeon and Book Appointment",
+      description:
+        "You can access clinic locations, contact details with options for direct appointment booking through us (requires referral from your GP).",
+      button: "Book An Appointment",
+    },
+    {
       icon: "/icons/CtaCard-1.png",
       title: "Rate & Review Your Experience",
       description:
         "We believe that patient feedback matters — and it helps others make more informed choices about their healthcare.",
       button: "Rate Now",
     },
-    {
-      icon: "/icons/CtaCard-2.png",
-      title: "Leave a Review",
-      description:
-        "After your appointment, you can rate your Orthopaedic surgeon based on your experience, including professionalism, bedside manner, clarity of diagnosis, wait times, and overall satisfaction.",
-      button: "Leave Review",
-    },
-    {
-      icon: "/icons/CtaCard-3.png",
-      title: "Help Others Find the Right Surgeon",
-      description:
-        "Your honest feedback provides valuable insights for other patients in WA who are seeking trusted care.",
-      button: "Find Now",
-    },
   ];
   return (
     <section className="mb-40">
       <div className="mb-24 grid grid-cols-[1.1fr_1fr] gap-4 max-md:grid-cols-1">
         <h2 className="font-syne text-primary w-full">
-        Experience Exceptional Healthcare In The Australia With Best Orthopedic Surgeon
+          WA’s Trusted Directory for Orthopaedic Specialists. Find the Right
+          Orthopaedic Surgeon. Make Informed Choices.
         </h2>
         <p className="w-full">
-          Discover the pinnacle of healthcare services in the Australia,
-          where advancements, quality, cutting edge research, expert doctors and
-          a commitment to patient success, combine to provide an unparalleled
-          medical tourism experience. Omnicure Australia is your dedicated partner,
-          guiding you towards improved health and wellness.
+          Discover top-rated orthopaedic specialists in Western Australia (Perth
+          and Regional) for hip, knee, shoulder, wrist/ hands, spine, sports
+          injuries, trauma, and foot & ankle conditions including orthopaedic
+          oncology and paediatric orthopaedics. Read real patient experiences,
+          verified surgeon’s profiles, choose and contact orthopaedic surgeons
+          with confidence and access their information on a single platform. We
+          do have an option for patients to directly Q&A with the surgeons,
+          through their secure profiles.
         </p>
       </div>
       <div className="grid grid-cols-1 gap-5 max-lg:gap-14 md:grid-cols-2 lg:grid-cols-3">

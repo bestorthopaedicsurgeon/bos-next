@@ -7,17 +7,19 @@ import React from "react";
 
 const HowToMakeSurgeonsProfilePage = () => {
   return (
-  
-      <div className="container">
-        <ProfileHeader heading={"Create Your Surgeon Profile"} step1={"surgeons"} step2={"registration guide"} />
-        <WhyJoinBOS />
-     
+    <div className="container">
+      <ProfileHeader
+        heading={"Claim and Create Your Surgeon Profile"}
+        step1={"surgeons"}
+        step2={"registration guide"}
+      />
+      <WhyJoinBOS />
+
       <HowItWorks />
-     
-        <EligibilitySection />
+
+      <EligibilitySection />
       <CallToAction />
-      </div>
-   
+    </div>
   );
 };
 

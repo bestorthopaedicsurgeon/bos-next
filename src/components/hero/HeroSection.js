@@ -22,26 +22,33 @@ export const HeroSection = ({ onSearchResults, onSearchStateChange }) => {
   const [searchForm, setSearchForm] = useState({
     name: "",
     subspecialty: "",
-    location: ""
+    location: "",
   });
   const [isSearching, setIsSearching] = useState(false);
   const [hasSearched, setHasSearched] = useState(false);
 
-  const subspecialities = useMemo(() => [
-    { value: "UPPER_LIMB", label: "Upper Limb" },
-    { value: "LOWER_LIMB", label: "Lower Limb" },
-    { value: "SPINE", label: "Spine" },
-    { value: "PEDIATRICS", label: "Paediatrics" },
-    { value: "ONCOLOGY", label: "Oncology" },
-    { value: "TRAUMA", label: "Trauma" },
-    { value: "SPORTS", label: "Sports" },
-    { value: "ARTHROPLASTY", label: "Arthroplasty" },
-  ], []);
+  const subspecialities = useMemo(
+    () => [
+      { value: "UPPER_LIMB", label: "Upper Limb" },
+      { value: "LOWER_LIMB", label: "Lower Limb" },
+      { value: "SPINE", label: "Spine" },
+      { value: "PEDIATRICS", label: "Paediatrics" },
+      { value: "ONCOLOGY", label: "Oncology" },
+      { value: "TRAUMA", label: "Trauma" },
+      { value: "SPORTS", label: "Sports" },
+      { value: "ARTHROPLASTY", label: "Arthroplasty" },
+    ],
+    [],
+  );
 
-  const locationOptions = useMemo(() => auCities.map((city) => ({
-    value: city.city,
-    label: city.city,
-  })), []);
+  const locationOptions = useMemo(
+    () =>
+      auCities.map((city) => ({
+        value: city.city,
+        label: city.city,
+      })),
+    [],
+  );
 
   const handleSearch = useCallback(async () => {
     setIsSearching(true);
@@ -56,27 +63,35 @@ export const HeroSection = ({ onSearchResults, onSearchStateChange }) => {
       // Filter doctors based on search criteria
       let filteredDoctors = allDoctors;
 
-   // Filter by name if provided
-   if (searchForm.name.trim()) {
-    filteredDoctors = filteredDoctors.filter((doctor) => {
-      const doctorName = doctor.name?.toLowerCase() || '';
-      const searchTerm = searchForm.name.toLowerCase();
-      return  doctorName.includes(searchTerm);
-    });
-  }
+      // Filter by name if provided
+      if (searchForm.name.trim()) {
+        filteredDoctors = filteredDoctors.filter((doctor) => {
+          const doctorName = doctor.name?.toLowerCase() || "";
+          const searchTerm = searchForm.name.toLowerCase();
+          return doctorName.includes(searchTerm);
+        });
+      }
 
       // Filter by subspecialty if provided
       if (searchForm.subspecialty.trim()) {
         filteredDoctors = filteredDoctors.filter((doctor) => {
-          if (!doctor.subspecialities || !Array.isArray(doctor.subspecialities)) {
+          if (
+            !doctor.subspecialities ||
+            !Array.isArray(doctor.subspecialities)
+          ) {
             return false;
           }
-          return doctor.subspecialities.some((subspecialty) =>
-            subspecialty.toLowerCase().includes(searchForm.subspecialty.toLowerCase()) ||
-            subspecialities.find(sub => 
-              sub.value.toLowerCase() === searchForm.subspecialty.toLowerCase() &&
-              subspecialty.toLowerCase().includes(sub.label.toLowerCase())
-            )
+          return doctor.subspecialities.some(
+            (subspecialty) =>
+              subspecialty
+                .toLowerCase()
+                .includes(searchForm.subspecialty.toLowerCase()) ||
+              subspecialities.find(
+                (sub) =>
+                  sub.value.toLowerCase() ===
+                    searchForm.subspecialty.toLowerCase() &&
+                  subspecialty.toLowerCase().includes(sub.label.toLowerCase()),
+              ),
           );
         });
       }
@@ -84,7 +99,9 @@ export const HeroSection = ({ onSearchResults, onSearchStateChange }) => {
       // Filter by location if provided
       if (searchForm.location.trim()) {
         filteredDoctors = filteredDoctors.filter((doctor) =>
-          doctor.location?.toLowerCase().includes(searchForm.location.toLowerCase())
+          doctor.location
+            ?.toLowerCase()
+            .includes(searchForm.location.toLowerCase()),
         );
       }
 
@@ -104,7 +121,7 @@ export const HeroSection = ({ onSearchResults, onSearchStateChange }) => {
     setSearchForm({
       name: "",
       subspecialty: "",
-      location: ""
+      location: "",
     });
     setHasSearched(false);
     onSearchResults(null); // null indicates show featured doctors
@@ -113,7 +130,7 @@ export const HeroSection = ({ onSearchResults, onSearchStateChange }) => {
 
   return (
     <section className="mb-40">
-      <div className="bg-primary justify-between text-primary-foreground mb-8 flex items-center gap-10 rounded-4xl px-20 py-16 max-lg:justify-center max-md:px-10">
+      <div className="bg-primary text-primary-foreground mb-8 flex items-center justify-between gap-10 rounded-4xl px-20 py-16 max-lg:justify-center max-md:px-10">
         <div className="flex w-full max-w-[570px] flex-col max-md:max-w-full">
           {/* <p className="mb-4">Find your surgeon!</p>
             <div className="bg-primary-foreground mb-4 h-[2px] w-full" /> */}
@@ -122,7 +139,7 @@ export const HeroSection = ({ onSearchResults, onSearchStateChange }) => {
             <div className="bg-primary-foreground mx-auto h-[2px] w-full" />
           </div>
           <h1 className="font-syne mb-4">
-          Built for Orthopaedic Surgeons. Trusted by Patients!
+            Built for Orthopaedic Surgeons. Trusted by Patients!
           </h1>
           <div className="hidden h-[352px] w-[308px] max-lg:mx-auto max-lg:flex max-lg:justify-center">
             <Image
@@ -136,14 +153,16 @@ export const HeroSection = ({ onSearchResults, onSearchStateChange }) => {
             />
           </div>
           <p className="mb-4">
-          Find the Right Orthopaedic Specialist, Fast
-BOS is the one and only online directory dedicated exclusively to Orthopaedic surgeons throughout Perth, Fremantle, Bunbury, Geraldton, and beyond.
+            Welcome to BOS, Western Australia’s dedicated platform for finding,
+            contacting, booking, rating and reviewing orthopaedic surgeons. Our
+            online directory is dedicated exclusively to Orthopaedic surgeons
+            throughout Perth, Fremantle, Bunbury, Geraldton, and beyond.
           </p>
           <div className="mb-4 flex flex-wrap gap-4">
             <Link href="/surgeons">
-            <Button variant={"primaryForeground"} size={"primaryForeground"}>
-              Find Your Doctor
-            </Button>
+              <Button variant={"primaryForeground"} size={"primaryForeground"}>
+                Find Your Doctor
+              </Button>
             </Link>
             <div
               onClick={() => {
@@ -219,7 +238,11 @@ BOS is the one and only online directory dedicated exclusively to Orthopaedic su
             onClick={hasSearched ? handleClearSearch : handleSearch}
             disabled={isSearching}
           >
-            {isSearching ? "Searching..." : hasSearched ? "Clear Search" : "Search"}
+            {isSearching
+              ? "Searching..."
+              : hasSearched
+                ? "Clear Search"
+                : "Search"}
           </Button>
         </div>
       </div>
