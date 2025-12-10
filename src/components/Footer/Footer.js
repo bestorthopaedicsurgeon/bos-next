@@ -31,16 +31,7 @@ const Footer = () => {
             ))}
           </div>
         </div>
-        {/* Pages */}
-        <div>
-          <h3 className="font-semibold text-lg mb-4">Pages</h3>
-          <ul className="space-y-2">
-            <li><Link href="/" className="hover:underline">Home</Link></li>
-            <li><Link href="/about" className="hover:underline">About Us</Link></li>
-            <li><Link href="/surgeons" className="hover:underline">Find Surgeons</Link></li>
-            <li><Link href="/blog" className="hover:underline">Blog</Link></li>
-          </ul>
-        </div>
+       
         {/* For Patients */}
         <div>
           <h3 className="font-semibold text-lg mb-4">For Patients</h3>
@@ -60,6 +51,26 @@ const Footer = () => {
             {/* <li><Link href="/doctor-profile" className="hover:underline">Manage Profile</Link></li> */}
             <li><Link href="/contactUs" className="hover:underline">Contact Us</Link></li>
           </ul>
+        </div>
+         {/* Pages */}
+         <div>
+          <h3 className="font-semibold text-lg mb-4">More</h3>
+          <ul className="space-y-2">
+            <li><Link href="/faq" className="hover:underline">FAQs</Link></li>
+            <li><Link href="/terms-of-use" className="hover:underline">Terms of Use</Link></li>
+            <li><Link href="/privacy-policy" className="hover:underline">Privacy Policy</Link></li>
+            <li><Link href="/legal-disclaimer" className="hover:underline">Legal Disclaimer</Link></li>
+            <li><Link href="/review-policy" className="hover:underline">Review Policy</Link></li>
+          </ul>
+        </div>
+      </div>
+      {/* Bottom Bar */}
+      <div className="max-w-7xl mx-auto mt-12 pt-8 border-t border-[#F1F8F6]/20">
+        <div className="flex flex-col sm:flex-row justify-between items-center gap-4">
+          <p className="text-sm text-[#F1F8F6]/80">
+            © {new Date().getFullYear()} Best Orthopaedic Surgeon. All rights reserved.
+          </p>
+        
         </div>
       </div>
     </footer>

@@ -1,5 +1,6 @@
 import { Blogsection } from "@/components/hero/blog/Blogsection";
 import { CtaSection } from "@/components/hero/CTA/CtaSection";
+import { FAQSection } from "@/components/hero/FAQ/FAQSection";
 import { SearchableDoctorsWrapper } from "@/components/hero/SearchableDoctorsWrapper";
 import { ServicesSection } from "@/components/hero/ServicesSection";
 import { TestimonialsSection } from "@/components/hero/Testimonials/TestimonialsSection";
@@ -16,6 +17,7 @@ export default function Home() {
         <CtaSection />
         <Blogsection />
         <ServicesSection />
+        <FAQSection />
       </div>
     </>
   );
