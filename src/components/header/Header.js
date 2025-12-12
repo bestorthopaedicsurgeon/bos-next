@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import ProfileDropdown from "@/components/header/ProfileDropdown";
 import { NavLinks } from "@/components/header/NavLinks";
 import { Menu, X } from "lucide-react";
+import CollaborateModal from "@/components/CollaborateModal";
 
 export default function Header() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -44,9 +45,11 @@ export default function Header() {
 
             {/* Right: Button + Profile */}
             <div className="flex items-center gap-4">
-              <Button variant={"primary"} size={"primary"}>
-                Collaborate
-              </Button>
+              <CollaborateModal>
+                <Button variant={"primary"} size={"primary"}>
+                  Collaborate
+                </Button>
+              </CollaborateModal>
               <ProfileDropdown />
             </div>
           </div>
@@ -87,14 +90,15 @@ export default function Header() {
                 
                 {/* Mobile Collaborate Button */}
                 <div className="px-6 pt-4 pb-4 border-t mt-4">
-                  <Button 
-                    variant={"primary"} 
-                    size={"primary"}
-                    className="w-full"
-                    onClick={closeMobileMenu}
-                  >
-                    Collaborate
-                  </Button>
+                  <CollaborateModal>
+                    <Button 
+                      variant={"primary"} 
+                      size={"primary"}
+                      className="w-full"
+                    >
+                      Collaborate
+                    </Button>
+                  </CollaborateModal>
                 </div>
               </nav>
             </div>

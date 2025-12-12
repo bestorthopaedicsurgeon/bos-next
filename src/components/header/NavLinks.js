@@ -12,6 +12,7 @@ export function NavLinks({ isMobile = false }) {
     { href: "/surgeons", label: "Surgeons" },
     { href: "/blog", label: "Blog" },
     { href: "/contactUs", label: "Contact" },
+    { href: "/faq", label: "FAQs" },
   ];
 
   return (

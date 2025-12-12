@@ -152,7 +152,7 @@ const Page = () => {
           <InputField
             placeholder={data.placeholder}
             name={data.name}
-            inputType={data.inputType}
+            inputType="text"
             label={data.label}
             key={data.name}
             value={form.email}
