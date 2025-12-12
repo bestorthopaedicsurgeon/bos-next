@@ -13,7 +13,7 @@ export const CtaCard = ({ icon, title, description, button }) => {
         height={64}
         className="mb-8"
       />
-      <h2 className="font-dm-sans mb-2 text-[20px]">{title}</h2>
+      <h2 className="font-dm-sans mb-2 text-[20px] text-center">{title}</h2>
       <p className="text-center text-[16px]">{description}</p>
       
       <Button

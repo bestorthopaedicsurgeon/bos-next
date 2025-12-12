@@ -14,9 +14,10 @@ const Footer = () => {
         {/* Brand/About */}
         <div>
           <h2 className="text-xl font-semibold mb-4">Best Orthopedic Surgeon</h2>
-          <p className="mb-6 text-base text-[#F1F8F6]">
+          <p className="mb-2 text-base text-[#F1F8F6] ">
           Built for Orthopaedic Surgeons. Trusted by Patients!  <br />Your Trusted Orthopaedic Surgeon Directory
           </p>
+          <p className="mb-6 text-base text-[#F1F8F6] font-bold">info@bestorthopaedicsurgeon.com.au</p>
           
           <div className="flex gap-4 mt-4">
             {socialIcons.map((icon) => (

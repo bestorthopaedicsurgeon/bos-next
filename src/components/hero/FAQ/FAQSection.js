@@ -31,14 +31,14 @@ export const FAQSection = () => {
       </div>
 
       {/* FAQ Accordion - Cervana Style */}
-      <div className="max-w-4xl mx-auto space-y-3">
+      <div className="max-w-4xl mx-auto space-y-3 ">
         {featuredFaqs.map((faq) => {
           const isOpen = openItems.includes(faq.id);
           return (
             <div
               key={faq.id}
               className={`
-                rounded-2xl overflow-hidden transition-all duration-300 ease-in-out
+                rounded-2xl overflow-hidden transition-all duration-300 ease-in-out 
                 ${isOpen 
                   ? "bg-white shadow-lg shadow-gray-200/50 border border-gray-100" 
                   : "bg-gray-50/80 hover:bg-gray-100/80 border border-transparent"
@@ -47,11 +47,11 @@ export const FAQSection = () => {
             >
               <button
                 onClick={() => toggleItem(faq.id)}
-                className="w-full px-6 py-5 flex items-center justify-between text-left transition-colors"
+                className="w-full px-6 py-5 flex items-center justify-between text-left transition-colors cursor-pointer"
               >
-                <span className={`font-semibold pr-4 transition-colors duration-200 ${isOpen ? "text-gray-900" : "text-gray-700"}`}>
+                <p className={`font-semibold pr-4 transition-colors leading-relaxed duration-200 ${isOpen ? "text-gray-900" : "text-gray-700"}`}>
                   {faq.question}
-                </span>
+                </p>
                 <div className={`
                   flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center transition-all duration-300
                   ${isOpen ? "bg-gray-100" : "bg-transparent"}
