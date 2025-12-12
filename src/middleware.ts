@@ -22,6 +22,7 @@ const PUBLIC_ROUTES = [
   "/privacy-policy",
   "/legal-disclaimer",
   "/review-policy",
+  
   ...AUTH_PAGES,
 ];  
 
