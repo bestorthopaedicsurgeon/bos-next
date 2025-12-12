@@ -17,6 +17,11 @@ const PUBLIC_ROUTES = [
   "/book-appointment",
   "/how-to-make-surgeons-profile",
   "/how-to-make-doctors-profile",
+  "/faq",
+  "/terms-of-use",
+  "/privacy-policy",
+  "/legal-disclaimer",
+  "/review-policy",
   ...AUTH_PAGES,
 ];  
 
