@@ -1,4 +1,5 @@
 import ProfileHeader from "@/components/reusable/profileHeader";
+import { WAIntroSection } from "@/components/surgeonProfilePage/WAIntroSection";
 import { WhyJoinBOS } from "@/components/surgeonProfilePage/WhyJoinBOS";
 import { HowItWorks } from "@/components/surgeonProfilePage/HowItWorks";
 import { EligibilitySection } from "@/components/surgeonProfilePage/EligibilitySection";
@@ -13,6 +14,9 @@ const HowToMakeSurgeonsProfilePage = () => {
         step1={"surgeons"}
         step2={"registration guide"}
       />
+
+      <WAIntroSection />
+
       <WhyJoinBOS />
 
       <HowItWorks />

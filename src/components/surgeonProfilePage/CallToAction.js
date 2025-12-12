@@ -51,7 +51,7 @@ export const CallToAction = () => {
             </Link>
           </div>
 
-          <div className="border-t border-white/20 pt-8">
+          {/* <div className="border-t border-white/20 pt-8">
             <h3 className="font-bold text-lg mb-4">Welcome Message for New Surgeons</h3>
             <div className="bg-white/10 rounded-lg p-6 text-left max-w-2xl mx-auto">
               <h4 className="font-bold mb-3">Welcome to BOS – Your Profile Is Live!</h4>
@@ -67,7 +67,7 @@ export const CallToAction = () => {
                 <p><strong>📞 Phone:</strong> 1300-ORTHO-WA</p>
               </div>
             </div>
-          </div>
+          </div> */}
         </div>
       </div>
     </section>
