@@ -45,13 +45,16 @@ export const ServicesSection = () => {
       const windowHeight = window.innerHeight;
 
       // Calculate scroll progress through the section (0 to 1)
-      // Start when section enters viewport, end when section is about to leave
-      const startOffset = windowHeight * 0.8; // Start animation when 80% visible
-      const endOffset = windowHeight * 0.2; // End animation before section leaves
+      // Start when section is 50% visible, complete while section is still on screen
+      const startOffset = windowHeight * 0.5; // Start animation when 50% visible
+      
+      // Animation should complete within 50% of the section height
+      // This ensures it finishes while section is still fully visible
+      const animationDistance = sectionHeight * 0.5;
       
       const scrollProgress = Math.min(
         Math.max(
-          (startOffset - sectionTop) / (sectionHeight + startOffset - endOffset),
+          (startOffset - sectionTop) / animationDistance,
           0
         ),
         1
