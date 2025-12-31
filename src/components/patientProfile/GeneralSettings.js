@@ -2,6 +2,7 @@
 import React from "react";
 import { Switch } from "@/components/ui/switch";
 import { Lock, Bell, ChevronRight } from "lucide-react";
+import Link from "next/link";
 
 const GeneralSettings = () => {
   return (
@@ -9,7 +10,7 @@ const GeneralSettings = () => {
       <div className="bg-gray-50/50 border-b border-gray-100 px-8 py-5">
         <h2 className="text-lg font-bold text-[#232323] font-syne">General Settings</h2>
       </div>
-      
+
       <div className="p-8 space-y-10">
         {/* Change Password Section */}
         <div className="flex items-start justify-between group">
@@ -22,12 +23,14 @@ const GeneralSettings = () => {
               <p className="text-xs text-gray-500 leading-relaxed font-medium">Keep your account secure by using a strong password.</p>
             </div>
           </div>
-          <button className="flex items-center gap-1.5 px-5 py-2.5 bg-gray-50 border border-gray-100 rounded-lg text-xs font-bold text-gray-600 hover:bg-white hover:border-[#2F797B] hover:text-[#2F797B] transition-all group/btn shadow-sm active:scale-95">
-            Change
-            <ChevronRight className="h-3 w-3 group-hover/btn:translate-x-0.5 transition-transform" />
-          </button>
+          <Link href="/profile/edit">
+            <button className="flex items-center cursor-pointer gap-1.5 px-5 py-2.5 bg-gray-50 border border-gray-100 rounded-lg text-xs font-bold text-gray-600 hover:bg-white hover:border-[#2F797B] hover:text-[#2F797B] transition-all group/btn shadow-sm active:scale-95">
+              Change
+              <ChevronRight className="h-3 w-3 group-hover/btn:translate-x-0.5 transition-transform" />
+            </button>
+          </Link>
         </div>
-        
+
         {/* Notifications Section */}
         {/* <div className="flex items-start justify-between group">
           <div className="flex gap-4">
