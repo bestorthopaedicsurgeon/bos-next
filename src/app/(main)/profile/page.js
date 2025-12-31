@@ -97,7 +97,7 @@ const Page = async () => {
 
                       {q.answers && q.answers.length > 0 && (
                         <div className="pt-4 border-t border-gray-100">
-                          <p className="text-xs text-gray-500 italic mb-4">"{q.answers[0].content}"</p>
+                          <p className="text-xs text-gray-500 italic mb-4">&quot;{q.answers[0].content}&quot;</p>
                           <div className="flex items-center justify-between text-gray-400">
                             <div className="flex items-center gap-1">
                               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M7 10v12M15 10v12M11 10v12M2 10h20M2 21a2 2 0 002 2h16a2 2 0 002-2V10H2v11z"/></svg>
