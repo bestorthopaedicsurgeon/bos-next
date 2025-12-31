@@ -30,8 +30,8 @@ export default function Header() {
                 src="/logos/bos-logo-1.png"
                 alt="Logo"
                 width={200}
-                height={110}
-                className="max-sm:w-30 max-sm:h-20"
+                height={200}
+                className="max-sm:w-30 max-sm:h-30"
               />
             </Link>
           </div>

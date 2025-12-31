@@ -16,10 +16,11 @@ export default function QuestionsAndAnswers({
   className,
   doctData,
   ownProfile,
+  questions: questionsFromProps,
 }) {
   // console.log("qa", doctorId);
   const [expandedQuestions, setExpandedQuestions] = useState({});
-  const [questions, setQuestions] = useState([]);
+  const [questions, setQuestions] = useState(questionsFromProps || []);
   const [answer, setAnswer] = useState("");
   const [helpfulCounts, setHelpfulCounts] = useState({
     1: { count: 20, clicked: false },
@@ -60,10 +61,11 @@ export default function QuestionsAndAnswers({
   };
 
   useEffect(() => {
-    if (doctData.id) {
+    // Only fetch if we don't have questions from props and we have a doctData.id
+    if (!questionsFromProps && doctData?.id) {
       fetchQuestions();
     }
-  }, [doctData.id]);
+  }, [doctData?.id, questionsFromProps]);
 
   // const questions = [
   //   {

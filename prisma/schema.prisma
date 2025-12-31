@@ -57,6 +57,8 @@ model User {
   lastName           String?
   image              String?
   phone              String?
+  dob                DateTime?
+  age                Int?
   role               Role
   createdAt          DateTime             @default(now())
   updatedAt          DateTime             @updatedAt

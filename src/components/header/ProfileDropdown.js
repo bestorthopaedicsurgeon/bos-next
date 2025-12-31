@@ -23,18 +23,19 @@ const ProfileDropdown = () => {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <div className="cursor-pointer rounded-full overflow-hidden">
+        <div className="cursor-pointer rounded-full overflow-hidden w-16 h-16 max-sm:w-12 max-sm:h-12 flex items-center justify-center bg-primary border-2 border-primary/20 shadow-sm hover:border-primary/40 transition-all">
           {userImage ? (
             <Image
               src={userImage}
               alt="Profile"
-              width={100}
-              height={100}
-              className="w-full h-full max-sm:w-8 max-sm:h-8 object-cover rounded-full"
+              width={128}
+              height={128}
+              className="w-full h-full object-cover"
+              priority
             />
           ) : (
-            <div className="bg-primary p-3 max-sm:p-2">
-              <User className="text-primary-foreground h-5 w-5 max-sm:h-4 max-sm:w-4" />
+            <div className="flex items-center justify-center w-full h-full">
+              <User className="text-primary-foreground h-8 w-8" />
             </div>
           )}
         </div>
@@ -48,10 +49,10 @@ const ProfileDropdown = () => {
 
         {session?.user?.role === "PATIENT" && (
           <>
-            {/* <DropdownMenuItem asChild className="cursor-pointer">
-              <Link href="/patient-profile" className="w-full">View Profile</Link>
-            </DropdownMenuItem> */}
-            {/* <DropdownMenuSeparator /> */}
+            <DropdownMenuItem asChild className="cursor-pointer">
+              <Link href="/profile" className="w-full">View Profile</Link>
+            </DropdownMenuItem>
+            <DropdownMenuSeparator />
             <DropdownMenuItem
               className="cursor-pointer"
               onClick={() => signOut({ callbackUrl: "/login" })}
