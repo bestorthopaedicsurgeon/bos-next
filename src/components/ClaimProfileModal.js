@@ -91,10 +91,10 @@ const ClaimProfileModal = ({ children, doctorId }) => {
   };
 
   const handleOpenChange = (open) => {
-    if (open && !session) {
-      toast.error("You must be logged in to claim a profile");
-      return;
-    }
+    // if (open && !session) {
+    //   toast.error("You must be logged in to claim a profile");
+    //   return;
+    // }
     setIsOpen(open);
   };
 
@@ -229,8 +229,8 @@ const ClaimProfileModal = ({ children, doctorId }) => {
           {message && (
             <div
               className={`mt-4 p-3 rounded-md text-sm ${message.includes("successfully")
-                  ? "bg-green-100 text-green-700"
-                  : "bg-red-100 text-red-700"
+                ? "bg-green-100 text-green-700"
+                : "bg-red-100 text-red-700"
                 }`}
             >
               {message}
