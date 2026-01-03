@@ -28,32 +28,32 @@ const PatientRating = ({ className, reviews = [], questions = [] }) => {
             {activeTab === "qa" ? "Questions Asked" : "Reviews & Ratings"}
           </h2>
           <p className="text-gray-400 text-xs mt-1">
-            {activeTab === "qa" 
-              ? `You asked total ${questions.length} questions` 
+            {activeTab === "qa"
+              ? `You asked total ${questions.length} questions`
               : `You rated total ${reviews.length} doctors`}
           </p>
         </div>
-        
+
         <div className="flex items-center gap-6">
           <div className="flex items-center gap-4 text-sm font-bold uppercase tracking-wider">
-            <button 
+            <button
               onClick={() => setActiveTab("reviews")}
               className={`${activeTab === "reviews" ? "text-primary border-b-2 border-primary" : "text-gray-300"} pb-1 transition-all`}
             >
               Reviews
             </button>
             <span className="text-gray-200">|</span>
-            <button 
+            <button
               onClick={() => setActiveTab("qa")}
               className={`${activeTab === "qa" ? "text-primary border-b-2 border-primary" : "text-gray-300"} pb-1 transition-all`}
             >
               Q&A
             </button>
           </div>
-          
+
           <button className="text-primary flex items-center gap-2 text-xs font-bold uppercase tracking-wide">
             <svg width="14" height="15" viewBox="0 0 14 15" fill="none">
-              <path d="M0 0.181641L5.44443 6.40394V12.6259L7 13.4039L8.55557 14.1816V6.40394L14 0.181641H0Z" fill="currentColor"/>
+              <path d="M0 0.181641L5.44443 6.40394V12.6259L7 13.4039L8.55557 14.1816V6.40394L14 0.181641H0Z" fill="currentColor" />
             </svg>
             Filter {activeTab === "qa" ? "Question" : "Reviews"}
           </button>
@@ -81,12 +81,12 @@ const PatientRating = ({ className, reviews = [], questions = [] }) => {
                 </div>
                 <h3 className="text-[#232323] font-bold text-base mb-2 group-hover:text-primary transition-colors">Satisfied with the doctor</h3>
                 <p className="text-gray-600 text-sm leading-relaxed max-w-2xl mb-4">{data.review}</p>
-                
+
                 <div className="flex items-center gap-4">
                   <div className="flex items-center gap-0.5">
                     {[...Array(5)].map((_, i) => (
                       <svg key={i} width="16" height="16" viewBox="0 0 18 18" fill={i < Math.round(data.averageRating) ? "#F3CD03" : "#E5E7EB"}>
-                        <path d="M8.91704 1.67224L11.3482 6.02832L15.4517 6.35438L12.6114 10.5457L13.9279 15.1522L8.91681 13.3355L3.89635 15.1875L4.96882 10.5435L1.93639 7.58736L6.48539 6.02832L8.91704 1.67224Z"/>
+                        <path d="M8.91704 1.67224L11.3482 6.02832L15.4517 6.35438L12.6114 10.5457L13.9279 15.1522L8.91681 13.3355L3.89635 15.1875L4.96882 10.5435L1.93639 7.58736L6.48539 6.02832L8.91704 1.67224Z" />
                       </svg>
                     ))}
                     <span className="text-xs font-bold text-gray-700 ml-1">{data.averageRating}</span>
@@ -103,8 +103,8 @@ const PatientRating = ({ className, reviews = [], questions = [] }) => {
             questions.map((q, idx) => (
               <div key={idx} className="group border-b border-gray-50 last:border-0 pb-6 last:pb-0">
                 <h3 className="text-[#232323] font-bold text-base mb-2 group-hover:text-primary transition-colors">Q. {q.question}</h3>
-                <p className="text-gray-600 text-sm leading-relaxed max-w-2xl mb-4">{q.detail || "I am looking for some information regarding this treatment..."}</p>
-                
+                <p className="text-gray-600 text-sm leading-relaxed max-w-2xl mb-4">{q.content}</p>
+
                 {q.answers && q.answers.length > 0 ? (
                   q.answers.map((ans, aIdx) => (
                     <div key={aIdx} className="flex items-center gap-3">

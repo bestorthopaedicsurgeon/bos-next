@@ -4,7 +4,8 @@ import {
   getNotificationTemplate,
   getWelcomeEmailTemplate,
   getAppointmentConfirmationTemplate,
-  getPasswordResetTemplate
+  getPasswordResetTemplate,
+  getClaimApprovedTemplate
 } from './emailTemplates';
 
 // Configure nodemailer with GoDaddy Email (Outlook/Office 365)
@@ -177,5 +178,28 @@ export async function sendPasswordReset(email: string, resetLink: string, userNa
   } catch (error: any) {
     console.error('❌ Failed to send password reset email:', error.message);
     throw new Error(`Failed to send password reset email: ${error.message}`);
+  }
+}
+
+/**
+ * Send a claim approval email to a doctor
+ */
+export async function sendClaimApprovedEmail(email: string, userName: string, password?: string): Promise<void> {
+  const { html, text } = getClaimApprovedTemplate(userName, email, password);
+  
+  const mailOptions = {
+    from: `"Best Orthopedic Surgeons" <${process.env.EMAIL_USERNAME}>`,
+    to: email,
+    subject: 'Doctor Profile Claim Approved! 🩺',
+    text,
+    html,
+  };
+
+  try {
+    await transporter.sendMail(mailOptions);
+    console.log('Claim approval email sent successfully!');
+  } catch (error: any) {
+    console.error('❌ Failed to send claim approval email:', error.message);
+    throw new Error(`Failed to send claim approval email: ${error.message}`);
   }
 }

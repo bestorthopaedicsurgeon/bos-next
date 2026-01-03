@@ -8,12 +8,12 @@ export async function POST(request: Request) {
         const session = await getServerSession(authOptions);
         const userId = session?.user?.id;
 
-        if (!userId) {
-            return NextResponse.json(
-                { error: 'You must be logged in to submit a claim request' },
-                { status: 401 }
-            );
-        }
+        // if (!userId) {
+        //     return NextResponse.json(
+        //         { error: 'You must be logged in to submit a claim request' },
+        //         { status: 401 }
+        //     );
+        // }
 
         const { doctorId, name, email, phone, ahpraNumber } = await request.json();
 

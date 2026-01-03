@@ -321,6 +321,67 @@ export function getPasswordResetTemplate(resetLink: string, userName: string): {
 }
 
 /**
+ * Doctor Claim Approved Email Template
+ */
+export function getClaimApprovedTemplate(userName: string, email: string, password?: string): { html: string; text: string } {
+  const content = `
+    <div style="text-align: center;">
+      <div style="margin-bottom: 30px;">
+        <svg width="80" height="80" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M12 2C6.48 2 2 6.48 2 12C2 17.52 6.48 22 12 22C17.52 22 22 17.52 22 12C22 6.48 17.52 2 12 2ZM10 17L5 12L6.41 10.59L10 14.17L17.59 6.58L19 8L10 17Z" fill="${PRIMARY_COLOR}"/>
+        </svg>
+      </div>
+      
+      <h2 style="margin: 0 0 15px 0; color: ${TEXT_PRIMARY}; font-size: 28px; font-weight: 700;">
+        Claim Approved! 🎉
+      </h2>
+      
+      <p style="margin: 0 0 10px 0; color: ${TEXT_PRIMARY}; font-size: 18px;">
+        Hello <strong>${userName}</strong>,
+      </p>
+      
+      <p style="margin: 0 0 30px 0; color: ${TEXT_SECONDARY}; font-size: 16px; line-height: 1.6;">
+        Great news! Your request to claim your doctor profile on Best Orthopedic Surgeons has been approved. You can now manage your profile, respond to patient questions, and more.
+      </p>
+
+      ${password ? `
+      <div style="background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%); border-radius: 8px; padding: 25px; margin-bottom: 30px; text-align: left;">
+        <h3 style="margin: 0 0 15px 0; color: ${TEXT_PRIMARY}; font-size: 18px; font-weight: 600;">
+          Your Login Credentials
+        </h3>
+        <p style="margin: 0 0 10px 0; color: ${TEXT_SECONDARY}; font-size: 15px;">
+          <strong>Email:</strong> ${email}
+        </p>
+        <p style="margin: 0 0 10px 0; color: ${TEXT_SECONDARY}; font-size: 15px;">
+          <strong>Temporary Password:</strong> <code style="background: #fff; padding: 2px 6px; border-radius: 4px; border: 1px solid #ddd;">${password}</code>
+        </p>
+        <p style="margin: 15px 0 0 0; color: #856404; font-size: 14px; font-style: italic;">
+          Please change your password after logging in for the first time.
+        </p>
+      </div>
+      ` : `
+      <p style="margin: 0 0 30px 0; color: ${TEXT_SECONDARY}; font-size: 16px; line-height: 1.6;">
+        You can log in using your existing account credentials to access your doctor dashboard.
+      </p>
+      `}
+      
+      <a href="${process.env.NEXTAUTH_URL}/login" style="display: inline-block; background: linear-gradient(135deg, ${PRIMARY_COLOR} 0%, ${PRIMARY_HOVER} 100%); color: #ffffff; text-decoration: none; padding: 14px 32px; border-radius: 8px; font-size: 16px; font-weight: 600; box-shadow: 0 4px 6px rgba(47, 121, 123, 0.3);">
+        Log In Now
+      </a>
+      
+      <p style="margin: 30px 0 0 0; color: ${TEXT_SECONDARY}; font-size: 14px; line-height: 1.6;">
+        If you have any questions, our support team is happy to help.
+      </p>
+    </div>
+  `;
+
+  return {
+    html: getEmailWrapper(content),
+    text: `Claim Approved!\n\nHello ${userName},\n\nYour request to claim your doctor profile on Best Orthopedic Surgeons has been approved.\n\n${password ? `Your Login Credentials:\nEmail: ${email}\nTemporary Password: ${password}` : `You can log in using your existing account credentials.`}\n\nLog In: ${process.env.NEXTAUTH_URL}/login\n\n© ${new Date().getFullYear()} Best Orthopedic Surgeons. All rights reserved.`
+  };
+}
+
+/**
  * General Notification Email Template
  */
 export function getNotificationTemplate(subject: string, message: string, actionText?: string, actionLink?: string): { html: string; text: string } {

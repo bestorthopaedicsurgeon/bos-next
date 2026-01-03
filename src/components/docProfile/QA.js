@@ -180,6 +180,7 @@ export default function QuestionsAndAnswers({
   };
 
   const currentQuestion = questions?.[currentQuestionIndex];
+  console.log("currentQuestion", currentQuestion);
 
   const canAnswer =
     currentUserId &&
@@ -214,7 +215,6 @@ export default function QuestionsAndAnswers({
                 width={40}
                 height={40}
                 className="h-10 w-10 rounded-full object-cover"
-                unoptimized
               />
               <div className="flex-1">
                 <div className="flex items-center gap-2">

@@ -2,6 +2,8 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
+import bcrypt from "bcryptjs";
+import { sendClaimApprovedEmail } from "@/lib/services/emailService";
 
 type Params = { params: Promise<{ id: string }> };
 
@@ -79,30 +81,62 @@ export async function PATCH(request: Request, { params }: Params) {
     }
 
     // Update the claim request
-    const updatedClaim = await prisma.$transaction(async (prisma) => {
-      const updatedClaim = await prisma.doctorClaimRequest.update({
+    const updatedClaim = await prisma.$transaction(async (tx) => {
+      let finalUserId = userId;
+      let generatedPassword = "";
+
+      // If approving and no userId provided, or if we need to check if user exists
+      if (status === "APPROVED") {
+        let user = await tx.user.findUnique({
+          where: { email: claimRequest.email },
+        });
+
+        if (!user) {
+          // Create new user if they don't exist
+          generatedPassword = Math.random().toString(36).slice(-10);
+          const hashedPassword = await bcrypt.hash(generatedPassword, 10);
+          
+          user = await tx.user.create({
+            data: {
+              email: claimRequest.email,
+              name: claimRequest.name,
+              password: hashedPassword,
+              role: "DOCTOR",
+            },
+          });
+        }
+
+        finalUserId = user.id;
+
+        // Check if the doctor is already claimed by another user (not the one we're assigning)
+        if (claimRequest.doctor.userId && claimRequest.doctor.userId !== finalUserId) {
+          throw new Error("This doctor profile is already claimed by another user");
+        }
+
+        // Link the doctor profile to the user
+        await tx.doctorProfile.update({
+          where: { id: claimRequest.doctorId },
+          data: {
+            userId: finalUserId,
+          },
+        });
+      }
+
+      const updatedClaim = await tx.doctorClaimRequest.update({
         where: { id: parseInt(id) },
         data: {
           status,
-          userId: status === "APPROVED" ? userId : undefined,
+          userId: status === "APPROVED" ? finalUserId : undefined,
         },
       });
 
-      // If approved, link the doctor profile to the user
-      if (status === "APPROVED") {
-        await prisma.doctorProfile.update({
-          where: { id: claimRequest.doctorId },
-          data: {
-            userId,
-          },
-        });
-      } else if (status === "PENDING") {
-        const doctorProfile = await prisma.doctorProfile.findUnique({
+      if (status === "PENDING") {
+        const doctorProfile = await tx.doctorProfile.findUnique({
           where: { id: claimRequest.doctorId },
         });
 
         if (doctorProfile?.userId) {
-          await prisma.doctorProfile.update({
+          await tx.doctorProfile.update({
             where: { id: claimRequest.doctorId },
             data: {
               userId: null,
@@ -111,10 +145,24 @@ export async function PATCH(request: Request, { params }: Params) {
         }
       }
 
-      return updatedClaim;
+      return { updatedClaim, generatedPassword, finalUserId };
     });
 
-    return NextResponse.json(updatedClaim);
+    // Send email after transaction succeeds
+    if (status === "APPROVED") {
+      try {
+        await sendClaimApprovedEmail(
+          claimRequest.email,
+          claimRequest.name,
+          updatedClaim.generatedPassword || undefined
+        );
+      } catch (emailError) {
+        console.error("Failed to send approval email:", emailError);
+        // We don't fail the whole request if email fails, but we log it
+      }
+    }
+
+    return NextResponse.json(updatedClaim.updatedClaim);
   } catch (error) {
     console.error("Error updating claim request:", error);
     return NextResponse.json(

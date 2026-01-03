@@ -35,13 +35,13 @@ const ClaimProfileModal = ({ children, doctorId }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+
     // Check if user is authenticated
-    if (!session) {
-      toast.error("You must be logged in to claim a profile");
-      return;
-    }
-    
+    // if (!session) {
+    //   toast.error("You must be logged in to claim a profile");
+    //   return;
+    // }
+
     if (!formData.agreeToTerms) {
       setMessage("Please agree to HealthShare's Terms of Service");
       return;
@@ -228,11 +228,10 @@ const ClaimProfileModal = ({ children, doctorId }) => {
           {/* Message Display */}
           {message && (
             <div
-              className={`mt-4 p-3 rounded-md text-sm ${
-                message.includes("successfully")
+              className={`mt-4 p-3 rounded-md text-sm ${message.includes("successfully")
                   ? "bg-green-100 text-green-700"
                   : "bg-red-100 text-red-700"
-              }`}
+                }`}
             >
               {message}
             </div>
