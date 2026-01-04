@@ -59,7 +59,7 @@ export function BlogCarousel({ blogs }) {
       <CarouselPrevious />
       <CarouselContent>
         {Array.from(blogs).map((blog, index) => (
-          <CarouselItem key={blog.id || index} className="md:basis-1/2 lg:basis-1/">
+          <CarouselItem key={blog.id || index} className="md:basis-1/2 lg:basis-1/3">
             <div className="bg-white p-7 rounded-lg shadow-sm hover:shadow-md transition-shadow h-full flex flex-col max-h-auto">
               <Image
                 src={blog.image || "/home/blog-image.png"}
