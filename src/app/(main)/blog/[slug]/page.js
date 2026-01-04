@@ -358,7 +358,7 @@ const Page = async ({ params }) => {
       {/* Author and Date Section */}
       <div className="mb-8 flex items-center gap-4 rounded-lg bg-gray-50 p-6 dark:bg-gray-800">
         <Image
-          src="/profile.png"
+          src="/bos_favicon.svg"
           width={60}
           height={60}
           alt="profile"
