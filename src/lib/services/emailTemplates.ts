@@ -382,6 +382,55 @@ export function getClaimApprovedTemplate(userName: string, email: string, passwo
 }
 
 /**
+ * Doctor Claim Request Submitted Email Template
+ */
+export function getClaimSubmittedTemplate(userName: string): { html: string; text: string } {
+  const content = `
+    <div style="text-align: center;">
+      <div style="margin-bottom: 30px;">
+        <svg width="80" height="80" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M12 2C6.48 2 2 6.48 2 12C2 17.52 6.48 22 12 22C17.52 22 22 17.52 22 12C22 6.48 17.52 2 12 2ZM11 16H13V18H11V16ZM11 6H13V14H11V6Z" fill="${PRIMARY_COLOR}"/>
+        </svg>
+      </div>
+      
+      <h2 style="margin: 0 0 15px 0; color: ${TEXT_PRIMARY}; font-size: 28px; font-weight: 700;">
+        Claim Request Received 🩺
+      </h2>
+      
+      <p style="margin: 0 0 10px 0; color: ${TEXT_PRIMARY}; font-size: 18px;">
+        Hello <strong>${userName}</strong>,
+      </p>
+      
+      <p style="margin: 0 0 30px 0; color: ${TEXT_SECONDARY}; font-size: 16px; line-height: 1.6;">
+        We have successfully received your request to claim your doctor profile on Best Orthopedic Surgeons.
+      </p>
+
+      <div style="background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%); border-radius: 8px; padding: 25px; margin-bottom: 30px; text-align: left;">
+        <h3 style="margin: 0 0 15px 0; color: ${TEXT_PRIMARY}; font-size: 18px; font-weight: 600;">
+          Status: Pending Review
+        </h3>
+        <p style="margin: 0; color: ${TEXT_SECONDARY}; font-size: 15px; line-height: 1.6;">
+          Our administration team is currently reviewing your AHPRA number and details provided. This process typically takes 1-2 business days.
+        </p>
+      </div>
+
+      <p style="margin: 0 0 30px 0; color: ${TEXT_SECONDARY}; font-size: 16px; line-height: 1.6;">
+        Once your request is approved, you will receive another email with instructions on how to access and manage your profile.
+      </p>
+      
+      <p style="margin: 30px 0 0 0; color: ${TEXT_SECONDARY}; font-size: 14px; line-height: 1.6;">
+        If you have any questions in the meantime, please feel free to contact our support team.
+      </p>
+    </div>
+  `;
+
+  return {
+    html: getEmailWrapper(content),
+    text: `Claim Request Received\n\nHello ${userName},\n\nWe have successfully received your request to claim your doctor profile on Best Orthopedic Surgeons.\n\nStatus: Pending Review\n\nOur administration team is currently reviewing your details. This process typically takes 1-2 business days. Once approved, you will receive another email with instructions.\n\nIf you have any questions, please contact our support team.\n\n© ${new Date().getFullYear()} Best Orthopedic Surgeons. All rights reserved.`
+  };
+}
+
+/**
  * General Notification Email Template
  */
 export function getNotificationTemplate(subject: string, message: string, actionText?: string, actionLink?: string): { html: string; text: string } {

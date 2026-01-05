@@ -1,11 +1,12 @@
 import nodemailer from 'nodemailer';
-import { 
-  getOTPEmailTemplate, 
+import {
+  getOTPEmailTemplate,
   getNotificationTemplate,
   getWelcomeEmailTemplate,
   getAppointmentConfirmationTemplate,
   getPasswordResetTemplate,
-  getClaimApprovedTemplate
+  getClaimApprovedTemplate,
+  getClaimSubmittedTemplate
 } from './emailTemplates';
 
 // Configure nodemailer with GoDaddy Email (Outlook/Office 365)
@@ -34,7 +35,7 @@ export function generateOTP(): string {
 
 export async function sendOTP(email: string, otp: string): Promise<void> {
   const { html, text } = getOTPEmailTemplate(otp);
-  
+
   const mailOptions = {
     from: `"Best Orthopedic Surgeons" <${process.env.EMAIL_USERNAME}>`,
     to: email,
@@ -44,18 +45,9 @@ export async function sendOTP(email: string, otp: string): Promise<void> {
   };
 
   try {
-    console.log('Attempting to send email from:', process.env.EMAIL_USERNAME);
-    console.log('SMTP Host:', 'smtp.office365.com');
-    console.log('SMTP Port:', 587);
-    
+
     const info = await transporter.sendMail(mailOptions);
-    
-    console.log('✅ Email sent successfully!');
-    console.log('📨 SMTP Response:', info.response);
-    console.log('📨 Message ID:', info.messageId);
-    console.log('📨 Accepted:', info.accepted);
-    console.log('📨 Rejected:', info.rejected);
-    
+
   } catch (error: any) {
     console.error('❌ DETAILED EMAIL ERROR:', {
       message: error.message,
@@ -78,7 +70,7 @@ export interface EmailOptions {
 
 export async function sendEmail({ to, subject, message, actionText, actionLink }: EmailOptions): Promise<void> {
   const { html, text } = getNotificationTemplate(subject, message, actionText, actionLink);
-  
+
   const mailOptions = {
     from: `"Best Orthopedic Surgeons" <${process.env.EMAIL_USERNAME}>`,
     to,
@@ -108,7 +100,7 @@ export async function sendEmail({ to, subject, message, actionText, actionLink }
  */
 export async function sendWelcomeEmail(email: string, userName: string): Promise<void> {
   const { html, text } = getWelcomeEmailTemplate(userName);
-  
+
   const mailOptions = {
     from: `"Best Orthopedic Surgeons" <${process.env.EMAIL_USERNAME}>`,
     to: email,
@@ -140,7 +132,7 @@ export async function sendAppointmentConfirmation(
   }
 ): Promise<void> {
   const { html, text } = getAppointmentConfirmationTemplate(details);
-  
+
   const mailOptions = {
     from: `"Best Orthopedic Surgeons" <${process.env.EMAIL_USERNAME}>`,
     to: email,
@@ -163,7 +155,7 @@ export async function sendAppointmentConfirmation(
  */
 export async function sendPasswordReset(email: string, resetLink: string, userName: string): Promise<void> {
   const { html, text } = getPasswordResetTemplate(resetLink, userName);
-  
+
   const mailOptions = {
     from: `"Best Orthopedic Surgeons" <${process.env.EMAIL_USERNAME}>`,
     to: email,
@@ -186,7 +178,7 @@ export async function sendPasswordReset(email: string, resetLink: string, userNa
  */
 export async function sendClaimApprovedEmail(email: string, userName: string, password?: string): Promise<void> {
   const { html, text } = getClaimApprovedTemplate(userName, email, password);
-  
+
   const mailOptions = {
     from: `"Best Orthopedic Surgeons" <${process.env.EMAIL_USERNAME}>`,
     to: email,
@@ -201,5 +193,30 @@ export async function sendClaimApprovedEmail(email: string, userName: string, pa
   } catch (error: any) {
     console.error('❌ Failed to send claim approval email:', error.message);
     throw new Error(`Failed to send claim approval email: ${error.message}`);
+  }
+}
+
+/**
+ * Send a claim submission confirmation email to a doctor
+ */
+export async function sendClaimSubmittedEmail(email: string, userName: string): Promise<void> {
+  const { html, text } = getClaimSubmittedTemplate(userName);
+
+  const mailOptions = {
+    from: `"Best Orthopedic Surgeons" <${process.env.EMAIL_USERNAME}>`,
+    to: email,
+    subject: 'Claim Request Received - Best Orthopedic Surgeons 🩺',
+    text,
+    html,
+  };
+
+  try {
+    await transporter.sendMail(mailOptions);
+    console.log('Claim submission email sent successfully!');
+  } catch (error: any) {
+    console.error('❌ Failed to send claim submission email:', error.message);
+    // We don't necessarily want to throw here and fail the whole request 
+    // if just the email fails, but for now we follow the existing pattern
+    throw new Error(`Failed to send claim submission email: ${error.message}`);
   }
 }

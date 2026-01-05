@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
+import { sendClaimSubmittedEmail } from '@/lib/services/emailService';
 
 export async function POST(request: Request) {
     try {
@@ -70,6 +71,14 @@ export async function POST(request: Request) {
                 userId: userId || null,
             },
         });
+
+        // Send confirmation email to the doctor
+        try {
+            await sendClaimSubmittedEmail(email, name);
+        } catch (emailError) {
+            // Log the error but don't fail the request if email sending fails
+            console.error('Failed to send claim submission email:', emailError);
+        }
 
         return NextResponse.json(
             {
