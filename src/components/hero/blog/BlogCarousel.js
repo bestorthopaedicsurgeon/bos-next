@@ -60,18 +60,19 @@ export function BlogCarousel({ blogs }) {
       <CarouselContent>
         {Array.from(blogs).map((blog, index) => (
           <CarouselItem key={blog.id || index} className="md:basis-1/2 lg:basis-1/3">
-            <div className="bg-white p-7 rounded-lg shadow-sm hover:shadow-md transition-shadow h-full flex flex-col">
+            <div className="bg-white p-7 rounded-lg shadow-sm hover:shadow-md transition-shadow h-full flex flex-col max-h-auto">
               <Image
                 src={blog.image || "/home/blog-image.png"}
                 alt={blog.title || "Blog"}
                 width={343}
                 height={220}
-                className="mb-4 rounded-md object-cover w-full h-[220px]"
+                className="mb-6 rounded-md object-cover w-full h-[220px]"
               />
-              <h3 className="font-dm-sans text-primary mb-2 text-[20px] font-medium h-[60px] flex items-center">
-                {truncateTitle(blog.title)}
+              <h3 className="font-dm-sans text-primary my-2 text-[20px] font-medium h-[60px] flex items-center ">
+                <span className="hidden sm:inline">{truncateTitle(blog.title, 6)}</span>
+                <span className="sm:hidden">{truncateTitle(blog.title, 4)}</span>
               </h3>
-              <p className="text-[16px] text-neutral-700 mb-4 line-clamp-3 flex-grow h-[72px] overflow-hidden">
+              <p className="text-[16px] text-neutral-700 my-6 line-clamp-3 flex-grow h-[72px] overflow-hidden">
                 {extractDescription(blog.content, 20)}
               </p>
               <Link 

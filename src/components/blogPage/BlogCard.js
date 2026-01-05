@@ -103,7 +103,6 @@ export const BlogCard = (card) => {
       <Link
         href={`/blog/${card.slug}`}
         className="mt-auto flex items-center gap-4 cursor-pointer group"
-        target="_blank"
       >
         <p className="font-dm-sans text-[16px] font-bold text-primary transition-colors">
           Read More

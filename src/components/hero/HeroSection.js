@@ -141,7 +141,7 @@ export const HeroSection = ({ onSearchResults, onSearchStateChange }) => {
           <h1 className="font-syne mb-4">
             Built for Orthopaedic Surgeons. Trusted by Patients!
           </h1>
-          <div className="hidden h-[352px] w-[308px] max-lg:mx-auto max-lg:flex max-lg:justify-center">
+          <div className="hidden h-[352px] w-[308px] max-lg:mx-auto max-lg:flex max-lg:justify-center max-sm:h-full max-sm:w-full">
             <Image
               src="/home/bones.png"
               alt="hero"

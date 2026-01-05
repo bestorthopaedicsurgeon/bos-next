@@ -1,11 +1,12 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { ChevronLeft, Save, Loader2 } from "lucide-react";
+import { Save, Loader2, ChevronLeft } from "lucide-react";
 import Link from "next/link";
 import { toast } from "sonner";
 import PhoneInput from "react-phone-input-2";
 import "react-phone-input-2/lib/style.css";
+import ProfileHeader from "@/components/reusable/profileHeader";
 
 const EditProfilePage = () => {
   const router = useRouter();
@@ -159,30 +160,28 @@ const EditProfilePage = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-[#FAF9F6]">
-        <Loader2 className="h-8 w-8 animate-spin text-[#2F797B]" />
+      <div className="min-h-screen flex items-center justify-center">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
       </div>
     );
   }
 
   return (
-    <div className="bg-[#FAF9F6] min-h-screen pb-20">
-      {/* Banner Section */}
-      <div className="bg-[#2F797B] py-12 px-4 shadow-sm">
-        <div className="container mx-auto max-w-3xl">
-          <Link href="/profile" className="inline-flex items-center text-white/80 hover:text-white mb-6 transition-colors">
-            <ChevronLeft className="h-4 w-4 mr-1" />
-            Back to Profile
-          </Link>
-          <h1 className="text-3xl md:text-4xl font-bold text-white font-syne">Edit Profile</h1>
-        </div>
-      </div>
+    <div className="container">
+      <ProfileHeader heading="Edit Profile" step1="Home" step2="Profile" step3="Edit" />
 
-      <div className="container mx-auto px-4 -mt-8 max-w-3xl space-y-8 pb-20">
+      <div className="py-12 max-w-3xl mx-auto space-y-8">
+        <Link 
+          href="/profile" 
+          className="inline-flex items-center text-primary hover:text-primary/80 transition-colors font-dm-sans font-semibold text-sm"
+        >
+          <ChevronLeft className="h-4 w-4 mr-1" />
+          Back to Profile
+        </Link>
         <form onSubmit={handleSubmit} className="bg-white rounded-2xl border border-gray-100 p-8 shadow-md space-y-8">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             <div className="space-y-2 md:col-span-2">
-              <label htmlFor="name" className="text-xs font-bold text-gray-400 uppercase tracking-wider">Display Name</label>
+              <label htmlFor="name" className="text-xs font-bold text-gray-400 uppercase tracking-wider font-dm-sans">Display Name</label>
               <input
                 type="text"
                 id="name"
@@ -190,19 +189,19 @@ const EditProfilePage = () => {
                 value={formData.name}
                 onChange={handleChange}
                 placeholder="Enter display name"
-                className="w-full bg-gray-50 border border-gray-100 rounded-xl px-4 py-3 text-[#232323] focus:outline-none focus:ring-2 focus:ring-[#2F797B]/20 transition-all font-medium"
+                className="w-full bg-gray-50 border border-gray-100 rounded-xl px-4 py-3 text-[#232323] focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all font-medium font-dm-sans"
                 required
               />
             </div>
 
             <div className="space-y-2">
-              <label htmlFor="phone" className="text-xs font-bold text-gray-400 uppercase tracking-wider">Phone Number</label>
+              <label htmlFor="phone" className="text-xs font-bold text-gray-400 uppercase tracking-wider font-dm-sans">Phone Number</label>
               <div className="phone-input-container">
                 <PhoneInput
                   country={'au'}
                   value={formData.phone.replace('+', '')}
                   onChange={handlePhoneChange}
-                  inputClass="!w-full !bg-gray-50 !border-gray-100 !rounded-xl !pl-14 !py-3 !text-[#232323] !focus:outline-none !focus:ring-2 !focus:ring-[#2F797B]/20 !transition-all !font-medium !h-[48px]"
+                  inputClass="!w-full !bg-gray-50 !border-gray-100 !rounded-xl !pl-14 !py-3 !text-[#232323] !focus:outline-none !focus:ring-2 !focus:ring-primary/20 !transition-all !font-medium !h-[48px]"
                   containerClass="!w-full"
                   buttonClass="!bg-transparent !border-none !rounded-l-xl !absolute !left-0 !top-0 !bottom-0 !z-10 !hover:bg-transparent"
                   dropdownClass="!bg-white !shadow-xl !rounded-xl !border-gray-100 !mt-2"
@@ -212,14 +211,14 @@ const EditProfilePage = () => {
             </div>
 
             <div className="space-y-2">
-              <label htmlFor="dob" className="text-xs font-bold text-gray-400 uppercase tracking-wider">Date of Birth {formData.age && <span className="text-[#2F797B] font-bold ml-2">({formData.age} yrs)</span>}</label>
+              <label htmlFor="dob" className="text-xs font-bold text-gray-400 uppercase tracking-wider font-dm-sans">Date of Birth {formData.age && <span className="text-primary font-bold ml-2">({formData.age} yrs)</span>}</label>
               <input
                 type="date"
                 id="dob"
                 name="dob"
                 value={formData.dob}
                 onChange={handleChange}
-                className="w-full bg-gray-50 border border-gray-100 rounded-xl px-4 py-3 text-[#232323] focus:outline-none focus:ring-2 focus:ring-[#2F797B]/20 transition-all font-medium"
+                className="w-full bg-gray-50 border border-gray-100 rounded-xl px-4 py-3 text-[#232323] focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all font-medium font-dm-sans"
               />
             </div>
           </div>
@@ -227,14 +226,14 @@ const EditProfilePage = () => {
           <div className="pt-4 border-t border-gray-50 flex items-center justify-end gap-4">
             <Link 
               href="/profile"
-              className="px-6 py-3 rounded-xl font-bold text-gray-400 hover:text-gray-600 transition-all text-sm"
+              className="px-6 py-3 rounded-xl font-bold text-gray-400 hover:text-gray-600 transition-all text-sm font-dm-sans"
             >
               Cancel
             </Link>
             <button
               type="submit"
               disabled={saving}
-              className="inline-flex items-center gap-2 bg-[#2F797B] text-white px-8 py-3 rounded-xl text-sm font-bold shadow-lg shadow-[#2F797B]/20 hover:scale-[1.02] active:scale-[0.98] disabled:opacity-70 disabled:scale-100 transition-all"
+              className="inline-flex items-center gap-2 bg-primary text-white px-8 py-3 rounded-xl text-sm font-bold shadow-lg shadow-primary/20 hover:scale-[1.02] active:scale-[0.98] disabled:opacity-70 disabled:scale-100 transition-all font-dm-sans"
             >
               {saving ? (
                 <>
@@ -255,7 +254,7 @@ const EditProfilePage = () => {
         <div className="bg-white rounded-2xl border border-gray-100 p-8 shadow-md space-y-8">
           <div>
             <h2 className="text-xl font-bold text-[#232323] font-syne">Account Security</h2>
-            <p className="text-sm text-gray-500 mt-1">
+            <p className="text-sm text-gray-500 mt-1 font-dm-sans">
               {formData.hasPassword 
                 ? "Update your existing account password." 
                 : "Add a password to your account to sign in without Google."}
@@ -266,7 +265,7 @@ const EditProfilePage = () => {
             <div className="grid grid-cols-1 gap-6">
               {formData.hasPassword && (
                 <div className="space-y-2">
-                  <label htmlFor="currentPassword" dangerouslySetInnerHTML={{ __html: 'Current Password' }} className="text-xs font-bold text-gray-400 uppercase tracking-wider" />
+                  <label htmlFor="currentPassword" dangerouslySetInnerHTML={{ __html: 'Current Password' }} className="text-xs font-bold text-gray-400 uppercase tracking-wider font-dm-sans" />
                   <input
                     type="password"
                     id="currentPassword"
@@ -274,7 +273,7 @@ const EditProfilePage = () => {
                     value={formData.currentPassword}
                     onChange={handleChange}
                     placeholder="Enter current password"
-                    className="w-full bg-gray-50 border border-gray-100 rounded-xl px-4 py-3 text-[#232323] focus:outline-none focus:ring-2 focus:ring-[#2F797B]/20 transition-all font-medium"
+                    className="w-full bg-gray-50 border border-gray-100 rounded-xl px-4 py-3 text-[#232323] focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all font-medium font-dm-sans"
                     required
                   />
                 </div>
@@ -282,7 +281,7 @@ const EditProfilePage = () => {
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="space-y-2">
-                  <label htmlFor="newPassword" dangerouslySetInnerHTML={{ __html: formData.hasPassword ? 'New Password' : 'Set Password' }} className="text-xs font-bold text-gray-400 uppercase tracking-wider" />
+                  <label htmlFor="newPassword" dangerouslySetInnerHTML={{ __html: formData.hasPassword ? 'New Password' : 'Set Password' }} className="text-xs font-bold text-gray-400 uppercase tracking-wider font-dm-sans" />
                   <input
                     type="password"
                     id="newPassword"
@@ -290,13 +289,13 @@ const EditProfilePage = () => {
                     value={formData.newPassword}
                     onChange={handleChange}
                     placeholder="Enter new password"
-                    className="w-full bg-gray-50 border border-gray-100 rounded-xl px-4 py-3 text-[#232323] focus:outline-none focus:ring-2 focus:ring-[#2F797B]/20 transition-all font-medium"
+                    className="w-full bg-gray-50 border border-gray-100 rounded-xl px-4 py-3 text-[#232323] focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all font-medium font-dm-sans"
                     required
                   />
                 </div>
 
                 <div className="space-y-2">
-                  <label htmlFor="confirmPassword" dangerouslySetInnerHTML={{ __html: 'Confirm New Password' }} className="text-xs font-bold text-gray-400 uppercase tracking-wider" />
+                  <label htmlFor="confirmPassword" dangerouslySetInnerHTML={{ __html: 'Confirm New Password' }} className="text-xs font-bold text-gray-400 uppercase tracking-wider font-dm-sans" />
                   <input
                     type="password"
                     id="confirmPassword"
@@ -304,7 +303,7 @@ const EditProfilePage = () => {
                     value={formData.confirmPassword}
                     onChange={handleChange}
                     placeholder="Confirm new password"
-                    className="w-full bg-gray-50 border border-gray-100 rounded-xl px-4 py-3 text-[#232323] focus:outline-none focus:ring-2 focus:ring-[#2F797B]/20 transition-all font-medium"
+                    className="w-full bg-gray-50 border border-gray-100 rounded-xl px-4 py-3 text-[#232323] focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all font-medium font-dm-sans"
                     required
                   />
                 </div>
@@ -315,7 +314,7 @@ const EditProfilePage = () => {
               <button
                 type="submit"
                 disabled={passwordSaving}
-                className="inline-flex items-center gap-2 bg-[#2F797B] text-white px-8 py-3 rounded-xl text-sm font-bold shadow-lg shadow-[#2F797B]/20 hover:scale-[1.02] active:scale-[0.98] disabled:opacity-70 disabled:scale-100 transition-all"
+                className="inline-flex items-center gap-2 bg-primary text-white px-8 py-3 rounded-xl text-sm font-bold shadow-lg shadow-primary/20 hover:scale-[1.02] active:scale-[0.98] disabled:opacity-70 disabled:scale-100 transition-all font-dm-sans"
               >
                 {passwordSaving ? (
                   <>
