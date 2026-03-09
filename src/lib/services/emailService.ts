@@ -34,7 +34,7 @@ export const transporter = nodemailer.createTransport({
 const commonAttachments = [
   {
     filename: 'bos-logo-2.png',
-    path: path.join(process.cwd(), 'public', 'logos', 'bos-logo-1.png'),
+    path: path.join(process.cwd(), 'public', 'logos', 'bos-logo-2.png'),
     cid: 'logo' // same cid as in the html template
   }
 ];
