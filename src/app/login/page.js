@@ -14,9 +14,9 @@ import { signIn, useSession } from "next-auth/react";
 import { redirect, useRouter } from "next/navigation";
 import { toast } from "sonner";
 import ForgotPasswordModal from "@/components/auth/ForgotPasswordModal";
+import Cookies from "js-cookie";
 
 const Page = () => {
-  const { data: session, status } = useSession();
   const router = useRouter();
 
   const [form, setForm] = useState({ email: "", password: "" });
@@ -24,28 +24,16 @@ const Page = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
-  // Load remembered credentials on component mount
+  // Load remembered credentials from cookies on component mount
   useEffect(() => {
-    try {
-      const rememberedData = localStorage.getItem("rememberMeData");
-      
-      if (rememberedData) {
-        const parsedData = JSON.parse(rememberedData);
-        const { email, password, rememberMe: remembered } = parsedData;
-        
-        if (remembered && email && password) {
-          setForm({ email: email, password: password });
-          setRememberMe(true);
-        }
-      }
-    } catch (error) {
-      console.error("Error loading remembered data:", error);
-      // Clear corrupted data
-      try {
-        localStorage.removeItem("rememberMeData");
-      } catch (e) {
-        console.error("Error clearing corrupted data:", e);
-      }
+    const savedEmail = Cookies.get("rememberedEmail");
+
+    if (savedEmail) {
+      setForm((prev) => ({
+        ...prev,
+        email: savedEmail,
+      }));
+      setRememberMe(true);
     }
   }, []);
 
@@ -64,8 +52,7 @@ const Page = () => {
       return;
     }
 
-    console.log("Form Data:", form);
-    
+
     try {
       const result = await signIn("credentials", {
         redirect: false,
@@ -80,22 +67,17 @@ const Page = () => {
         // Handle remember me functionality
         try {
           if (rememberMe) {
-            // Save credentials to localStorage
-            const dataToRemember = {
-              email: form.email,
-              password: form.password,
-              rememberMe: true,
-            };
-            localStorage.setItem("rememberMeData", JSON.stringify(dataToRemember));
+            // Save email to cookies (expires in 30 days)
+            Cookies.set("rememberedEmail", form.email, { expires: 30 });
           } else {
             // Clear remembered data if remember me is unchecked
-            localStorage.removeItem("rememberMeData");
+            Cookies.remove("rememberedEmail");
           }
         } catch (error) {
           console.error("Error handling remember me data:", error);
-          // Continue with login even if localStorage fails
+          // Continue with login even if cookie fails
         }
-        
+
         toast.success("Login successful!");
         router.push("/");
       }
@@ -103,15 +85,9 @@ const Page = () => {
       setError("An error occurred during login.");
       console.error("Login error:", error);
     }
-    
+
     setLoading(false);
   };
-
-  // useEffect(() => {
-  //   if (status === "authenticated") {
-  //     router.replace("/"); // redirect to home if already logged in
-  //   }
-  // }, [status, router]);
 
   return (
     <div className="flex items-center justify-center min-xl:pr-[200px] min-h-screen">
@@ -134,7 +110,7 @@ const Page = () => {
         />
         {/* input form start */}
         <form onSubmit={handleSubmit}>
-        {/* <RadioGroup
+          {/* <RadioGroup
             defaultValue="comfortable"
             className="m-auto mt-[40px] flex items-center justify-center gap-[40px]"
           >
@@ -148,60 +124,60 @@ const Page = () => {
             </div>
           </RadioGroup> */}
 
-        {input.email.map((data) => (
-          <InputField
-            placeholder={data.placeholder}
-            name={data.name}
-            inputType="text"
-            label={data.label}
-            key={data.name}
-            value={form.email}
-            onChange={handleChange}
-          />
-        ))}
-        {input.pass.map((data) => (
-          <InputField
-            placeholder={data.placeholder}
-            name={data.name}
-            inputType={data.inputType}
-            label={data.label}
-            key={data.name}
-            value={form.password}
-            onChange={handleChange}
-          />
-        ))}
-        
-
-
-        <div className="flex items-center justify-between mt-4">
-          <div className="flex items-center space-x-2">
-            <Checkbox 
-              id="rememberMe" 
-              checked={rememberMe}
-              onCheckedChange={(checked) => setRememberMe(checked)}
+          {input.email.map((data) => (
+            <InputField
+              placeholder={data.placeholder}
+              name={data.name}
+              inputType="text"
+              label={data.label}
+              key={data.name}
+              value={form.email}
+              onChange={handleChange}
             />
-            <label htmlFor="rememberMe" className="text-sm text-gray-600 cursor-pointer">
-              Remember me
-            </label>
-          </div>
-          <ForgotPasswordModal>
-            <button type="button" className="text-sm text-[--primary] hover:underline">
-              Forgot Password?
-            </button>
-          </ForgotPasswordModal>
-        </div>
+          ))}
+          {input.pass.map((data) => (
+            <InputField
+              placeholder={data.placeholder}
+              name={data.name}
+              inputType={data.inputType}
+              label={data.label}
+              key={data.name}
+              value={form.password}
+              onChange={handleChange}
+            />
+          ))}
 
-        <div
-          className="max-lg:mt-[17px] min-lg:mt-[27px]"
-        >
-          <CustomBtn
-            btnText={loading ? "Logging in..." : "Login"}
-            border="md"
-            width="100%"
-            disabled={loading}
-          />
-        </div>
-        {error && <div className="mt-2 text-red-500">{error}</div>}
+
+
+          <div className="flex items-center justify-between mt-4">
+            <div className="flex items-center space-x-2">
+              <Checkbox
+                id="rememberMe"
+                checked={rememberMe}
+                onCheckedChange={(checked) => setRememberMe(checked)}
+              />
+              <label htmlFor="rememberMe" className="text-sm text-gray-600 cursor-pointer">
+                Remember me
+              </label>
+            </div>
+            <ForgotPasswordModal>
+              <button type="button" className="text-sm text-[--primary] hover:underline">
+                Forgot Password?
+              </button>
+            </ForgotPasswordModal>
+          </div>
+
+          <div
+            className="max-lg:mt-[17px] min-lg:mt-[27px]"
+          >
+            <CustomBtn
+              btnText={loading ? "Logging in..." : "Login"}
+              border="md"
+              width="100%"
+              disabled={loading}
+            />
+          </div>
+          {error && <div className="mt-2 text-red-500">{error}</div>}
         </form>
         {/* input form end */}
 
