@@ -38,7 +38,7 @@ function getEmailWrapper(content: string): string {
   text-align: center;
   border-radius: 12px 12px 0 0;
 ">
-  <img src="https://juiziglmzcqnbaagsdrq.supabase.co/storage/v1/object/public/bos-logos/bos-logo-2.png"
+  <img src="cid:logo"
        alt="Best Orthopaedic Surgeon"
        style="max-width: 150px; height: auto; display: block; margin: 0 auto;">
 </td>
