@@ -5,6 +5,7 @@ import {
   submitAnswer,
   submitQuestion,
 } from "@/lib/apiCalls/client/qa";
+import { sanitizeInput } from "@/lib/sanitize";
 import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 import { Button } from "../ui/button";
@@ -307,7 +308,7 @@ export default function QuestionsAndAnswers({
                       <textarea
                         ref={replyTextareaRef}
                         value={answer}
-                        onChange={(e) => setAnswer(e.target.value)}
+                        onChange={(e) => setAnswer(sanitizeInput(e.target.value))}
                         placeholder="Write a reply..."
                         rows="2"
                         className="w-full resize-none rounded-lg border border-gray-300 p-2 text-sm focus:border-blue-500"
@@ -392,7 +393,7 @@ export default function QuestionsAndAnswers({
           <form onSubmit={handleSubmitQuestion}>
             <textarea
               value={newQuestion}
-              onChange={(e) => setNewQuestion(e.target.value)}
+              onChange={(e) => setNewQuestion(sanitizeInput(e.target.value))}
               placeholder="Type your question…"
               className="border-primary mb-4 h-32 w-full resize-none rounded-lg border p-3 focus:border-transparent"
               required

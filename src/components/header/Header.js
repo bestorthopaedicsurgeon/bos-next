@@ -24,14 +24,14 @@ export default function Header() {
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between">
           {/* Left: Logo */}
-          <div className="text-xl font-bold text-blue-600">
-            <Link href="/">
+          <div className="font-bold text-blue-600 w-40">
+            <Link href="/" className="w-40">
               <Image
                 src="/logos/bos-logo-1.png"
                 alt="Logo"
                 width={200}
                 height={200}
-                className="max-sm:w-30 max-sm:h-30"
+                className="max-sm:w-30 max-sm:h-30 w-30"
               />
             </Link>
           </div>

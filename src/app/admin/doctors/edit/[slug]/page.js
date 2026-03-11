@@ -35,6 +35,7 @@ import EditableEntry from "@/components/registration/EditableEntry";
 import { toast } from "sonner";
 import { auCities } from "@/lib/constants/auCities";
 import { useSession } from "next-auth/react";
+import { sanitizeFormValue } from "@/lib/sanitize";
 
 const AdminEditDoctorPage = ({ params }) => {
   const { data: session } = useSession();
@@ -268,12 +269,12 @@ const AdminEditDoctorPage = ({ params }) => {
   ];
 
   const handleInputChange = (field) => (e) => {
-    const value = field === "image" ? e.target.files?.[0] : e.target.value;
+    const value = field === "image" ? e.target.files?.[0] : sanitizeFormValue(e.target.value);
     setForm((prev) => ({ ...prev, [field]: value }));
   };
 
   const handleMultiInputChange = (field) => (e) => {
-    setInputs((prev) => ({ ...prev, [field]: e.target.value }));
+    setInputs((prev) => ({ ...prev, [field]: sanitizeFormValue(e.target.value) }));
   };
 
   const handleImageUpload = async () => {
@@ -321,7 +322,7 @@ const AdminEditDoctorPage = ({ params }) => {
 
   // Qualifications tag input handlers
   const handleQualificationInputChange = (e) => {
-    setQualificationInput(e.target.value);
+    setQualificationInput(sanitizeFormValue(e.target.value));
   };
 
   const handleQualificationKeyDown = (e) => {
@@ -342,7 +343,7 @@ const AdminEditDoctorPage = ({ params }) => {
   // For practice dialog input
   const handlePracticeInputChange = (e) => {
     const { name, value } = e.target;
-    setPracticeForm((prev) => ({ ...prev, [name]: value }));
+    setPracticeForm((prev) => ({ ...prev, [name]: sanitizeFormValue(value) }));
   };
 
   // Add practice entry

@@ -14,12 +14,13 @@ import { signIn, useSession } from "next-auth/react";
 import { redirect, useRouter } from "next/navigation";
 import { toast } from "sonner";
 import ForgotPasswordModal from "@/components/auth/ForgotPasswordModal";
+import { useSanitizedForm } from "@/hooks/useSanitizedForm";
 
 const Page = () => {
   const { data: session, status } = useSession();
   const router = useRouter();
 
-  const [form, setForm] = useState({ email: "", password: "" });
+  const [form, setForm, handleChange] = useSanitizedForm({ email: "", password: "" });
   const [rememberMe, setRememberMe] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -47,11 +48,7 @@ const Page = () => {
         console.error("Error clearing corrupted data:", e);
       }
     }
-  }, []);
-
-  const handleChange = (e) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
-  };
+  }, [setForm]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();

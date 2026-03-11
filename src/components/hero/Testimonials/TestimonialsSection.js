@@ -6,6 +6,7 @@ import {
   CarouselContent,
   CarouselItem,
 } from "@/components/ui/carousel";
+import Link from "next/link";
 import React from "react";
 
 export const TestimonialsSection = () => {
@@ -67,8 +68,11 @@ export const TestimonialsSection = () => {
           variant={"primaryForeground"}
           size={"primaryForeground"}
           className="mt-8 flex items-center gap-2"
+          asChild
         >
-          Rate your doctor
+          <Link href="/surgeons?scroll=section">
+            Rate your doctor
+          </Link>
         </Button>
       </div>
     </section>
