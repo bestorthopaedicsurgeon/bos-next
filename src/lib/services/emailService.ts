@@ -1,4 +1,6 @@
 import nodemailer from 'nodemailer';
+import path from 'path';
+
 import {
   getOTPEmailTemplate,
   getNotificationTemplate,
@@ -28,6 +30,15 @@ export const transporter = nodemailer.createTransport({
   },
 });
 
+// Common attachments for all emails
+const commonAttachments = [
+  {
+    filename: 'bos-logo-2.png',
+    path: path.join(process.cwd(), 'public', 'logos', 'bos-logo-2.png'),
+    cid: 'logo' // same cid as in the html template
+  }
+];
+
 export function generateOTP(): string {
   // Generate a 6-digit OTP
   return Math.floor(100000 + Math.random() * 900000).toString();
@@ -42,6 +53,7 @@ export async function sendOTP(email: string, otp: string): Promise<void> {
     subject: 'Verify Your Email - Best Orthopedic Surgeons',
     text,
     html,
+    attachments: commonAttachments,
   };
 
   try {
@@ -77,6 +89,7 @@ export async function sendEmail({ to, subject, message, actionText, actionLink }
     subject,
     text,
     html,
+    attachments: commonAttachments,
   };
 
   try {
@@ -107,6 +120,7 @@ export async function sendWelcomeEmail(email: string, userName: string): Promise
     subject: 'Welcome to Best Orthopedic Surgeons! 🎉',
     text,
     html,
+    attachments: commonAttachments,
   };
 
   try {
@@ -139,6 +153,7 @@ export async function sendAppointmentConfirmation(
     subject: 'Appointment Confirmed - Best Orthopedic Surgeons',
     text,
     html,
+    attachments: commonAttachments,
   };
 
   try {
@@ -162,6 +177,7 @@ export async function sendPasswordReset(email: string, resetLink: string, userNa
     subject: 'Reset Your Password - Best Orthopedic Surgeons',
     text,
     html,
+    attachments: commonAttachments,
   };
 
   try {
@@ -185,6 +201,7 @@ export async function sendClaimApprovedEmail(email: string, userName: string, pa
     subject: 'Doctor Profile Claim Approved! 🩺',
     text,
     html,
+    attachments: commonAttachments,
   };
 
   try {
@@ -208,6 +225,7 @@ export async function sendClaimSubmittedEmail(email: string, userName: string): 
     subject: 'Claim Request Received - Best Orthopedic Surgeons 🩺',
     text,
     html,
+    attachments: commonAttachments,
   };
 
   try {

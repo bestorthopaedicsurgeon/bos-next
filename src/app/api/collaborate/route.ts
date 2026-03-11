@@ -1,5 +1,7 @@
 import { NextResponse, NextRequest } from 'next/server';
+import path from 'path';
 import { transporter } from '@/lib/services/emailService';
+import { getNotificationTemplate } from '@/lib/services/emailTemplates';
 
 // The email address where collaboration requests will be sent
 const COLLABORATE_EMAIL = 'info@bestorthopaedicsurgeon.com.au';
@@ -16,52 +18,34 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // Email content for the collaboration request
-    const htmlContent = `
-      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
-        <h2 style="color: #217B7E; border-bottom: 2px solid #217B7E; padding-bottom: 10px;">
-          New Collaboration Request
-        </h2>
-        
-        <div style="background-color: #f9f9f9; padding: 20px; border-radius: 8px; margin: 20px 0;">
-          <p style="margin: 10px 0;"><strong>Name:</strong> ${name}</p>
-          <p style="margin: 10px 0;"><strong>Email:</strong> <a href="mailto:${email}">${email}</a></p>
-        </div>
-        
-        <div style="margin: 20px 0;">
-          <h3 style="color: #333;">Why they want to collaborate:</h3>
-          <p style="background-color: #fff; padding: 15px; border-left: 4px solid #217B7E; margin: 10px 0;">
-            ${reason.replace(/\n/g, '<br>')}
-          </p>
-        </div>
-        
-        <hr style="border: none; border-top: 1px solid #eee; margin: 20px 0;">
-        <p style="color: #666; font-size: 12px;">
-          This email was sent from the Best Orthopaedic Surgeons website collaboration form.
-        </p>
-      </div>
-    `;
-
-    const textContent = `
-New Collaboration Request
-
+    // Use standard notification template for consistency
+    const { html, text } = getNotificationTemplate(
+      `Collaboration Request from ${name}`,
+      `
 Name: ${name}
 Email: ${email}
 
 Why they want to collaborate:
 ${reason}
-
----
-This email was sent from the Best Orthopaedic Surgeons website collaboration form.
-    `;
+      `,
+      "View on Website",
+      process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000"
+    );
 
     const mailOptions = {
       from: `"Best Orthopedic Surgeons" <${process.env.EMAIL_USERNAME}>`,
       to: COLLABORATE_EMAIL,
-      replyTo: email, // So you can reply directly to the person
+      replyTo: email,
       subject: `Collaboration Request from ${name}`,
-      text: textContent,
-      html: htmlContent,
+      text: text,
+      html: html,
+      attachments: [
+        {
+          filename: 'bos-logo-2.png',
+          path: path.join(process.cwd(), 'public', 'logos', 'bos-logo-2.png'),
+          cid: 'logo'
+        }
+      ],
     };
 
     await transporter.sendMail(mailOptions);
