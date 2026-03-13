@@ -5,6 +5,7 @@ import { useSession } from "next-auth/react";
 import { Checkbox } from "@/components/ui/checkbox";
 import { submitDoctorReview } from "@/lib/apiCalls/client/doctor";
 import { toast } from "sonner";
+import { useSanitizedForm } from "@/hooks/useSanitizedForm";
 
 export default function ReviewForm({ className, doctorId, onReviewSubmit }) {
   const { data: session, status } = useSession();
@@ -13,7 +14,7 @@ export default function ReviewForm({ className, doctorId, onReviewSubmit }) {
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
 
-  const [formData, setFormData] = useState({
+  const [formData, setFormData, handleChange] = useSanitizedForm({
     name: "",
     email: "",
     review: "",
@@ -33,14 +34,6 @@ export default function ReviewForm({ className, doctorId, onReviewSubmit }) {
       }));
     }
   }, [isLoggedIn, session]);
-
-  const handleChange = (e) => {
-    const { name, value, type, checked } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: type === "checkbox" ? checked : value,
-    }));
-  };
 
   const handleRatingChange = (category, value) => {
     setFormData((prev) => ({

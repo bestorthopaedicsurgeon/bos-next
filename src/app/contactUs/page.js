@@ -3,29 +3,7 @@ import React, { useState, useCallback } from "react";
 import { Checkbox } from "@/components/ui/checkbox";
 import { submitContactForm } from '@/lib/apiCalls/client/ContactUs';
 import { toast } from "sonner";
-// Utility functions for sanitization and validation
-const sanitizeInput = (input) => {
-  if (typeof input !== 'string') return '';
-  return input
-    .replace(/[<>\"'&]/g, '') // Remove potentially harmful characters
-    .replace(/\s{3,}/g, '  ') // Replace 3+ consecutive spaces with 2 spaces (less aggressive)
-    .substring(0, 500); // Limit length
-};
-
-const validateEmail = (email) => {
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  return emailRegex.test(email);
-};
-
-const validatePhone = (phone) => {
-  const phoneRegex = /^[\d\s\-\+\(\)]+$/;
-  return phoneRegex.test(phone) && phone.replace(/\D/g, '').length >= 8;
-};
-
-const validateName = (name) => {
-  const nameRegex = /^[a-zA-Z\s'-]{2,50}$/;
-  return nameRegex.test(name);
-};
+import { sanitizeInput, validateEmail, validateName, validatePhone } from "@/lib/sanitize";
 
 const formField = "flex flex-col gap-2 max-md:col-span-2";
 const inputField = "border border-gray-300 rounded-md p-3 focus:outline-none focus:border-primary";

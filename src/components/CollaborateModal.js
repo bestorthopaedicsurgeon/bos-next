@@ -9,24 +9,17 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import { useSanitizedForm } from "@/hooks/useSanitizedForm";
 
 const CollaborateModal = ({ children }) => {
   const [isOpen, setIsOpen] = useState(false);
-  const [formData, setFormData] = useState({
+  const [formData, setFormData, handleInputChange] = useSanitizedForm({
     name: "",
     email: "",
     reason: "",
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [message, setMessage] = useState("");
-
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
-  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();

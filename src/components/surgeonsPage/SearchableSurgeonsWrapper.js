@@ -1,22 +1,52 @@
 "use client";
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { HeroSection } from "./Hero";
 import { AllSurgeons } from "./AllSurgeons";
 
 export const SearchableSurgeonsWrapper = () => {
   const [searchResults, setSearchResults] = useState(null);
   const [isSearching, setIsSearching] = useState(false);
+  const heroRef = useRef(null);
+
+  // When landing with ?scroll=section (+100) or ?scroll=section_high (-100): scroll then clean URL
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const params = new URLSearchParams(window.location.search);
+    const scroll = params.get("scroll");
+    if (scroll !== "section" && scroll !== "section_high") return;
+
+    const baseHeight = heroRef.current?.offsetHeight ?? 0;
+    const offset = scroll === "section" ? 100 : -180;
+    const scrollTop = Math.max(0, baseHeight + offset);
+
+    const scrollToPosition = () => {
+      window.scrollTo({ top: scrollTop, behavior: "smooth" });
+    };
+    const cleanUrl = () => {
+      window.history.replaceState({}, "", "/surgeons");
+    };
+
+    const t = setTimeout(() => {
+      scrollToPosition();
+      cleanUrl();
+    }, 100);
+    return () => clearTimeout(t);
+  }, []);
 
   return (
     <>
-      <HeroSection 
-        onSearchResults={setSearchResults} 
-        onSearchStateChange={setIsSearching}
-      />
-      <AllSurgeons 
-        searchResults={searchResults} 
+      <div >
+        <HeroSection
+          onSearchResults={setSearchResults}
+          onSearchStateChange={setIsSearching}
+        />
+      </div>
+      <div ref={heroRef}>
+      <AllSurgeons
+        searchResults={searchResults}
         isSearching={isSearching}
       />
+      </div>
     </>
   );
 };

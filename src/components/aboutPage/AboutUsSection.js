@@ -25,11 +25,11 @@ export const AboutUsSection = () => {
             various specialties — helping you make informed decisions for your
             health with confidence and ease.
           </p>
-          <Link href="/surgeons">
-          <Button className="mt-8" variant="primary" size="primary">
-            Find Your Surgeon
+          <Button className="mt-8" variant="primary" size="primary" asChild>
+            <Link href="/surgeons?scroll=section_high">
+              Find Your Surgeon
+            </Link>  
           </Button>
-          </Link>
         </div>
       </div>
     </section>
