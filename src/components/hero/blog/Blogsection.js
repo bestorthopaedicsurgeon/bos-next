@@ -21,15 +21,16 @@ export const Blogsection = async () => {
           Explore insightful blogs and practical health tips designed to help you live a healthier, happier life. From nutrition and fitness to mental well-being, we share everything you need to stay on track.
           </p>
           <BlogCarousel blogs={blogs} />
-          <Link href="/blog">
             <Button
               variant={"primaryForeground"}
               size={"primaryForeground"}
               className="mt-8 flex items-center gap-2"
+              asChild
             >
+              <Link href="/blog?scroll=section">
               Read More Blogs
+              </Link>
             </Button>
-          </Link>
         </div>
       </div>
     </section>

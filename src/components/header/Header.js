@@ -31,13 +31,13 @@ export default function Header() {
                 alt="Logo"
                 width={200}
                 height={200}
-                className="max-sm:w-30 max-sm:h-30 w-30"
+                className="max-sm:w-30 max-sm:h-20 w-30"
               />
             </Link>
           </div>
 
-          {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center gap-6">
+          {/* Desktop Navigation - visible from 992px up */}
+          <div className="hidden min-[992px]:flex items-center gap-6">
             {/* Middle: Nav Items */}
             <nav className="ml-12 gap-6 flex">
               <NavLinks />
@@ -54,8 +54,8 @@ export default function Header() {
             </div>
           </div>
 
-          {/* Mobile Menu Button and Profile */}
-          <div className="md:hidden flex items-center gap-4">
+          {/* Mobile Menu Button and Profile - visible below 992px */}
+          <div className="flex min-[992px]:hidden items-center gap-4">
             
             <button
               onClick={toggleMobileMenu}
@@ -77,12 +77,12 @@ export default function Header() {
           <>
             {/* Overlay */}
             <div 
-              className="fixed inset-0 bg-[rgba(255,255,255,0.4)] bg-opacity-50 z-40 md:hidden"
+              className="fixed inset-0 bg-[rgba(255,255,255,0.4)] bg-opacity-50 z-40 min-[992px]:hidden"
               onClick={closeMobileMenu}
             />
             
             {/* Mobile Menu */}
-            <div className="absolute top-full left-0 right-0 bg-white border-b rounded-lg shadow-lg z-50 md:hidden">
+            <div className="absolute top-full left-0 right-0 bg-white border-b rounded-lg shadow-lg z-50 min-[992px]:hidden">
               <nav className="flex flex-col">
                 <div onClick={closeMobileMenu}>
                   <NavLinks isMobile={true} />

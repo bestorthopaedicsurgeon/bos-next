@@ -141,7 +141,7 @@ export const HeroSection = ({ onSearchResults, onSearchStateChange }) => {
           </h1>
           <div className="hidden h-[352px] w-full max-w-[308px] max-lg:mx-auto max-lg:flex max-lg:justify-center">
             <Image
-              src="/surgeons/surgons.png"
+              src="/surgeons/surgeons.png"
               alt="hero"
               width={500}
               height={500}
@@ -183,7 +183,7 @@ export const HeroSection = ({ onSearchResults, onSearchStateChange }) => {
         </div>
         <div className="mb-[-64px] max-h-[607px] w-full max-w-[596px] max-lg:hidden">
           <Image
-            src="/surgeons/surgons.png"
+            src="/surgeons/surgeons.png"
             alt="hero"
             width={500}
             height={500}

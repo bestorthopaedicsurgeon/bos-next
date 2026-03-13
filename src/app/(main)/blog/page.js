@@ -1,12 +1,10 @@
-import { Blogs } from "@/components/blogPage/Blogs";
-import { HeroSection } from "@/components/blogPage/Hero";
+import { BlogPageWrapper } from "@/components/blogPage/BlogPageWrapper";
 import React from "react";
 
 const BlogPage = () => {
   return (
     <div className="container">
-      <HeroSection />
-      <Blogs />
+      <BlogPageWrapper />
     </div>
   );
 };
