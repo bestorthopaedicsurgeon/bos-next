@@ -145,7 +145,7 @@ export const FeaturedSurgeonsSection = ({ searchResults = null, isSearching = fa
       ) : (
         <div className="grid grid-cols-1 gap-8 lg:grid-cols-2">
           {displayDoctors?.map((doctor, index) => (
-            <DoctorCard key={doctor.id || index} {...doctor} />
+            <DoctorCard key={doctor.id || index} {...doctor} reviewButton={true} />
           ))}
         </div>
       )}
