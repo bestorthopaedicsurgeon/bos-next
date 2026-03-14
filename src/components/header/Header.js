@@ -31,7 +31,7 @@ export default function Header() {
                 alt="Logo"
                 width={200}
                 height={200}
-                className="max-sm:w-30 max-sm:h-20 w-30"
+                className="max-sm:w-30 max-sm:h-20 w-40"
               />
             </Link>
           </div>
