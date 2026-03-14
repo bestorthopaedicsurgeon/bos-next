@@ -136,7 +136,7 @@ const Page = () => {
   };
 
   const handleImageUpload = async () => {
-    if (!form.image) return alert("Please upload an image");
+    if (!form.image) return toast.error("Please upload an image");
 
     const formData = new FormData();
     formData.append("file", form.image);
@@ -149,7 +149,7 @@ const Page = () => {
 
     const result = await res.json();
 
-    if (!res.ok) return alert("Upload failed");
+    if (!res.ok) return toast.error("Upload failed");
 
     console.log("Public URL:", result.url);
     return true;
@@ -158,20 +158,26 @@ const Page = () => {
     // await updateDoctor({ imageUrl: result.url });
   };
 
+  // Add current input as tag (used by Enter key, blur, and Add button for better UX)
+  const addCurrentInputAsTag = (field) => {
+    const value = (inputs?.[field] ?? "").trim();
+    if (!value) return;
+    setForm((prev) => {
+      if (prev[field].includes(value)) return prev;
+      return { ...prev, [field]: [...prev[field], value] };
+    });
+    setInputs((prev) => ({ ...prev, [field]: "" }));
+  };
+
   const handleKeyDown = (field) => (e) => {
-    if (e.key === "Enter" && inputs[field].trim()) {
+    if (e.key === "Enter") {
       e.preventDefault();
-      console.log(inputs);
-      console.log("form", form);
-      const trimmed = inputs[field].trim();
-      if (!form[field].includes(trimmed)) {
-        setForm((prev) => ({
-          ...prev,
-          [field]: [...prev[field], trimmed],
-        }));
-      }
-      setInputs((prev) => ({ ...prev, [field]: "" }));
+      addCurrentInputAsTag(field);
     }
+  };
+
+  const handleTagInputBlur = (field) => () => {
+    addCurrentInputAsTag(field);
   };
 
   const handleRemoveValue = (field, idx) => {
@@ -241,8 +247,8 @@ const Page = () => {
     if (!form.title) return toast.error("Please select your title.");
     if (!form.fname) return toast.error("First name is required.");
     if (!form.lname) return toast.error("Last name is required.");
-    if (isNaN(parseInt(form.exp)))
-      return toast.error("Please select your years of experience.");
+    // if (isNaN(parseInt(form.exp)))
+    //   return toast.error("Please select your years of experience.");
     if (!form.desig) return toast.error("Please select your designation.");
     if (practiceEntries.length === 0)
       return toast.error("Practice/Clinic Details is required.");
@@ -420,6 +426,40 @@ const Page = () => {
         // setAvailability(base);
         console.log("Registration successful:", data);
         toast.success("Registration successful!");
+        setSelectedSpecialties([])
+        setForm({
+          qualifications: [],
+            awardsPublications: [],
+            registrationsAssociations: [],
+            hospitalAffiliation: [],
+            title: "",
+            fname: "",
+            lname: "",
+            exp: "",
+            desig: "",
+            about_self: "",
+            location: "",
+
+        })
+        setInputs({
+          qualifications: "",
+          awardsPublications: "",
+          registrationsAssociations: "",
+        })
+        setQualifications([])
+        setQualificationInput()
+        setPracticeEntries([])
+        setHospitalAffiliations([])
+        setDoctorAvailability([])
+        setPracticeForm({
+        practiceName: "",
+            clinicAddress: "",
+            postCode: "",
+            phone: "",
+
+        })
+        setCustomSpecialties([])
+        setCustomInput("")
         const imageUploaded = await handleImageUpload(doctorId);
         if (imageUploaded) {
           console.log("Image uploaded successfully");
@@ -711,7 +751,7 @@ const Page = () => {
             onChange={handleInputChange("lname")}
           />
         </div>
-        <div className={formField}>
+        {/* <div className={formField}>
           <label htmlFor="exp">Experience</label>
           <input
             type="text"
@@ -722,7 +762,7 @@ const Page = () => {
             value={form.exp}
             onChange={handleInputChange("exp")}
           />
-        </div>
+        </div> */}
         <div className={formField}>
           <label htmlFor="desig">Designation</label>
           <select
@@ -760,20 +800,14 @@ const Page = () => {
             })}
           </select>
         </div>
-        {/* Practice/Clinic Entries Tag Box */}
         <div className={`${formField} col-span-2`}>
-          <label>Practice/Clinic Details</label>
+          <label htmlFor="hosp_aff">Hospital affiliations</label>
           <div className="flex flex-col gap-2">
             <EditableEntry
-              entries={practiceEntries}
-              setEntries={setPracticeEntries}
-              fieldNames={[
-                "practiceName",
-                "clinicAddress",
-                "postCode",
-                "phone",
-              ]}
-              renderLabel={(entry) => entry.practiceName}
+              entries={hospitalAffiliations}
+              setEntries={setHospitalAffiliations}
+              fieldNames={["name", "address"]}
+              renderLabel={(entry) => entry.name}
             />
           </div>
         </div>
@@ -788,6 +822,23 @@ const Page = () => {
                 scrollbarColor: "#2F797B #D9D9D9",
               }}
             >
+                {/* Input field + Add button */}
+                <div className="flex gap-2">
+                        <input
+                          type="text"
+                          value={customInput}
+                          onChange={(e) => setCustomInput(e.target.value)}
+                          placeholder="Enter other specialty"
+                          className="w-full rounded border border-gray-300 px-3 py-2 text-sm"
+                        />
+                        <button
+                          type="button"
+                          onClick={handleAddCustomSpecialty}
+                          className="rounded bg-primary p-2 text-white hover:bg-primary/80"
+                        >
+                          <Plus size={18} />
+                        </button>
+                      </div>
               {subspecialities.map((specialty, idx) => {
                 if (specialty.value === "Other") {
                   return (
@@ -809,23 +860,7 @@ const Page = () => {
                         </div>
                       ))}
 
-                      {/* Input field + Add button */}
-                      <div className="flex gap-2">
-                        <input
-                          type="text"
-                          value={customInput}
-                          onChange={(e) => setCustomInput(e.target.value)}
-                          placeholder="Enter other specialty"
-                          className="w-full rounded border border-gray-300 px-3 py-2 text-sm"
-                        />
-                        <button
-                          type="button"
-                          onClick={handleAddCustomSpecialty}
-                          className="rounded bg-primary p-2 text-white hover:bg-primary/80"
-                        >
-                          <Plus size={18} />
-                        </button>
-                      </div>
+                    
                     </div>
                   );
                 }
@@ -903,7 +938,7 @@ const Page = () => {
         <div className={formField}>
           <label htmlFor="reg_assoc">Registrations & Associations</label>
           <div className="flex flex-col gap-2">
-            <div className="items-starts border-primary flex min-h-[240px] flex-wrap content-start rounded-md border bg-transparent p-3">
+            <div className="items-starts border-primary flex min-h-[240px] flex-wrap content-start gap-2 rounded-md border bg-transparent p-3">
               {form?.registrationsAssociations?.map((q, idx) => (
                 <span
                   key={idx}
@@ -922,17 +957,29 @@ const Page = () => {
                   </button>
                 </span>
               ))}
-              <input
-                type="text"
-                className="h-fit min-w-[120px] flex-1 border-none outline-none"
-                placeholder="Type and press Enter..."
-                value={inputs?.registrationsAssociations}
-                onChange={handleMultiInputChange("registrationsAssociations")}
-                onKeyDown={handleKeyDown("registrationsAssociations")}
-              />
+              <div className="flex min-w-[120px] flex-1 basis-full items-center gap-2">
+                <input
+                  type="text"
+                  className="h-fit flex-1 border-none outline-none"
+                  placeholder="Type then press Enter, click Add, or tap outside"
+                  value={inputs?.registrationsAssociations ?? ""}
+                  onChange={handleMultiInputChange("registrationsAssociations")}
+                  onKeyDown={handleKeyDown("registrationsAssociations")}
+                  onBlur={handleTagInputBlur("registrationsAssociations")}
+                />
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  className="shrink-0 bg-primary text-white"
+                  onClick={() => addCurrentInputAsTag("registrationsAssociations")}
+                >
+                  Add
+                </Button>
+              </div>
             </div>
             <span className="text-xs text-gray-500">
-              Press Enter to add each qualification as a tag.
+              Add each item (e.g. AHPRA, AOA, FRACS). Press Enter, click Add, or leave the field to save.
             </span>
           </div>
           {/* <textarea
@@ -947,7 +994,7 @@ const Page = () => {
         <div className={formField}>
           <label htmlFor="qual">Qualifications</label>
           <div className="flex flex-col gap-2">
-            <div className="items-starts border-primary flex min-h-[240px] flex-wrap content-start rounded-md border bg-transparent p-3">
+            <div className="items-starts border-primary flex min-h-[240px] flex-wrap content-start gap-2 rounded-md border bg-transparent p-3">
               {form?.qualifications?.map((q, idx) => (
                 <span
                   key={idx}
@@ -964,24 +1011,36 @@ const Page = () => {
                   </button>
                 </span>
               ))}
-              <input
-                type="text"
-                className="h-fit min-w-[120px] flex-1 border-none outline-none"
-                placeholder="Type and press Enter..."
-                value={inputs?.qualifications}
-                onChange={handleMultiInputChange("qualifications")}
-                onKeyDown={handleKeyDown("qualifications")}
-              />
+              <div className="flex min-w-[120px] flex-1 basis-full items-center gap-2">
+                <input
+                  type="text"
+                  className="h-fit flex-1 border-none outline-none"
+                  placeholder="Type then press Enter, click Add, or tap outside"
+                  value={inputs?.qualifications ?? ""}
+                  onChange={handleMultiInputChange("qualifications")}
+                  onKeyDown={handleKeyDown("qualifications")}
+                  onBlur={handleTagInputBlur("qualifications")}
+                />
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  className="shrink-0 bg-primary text-white"
+                  onClick={() => addCurrentInputAsTag("qualifications")}
+                >
+                  Add
+                </Button>
+              </div>
             </div>
             <span className="text-xs text-gray-500">
-              Press Enter to add each qualification as a tag.
+              Add each qualification. Press Enter, click Add, or leave the field to save.
             </span>
           </div>
         </div>
         <div className={formField}>
           <label htmlFor="qual">Awards & Publications</label>
           <div className="flex flex-col gap-2">
-            <div className="items-starts border-primary flex min-h-[240px] flex-wrap content-start rounded-md border bg-transparent p-3">
+            <div className="items-starts border-primary flex min-h-[240px] flex-wrap content-start gap-2 rounded-md border bg-transparent p-3">
               {form?.awardsPublications?.map((q, idx) => (
                 <span
                   key={idx}
@@ -998,31 +1057,50 @@ const Page = () => {
                   </button>
                 </span>
               ))}
-              <input
-                type="text"
-                className="h-fit min-w-[120px] flex-1 border-none outline-none"
-                placeholder="Type and press Enter..."
-                value={inputs?.awardsPublications}
-                onChange={handleMultiInputChange("awardsPublications")}
-                onKeyDown={handleKeyDown("awardsPublications")}
-              />
+              <div className="flex min-w-[120px] flex-1 basis-full items-center gap-2">
+                <input
+                  type="text"
+                  className="h-fit flex-1 border-none outline-none"
+                  placeholder="Type then press Enter, click Add, or tap outside"
+                  value={inputs?.awardsPublications ?? ""}
+                  onChange={handleMultiInputChange("awardsPublications")}
+                  onKeyDown={handleKeyDown("awardsPublications")}
+                  onBlur={handleTagInputBlur("awardsPublications")}
+                />
+                <Button
+                  type="button"
+                  variant="outline "
+                  size="sm"
+                  className="shrink-0 bg-primary text-white"
+                  onClick={() => addCurrentInputAsTag("awardsPublications")}
+                >
+                  Add
+                </Button>
+              </div>
             </div>
             <span className="text-xs text-gray-500">
-              Press Enter to add each awards and Publications as a tag.
+              Add each award or publication. Press Enter, click Add, or leave the field to save.
             </span>
           </div>
         </div>
-        <div className={formField}>
-          <label htmlFor="hosp_aff">Hospital affiliations</label>
+        {/* Practice/Clinic Entries Tag Box */}
+        <div className={`${formField}`}>
+          <label>Practice/Clinic Details</label>
           <div className="flex flex-col gap-2">
             <EditableEntry
-              entries={hospitalAffiliations}
-              setEntries={setHospitalAffiliations}
-              fieldNames={["name", "address"]}
-              renderLabel={(entry) => entry.name}
+              entries={practiceEntries}
+              setEntries={setPracticeEntries}
+              fieldNames={[
+                "practiceName",
+                "clinicAddress",
+                "postCode",
+                "phone",
+              ]}
+              renderLabel={(entry) => entry.practiceName}
             />
           </div>
         </div>
+     
         <div className={formField}>
           <label htmlFor="avail">Set Your Availability</label>
           <Dialog
