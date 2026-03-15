@@ -27,24 +27,25 @@ const DocInfo = ({ docProfile_Details, showLocation = true }) => {
               className={`${info_style}`}
             >{`${doctorProfile?.title ? `${doctorProfile?.title}. ` : ""}${data.name}`}</p>
           </div>
-          <div>
+          {/* <div>
             <p className={`${heading_style}`}>Experience</p>
             <p className={`${info_style}`}>{doctorProfile.experience}</p>
-          </div>
+          </div> */}
           <div>
             <p className={`${heading_style}`}>Subspeciality</p>
             <p className={`${info_style} max-w-52`}>
-              {doctorProfile?.subspecialities?.[0]?.split(",")[0] || "Not specified"}
+              {doctorProfile?.subspecialities?.[0]?.split(",")[0] ||
+                "Not specified"}
             </p>
           </div>
           <div>
             <p className={`${heading_style}`}>Hospital</p>
             <p className={`${info_style}`}>{doctorProfile?.clinicAddress}</p>
           </div>
-          <div>
+          {/* <div>
             <p className={`${heading_style}`}>Email Address</p>
             <p className={`${info_style}`}>{data?.email}</p>
-          </div>
+          </div> */}
           <div>
             <p className={`${heading_style}`}>Designation</p>
             <p className={`${info_style}`}>{doctorProfile?.designation}</p>
@@ -53,14 +54,14 @@ const DocInfo = ({ docProfile_Details, showLocation = true }) => {
             <p className={`${heading_style}`}>Qualification</p>
             <p className={`${info_style}`}>{doctorProfile?.qualification}</p>
           </div>
-          <div>
+          {/* <div>
             <p className={`${heading_style}`}>Consultation Fee</p>
             <p className={`${info_style}`}>EURO {doctorProfile?.fee}</p>
           </div>
           <div>
             <p className={`${heading_style}`}>Consultation Fee (Online)</p>
             <p className={`${info_style}`}>EURO {doctorProfile?.onlineFee}</p>
-          </div>
+          </div> */}
         </div>
       </div>
       {/* doc location  */}
