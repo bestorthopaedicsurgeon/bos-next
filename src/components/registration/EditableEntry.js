@@ -5,6 +5,7 @@ const {
   PopoverContent,
 } = require("@/components/ui/popover");
 const { Plus } = require("lucide-react");
+import { sanitizeFormValue } from "@/lib/sanitize";
 
 const EditableEntry = ({ entries, setEntries, fieldNames, renderLabel }) => {
   const [editEntry, setEditEntry] = useState(null);
@@ -21,7 +22,7 @@ const EditableEntry = ({ entries, setEntries, fieldNames, renderLabel }) => {
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
+    setFormData((prev) => ({ ...prev, [name]: sanitizeFormValue(value) }));
   };
 
   const handleAdd = () => {
@@ -88,7 +89,7 @@ const EditableEntry = ({ entries, setEntries, fieldNames, renderLabel }) => {
                       onChange={(e) =>
                         setEditEntry((prev) => ({
                           ...prev,
-                          [field]: e.target.value,
+                          [field]: sanitizeFormValue(e.target.value),
                         }))
                       }
                     />

@@ -10,11 +10,12 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import { useSanitizedForm } from "@/hooks/useSanitizedForm";
 
 const ClaimProfileModal = ({ children, doctorId }) => {
   const { data: session, status } = useSession();
   const [isOpen, setIsOpen] = useState(false);
-  const [formData, setFormData] = useState({
+  const [formData, setFormData, handleInputChange] = useSanitizedForm({
     name: "",
     email: "",
     phone: "",
@@ -24,14 +25,6 @@ const ClaimProfileModal = ({ children, doctorId }) => {
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [message, setMessage] = useState("");
-
-  const handleInputChange = (e) => {
-    const { name, value, type, checked } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: type === "checkbox" ? checked : value,
-    }));
-  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();

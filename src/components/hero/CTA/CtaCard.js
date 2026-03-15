@@ -3,7 +3,7 @@ import Image from "next/image";
 import Link from "next/link";
 import React from "react";
 
-export const CtaCard = ({ icon, title, description, button }) => {
+export const CtaCard = ({ icon, title, description, button, href = "/surgeons?scroll=section" }) => {
   return (
     <div className="relative flex flex-col items-center justify-center rounded-4xl bg-white px-8 py-24">
       <Image
@@ -15,17 +15,15 @@ export const CtaCard = ({ icon, title, description, button }) => {
       />
       <h2 className="font-dm-sans mb-2 text-[20px] text-center">{title}</h2>
       <p className="text-center text-[16px]">{description}</p>
-      
+
       <Button
-        className={"absolute bottom-[-28px]"}
-        variant={"primary"}
-        size={"primary"}
+        className="absolute bottom-[-28px]"
+        variant="primary"
+        size="primary"
+        asChild
       >
-        <Link href='/surgeons'>
-        {button}
-        </Link>
+        <Link href={href}>{button}</Link>
       </Button>
-    
     </div>
   );
 };

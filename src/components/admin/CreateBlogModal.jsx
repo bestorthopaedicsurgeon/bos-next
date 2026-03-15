@@ -11,18 +11,14 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { useState } from "react";
+import { useSanitizedForm } from "@/hooks/useSanitizedForm";
 
 export default function CreateBlogModal({ open, setOpen, onSubmit }) {
-  const [form, setForm] = useState({
+  const [form, setForm, handleChange] = useSanitizedForm({
     title: "",
     content: "",
     author: "",
   });
-
-  const handleChange = (e) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
-  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();

@@ -16,9 +16,10 @@ import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import OtpVerification from "@/components/auth/OtpVerification";
+import { useSanitizedForm } from "@/hooks/useSanitizedForm";
 
 const Page = () => {
-  const [formData, setFormData] = useState({
+  const [formData, setFormData, handleInputChange] = useSanitizedForm({
     firstName: "",
     lastName: "",
     email: "",
@@ -31,14 +32,6 @@ const Page = () => {
   const [showOtpModal, setShowOtpModal] = useState(false);
   const [otpLoading, setOtpLoading] = useState(false);
   const router = useRouter();
-
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: value
-    }));
-  };
 
   const handlePhoneChange = (phone) => {
     setFormData(prev => ({
