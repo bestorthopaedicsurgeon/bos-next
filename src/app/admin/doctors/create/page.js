@@ -22,7 +22,6 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
-import UsePresenceData from "@/components/ui/slider.jsx";
 import { ChevronLeft, ChevronRight, Edit, Check, Plus, X } from "lucide-react";
 // import { Pencil } from "lucide";
 import { Clock3, PencilIcon, User } from "lucide-react";
