@@ -26,14 +26,14 @@ const page = async () => {
           step2={docProfile_Details.doc_details[0].name}
         />
       ))}
-      <div className="mt-30 flex flex-wrap justify-center min-lg:gap-10">
+      <div className="w-full max-w-7xl mx-auto flex flex-col min-lg:flex-row items-start gap-10 mt-10">
         {/* left area    */}
-        <div>
+        <div className="flex-1 w-full flex flex-col gap-5">
           <DocProfile docProfile_Details={docProfile_Details} />
           <DocInfo docProfile_Details={docProfile_Details} />
         </div>
         {/* right area */}
-        <div>
+        <div className="w-full min-lg:w-[450px] flex flex-col gap-5 xl:w-[500px]">
           <AvailabilityCalendar />
           <HospitalAffiliations />
         </div>

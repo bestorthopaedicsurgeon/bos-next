@@ -49,6 +49,8 @@ const Page = () => {
     awardsPublications: [],
     registrationsAssociations: [],
     hospitalAffiliation: [],
+    groupName: "",
+    officialEmail: "",
   });
   const [inputs, setInputs] = useState();
 
@@ -339,6 +341,8 @@ const Page = () => {
       if (form.desig) data.designation = form.desig;
       if (form.about_self) data.about = form.about_self;
       if (form.location) data.location = form.location;
+      if (form.groupName) data.groupName = form.groupName;
+      if (form.officialEmail) data.officialEmail = form.officialEmail;
 
       // Arrays: check if defined AND has at least one item
       if (
@@ -439,6 +443,8 @@ const Page = () => {
             desig: "",
             about_self: "",
             location: "",
+            groupName: "",
+            officialEmail: "",
 
         })
         setInputs({
@@ -800,13 +806,35 @@ const Page = () => {
             })}
           </select>
         </div>
+        <div className={formField}>
+          <label htmlFor="officialEmail">Official Email Address</label>
+          <input
+            type="email"
+            name="officialEmail"
+            id="officialEmail"
+            className={inputField}
+            value={form.officialEmail}
+            onChange={handleInputChange("officialEmail")}
+          />
+        </div>
+        <div className={formField}>
+          <label htmlFor="groupName">Group Name</label>
+          <input
+            type="text"
+            name="groupName"
+            id="groupName"
+            className={inputField}
+            value={form.groupName}
+            onChange={handleInputChange("groupName")}
+          />
+        </div>
         <div className={`${formField} col-span-2`}>
           <label htmlFor="hosp_aff">Hospital affiliations</label>
           <div className="flex flex-col gap-2">
             <EditableEntry
               entries={hospitalAffiliations}
               setEntries={setHospitalAffiliations}
-              fieldNames={["name", "address"]}
+              fieldNames={["name", "address", "phone"]}
               renderLabel={(entry) => entry.name}
             />
           </div>
