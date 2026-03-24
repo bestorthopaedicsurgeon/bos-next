@@ -48,7 +48,8 @@
     "react-phone-input-2": "^2.15.1",
     "sonner": "^2.0.6",
     "tailwind-merge": "^3.2.0",
-    "tailwind-scrollbar": "^4.0.2"
+    "tailwind-scrollbar": "^4.0.2",
+    "zod": "^4.3.6"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",

@@ -2,14 +2,31 @@ import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { getServerSession } from "next-auth";
 import { NextResponse } from "next/server";
+import { DoctorProfileSchema } from "@/lib/validations/doctor";
 
 export async function POST(req: Request): Promise<NextResponse> {
   try {
     const session = await getServerSession(authOptions);
     const body = await req.json();
-    let { userId: bodyUserId } = body;
+    // 1. Validate input
+    const validation = DoctorProfileSchema.safeParse(body);
+    if (!validation.success) {
+      return NextResponse.json(
+        {
+          success: false,
+          error: "Invalid input data",
+          details: validation.error.flatten().fieldErrors,
+        },
+        { status: 400 },
+      );
+    }
 
-    // const { practiceName, clinicAddress, state, practicePhone } = //   practices[0] || {};
+    const {
+      userId: bodyUserId,
+      doctorAvailability,
+      specificAvailability: _, // Not used in POST
+      ...restData
+    } = validation.data;
 
     let userId: string | undefined;
 
@@ -34,7 +51,7 @@ export async function POST(req: Request): Promise<NextResponse> {
 
     // Admin: use provided userId if any
     else if (session.user.role === "ADMIN") {
-      userId = bodyUserId ?? undefined;
+      userId = (bodyUserId as string) ?? undefined;
     }
 
     if (userId) {
@@ -53,25 +70,10 @@ export async function POST(req: Request): Promise<NextResponse> {
       }
     }
 
-    const data: any = {};
-
-    if ("title" in body) data.title = body.title;
-    if ("name" in body) data.name = body.name;
-    if ("experience" in body) data.experience = body.experience;
-    if ("designation" in body) data.designation = body.designation;
-    if ("practices" in body) data.practices = body.practices;
-    if ("subspecialities" in body) data.subspecialities = body.subspecialities;
-    if ("about" in body) data.about = body.about;
-    if ("registrationsAssociations" in body)
-      data.registrationsAssociations = body.registrationsAssociations;
-    if ("qualifications" in body) data.qualifications = body.qualifications;
-    if ("awardsPublications" in body)
-      data.awardsPublications = body.awardsPublications;
-    if ("hospitalAffiliations" in body)
-      data.hospitalAffiliations = body.hospitalAffiliations;
-    if ("doctorAvailability" in body)
-      data.DoctorAvailability = { create: body.doctorAvailability };
-    if ("location" in body) data.location = body.location;
+    const data: any = { ...restData };
+    if (doctorAvailability) {
+      data.DoctorAvailability = { create: doctorAvailability };
+    }
 
     let profile;
 
@@ -155,7 +157,27 @@ export async function PATCH(req: Request) {
       );
     }
 
-    // 3. Determine doctorId based on role
+    // 3. Validate input
+    const validation = DoctorProfileSchema.safeParse(body);
+    if (!validation.success) {
+      return NextResponse.json(
+        {
+          success: false,
+          error: "Invalid input data",
+          details: validation.error.flatten().fieldErrors,
+        },
+        { status: 400 },
+      );
+    }
+
+    const {
+      doctorAvailability,
+      specificAvailability,
+      userId: _, // Not updated via PATCH here
+      ...updateData
+    } = validation.data;
+
+    // 4. Determine doctorId based on role
     let doctorId: number | undefined;
 
     if (userRole === "ADMIN") {
@@ -182,7 +204,7 @@ export async function PATCH(req: Request) {
       doctorId = doctor.id;
     }
 
-    // 4. Optional: Validate doctorId
+    // 5. Optional: Validate doctorId
     if (!doctorId || isNaN(doctorId)) {
       return NextResponse.json(
         { success: false, error: "Invalid doctor ID" },
@@ -190,45 +212,23 @@ export async function PATCH(req: Request) {
       );
     }
 
-    // 5. Prepare updatable data
-    const data: any = {};
-
-    if ("title" in body) data.title = body.title;
-    if ("name" in body) data.name = body.name;
-    if ("experience" in body) data.experience = body.experience;
-    if ("designation" in body) data.designation = body.designation;
-    if ("practices" in body) data.practices = body.practices;
-    if ("subspecialities" in body) data.subspecialities = body.subspecialities;
-    if ("about" in body) data.about = body.about;
-    if ("registrationsAssociations" in body)
-      data.registrationsAssociations = body.registrationsAssociations;
-    if ("qualifications" in body) data.qualifications = body.qualifications;
-    if ("awardsPublications" in body)
-      data.awardsPublications = body.awardsPublications;
-    if ("hospitalAffiliations" in body)
-      data.hospitalAffiliations = body.hospitalAffiliations;
-    if ("location" in body) data.location = body.location;
-
     // 6. Perform update
     const updatedProfile = await prisma.doctorProfile.update({
       where: { id: doctorId },
-      data,
+      data: updateData,
     });
 
     // 7. Handle Doctor Availability (Weekly Schedule) - Delete + Create Strategy
-    if (
-      "doctorAvailability" in body &&
-      Array.isArray(body.doctorAvailability)
-    ) {
+    if (doctorAvailability && Array.isArray(doctorAvailability)) {
       // Delete existing availability for this doctor
       await prisma.doctorAvailabilityTime.deleteMany({
         where: { doctorId: doctorId },
       });
 
       // Create new availability records
-      if (body.doctorAvailability.length > 0) {
+      if (doctorAvailability.length > 0) {
         await prisma.doctorAvailabilityTime.createMany({
-          data: body.doctorAvailability.map((item: any) => ({
+          data: doctorAvailability.map((item: any) => ({
             doctorId: doctorId!,
             dayOfWeek: item.dayOfWeek,
             startTime: item.startTime,
@@ -241,11 +241,8 @@ export async function PATCH(req: Request) {
     }
 
     // 8. Handle Specific Availability (Date Overrides)
-    if (
-      "specificAvailability" in body &&
-      Array.isArray(body.specificAvailability)
-    ) {
-      for (const item of body.specificAvailability) {
+    if (specificAvailability && Array.isArray(specificAvailability)) {
+      for (const item of specificAvailability) {
         const date = new Date(item.date);
         date.setHours(0, 0, 0, 0); // Normalize to midnight
         
