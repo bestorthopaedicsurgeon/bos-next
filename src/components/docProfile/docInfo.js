@@ -69,7 +69,9 @@ const DocInfo = ({ docProfile_Details, showLocation = true }) => {
           </div>
           <div>
             <p className={`${heading_style}`}>Qualification</p>
-            <p className={`${info_style}`}>{doctorProfile?.qualification}</p>
+            <p className={`${info_style}`}>
+              {doctorProfile?.qualifications?.[0] || "Not specified"}
+            </p>
           </div>
         </div>
       </div>
@@ -104,7 +106,13 @@ const DocInfo = ({ docProfile_Details, showLocation = true }) => {
               )}
               </div>
                 <p className={`${heading_style}`}>Practice Name</p>
-                <p className={`${info_style} mb-3`}>{activePractice?.practiceName}</p>
+                <p className={`${info_style} mb-2`}>{activePractice?.practiceName}</p>
+                {activePractice?.clinicName && (
+                  <>
+                    <p className={`${heading_style}`}>Clinic Name</p>
+                    <p className={`${info_style} mb-3`}>{activePractice.clinicName}</p>
+                  </>
+                )}
                 
                 <p className={`${heading_style}`}>Address</p>
                 <a
@@ -129,7 +137,7 @@ const DocInfo = ({ docProfile_Details, showLocation = true }) => {
                 <iframe
                   key={currentLocationIndex}
                   src={`https://www.google.com/maps?q=${encodeURIComponent(
-                    `${activePractice?.practiceName ? activePractice.practiceName + " " : ""}${activePractice?.clinicAddress || ""}${activePractice?.postCode ? " " + activePractice.postCode : ""}`
+                    `${activePractice?.clinicName ? activePractice.clinicName + " " : ""}${activePractice?.practiceName ? activePractice.practiceName + " " : ""}${activePractice?.clinicAddress || ""}${activePractice?.postCode ? " " + activePractice.postCode : ""}`
                   )}&output=embed&z=15&t=m`}
                   className="w-full h-full min-h-[250px]"
                   style={{ border: "0", borderRadius: "9px" }}
@@ -157,6 +165,18 @@ const DocInfo = ({ docProfile_Details, showLocation = true }) => {
             >
               {doctorProfile?.hospitalAffiliations?.[0]?.address}
             </a>
+
+            {doctorProfile?.hospitalAffiliations?.[0]?.phone && (
+              <>
+                <p className={`${heading_style} mt-3`}>Phone Number</p>
+                <a
+                  href={`tel:${doctorProfile.hospitalAffiliations[0].phone}`}
+                  className={`${info_style} hover:text-primary hover:underline underline-offset-2 transition-colors`}
+                >
+                  {doctorProfile.hospitalAffiliations[0].phone}
+                </a>
+              </>
+            )}
           </div>
           <div className="w-full min-md:w-[350px] lg:w-[400px] p-2 flex">
             <iframe

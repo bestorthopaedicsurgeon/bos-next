@@ -45,6 +45,8 @@ const Page = () => {
   const [selectedSpecialties, setSelectedSpecialties] = useState([]);
   const [form, setForm] = useState({
     qualifications: [],
+    primaryQualification: "",
+    primaryQualificationOther: "",
     awardsPublications: [],
     registrationsAssociations: [],
     hospitalAffiliation: [],
@@ -358,11 +360,23 @@ const Page = () => {
         data.registrationsAssociations = form.registrationsAssociations;
       }
 
-      if (
-        Array.isArray(form.qualifications) &&
-        form.qualifications.length > 0
-      ) {
-        data.qualifications = form.qualifications;
+      const finalQualifications = [];
+      if (form.primaryQualification === "Other" && form.primaryQualificationOther) {
+        finalQualifications.push(form.primaryQualificationOther);
+      } else if (form.primaryQualification && form.primaryQualification !== "Other") {
+        finalQualifications.push(form.primaryQualification);
+      }
+
+      if (Array.isArray(form.qualifications)) {
+        form.qualifications.forEach(q => {
+          if (!finalQualifications.includes(q)) {
+            finalQualifications.push(q);
+          }
+        });
+      }
+
+      if (finalQualifications.length > 0) {
+        data.qualifications = finalQualifications;
       }
 
       if (
@@ -656,7 +670,7 @@ const Page = () => {
         startTime: entry.startTime,
         endTime: entry.endTime,
         location,
-        clinicName,
+        clinicName: clinicName || "ONLINE",
       };
     });
     setDoctorAvailability(updatedAvailability);
@@ -1019,7 +1033,35 @@ const Page = () => {
           ></textarea> */}
         </div>
         <div className={formField}>
-          <label htmlFor="qual">Qualifications</label>
+          <label htmlFor="primaryQualification">Primary Qualification</label>
+          <select
+            name="primaryQualification"
+            id="primaryQualification"
+            className={dropDown}
+            style={selectStyle}
+            value={form.primaryQualification}
+            onChange={handleInputChange("primaryQualification")}
+          >
+            <option value="">Select Primary Qualification</option>
+            <option value="FRCS">FRCS</option>
+            <option value="FRACS">FRACS</option>
+            <option value="FAOrthoA">FAOrthoA</option>
+            <option value="DMCC">DMCC</option>
+            <option value="Other">Other</option>
+          </select>
+          {form.primaryQualification === "Other" && (
+            <input
+              type="text"
+              name="primaryQualificationOther"
+              placeholder="Enter your primary qualification"
+              className={`${inputField} mt-2`}
+              value={form.primaryQualificationOther}
+              onChange={handleInputChange("primaryQualificationOther")}
+            />
+          )}
+        </div>
+        <div className={formField}>
+          <label htmlFor="qual">Additional Qualifications</label>
           <div className="flex flex-col gap-2">
             <div className="items-starts border-primary flex min-h-[240px] flex-wrap content-start gap-2 rounded-md border bg-transparent p-3">
               {form?.qualifications?.map((q, idx) => (
@@ -1119,11 +1161,16 @@ const Page = () => {
               setEntries={setPracticeEntries}
               fieldNames={[
                 "practiceName",
+                "clinicName",
                 "clinicAddress",
                 "postCode",
                 "phone",
               ]}
-              renderLabel={(entry) => entry.practiceName}
+              renderLabel={(entry) =>
+                entry.clinicName
+                  ? `${entry.practiceName} (${entry.clinicName})`
+                  : entry.practiceName
+              }
             />
           </div>
         </div>
@@ -1201,7 +1248,9 @@ const Page = () => {
                 <div className="mt-6 flex flex-col space-y-4 max-sm:gap-[30px]">
                   {[
                     "online",
-                    ...practiceEntries.map((entry) => entry.practiceName),
+                    ...practiceEntries.map(
+                      (entry) => entry.clinicName || entry.practiceName,
+                    ),
                   ].map((type) => {
                     const selectedDays = getSelectedDays(type);
                     const meta = getMeta(type);
@@ -1309,8 +1358,11 @@ const Page = () => {
                           <option value="ONLINE">Online</option>
                           {practiceEntries &&
                             practiceEntries.map((practice, idx) => (
-                              <option key={idx} value={practice.practiceName}>
-                                {practice.practiceName}
+                              <option
+                                key={idx}
+                                value={practice.clinicName || practice.practiceName}
+                              >
+                                {practice.clinicName || practice.practiceName}
                               </option>
                             ))}
                         </select>

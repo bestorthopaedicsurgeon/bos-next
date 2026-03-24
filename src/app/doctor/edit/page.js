@@ -54,7 +54,10 @@ const Page = ({ params }) => {
     desig: "",
     about_self: "",
     location: "",
+    officialEmail: "",
     qualifications: [],
+    primaryQualification: "",
+    primaryQualificationOther: "",
     awardsPublications: [],
     registrationsAssociations: [],
     hospitalAffiliation: [],
@@ -123,12 +126,24 @@ const Page = ({ params }) => {
             desig: doctorData.designation || "",
             about_self: doctorData.about || "",
             location: doctorData.location || "",
-            qualifications: doctorData.qualifications || [],
+            officialEmail: doctorData.officialEmail || "",
+            qualifications: doctorData.qualifications ? doctorData.qualifications.slice(1) : [],
+            primaryQualification: doctorData.qualifications?.[0] || "",
             awardsPublications: doctorData.awardsPublications || [],
             registrationsAssociations:
               doctorData.registrationsAssociations || [],
             hospitalAffiliation: doctorData.hospitalAffiliations || [],
           });
+
+          // If primary qualification is not in the standard list, set it to "Other" and set primaryQualificationOther
+          const commonQuals = ["FRCS", "FRACS", "FAOrthoA", "DMCC"];
+          if (doctorData.qualifications?.[0] && !commonQuals.includes(doctorData.qualifications[0])) {
+            setForm(prev => ({
+              ...prev,
+              primaryQualification: "Other",
+              primaryQualificationOther: doctorData.qualifications[0]
+            }));
+          }
 
           // Set subspecialties
           if (
@@ -409,6 +424,7 @@ const Page = ({ params }) => {
       if (form.desig) data.designation = form.desig;
       if (form.about_self) data.about = form.about_self;
       if (form.location) data.location = form.location;
+      if (form.officialEmail) data.officialEmail = form.officialEmail;
 
       // Arrays: check if defined AND has at least one item
       if (
@@ -425,11 +441,23 @@ const Page = ({ params }) => {
         data.registrationsAssociations = form.registrationsAssociations;
       }
 
-      if (
-        Array.isArray(form.qualifications) &&
-        form.qualifications.length > 0
-      ) {
-        data.qualifications = form.qualifications;
+      const finalQualifications = [];
+      if (form.primaryQualification === "Other" && form.primaryQualificationOther) {
+        finalQualifications.push(form.primaryQualificationOther);
+      } else if (form.primaryQualification && form.primaryQualification !== "Other") {
+        finalQualifications.push(form.primaryQualification);
+      }
+
+      if (Array.isArray(form.qualifications)) {
+        form.qualifications.forEach(q => {
+          if (!finalQualifications.includes(q)) {
+            finalQualifications.push(q);
+          }
+        });
+      }
+
+      if (finalQualifications.length > 0) {
+        data.qualifications = finalQualifications;
       }
 
       if (
@@ -644,7 +672,7 @@ const Page = ({ params }) => {
           startTime: entry.startTime,
           endTime: entry.endTime,
           location,
-          clinicName,
+          clinicName: clinicName || "ONLINE",
         };
       })
       .filter(Boolean); // Remove null entries
@@ -785,6 +813,18 @@ const Page = ({ params }) => {
             <option value="SURGEON">SURGEON</option>
             <option value="GENERAL">GENERAL</option>
           </select>
+        </div>
+        <div className={formField}>
+          <label htmlFor="officialEmail">Official Email</label>
+          <input
+            type="email"
+            name="officialEmail"
+            id="officialEmail"
+            autoComplete="off"
+            className={inputField}
+            value={form.officialEmail}
+            onChange={handleInputChange("officialEmail")}
+          />
         </div>
         <div className={formField}>
           <label htmlFor="location">City</label>
@@ -992,7 +1032,35 @@ const Page = ({ params }) => {
           ></textarea> */}
         </div>
         <div className={formField}>
-          <label htmlFor="qual">Qualifications</label>
+          <label htmlFor="primaryQualification">Primary Qualification</label>
+          <select
+            name="primaryQualification"
+            id="primaryQualification"
+            className={dropDown}
+            style={selectStyle}
+            value={form.primaryQualification}
+            onChange={handleInputChange("primaryQualification")}
+          >
+            <option value="">Select Primary Qualification</option>
+            <option value="FRCS">FRCS</option>
+            <option value="FRACS">FRACS</option>
+            <option value="FAOrthoA">FAOrthoA</option>
+            <option value="DMCC">DMCC</option>
+            <option value="Other">Other</option>
+          </select>
+          {form.primaryQualification === "Other" && (
+            <input
+              type="text"
+              name="primaryQualificationOther"
+              placeholder="Enter your primary qualification"
+              className={`${inputField} mt-2`}
+              value={form.primaryQualificationOther}
+              onChange={handleInputChange("primaryQualificationOther")}
+            />
+          )}
+        </div>
+        <div className={formField}>
+          <label htmlFor="qual">Additional Qualifications</label>
           <div className="flex flex-col gap-2">
             <div className="items-starts border-primary flex min-h-[240px] flex-wrap content-start rounded-md border bg-transparent p-3">
               {form?.qualifications?.map((q, idx) => (
@@ -1065,8 +1133,29 @@ const Page = ({ params }) => {
             <EditableEntry
               entries={hospitalAffiliations}
               setEntries={setHospitalAffiliations}
-              fieldNames={["name", "address"]}
+              fieldNames={["name", "address", "phone"]}
               renderLabel={(entry) => entry.name}
+            />
+          </div>
+        </div>
+        <div className={formField}>
+          <label>Practice/Clinic Details</label>
+          <div className="flex flex-col gap-2">
+            <EditableEntry
+              entries={practiceEntries}
+              setEntries={setPracticeEntries}
+              fieldNames={[
+                "practiceName",
+                "clinicName",
+                "clinicAddress",
+                "postCode",
+                "phone",
+              ]}
+              renderLabel={(entry) =>
+                entry.clinicName
+                  ? `${entry.practiceName} (${entry.clinicName})`
+                  : entry.practiceName
+              }
             />
           </div>
         </div>
@@ -1186,8 +1275,11 @@ const Page = ({ params }) => {
                           <option value="ONLINE">Online</option>
                           {practiceEntries &&
                             practiceEntries.map((practice, idx) => (
-                              <option key={idx} value={practice.practiceName}>
-                                {practice.practiceName}
+                              <option
+                                key={idx}
+                                value={practice.clinicName || practice.practiceName}
+                              >
+                                {practice.clinicName || practice.practiceName}
                               </option>
                             ))}
                         </select>

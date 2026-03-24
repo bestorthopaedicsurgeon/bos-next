@@ -93,6 +93,7 @@ model DoctorProfile {
   registrationCompleted     Boolean                      @default(false)
   image                     String?
   hidden                    Boolean                      @default(false)
+  officialEmail             String?
   DoctorAvailability        DoctorAvailabilityTime[]
   DoctorClaimRequest        DoctorClaimRequest[]
   user                      User?                        @relation("UserDoctorProfile", fields: [userId], references: [id])

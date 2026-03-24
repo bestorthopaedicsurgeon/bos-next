@@ -47,6 +47,7 @@ export const DoctorProfileSchema = z.object({
   awardsPublications: z.array(z.string()).optional(),
   hospitalAffiliations: z.any().nullable().optional(), // Json in Prisma
   location: z.string().nullable().optional(),
+  officialEmail: z.string().email().nullable().optional(),
   userId: z.string().optional(),
   doctorAvailability: z.array(DoctorAvailabilitySchema).optional(),
   specificAvailability: z.array(SpecificAvailabilitySchema).optional(),

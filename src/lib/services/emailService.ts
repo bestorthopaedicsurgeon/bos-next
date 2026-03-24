@@ -6,6 +6,7 @@ import {
   getNotificationTemplate,
   getWelcomeEmailTemplate,
   getAppointmentConfirmationTemplate,
+  getDoctorAppointmentNotificationTemplate,
   getPasswordResetTemplate,
   getClaimApprovedTemplate,
   getClaimSubmittedTemplate
@@ -162,6 +163,44 @@ export async function sendAppointmentConfirmation(
   } catch (error: any) {
     console.error('❌ Failed to send appointment confirmation:', error.message);
     throw new Error(`Failed to send appointment confirmation: ${error.message}`);
+  }
+}
+
+/**
+ * Send an appointment notification to a doctor/secretary
+ */
+export async function sendAppointmentNotificationToDoctor(
+  email: string,
+  details: {
+    surgeonName: string;
+    patientName: string;
+    patientEmail: string;
+    patientPhone: string;
+    date: string;
+    time: string;
+    location: string;
+    consultationType: string;
+    symptoms?: string;
+    message?: string;
+  }
+): Promise<void> {
+  const { html, text } = getDoctorAppointmentNotificationTemplate(details);
+
+  const mailOptions = {
+    from: `"Best Orthopedic Surgeons" <${process.env.EMAIL_USERNAME}>`,
+    to: email,
+    subject: `New Appointment: ${details.patientName} - Best Orthopedic Surgeons`,
+    text,
+    html,
+    attachments: commonAttachments,
+  };
+
+  try {
+    await transporter.sendMail(mailOptions);
+    console.log('Appointment notification sent to doctor successfully!');
+  } catch (error: any) {
+    console.error('❌ Failed to send appointment notification to doctor:', error.message);
+    throw new Error(`Failed to send appointment notification to doctor: ${error.message}`);
   }
 }
 

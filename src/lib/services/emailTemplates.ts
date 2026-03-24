@@ -269,6 +269,111 @@ export function getAppointmentConfirmationTemplate(details: {
 }
 
 /**
+ * Appointment Notification Template for Doctor/Secretary
+ */
+export function getDoctorAppointmentNotificationTemplate(details: {
+  surgeonName: string;
+  patientName: string;
+  patientEmail: string;
+  patientPhone: string;
+  date: string;
+  time: string;
+  location: string;
+  consultationType: string;
+  symptoms?: string;
+  message?: string;
+}): { html: string; text: string } {
+  const content = `
+    <div>
+      <div style="text-align: center; margin-bottom: 30px;">
+        <svg width="64" height="64" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M19 4H5C3.89543 4 3 4.89543 3 6V20C3 21.1046 3.89543 22 5 22H19C20.1046 22 21 21.1046 21 20V6C21 4.89543 20.1046 4 19 4Z" stroke="${PRIMARY_COLOR}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M16 2V6" stroke="${PRIMARY_COLOR}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M8 2V6" stroke="${PRIMARY_COLOR}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M3 10H21" stroke="${PRIMARY_COLOR}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+      
+      <h2 style="margin: 0 0 10px 0; color: ${TEXT_PRIMARY}; font-size: 24px; font-weight: 700; text-align: center;">
+        New Appointment Request
+      </h2>
+      
+      <p style="margin: 0 0 30px 0; color: ${TEXT_SECONDARY}; font-size: 16px; text-align: center;">
+        A new appointment has been booked for ${details.surgeonName}.
+      </p>
+      
+      <div style="background-color: #f8f9fa; border-radius: 8px; padding: 25px; margin-bottom: 25px; border: 1px solid #e9ecef;">
+        <h3 style="margin: 0 0 15px 0; color: ${PRIMARY_COLOR}; font-size: 18px; font-weight: 600;">
+          Patient Details
+        </h3>
+        <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%">
+          <tr>
+            <td style="padding: 8px 0; width: 120px;"><strong style="color: ${TEXT_PRIMARY};">Name:</strong></td>
+            <td style="padding: 8px 0; color: ${TEXT_SECONDARY};">${details.patientName}</td>
+          </tr>
+          <tr>
+            <td style="padding: 8px 0;"><strong style="color: ${TEXT_PRIMARY};">Email:</strong></td>
+            <td style="padding: 8px 0; color: ${TEXT_SECONDARY};">${details.patientEmail}</td>
+          </tr>
+          <tr>
+            <td style="padding: 8px 0;"><strong style="color: ${TEXT_PRIMARY};">Phone:</strong></td>
+            <td style="padding: 8px 0; color: ${TEXT_SECONDARY};">${details.patientPhone}</td>
+          </tr>
+        </table>
+      </div>
+
+      <div style="background: linear-gradient(135deg, #e8f4f5 0%, #d4ebec 100%); border-left: 4px solid ${PRIMARY_COLOR}; border-radius: 8px; padding: 25px; margin-bottom: 25px;">
+        <h3 style="margin: 0 0 15px 0; color: ${PRIMARY_COLOR}; font-size: 18px; font-weight: 600;">
+          Appointment Info
+        </h3>
+        <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%">
+          <tr>
+            <td style="padding: 8px 0; width: 120px;"><strong style="color: ${TEXT_PRIMARY};">Date:</strong></td>
+            <td style="padding: 8px 0; color: ${TEXT_SECONDARY};">${details.date}</td>
+          </tr>
+          <tr>
+            <td style="padding: 8px 0;"><strong style="color: ${TEXT_PRIMARY};">Time:</strong></td>
+            <td style="padding: 8px 0; color: ${TEXT_SECONDARY};">${details.time}</td>
+          </tr>
+          <tr>
+            <td style="padding: 8px 0;"><strong style="color: ${TEXT_PRIMARY};">Type:</strong></td>
+            <td style="padding: 8px 0; color: ${TEXT_SECONDARY};">${details.consultationType}</td>
+          </tr>
+          <tr>
+            <td style="padding: 8px 0;"><strong style="color: ${TEXT_PRIMARY};">Location:</strong></td>
+            <td style="padding: 8px 0; color: ${TEXT_SECONDARY};">${details.location}</td>
+          </tr>
+        </table>
+      </div>
+
+      ${details.symptoms || details.message ? `
+      <div style="background-color: #ffffff; border: 1px solid #e9ecef; border-radius: 8px; padding: 25px; margin-bottom: 25px;">
+        ${details.symptoms ? `
+          <h4 style="margin: 0 0 10px 0; color: ${TEXT_PRIMARY}; font-size: 16px; font-weight: 600;">Symptoms</h4>
+          <p style="margin: 0 0 20px 0; color: ${TEXT_SECONDARY}; font-size: 14px; line-height: 1.6;">${details.symptoms}</p>
+        ` : ''}
+        ${details.message ? `
+          <h4 style="margin: 0 0 10px 0; color: ${TEXT_PRIMARY}; font-size: 16px; font-weight: 600;">Message from Patient</h4>
+          <p style="margin: 0; color: ${TEXT_SECONDARY}; font-size: 14px; line-height: 1.6;">${details.message}</p>
+        ` : ''}
+      </div>
+      ` : ''}
+      
+      <div style="text-align: center;">
+        <a href="${process.env.NEXTAUTH_URL}/admin/appointments" style="display: inline-block; background: linear-gradient(135deg, ${PRIMARY_COLOR} 0%, ${PRIMARY_HOVER} 100%); color: #ffffff; text-decoration: none; padding: 12px 28px; border-radius: 8px; font-size: 15px; font-weight: 600;">
+          View in Dashboard
+        </a>
+      </div>
+    </div>
+  `;
+
+  return {
+    html: getEmailWrapper(content),
+    text: `New Appointment Request\n\nA new appointment has been booked for ${details.surgeonName}.\n\nPatient: ${details.patientName}\nEmail: ${details.patientEmail}\nPhone: ${details.patientPhone}\n\nDate: ${details.date}\nTime: ${details.time}\nType: ${details.consultationType}\nLocation: ${details.location}\n\n${details.symptoms ? `Symptoms: ${details.symptoms}\n` : ''}${details.message ? `Message: ${details.message}\n` : ''}\n© ${new Date().getFullYear()} Best Orthopedic Surgeons. All rights reserved.`
+  };
+}
+
+/**
  * Password Reset Email Template
  */
 export function getPasswordResetTemplate(resetLink: string, userName: string): { html: string; text: string } {

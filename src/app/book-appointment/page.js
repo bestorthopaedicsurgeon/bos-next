@@ -1,6 +1,7 @@
 "use client";
 import ProfileHeader from "@/components/reusable/profileHeader";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { useSearchParams } from "next/navigation";
 import { appointment } from "@/data/apppointment";
 import {
   Dialog,
@@ -25,9 +26,66 @@ const selectStyle = {
 };
 
 const Page = () => {
+  const searchParams = useSearchParams();
+  const doctorId = searchParams.get("doctorId");
+  const doctorName = searchParams.get("doctorName");
+
   const [consultType, setConsultType] = useState("online");
   const [acceptTerms, setAcceptTerms] = useState(false);
   const [openDialog, setOpenDialog] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [success, setSuccess] = useState(false);
+
+  const [form, setForm] = useState({
+    doctor_name: doctorName || "",
+    clinic_address: "",
+    slot: "Wednesday, 3:30 PM",
+    fname: "",
+    lname: "",
+    email: "",
+    phone: "",
+    age: "",
+    symptoms: "",
+    message: "",
+  });
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setForm((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (!acceptTerms) {
+      alert("Please accept the terms and conditions");
+      return;
+    }
+
+    setIsSubmitting(true);
+    try {
+      const res = await fetch("/api/appointments/book", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          ...form,
+          doctorId,
+          consultType,
+        }),
+      });
+
+      const data = await res.json();
+      if (data.success) {
+        setSuccess(true);
+        setOpenDialog(true);
+      } else {
+        alert(data.error || "Failed to book appointment");
+      }
+    } catch (error) {
+      alert("Something went wrong. Please try again.");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
   return (
     <div className="container m-auto px-2 md:px-0">
       {appointment.stepper &&
@@ -48,19 +106,17 @@ const Page = () => {
       </div>
       <form
         className="mx-auto mt-8 grid grid-cols-2 gap-6 rounded-lg bg-transparent md:gap-8"
-        onSubmit={(e) => {
-          e.preventDefault();
-          setOpenDialog(true);
-        }}
+        onSubmit={handleSubmit}
       >
         {/* Doctor's Name & Clinic Address */}
         <div className={formField}>
-          <label htmlFor="doctor_name">Doctor&#39;s Name</label>
           <input
             id="doctor_name"
             name="doctor_name"
             className={inputField}
             placeholder="Enter doctor's name"
+            value={form.doctor_name}
+            onChange={handleInputChange}
           />
         </div>
         <div className={formField}>
@@ -70,6 +126,8 @@ const Page = () => {
             name="clinic_address"
             className={inputField}
             placeholder="Enter clinic address"
+            value={form.clinic_address}
+            onChange={handleInputChange}
           />
         </div>
         {/* Consultation Type & Available Slot */}
@@ -115,11 +173,12 @@ const Page = () => {
             name="slot"
             className={dropDown + " w-full"}
             style={selectStyle}
-            defaultValue="Wednesday, 3:30 PM"
+            value={form.slot}
+            onChange={handleInputChange}
           >
-            <option>Wednesday, 3:30 PM</option>
-            <option>Thursday, 10:00 AM</option>
-            <option>Friday, 1:00 PM</option>
+            <option value="Wednesday, 3:30 PM">Wednesday, 3:30 PM</option>
+            <option value="Thursday, 10:00 AM">Thursday, 10:00 AM</option>
+            <option value="Friday, 1:00 PM">Friday, 1:00 PM</option>
           </select>
         </div>
         {/* First Name & Last Name */}
@@ -130,6 +189,9 @@ const Page = () => {
             name="fname"
             className={inputField}
             placeholder="Enter your first name"
+            value={form.fname}
+            onChange={handleInputChange}
+            required
           />
         </div>
         <div className={formField}>
@@ -139,17 +201,23 @@ const Page = () => {
             name="lname"
             className={inputField}
             placeholder="Enter your last name"
+            value={form.lname}
+            onChange={handleInputChange}
+            required
           />
         </div>
-        {/* Age & Phone Number */}
+        {/* Email & Phone Number */}
         <div className={formField}>
-          <label htmlFor="age">Age</label>
+          <label htmlFor="email">Email Address</label>
           <input
-            id="age"
-            name="age"
+            id="email"
+            name="email"
             className={inputField}
-            placeholder="Enter your age"
-            type="number"
+            placeholder="Enter your email"
+            type="email"
+            value={form.email}
+            onChange={handleInputChange}
+            required
           />
         </div>
         <div className={formField}>
@@ -160,6 +228,22 @@ const Page = () => {
             className={inputField}
             placeholder="Enter your phone number"
             type="tel"
+            value={form.phone}
+            onChange={handleInputChange}
+            required
+          />
+        </div>
+        {/* Age */}
+        <div className={formField}>
+          <label htmlFor="age">Age</label>
+          <input
+            id="age"
+            name="age"
+            className={inputField}
+            placeholder="Enter your age"
+            type="number"
+            value={form.age}
+            onChange={handleInputChange}
           />
         </div>
         {/* Symptoms */}
@@ -170,6 +254,8 @@ const Page = () => {
             name="symptoms"
             className={inputField}
             placeholder="E.g back pain, muscle stretch..."
+            value={form.symptoms}
+            onChange={handleInputChange}
           />
         </div>
         {/* Message & Upload Documents */}
@@ -180,6 +266,8 @@ const Page = () => {
             name="message"
             className={inputField + " h-45 resize-none"}
             placeholder="Type your message..."
+            value={form.message}
+            onChange={handleInputChange}
           />
         </div>
         <div className={formField}>
@@ -229,8 +317,9 @@ const Page = () => {
           <button
             type="submit"
             className="btn_fill w-full px-14 py-2 md:w-auto"
+            disabled={isSubmitting}
           >
-            Confirm Booking
+            {isSubmitting ? "Confirming..." : "Confirm Booking"}
           </button>
         </div>
       </form>
@@ -242,9 +331,26 @@ const Page = () => {
       >
         <DialogContent className="bg-white p-0">
           <DialogTitle></DialogTitle>
-          <div className="!m-0 !rounded-none bg-white p-4 !shadow-none">
-            {/* Remove border, reduce spacing, set white bg */}
-            <AvailabilityCalendar className="!m-w-sm !m-0 !border-none !bg-white !p-0" />
+          <div className="!m-0 !rounded-none bg-white p-4 !shadow-none text-center">
+            {success ? (
+              <div className="py-10">
+                <div className="mb-4 flex justify-center text-green-500">
+                  <svg width="60" height="60" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M12 2C6.48 2 2 6.48 2 12C2 17.52 6.48 22 12 22C17.52 22 22 17.52 22 12C22 6.48 17.52 2 12 2ZM10 17L5 12L6.41 10.59L10 14.17L17.59 6.58L19 8L10 17Z" fill="currentColor"/>
+                  </svg>
+                </div>
+                <h3 className="mb-2 text-xl font-bold">Appointment Booked!</h3>
+                <p className="text-gray-600">Your request has been sent to {form.doctor_name}. Confirmation emails have been sent to you and the doctor.</p>
+                <button 
+                  onClick={() => setOpenDialog(false)} 
+                  className="bg-primary mt-6 rounded px-6 py-2 text-white"
+                >
+                  Close
+                </button>
+              </div>
+            ) : (
+              <AvailabilityCalendar className="!m-w-sm !m-0 !border-none !bg-white !p-0" />
+            )}
           </div>
         </DialogContent>
       </Dialog>
