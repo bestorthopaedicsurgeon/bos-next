@@ -1,6 +1,6 @@
 "use client";
 import ProfileHeader from "@/components/reusable/profileHeader";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import { appointment } from "@/data/apppointment";
 import {
@@ -25,7 +25,7 @@ const selectStyle = {
   backgroundImage: `url("data:image/svg+xml,%3Csvg width='18' height='11' viewBox='0 0 18 11' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath fill-rule='evenodd' clip-rule='evenodd' d='M9.53026 9.88407C9.23736 10.177 8.76256 10.177 8.46966 9.88407L0.823183 2.23757C0.530293 1.94467 0.530293 1.46987 0.823183 1.17697L1.17674 0.823374C1.46963 0.530474 1.9445 0.530474 2.2374 0.823374L8.99996 7.58597L15.7626 0.823374C16.0555 0.530474 16.5303 0.530474 16.8232 0.823374L17.1768 1.17697C17.4697 1.46987 17.4697 1.94467 17.1768 2.23757L9.53026 9.88407Z' fill='%23033333'/%3E%3C/svg%3E")`,
 };
 
-const Page = () => {
+const BookingPageContent = () => {
   const searchParams = useSearchParams();
   const doctorId = searchParams.get("doctorId");
   const doctorName = searchParams.get("doctorName");
@@ -358,4 +358,17 @@ const Page = () => {
   );
 };
 
-export default Page;
+export default function Page() {
+  return (
+    <Suspense fallback={
+      <div className="container m-auto flex min-h-screen items-center justify-center">
+        <div className="text-center">
+          <div className="mx-auto mb-4 h-12 w-12 animate-spin rounded-full border-b-2 border-[#83C5BE]"></div>
+          <p className="text-lg text-gray-600">Loading booking form...</p>
+        </div>
+      </div>
+    }>
+      <BookingPageContent />
+    </Suspense>
+  );
+}
