@@ -7,6 +7,7 @@ import { toast } from "sonner";
 import PhoneInput from "react-phone-input-2";
 import "react-phone-input-2/lib/style.css";
 import ProfileHeader from "@/components/reusable/profileHeader";
+import { sanitizeFormValue } from "@/lib/sanitize";
 
 const EditProfilePage = () => {
   const router = useRouter();
@@ -55,12 +56,13 @@ const EditProfilePage = () => {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
+    const safeValue = sanitizeFormValue(value);
     setFormData((prev) => {
-      const newData = { ...prev, [name]: value };
+      const newData = { ...prev, [name]: safeValue };
       
       // Calculate age if DOB changes
-      if (name === "dob" && value) {
-        const birthDate = new Date(value);
+      if (name === "dob" && safeValue) {
+        const birthDate = new Date(safeValue);
         const today = new Date();
         let age = today.getFullYear() - birthDate.getFullYear();
         const m = today.getMonth() - birthDate.getMonth();

@@ -159,7 +159,7 @@ export const HeroSection = ({ onSearchResults, onSearchStateChange }) => {
             throughout Perth, Fremantle, Bunbury, Geraldton, and beyond.
           </p>
           <div className="mb-4 flex flex-wrap gap-4">
-            <Link href="/surgeons">
+            <Link href="/surgeons?scroll=section">
               <Button variant={"primaryForeground"} size={"primaryForeground"}>
                 Find Your Doctor
               </Button>

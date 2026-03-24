@@ -1,6 +1,6 @@
 "use client";
 
-import { AnimatePresence, motion, usePresenceData, wrap } from "motion/react";
+import { AnimatePresence, motion, wrap } from "framer-motion";
 import { forwardRef, SVGProps, useState } from "react";
 
 export default function UsePresenceData() {
@@ -26,7 +26,7 @@ export default function UsePresenceData() {
   return (
     <div style={container}>
       <AnimatePresence custom={direction} initial={false} mode="popLayout">
-        <Slide key={selectedItem} color={color}>
+        <Slide key={selectedItem} color={color} direction={direction}>
           {slideContent[selectedItem]}
         </Slide>
       </AnimatePresence>
@@ -56,8 +56,7 @@ export default function UsePresenceData() {
   );
 }
 
-const Slide = forwardRef(function Slide({ color, children }, ref) {
-  const direction = usePresenceData();
+const Slide = forwardRef(function Slide({ color, children, direction }, ref) {
   return (
     <motion.div
       ref={ref}

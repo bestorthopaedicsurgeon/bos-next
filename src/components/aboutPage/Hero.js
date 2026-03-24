@@ -43,7 +43,7 @@ export const HeroSection = () => {
           Helping patients find the right orthopaedic surgeons with ease. Our platform lets you discover, review, and rate healthcare professionals based on real patient experiences.
           </p>
           <div className="mb-4 flex flex-wrap gap-4">
-            <Link href="/surgeons">
+            <Link href="/surgeons?scroll=section">
             <Button variant={"primaryForeground"} size={"primaryForeground"}>
               Find Your Doctor
             </Button>

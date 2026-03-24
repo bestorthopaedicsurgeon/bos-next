@@ -4,18 +4,10 @@ import * as React from "react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import {
-  Users,
-  UserPlus,
-  Calendar,
   BarChart3,
-  Settings,
   Home,
-  FileText,
   Stethoscope,
-  ClipboardList,
-  Star,
-  MessageSquare,
-  NotebookPen
+  NotebookPen,
 } from "lucide-react"
 
 import { cn } from "@/lib/utils"
@@ -115,11 +107,6 @@ const data = {
       title: "Blogs",
       url: "/admin/blogs",
       icon: NotebookPen,
-    },
-    {
-      title: "Settings",
-      url: "/admin/settings",
-      icon: Settings,
     },
   ],
 }

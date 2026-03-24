@@ -35,6 +35,13 @@ const Page = async ({ params }) => {
     console.log("doctData", doctData);
   }
 
+  // Helper to standardise titles like DR. to Dr.
+  const formatTitle = (title) => {
+    if (!title) return "";
+    return title.charAt(0).toUpperCase() + title.slice(1).toLowerCase();
+  };
+  const formattedTitle = formatTitle(doctData?.title);
+
   return (
     <div className="">
       {docProfile_Details.stepper.map((data) => (
@@ -42,22 +49,23 @@ const Page = async ({ params }) => {
           key={data.heading}
           heading={data.heading}
           step1={data.step1}
-          step2={docProfile_Details.doc_details[0].name}
+          step2={`${formattedTitle ? `${formattedTitle}. ` : ""}${doctData?.name || "Doctor"}`}
         />
       ))}
-      <div className="mt-30 flex flex-wrap justify-center min-lg:gap-10">
+      <div className="w-full max-w-7xl mx-auto flex flex-col min-lg:flex-row items-start gap-10 mt-10">
         {/* left area    */}
-        <div>
+        <div className="flex-1 w-full flex flex-col gap-5">
           <DocProfile docProfile_Details={doctData} />
           <DocInfo docProfile_Details={doctData} />
         </div>
         {/* right area */}
-        <div>
+        <div className="w-full min-lg:w-[450px] xl:w-[500px] flex flex-col gap-5 min-lg:self-stretch">
           <AvailabilityCalendar
             availability={doctData?.DoctorAvailabilityTime}
           />
           <HospitalAffiliations
             hospitals={doctData?.hospitalAffiliations}
+            className="flex-1"
           />
         </div>
       </div>

@@ -114,11 +114,18 @@ const DocProfile = ({ docProfile_Details, editProfile }) => {
     </div>
   );
 
+  // Helper to standardise titles like DR. to Dr.
+  const formatTitle = (title) => {
+    if (!title) return "";
+    return title.charAt(0).toUpperCase() + title.slice(1).toLowerCase();
+  };
+  const formattedTitle = formatTitle(doctorProfile?.title);
+
   return (
     <div>
       <div
         key={data.id}
-        className="flex items-center justify-start gap-5 max-md:flex-wrap"
+        className="flex items-center justify-start gap-5 max-md:flex-col max-md:items-center max-md:text-center max-md:justify-center p-2"
       >
         <div className="border-primary relative h-50 w-50 overflow-hidden rounded-md border-2">
           <Image
@@ -128,26 +135,9 @@ const DocProfile = ({ docProfile_Details, editProfile }) => {
             className="object-cover"
           />
         </div>
-        <div className="flex flex-col flex-wrap gap-2 min-lg:w-[220px]">
-          {/* {renderEditable(
-              "Name",
-              "name",
-              `${doctorProfile?.title ? `${doctorProfile?.title}. ` : ""}${data.name}`,
-              true
-            )}
-          </h3>
-          <div className="text-primary text-[16px] font-[700]">
-            {renderEditable("Designation", "designation", doctorProfile?.designation)}
-          </div>
-          <div className="text-primary text-[16px] font-[700]">
-            {renderEditable("Qualification", "qualifications", doctorProfile?.qualifications?.[0])}
-          </div>
-          <div className="flex items-center gap-3 text-[13px]">
-            <MapPin className="text-primary h-5 w-5" />
-            {renderEditable("Clinic Address", "clinicAddress", doctorProfile?.location)}
-          </div> */}
+        <div className="flex flex-col flex-wrap gap-2 min-lg:w-[220px] max-md:items-center">
           <h3 className="font-[500]">
-            {`${doctorProfile?.title ? `${doctorProfile?.title}. ` : ""}${data.name}`}
+            {`${formattedTitle ? `${formattedTitle}. ` : ""}${data.name}`}
           </h3>
           <p className="text-primary text-[16px] font-[700]">
             {doctorProfile?.designation}
@@ -156,7 +146,7 @@ const DocProfile = ({ docProfile_Details, editProfile }) => {
             {doctorProfile?.qualification}
           </p>
           {doctorProfile?.location && (
-            <p className="flex items-center gap-3 text-[13px]">
+            <p className="flex items-center gap-3 text-[13px] max-md:justify-center">
               {" "}
               <MapPin className="text-primary h-5 w-5" />
               {doctorProfile?.location}, Australia
