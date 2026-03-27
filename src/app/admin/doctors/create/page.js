@@ -920,7 +920,7 @@ const Page = () => {
                   </button>
                 </TooltipTrigger>
                 <TooltipContent className="max-w-xs text-center border border-gray-200 bg-white text-black p-2 text-sm shadow-md">
-                  <p>The first subspeciality entered will appear on the doctor's card; all will show in the about section.</p>
+                  <p>The first subspeciality entered will appear on the doctor&apos;s card; all will show in the about section.</p>
                 </TooltipContent>
               </Tooltip>
             </TooltipProvider>
