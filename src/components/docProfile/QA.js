@@ -66,6 +66,7 @@ export default function QuestionsAndAnswers({
     if (!questionsFromProps && doctData?.id) {
       fetchQuestions();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [doctData?.id, questionsFromProps]);
 
   // const questions = [

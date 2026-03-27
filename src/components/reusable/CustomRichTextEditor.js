@@ -75,6 +75,7 @@ export default function CustomRichTextEditor({ value, onChange, placeholder = "S
       setCursorPosition(null);
       lastCursorPositionRef.current = null;
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [value]); // Only depend on value, not internalValue
 
 
@@ -171,6 +172,7 @@ export default function CustomRichTextEditor({ value, onChange, placeholder = "S
         onChange(content);
       }
     }, 150),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [internalValue, onChange]
   );
 

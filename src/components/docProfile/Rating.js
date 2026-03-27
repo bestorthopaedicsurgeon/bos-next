@@ -36,6 +36,7 @@ const Rating = ({ className, doctorId }) => {
     if (doctorId) {
       loadReviews();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
 

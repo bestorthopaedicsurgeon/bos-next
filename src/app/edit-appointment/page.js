@@ -1,6 +1,7 @@
 "use client";
 import ProfileHeader from "@/components/reusable/profileHeader";
 import React, { useState } from "react";
+import Image from "next/image";
 import { editAppointment } from "@/data/editAppointment";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -237,9 +238,11 @@ const Page = () => {
                   key={idx}
                   className="flex flex-col items-center justify-center rounded-md border border-dashed bg-white p-2"
                 >
-                  <img
+                  <Image
                     src="/icons/pdf-icon.svg"
                     alt="pdf"
+                    width={40}
+                    height={40}
                     className="mb-2 h-10 w-10"
                   />
                   <span className="text-center text-xs">{doc.name}</span>
