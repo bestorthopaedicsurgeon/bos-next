@@ -85,7 +85,7 @@ export async function GET() {
                   0,
                 ) / doc.reviews.length,
           subspecialities: doc.subspecialities,
-          
+          slug: doc.slug,
         })),
       },
       { status: 200 },

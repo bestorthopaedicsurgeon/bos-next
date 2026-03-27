@@ -3,6 +3,7 @@ import { prisma } from "@/lib/prisma";
 import { getServerSession } from "next-auth";
 import { NextResponse } from "next/server";
 import { DoctorProfileSchema } from "@/lib/validations/doctor";
+import { slugify } from "@/lib/utils";
 
 export async function POST(req: Request): Promise<NextResponse> {
   try {
@@ -73,6 +74,25 @@ export async function POST(req: Request): Promise<NextResponse> {
     const data: any = { ...restData };
     if (doctorAvailability) {
       data.DoctorAvailability = { create: doctorAvailability };
+    }
+
+    // Generate slug
+    if (data.name) {
+      let baseSlug = slugify(data.name);
+      let slug = baseSlug;
+      let counter = 1;
+
+      while (true) {
+        const existing = await prisma.doctorProfile.findUnique({
+          where: { slug },
+        });
+
+        if (!existing) break;
+
+        slug = `${baseSlug}-${counter}`;
+        counter++;
+      }
+      data.slug = slug;
     }
 
     let profile;
@@ -215,7 +235,25 @@ export async function PATCH(req: Request) {
     // 6. Perform update
     const updatedProfile = await prisma.doctorProfile.update({
       where: { id: doctorId },
-      data: updateData,
+      data: {
+        ...updateData,
+        ...(updateData.name && {
+          slug: await (async () => {
+            let baseSlug = slugify(updateData.name);
+            let slug = baseSlug;
+            let counter = 1;
+            while (true) {
+              const existing = await prisma.doctorProfile.findUnique({
+                where: { slug },
+              });
+              if (!existing || existing.id === doctorId) break;
+              slug = `${baseSlug}-${counter}`;
+              counter++;
+            }
+            return slug;
+          })(),
+        }),
+      },
     });
 
     // 7. Handle Doctor Availability (Weekly Schedule) - Delete + Create Strategy
