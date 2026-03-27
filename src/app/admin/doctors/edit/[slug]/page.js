@@ -23,23 +23,31 @@ import {
 } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
 import { ChevronLeft, ChevronRight, Edit, Check, Plus, X } from "lucide-react";
-import { Clock3, PencilIcon, User } from "lucide-react";
+import { Clock3, PencilIcon, User, Info } from "lucide-react";
 import { redirect, useRouter } from "next/navigation";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import EditableEntry from "@/components/registration/EditableEntry";
 import { toast } from "sonner";
 import { auCities } from "@/lib/constants/auCities";
 import { useSession } from "next-auth/react";
 import { sanitizeFormValue } from "@/lib/sanitize";
+import CreatableSelect from "react-select/creatable";
+import Select from "react-select";
 
 const AdminEditDoctorPage = ({ params }) => {
   const { data: session } = useSession();
   const doctorId = params.slug; // Get doctor ID from URL params
-  console.log("this is a doctor id", doctorId)
+  console.log("this is a doctor id", doctorId);
   const router = useRouter();
 
   const [selectedSpecialties, setSelectedSpecialties] = useState([]);
@@ -52,8 +60,9 @@ const AdminEditDoctorPage = ({ params }) => {
     about_self: "",
     location: "",
     officialEmail: "",
+    groupName: "",
     qualifications: [],
-    primaryQualification: "",
+    primaryQualification: [],
     primaryQualificationOther: "",
     awardsPublications: [],
     registrationsAssociations: [],
@@ -72,7 +81,9 @@ const AdminEditDoctorPage = ({ params }) => {
   // For practice/clinic entries
   const [practiceEntries, setPracticeEntries] = useState([]);
   const [hospitalAffiliations, setHospitalAffiliations] = useState([]);
-  const [registrationsAssociations, setRegistrationsAssociations] = useState([]);
+  const [registrationsAssociations, setRegistrationsAssociations] = useState(
+    [],
+  );
 
   //for availability time
   const [doctorAvailability, setDoctorAvailability] = useState([]);
@@ -107,14 +118,14 @@ const AdminEditDoctorPage = ({ params }) => {
     const fetchDoctorData = async () => {
       try {
         setDataLoading(true);
-        
+
         const res = await fetch(`/api/doctors/${doctorId}`);
         if (!res.ok) {
           throw new Error("Failed to fetch doctor data");
         }
         const data = await res.json();
         const doctorData = data.data;
-        console.log("this is a doctor data", doctorData)
+        console.log("this is a doctor data", doctorData);
         if (doctorData) {
           console.log("Fetched doctor data:", doctorData);
 
@@ -135,23 +146,25 @@ const AdminEditDoctorPage = ({ params }) => {
             about_self: doctorData.about || "",
             location: doctorData.location || "",
             officialEmail: doctorData.officialEmail || "",
-            qualifications: doctorData.qualifications ? doctorData.qualifications.slice(1) : [],
-            primaryQualification: doctorData.qualifications?.[0] || "",
+            groupName: doctorData.groupName || "",
+            qualifications: doctorData.qualifications
+              ? doctorData.qualifications.slice(1)
+              : [],
+            primaryQualification: doctorData.qualifications?.[0]
+              ? [
+                  {
+                    value: doctorData.qualifications[0],
+                    label: doctorData.qualifications[0],
+                  },
+                ]
+              : [],
             awardsPublications: doctorData.awardsPublications || [],
             registrationsAssociations:
               doctorData.registrationsAssociations || [],
             hospitalAffiliation: doctorData.hospitalAffiliations || [],
           });
 
-          // If primary qualification is not in the standard list, set it to "Other" and set primaryQualificationOther
-          const commonQuals = ["FRCS", "FRACS", "FAOrthoA", "DMCC"];
-          if (doctorData.qualifications?.[0] && !commonQuals.includes(doctorData.qualifications[0])) {
-            setForm(prev => ({
-              ...prev,
-              primaryQualification: "Other",
-              primaryQualificationOther: doctorData.qualifications[0]
-            }));
-          }
+          // primaryQualification already set as array of {value, label} objects above
 
           // Set subspecialties
           if (
@@ -284,7 +297,8 @@ const AdminEditDoctorPage = ({ params }) => {
   ];
 
   const handleInputChange = (field) => (e) => {
-    const value = field === "image" ? e.target.files?.[0] : sanitizeFormValue(e.target.value);
+    const value =
+      field === "image" ? e.target.files?.[0] : sanitizeFormValue(e.target.value);
     setForm((prev) => ({ ...prev, [field]: value }));
   };
 
@@ -312,20 +326,35 @@ const AdminEditDoctorPage = ({ params }) => {
     return true;
   };
 
-  const handleKeyDown = (field) => (e) => {
-    if (e.key === "Enter" && inputs[field]?.trim()) {
-      e.preventDefault();
-      console.log(inputs);
-      console.log("form", form);
-      const trimmed = inputs[field].trim();
-      if (!form[field].includes(trimmed)) {
-        setForm((prev) => ({
-          ...prev,
-          [field]: [...prev[field], trimmed],
-        }));
-      }
-      setInputs((prev) => ({ ...prev, [field]: "" }));
+  const toTitleCase = (str) =>
+    str.replace(/\w\S*/g, (t) => t.charAt(0).toUpperCase() + t.substr(1).toLowerCase());
+
+  const addCurrentInputAsTag = (field) => {
+    let value = (inputs?.[field] ?? "").trim();
+    if (!value) return;
+    if (
+      ["registrationsAssociations", "qualifications", "awardsPublications"].includes(
+        field,
+      )
+    ) {
+      value = toTitleCase(value);
     }
+    setForm((prev) => {
+      if (prev[field].includes(value)) return prev;
+      return { ...prev, [field]: [...prev[field], value] };
+    });
+    setInputs((prev) => ({ ...prev, [field]: "" }));
+  };
+
+  const handleKeyDown = (field) => (e) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      addCurrentInputAsTag(field);
+    }
+  };
+
+  const handleTagInputBlur = (field) => () => {
+    addCurrentInputAsTag(field);
   };
 
   const handleRemoveValue = (field, idx) => {
@@ -401,8 +430,7 @@ const AdminEditDoctorPage = ({ params }) => {
       return toast.error("Practice/Clinic Details is required.");
     if (selectedSpecialties.length === 0)
       return toast.error("Please select at least one subspeciality.");
-    if (!form.about_self)
-      return toast.error("Please tell us about yourself.");
+    if (!form.about_self) return toast.error("Please tell us about yourself.");
     if (!form.hospitalAffiliation)
       return toast.error("Registrations & Associations are required.");
     if (!form.qualifications) return toast.error("Qualifications are required.");
@@ -425,6 +453,7 @@ const AdminEditDoctorPage = ({ params }) => {
       if (form.desig) data.designation = form.desig;
       if (form.about_self) data.about = form.about_self;
       if (form.location) data.location = form.location;
+      if (form.groupName) data.groupName = form.groupName;
       if (form.officialEmail) data.officialEmail = form.officialEmail;
 
       // Arrays: check if defined AND has at least one item
@@ -443,14 +472,16 @@ const AdminEditDoctorPage = ({ params }) => {
       }
 
       const finalQualifications = [];
-      if (form.primaryQualification === "Other" && form.primaryQualificationOther) {
-        finalQualifications.push(form.primaryQualificationOther);
-      } else if (form.primaryQualification && form.primaryQualification !== "Other") {
-        finalQualifications.push(form.primaryQualification);
+      if (Array.isArray(form.primaryQualification)) {
+        form.primaryQualification.forEach((q) => {
+          if (!finalQualifications.includes(q.value)) {
+            finalQualifications.push(q.value);
+          }
+        });
       }
 
       if (Array.isArray(form.qualifications)) {
-        form.qualifications.forEach(q => {
+        form.qualifications.forEach((q) => {
           if (!finalQualifications.includes(q)) {
             finalQualifications.push(q);
           }
@@ -532,7 +563,8 @@ const AdminEditDoctorPage = ({ params }) => {
   const dropDown =
     "border border-(--primary) rounded-md p-3 pr-5 appearance-none bg-no-repeat bg-[right_0.75rem_center] bg-[length:16px_12px";
   const formField = "flex flex-col gap-2 max-lg:col-span-2";
-  const inputField = "border border-(--primary) rounded-md p-3";
+  const inputField =
+    "border border-(--primary) rounded-md p-3 focus:ring-1 focus:ring-(--primary) focus:outline-none";
 
   const handleSpecialtyChange = (specialty) => {
     console.log(selectedSpecialties);
@@ -729,10 +761,7 @@ const AdminEditDoctorPage = ({ params }) => {
               Update doctor&apos;s professional information and availability
             </p>
           </div>
-          <Link
-            href="/admin/doctors"
-            className="btn_outline px-6 py-2"
-          >
+          <Link href="/admin/doctors" className="btn_outline px-6 py-2">
             Back to Doctors
           </Link>
         </div>
@@ -744,32 +773,70 @@ const AdminEditDoctorPage = ({ params }) => {
       >
         <div className={formField}>
           <label htmlFor="title">Title</label>
-          <select
-            name="title"
+          <Select
             id="title"
-            className={dropDown}
-            style={selectStyle}
-            value={form.title}
-            onChange={handleInputChange("title")}
-          >
-            <option value="">select your title</option>
-            <option value="DR">Dr</option>
-            <option value="MS">Ms</option>
-            <option value="MR">Mr</option>
-            <option value="PROF">Prof</option>
-          </select>
+            isSearchable={false}
+            isClearable
+            className="react-select-container"
+            classNamePrefix="react-select"
+            value={
+              form.title
+                ? {
+                    value: form.title,
+                    label: {
+                      DR: "Dr",
+                      MS: "Ms",
+                      MR: "Mr",
+                      PROF: "Prof",
+                    }[form.title],
+                  }
+                : null
+            }
+            onChange={(selected) =>
+              setForm((prev) => ({
+                ...prev,
+                title: selected ? selected.value : "",
+              }))
+            }
+            options={[
+              { value: "DR", label: "Dr" },
+              { value: "MS", label: "Ms" },
+              { value: "MR", label: "Mr" },
+              { value: "PROF", label: "Prof" },
+            ]}
+            placeholder="Select your title"
+            unstyled
+            classNames={{
+              control: (state) =>
+                `${inputField} bg-transparent ${
+                  state.isFocused ? "ring-1 ring-(--primary)" : ""
+                }`,
+              menu: () =>
+                "bg-white border border-gray-200 rounded-md shadow-lg mt-1 z-50",
+              option: (state) =>
+                `cursor-pointer p-2 ${
+                  state.isFocused
+                    ? "bg-(--primary) text-white"
+                    : "hover:bg-gray-100"
+                }`,
+              placeholder: () => "text-gray-500",
+              valueContainer: () => "flex gap-1",
+              indicatorsContainer: () => "text-gray-500 cursor-pointer",
+            }}
+          />
         </div>
+
         <div className={formField}>
-          <label htmlFor="pic">Upload Profile Picture</label>
+          <label htmlFor="image">Upload Profile Picture</label>
           <input
             type="file"
-            name="pic"
-            id="pic"
+            name="image"
+            id="image"
             className="hidden"
             onChange={handleInputChange("image")}
           />
           <label
-            htmlFor="pic"
+            htmlFor="image"
             className="flex cursor-pointer items-center justify-center gap-2 rounded-md bg-[#83C5BE] px-4 py-2 text-white"
           >
             <span>Click to upload</span>
@@ -789,29 +856,34 @@ const AdminEditDoctorPage = ({ params }) => {
             </span>
           </label>
         </div>
+
         <div className={formField}>
           <label htmlFor="fname">First Name</label>
           <input
             type="text"
             name="fname"
             id="fname"
+            placeholder="Enter first name"
             className={inputField}
             value={form.fname}
             onChange={handleInputChange("fname")}
           />
         </div>
+
         <div className={formField}>
           <label htmlFor="lname">Last Name</label>
           <input
             type="text"
             name="lname"
             id="lname"
+            placeholder="Enter last name"
             className={inputField}
             value={form.lname}
             onChange={handleInputChange("lname")}
           />
         </div>
-        <div className={formField}>
+
+        {/* <div className={formField}>
           <label htmlFor="exp">Experience</label>
           <input
             type="text"
@@ -822,76 +894,175 @@ const AdminEditDoctorPage = ({ params }) => {
             value={form.exp}
             onChange={handleInputChange("exp")}
           />
-        </div>
+        </div> */}
+
         <div className={formField}>
           <label htmlFor="desig">Designation</label>
-          <select
-            name="desig"
+          <CreatableSelect
+            isClearable
             id="desig"
-            className={dropDown}
-            style={selectStyle}
-            value={form.desig}
-            onChange={handleInputChange("desig")}
-          >
-            <option value="">Select Designation</option>
-            <option value="DOCTOR">DOCTOR</option>
-            <option value="SURGEON">SURGEON</option>
-            <option value="GENERAL">GENERAL</option>
-          </select>
+            className="react-select-container"
+            classNamePrefix="react-select"
+            value={form.desig ? { label: form.desig, value: form.desig } : null}
+            onChange={(selected) =>
+              setForm((prev) => ({
+                ...prev,
+                desig: selected ? selected.value : "",
+              }))
+            }
+            options={[
+              { value: "Orthopaedic Surgeon", label: "Orthopaedic Surgeon" },
+              { value: "A/ Professor", label: "A/ Professor" },
+              { value: "Professor", label: "Professor" },
+              { value: "Spinal Surgeon", label: "Spinal Surgeon" },
+            ]}
+            placeholder="Select or type..."
+            unstyled
+            classNames={{
+              control: (state) =>
+                `${inputField} bg-transparent ${
+                  state.isFocused ? "ring-1 ring-(--primary)" : ""
+                }`,
+              menu: () =>
+                "bg-white border border-gray-200 rounded-md shadow-lg mt-1 z-50",
+              option: (state) =>
+                `cursor-pointer p-2 ${
+                  state.isFocused
+                    ? "bg-(--primary) text-white"
+                    : "hover:bg-gray-100"
+                }`,
+              placeholder: () => "text-gray-500",
+              valueContainer: () => "flex gap-1",
+              indicatorsContainer: () => "text-gray-500 cursor-pointer",
+            }}
+          />
         </div>
+
         <div className={formField}>
-          <label htmlFor="officialEmail">Official Email</label>
+          <label htmlFor="location">City</label>
+          <Select
+            id="location"
+            className="react-select-container"
+            classNamePrefix="react-select"
+            value={form.location ? { value: form.location, label: form.location } : null}
+            onChange={(selected) =>
+              setForm((prev) => ({
+                ...prev,
+                location: selected ? selected.value : "",
+              }))
+            }
+            options={auCities.map((cityObj) => ({
+              value: cityObj.city,
+              label: cityObj.city,
+            }))}
+            placeholder="Select your city"
+            unstyled
+            classNames={{
+              control: (state) =>
+                `${inputField} bg-transparent ${
+                  state.isFocused ? "ring-1 ring-(--primary)" : ""
+                }`,
+              menu: () =>
+                "bg-white border border-gray-200 rounded-md shadow-lg mt-1 z-50",
+              option: (state) =>
+                `cursor-pointer p-2 ${
+                  state.isFocused
+                    ? "bg-(--primary) text-white"
+                    : "hover:bg-gray-100"
+                }`,
+              placeholder: () => "text-gray-500",
+              valueContainer: () => "flex gap-1",
+              indicatorsContainer: () => "text-gray-500 cursor-pointer",
+            }}
+          />
+        </div>
+
+        <div className={formField}>
+          <label htmlFor="officialEmail" className="flex items-center">
+            Official Email Address
+            <TooltipProvider>
+              <Tooltip delayDuration={300}>
+                <TooltipTrigger asChild>
+                  <button
+                    type="button"
+                    className="cursor-help focus:outline-none"
+                    tabIndex="-1"
+                  >
+                    <Info className="ml-2 h-4 w-4 text-gray-500 hover:text-gray-700" />
+                  </button>
+                </TooltipTrigger>
+                <TooltipContent className="max-w-xs text-center border border-gray-200 bg-white text-black p-2 text-sm shadow-md">
+                  <p>
+                    This email will be used to securely notify you about your
+                    appointments booked through our platform.
+                  </p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+          </label>
           <input
             type="email"
             name="officialEmail"
             id="officialEmail"
-            autoComplete="off"
+            placeholder="Enter official email address"
             className={inputField}
             value={form.officialEmail}
             onChange={handleInputChange("officialEmail")}
           />
         </div>
+
         <div className={formField}>
-          <label htmlFor="location">City</label>
-          <select
-            name="location"
-            id="location"
-            className={dropDown}
-            style={selectStyle}
-            value={form.location}
-            placeholder="Select your city"
-            onChange={handleInputChange("location")}
-          >
-            <option value="">Select your city</option>
-            {auCities.map((cityObj, index) => {
-              return (
-                <option key={index} value={cityObj.city}>
-                  {cityObj.city}
-                </option>
-              );
-            })}
-          </select>
+          <label htmlFor="groupName">Group Name</label>
+          <input
+            type="text"
+            name="groupName"
+            id="groupName"
+            placeholder="Enter group or practice name"
+            className={inputField}
+            value={form.groupName}
+            onChange={handleInputChange("groupName")}
+          />
         </div>
-        {/* Practice/Clinic Entries Tag Box */}
+
         <div className={`${formField} col-span-2`}>
-          <label>Practice/Clinic Details</label>
+          <label htmlFor="hosp_aff">Hospital affiliations</label>
           <div className="flex flex-col gap-2">
             <EditableEntry
-              entries={practiceEntries}
-              setEntries={setPracticeEntries}
-              fieldNames={[
-                "practiceName",
-                "clinicAddress",
-                "postCode",
-                "phone",
-              ]}
-              renderLabel={(entry) => entry.practiceName}
+              entries={hospitalAffiliations}
+              setEntries={setHospitalAffiliations}
+              fieldNames={["name", "address", "phone"]}
+              renderLabel={(entry) => entry.name}
             />
+            <span className="text-xs text-gray-500">
+              Click + to add a hospital affiliation.
+            </span>
           </div>
         </div>
+
         {/* Practice/Clinic Add Dialog */}{" "}
         <div className={formField}>
-          <label htmlFor="">Subspeciality/Special Interests</label>
+          <label htmlFor="" className="flex items-center">
+            Subspeciality/Special Interests
+            <TooltipProvider>
+              <Tooltip delayDuration={300}>
+                <TooltipTrigger asChild>
+                  <button
+                    type="button"
+                    className="cursor-help focus:outline-none"
+                    tabIndex="-1"
+                  >
+                    <Info className="ml-2 h-4 w-4 text-gray-500 hover:text-gray-700" />
+                  </button>
+                </TooltipTrigger>
+                <TooltipContent className="max-w-xs text-center border border-gray-200 bg-white text-black p-2 text-sm shadow-md">
+                  <p>
+                    The first subspeciality entered will appear on the doctor's
+                    card; all will show in the about section.
+                  </p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+          </label>
           <div className="border-1 border-(--primary) p-3">
             <div
               className="max-h-[240px] overflow-auto"
@@ -928,7 +1099,7 @@ const AdminEditDoctorPage = ({ params }) => {
                           value={customInput}
                           onChange={(e) => setCustomInput(e.target.value)}
                           placeholder="Enter other specialty"
-                          className="w-full rounded border border-gray-300 px-3 py-2 text-sm"
+                          className="w-full rounded border border-(--primary) px-3 py-2 text-sm focus:outline-none"
                         />
                         <button
                           type="button"
@@ -977,6 +1148,7 @@ const AdminEditDoctorPage = ({ params }) => {
             </div>
           </div>
         </div>
+
         <div className={formField}>
           <div className="mt-9 border-1 border-(--primary) p-3">
             <div
@@ -1001,6 +1173,7 @@ const AdminEditDoctorPage = ({ params }) => {
             </div>
           </div>
         </div>
+
         <div className={formField}>
           <label htmlFor="about_self">Tell us about yourself</label>
           <textarea
@@ -1012,19 +1185,20 @@ const AdminEditDoctorPage = ({ params }) => {
             onChange={handleInputChange("about_self")}
           ></textarea>
         </div>
+
         <div className={formField}>
           <label htmlFor="reg_assoc">Registrations & Associations</label>
           <div className="flex flex-col gap-2">
-            <div className="items-starts border-primary flex min-h-[240px] flex-wrap content-start rounded-md border bg-transparent p-3">
+            <div className="items-starts border-primary flex min-h-[240px] flex-wrap content-start gap-2 rounded-md border bg-transparent p-3 focus-within:ring-1 focus-within:ring-(--primary)">
               {form?.registrationsAssociations?.map((q, idx) => (
                 <span
                   key={idx}
-                  className="mr-2 mb-2 flex h-fit items-center rounded-full bg-[#83C5BE] px-3 py-1 text-sm text-white"
+                  className="mr-2 mb-2 flex h-fit items-center rounded-md bg-[#83C5BE] px-3 py-1 text-sm text-white"
                 >
                   {q}
                   <button
                     type="button"
-                    className="ml-2 cursor-pointer text-white hover:text-red-200"
+                    className="ml-2 cursor-pointer text-white hover:text-red-400"
                     onClick={() =>
                       handleRemoveValue("registrationsAssociations", idx)
                     }
@@ -1034,95 +1208,187 @@ const AdminEditDoctorPage = ({ params }) => {
                   </button>
                 </span>
               ))}
-              <input
-                type="text"
-                className="h-fit min-w-[120px] flex-1 border-none outline-none"
-                placeholder="Type and press Enter..."
-                value={inputs?.registrationsAssociations}
-                onChange={handleMultiInputChange("registrationsAssociations")}
-                onKeyDown={handleKeyDown("registrationsAssociations")}
-              />
-            </div>
-            <span className="text-xs text-gray-500">
-              Press Enter to add each qualification as a tag.
-            </span>
-          </div>
-        </div>
-        <div className={formField}>
-          <label htmlFor="primaryQualification">Primary Qualification</label>
-          <select
-            name="primaryQualification"
-            id="primaryQualification"
-            className={dropDown}
-            style={selectStyle}
-            value={form.primaryQualification}
-            onChange={handleInputChange("primaryQualification")}
-          >
-            <option value="">Select Primary Qualification</option>
-            <option value="FRCS">FRCS</option>
-            <option value="FRACS">FRACS</option>
-            <option value="FAOrthoA">FAOrthoA</option>
-            <option value="DMCC">DMCC</option>
-            <option value="Other">Other</option>
-          </select>
-          {form.primaryQualification === "Other" && (
-            <input
-              type="text"
-              name="primaryQualificationOther"
-              placeholder="Enter your primary qualification"
-              className={`${inputField} mt-2`}
-              value={form.primaryQualificationOther}
-              onChange={handleInputChange("primaryQualificationOther")}
-            />
-          )}
-        </div>
-        <div className={formField}>
-          <label htmlFor="qual">Additional Qualifications</label>
-          <div className="flex flex-col gap-2">
-            <div className="items-starts border-primary flex min-h-[240px] flex-wrap content-start rounded-md border bg-transparent p-3">
-              {form?.qualifications?.map((q, idx) => (
-                <span
-                  key={idx}
-                  className="mr-2 mb-2 flex h-fit items-center rounded-full bg-[#83C5BE] px-3 py-1 text-sm text-white"
+              <div className="flex min-w-[120px] flex-1 basis-full items-center gap-2">
+                <input
+                  type="text"
+                  className="h-fit flex-1 border-none outline-none"
+                  placeholder="Type then press Enter, click Add, or tap outside"
+                  value={inputs?.registrationsAssociations ?? ""}
+                  onChange={handleMultiInputChange("registrationsAssociations")}
+                  onKeyDown={handleKeyDown("registrationsAssociations")}
+                  onBlur={handleTagInputBlur("registrationsAssociations")}
+                />
+                <Button
+                  type="button"
+                  size="sm"
+                  className="shrink-0 bg-(--primary) text-white px-3 py-1 rounded-md text-sm hover:bg-(--primary-hover) hover:text-white transition-colors"
+                  onClick={() =>
+                    addCurrentInputAsTag("registrationsAssociations")
+                  }
                 >
-                  {q}
-                  <button
-                    type="button"
-                    className="ml-2 cursor-pointer text-white hover:text-red-200"
-                    onClick={() => handleRemoveValue("qualifications", idx)}
-                    aria-label="Remove"
-                  >
-                    &times;
-                  </button>
-                </span>
-              ))}
-              <input
-                type="text"
-                className="h-fit min-w-[120px] flex-1 border-none outline-none"
-                placeholder="Type and press Enter..."
-                value={inputs?.qualifications}
-                onChange={handleMultiInputChange("qualifications")}
-                onKeyDown={handleKeyDown("qualifications")}
-              />
+                  Add
+                </Button>
+              </div>
             </div>
             <span className="text-xs text-gray-500">
-              Press Enter to add each qualification as a tag.
+              Add each item (e.g. AHPRA, AOA, FRACS). Press Enter, click Add, or
+              leave the field to save.
             </span>
           </div>
         </div>
-        <div className={formField}>
-          <label htmlFor="qual">Awards & Publications</label>
+
+        <div className="flex flex-col gap-[20px] max-lg:col-span-2 h-full">
           <div className="flex flex-col gap-2">
-            <div className="items-starts border-primary flex min-h-[240px] flex-wrap content-start rounded-md border bg-transparent p-3">
+            <label htmlFor="primaryQualification" className="flex items-center">
+              Primary Qualification
+              <TooltipProvider>
+                <Tooltip delayDuration={300}>
+                  <TooltipTrigger asChild>
+                    <button
+                      type="button"
+                      className="cursor-help focus:outline-none"
+                      tabIndex="-1"
+                    >
+                      <Info className="ml-2 h-4 w-4 text-gray-500 hover:text-gray-700" />
+                    </button>
+                  </TooltipTrigger>
+                  <TooltipContent className="max-w-xs text-center border border-gray-200 bg-white text-black p-2 text-sm shadow-md">
+                    <p>
+                      This will be prominently displayed on your profile at the
+                      top, under your doctor information.
+                    </p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+            </label>
+            <CreatableSelect
+              isMulti
+              id="primaryQualification"
+              className="react-select-container"
+              classNamePrefix="react-select"
+              value={form.primaryQualification}
+              onChange={(selected) =>
+                setForm((prev) => ({
+                  ...prev,
+                  primaryQualification: selected || [],
+                }))
+              }
+              options={[
+                { value: "FRCS", label: "FRCS" },
+                { value: "FRACS", label: "FRACS" },
+                { value: "FAOrthoA", label: "FAOrthoA" },
+                { value: "DMCC", label: "DMCC" },
+              ]}
+              isOptionDisabled={() => form.primaryQualification?.length >= 4}
+              placeholder="Select or type up to 4..."
+              unstyled
+              classNames={{
+                control: (state) =>
+                  `${inputField} bg-transparent ${
+                    state.isFocused ? "ring-1 ring-(--primary)" : ""
+                  }`,
+                menu: () =>
+                  "bg-white border border-gray-200 rounded-md shadow-lg mt-1 z-50",
+                option: (state) =>
+                  `cursor-pointer p-2 ${
+                    state.isFocused
+                      ? "bg-(--primary) text-white"
+                      : "hover:bg-gray-100"
+                  }`,
+                placeholder: () => "text-gray-500",
+                multiValue: () =>
+                  "bg-[#83C5BE] text-white rounded-md m-1 flex items-center",
+                multiValueLabel: () => "p-1 px-2 text-sm",
+                multiValueRemove: () =>
+                  "hover:text-red-400 p-1 rounded-r-md cursor-pointer",
+                valueContainer: () => "flex gap-1 flex-wrap",
+                indicatorsContainer: () => "text-gray-500 cursor-pointer",
+              }}
+            />
+          </div>
+
+          <div className="flex flex-col gap-2 flex-1">
+            <label htmlFor="qual" className="flex items-center">
+              Additional Qualifications
+              <TooltipProvider>
+                <Tooltip delayDuration={300}>
+                  <TooltipTrigger asChild>
+                    <button
+                      type="button"
+                      className="cursor-help focus:outline-none"
+                      tabIndex="-1"
+                    >
+                      <Info className="ml-2 h-4 w-4 text-gray-500 hover:text-gray-700" />
+                    </button>
+                  </TooltipTrigger>
+                  <TooltipContent className="max-w-xs text-center border border-gray-200 bg-white text-black p-2 text-sm shadow-md">
+                    <p>
+                      These will be grouped as descriptive qualifications and
+                      shown within the About section of your profile.
+                    </p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+            </label>
+            <div className="flex flex-col gap-2 flex-1">
+              <div className="items-starts border-primary flex min-h-[140px] flex-wrap content-start gap-2 rounded-md border bg-transparent p-3 flex-1 focus-within:ring-1 focus-within:ring-(--primary)">
+                {form?.qualifications?.map((q, idx) => (
+                  <span
+                    key={idx}
+                    className="mr-2 mb-2 flex h-fit items-center rounded-full bg-[#83C5BE] px-3 py-1 text-sm text-white"
+                  >
+                    {q}
+                    <button
+                      type="button"
+                      className="ml-2 cursor-pointer text-white hover:text-red-400"
+                      onClick={() => handleRemoveValue("qualifications", idx)}
+                      aria-label="Remove"
+                    >
+                      &times;
+                    </button>
+                  </span>
+                ))}
+                <div className="flex min-w-[120px] flex-1 basis-full items-center gap-2">
+                  <input
+                    type="text"
+                    className="h-fit flex-1 border-none outline-none"
+                    placeholder="Type then press Enter, click Add, or tap outside"
+                    value={inputs?.qualifications ?? ""}
+                    onChange={handleMultiInputChange("qualifications")}
+                    onKeyDown={handleKeyDown("qualifications")}
+                    onBlur={handleTagInputBlur("qualifications")}
+                  />
+                  <Button
+                    type="button"
+                    size="sm"
+                    className="shrink-0 bg-(--primary) text-white px-3 py-1 rounded-md text-sm hover:bg-(--primary-hover) hover:text-white transition-colors"
+                    onClick={() => addCurrentInputAsTag("qualifications")}
+                  >
+                    Add
+                  </Button>
+                </div>
+              </div>
+              <span className="text-xs text-gray-500">
+                Add each qualification. Press Enter, click Add, or leave the
+                field to save.
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <div className={`${formField} h-full`}>
+          <label htmlFor="qual">Awards & Publications</label>
+          <div className="flex flex-col gap-2 flex-1">
+            <div className="items-starts border-primary flex min-h-[240px] flex-wrap content-start gap-2 rounded-md border bg-transparent p-3 flex-1 focus-within:ring-1 focus-within:ring-(--primary)">
               {form?.awardsPublications?.map((q, idx) => (
                 <span
                   key={idx}
-                  className="mr-2 mb-2 flex h-fit items-center rounded-full bg-[#83C5BE] px-3 py-1 text-sm text-white"
+                  className="mr-2 mb-2 flex h-fit items-center rounded-md bg-[#83C5BE] px-3 py-1 text-sm text-white"
                 >
                   {q}
                   <button
                     type="button"
-                    className="ml-2 cursor-pointer text-white hover:text-red-200"
+                    className="ml-2 cursor-pointer text-white hover:text-red-400"
                     onClick={() => handleRemoveValue("awardsPublications", idx)}
                     aria-label="Remove"
                   >
@@ -1130,32 +1396,35 @@ const AdminEditDoctorPage = ({ params }) => {
                   </button>
                 </span>
               ))}
-              <input
-                type="text"
-                className="h-fit min-w-[120px] flex-1 border-none outline-none"
-                placeholder="Type and press Enter..."
-                value={inputs?.awardsPublications}
-                onChange={handleMultiInputChange("awardsPublications")}
-                onKeyDown={handleKeyDown("awardsPublications")}
-              />
+              <div className="flex min-w-[120px] flex-1 basis-full items-center gap-2">
+                <input
+                  type="text"
+                  className="h-fit flex-1 border-none outline-none"
+                  placeholder="Type then press Enter, click Add, or tap outside"
+                  value={inputs?.awardsPublications ?? ""}
+                  onChange={handleMultiInputChange("awardsPublications")}
+                  onKeyDown={handleKeyDown("awardsPublications")}
+                  onBlur={handleTagInputBlur("awardsPublications")}
+                />
+                <Button
+                  type="button"
+                  size="sm"
+                  className="shrink-0 bg-(--primary) text-white px-3 py-1 rounded-md text-sm hover:bg-(--primary-hover) hover:text-white transition-colors"
+                  onClick={() => addCurrentInputAsTag("awardsPublications")}
+                >
+                  Add
+                </Button>
+              </div>
             </div>
             <span className="text-xs text-gray-500">
-              Press Enter to add each awards and Publications as a tag.
+              Add each award or publication. Press Enter, click Add, or leave
+              the field to save.
             </span>
           </div>
         </div>
-        <div className={formField}>
-          <label htmlFor="hosp_aff">Hospital affiliations</label>
-          <div className="flex flex-col gap-2">
-            <EditableEntry
-              entries={hospitalAffiliations}
-              setEntries={setHospitalAffiliations}
-              fieldNames={["name", "address", "phone"]}
-              renderLabel={(entry) => entry.name}
-            />
-          </div>
-        </div>
-        <div className={formField}>
+
+        {/* Practice/Clinic Entries Tag Box */}
+        <div className={`${formField}`}>
           <label>Practice/Clinic Details</label>
           <div className="flex flex-col gap-2">
             <EditableEntry
@@ -1174,8 +1443,12 @@ const AdminEditDoctorPage = ({ params }) => {
                   : entry.practiceName
               }
             />
+            <span className="text-xs text-gray-500">
+              Click + to add a practice or clinic location.
+            </span>
           </div>
         </div>
+
         <div className={formField}>
           <label htmlFor="avail">Set Your Availability</label>
           <Dialog
@@ -1197,8 +1470,7 @@ const AdminEditDoctorPage = ({ params }) => {
               }}
               style={{
                 opacity: practiceEntries.length === 0 ? 0.5 : 1,
-                cursor:
-                  practiceEntries.length === 0 ? "not-allowed" : "pointer",
+                cursor: practiceEntries.length === 0 ? "not-allowed" : "pointer",
               }}
             >
               <span>Click to set availability</span>
@@ -1238,7 +1510,9 @@ const AdminEditDoctorPage = ({ params }) => {
                   </div>
                   <button
                     onClick={handleEditToggle}
-                    className={`ml-4 rounded-full p-1 ${isEditing ? "bg-gray-200" : ""}`}
+                    className={`ml-4 rounded-full p-1 ${
+                      isEditing ? "bg-gray-200" : ""
+                    }`}
                     aria-label={
                       isEditing ? "Stop editing" : "Edit availability"
                     }
@@ -1285,7 +1559,19 @@ const AdminEditDoctorPage = ({ params }) => {
                                 key={day}
                                 disabled={isDisabled}
                                 onClick={() => toggleDay(type, day)}
-                                className={`flex h-10 w-10 items-center justify-center border border-gray-300 ${isHoliday ? "rounded-full bg-[var(--primary)] text-white" : ""} ${isDisabled ? "cursor-not-allowed opacity-50" : isEditing ? "hover:bg-blue-200 hover:text-gray-800" : ""} ${isSelected ? "bg-[#04434317] !text-black" : ""}`}
+                                className={`flex h-10 w-10 items-center justify-center border border-gray-300 ${
+                                  isHoliday
+                                    ? "rounded-full bg-[var(--primary)] text-white"
+                                    : ""
+                                } ${
+                                  isDisabled
+                                    ? "cursor-not-allowed opacity-50"
+                                    : isEditing
+                                      ? "hover:bg-blue-200 hover:text-gray-800"
+                                      : ""
+                                } ${
+                                  isSelected ? "bg-[#04434317] !text-black" : ""
+                                }`}
                               >
                                 {day}
                               </button>
@@ -1387,10 +1673,12 @@ const AdminEditDoctorPage = ({ params }) => {
             </DialogContent>
           </Dialog>
         </div>
+
         {success && (
           <div className="col-span-2 mt-2 text-green-500">{success}</div>
         )}
       </div>
+
       <div className="flex items-center justify-center gap-4">
         <button
           className="btn_fill col-span-2 m-auto mt-10 mb-10 flex cursor-pointer justify-center px-14 py-2 max-sm:w-full"
@@ -1415,4 +1703,4 @@ const AdminEditDoctorPage = ({ params }) => {
   );
 };
 
-export default AdminEditDoctorPage; 
+export default AdminEditDoctorPage;

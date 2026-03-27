@@ -143,6 +143,6 @@ const EditableEntry = ({ entries, setEntries, fieldNames, renderLabel }) => {
   );
 };
 
-const inputField = "border border-(--primary) rounded-md p-3";
+const inputField = "border border-(--primary) rounded-md p-3 focus:outline-none focus:ring-1 focus:ring-(--primary)";
 
 export default EditableEntry;
