@@ -255,6 +255,7 @@ const AdminEditDoctorPage = ({ params }) => {
     if (doctorId) {
       fetchDoctorData();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [doctorId]);
 
   console.log("this is a practice", practiceEntries);
@@ -1056,7 +1057,7 @@ const AdminEditDoctorPage = ({ params }) => {
                 </TooltipTrigger>
                 <TooltipContent className="max-w-xs text-center border border-gray-200 bg-white text-black p-2 text-sm shadow-md">
                   <p>
-                    The first subspeciality entered will appear on the doctor's
+                    The first subspeciality entered will appear on the doctor&apos;s
                     card; all will show in the about section.
                   </p>
                 </TooltipContent>

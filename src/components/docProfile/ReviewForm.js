@@ -33,6 +33,7 @@ export default function ReviewForm({ className, doctorId, onReviewSubmit }) {
         email: session.user.email || "",
       }));
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isLoggedIn, session]);
 
   const handleRatingChange = (category, value) => {
