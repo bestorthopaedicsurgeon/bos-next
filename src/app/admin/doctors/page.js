@@ -283,7 +283,7 @@ const DoctorsPage = () => {
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align="end">
                     <DropdownMenuItem asChild>
-                      <Link href={`/doctor/${doctor.id}`}>
+                      <Link href={`/doctor/${doctor.slug || doctor.id}`}>
                         <Eye className="h-4 w-4 mr-2" />
                         View Profile
                       </Link>

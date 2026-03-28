@@ -7,6 +7,7 @@ import React from "react";
 
 const DoctorCard = ({
   id,
+  slug,
   image,
   title,
   name,
@@ -49,7 +50,7 @@ const DoctorCard = ({
         <div className="flex items-center gap-2 max-sm:flex-col">
           <div
             onClick={() => {
-              router.push(`/doctor/${id}`);
+              router.push(`/doctor/${slug || id}`);
             }}
             className="curssor-pointer max-sm:w-full"
           >

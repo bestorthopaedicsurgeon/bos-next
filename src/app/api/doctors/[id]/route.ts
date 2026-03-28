@@ -3,20 +3,18 @@ import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: Promise<{ id: number }> },
+  { params }: { params: Promise<{ id: string }> },
 ) {
   let { id } = await params;
-  //convert id to number if it's a string
-  id = Number(id);
-  console.log("Fetching doctor with slug:", id);
+  
+  const numericId = Number(id);
+  const isNumeric = !isNaN(numericId);
 
-  if (!id) {
-    return NextResponse.json({ error: "id is required." }, { status: 400 });
-  }
+  console.log(`Fetching doctor with ${isNumeric ? "ID" : "slug"}:`, id);
 
   try {
     const doctor = await prisma.doctorProfile.findUnique({
-      where: { id: id },
+      where: isNumeric ? { id: numericId } : { slug: id },
     });
 
     if (!doctor) {

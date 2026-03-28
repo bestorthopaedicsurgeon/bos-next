@@ -16,11 +16,18 @@ import { getDoctorProfile } from "@/lib/apiCalls/server/doctor";
 const Page = async ({ params }) => {
   // const session = await getServerSession(authOptions);
   const { slug } = await params
-  console.log("Doctor ID:", slug);
-
-  // console.log("Session in doctor profile page:", session);
+  
+  // Check if we should redirect from ID to slug
+  const isNumeric = !isNaN(Number(slug));
 
   const res = await getDoctorProfile(slug);
+
+  if (res?.success && res.data) {
+    // If it was a numeric ID, redirect to the slug for SEO
+    if (isNumeric && res.data.slug) {
+      redirect(`/doctor/${res.data.slug}`);
+    }
+  }
   // console.log("Doctor Profile Data:", doctorProfile);
 
   if (!res || !res.success) {
