@@ -70,7 +70,9 @@ const DocInfo = ({ docProfile_Details, showLocation = true }) => {
           <div>
             <p className={`${heading_style}`}>Qualification</p>
             <p className={`${info_style}`}>
-              {doctorProfile?.qualifications?.[0] || "Not specified"}
+              {doctorProfile?.featuredQualifications?.length > 0 
+                ? doctorProfile.featuredQualifications.join(", ") 
+                : (doctorProfile?.qualifications?.[0] || "Not specified")}
             </p>
           </div>
         </div>
@@ -125,13 +127,19 @@ const DocInfo = ({ docProfile_Details, showLocation = true }) => {
                   {activePractice?.postCode ? `, ${activePractice?.postCode}` : ""}
                 </a>
 
-                <p className={`${heading_style}`}>Phone Number</p>
                 <a
                   href={`tel:${activePractice?.phone}`}
                   className={`${info_style} hover:text-primary hover:underline underline-offset-2 transition-colors`}
                 >
                   {activePractice?.phone}
                 </a>
+
+                {activePractice?.fax && (
+                  <>
+                    <p className={`${heading_style} mt-3`}>Fax Number</p>
+                    <p className={`${info_style}`}>{activePractice.fax}</p>
+                  </>
+                )}
               </div>
               <div className="w-full min-md:w-[350px] lg:w-[400px] p-2 flex">
                 <iframe

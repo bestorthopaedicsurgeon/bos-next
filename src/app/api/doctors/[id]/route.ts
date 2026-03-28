@@ -40,3 +40,43 @@ export async function GET(
     );
   }
 }
+
+export async function DELETE(
+  request: NextRequest,
+  { params }: { params: Promise<{ id: string }> },
+) {
+  try {
+    const { id } = await params;
+    const numericId = Number(id);
+
+    if (isNaN(numericId)) {
+      return NextResponse.json(
+        { success: false, error: "Invalid doctor ID." },
+        { status: 400 },
+      );
+    }
+
+    // Prisma doesn't have Cascade delete enabled on the relations in the schema,
+    // so we manually clean up related data before deleting the profile itself.
+    // deleteMany safely drops records without throwing if they don't exist.
+    await prisma.$transaction([
+      prisma.doctorAvailabilityTime.deleteMany({ where: { doctorId: numericId } }),
+      prisma.doctorSpecificAvailability.deleteMany({ where: { doctorId: numericId } }),
+      prisma.doctorReview.deleteMany({ where: { doctorId: numericId } }),
+      prisma.doctorClaimRequest.deleteMany({ where: { doctorId: numericId } }),
+      prisma.question.deleteMany({ where: { doctorId: numericId } }), // Automatically cascades to related answers based on schema
+      prisma.doctorProfile.delete({ where: { id: numericId } }),
+    ]);
+
+    return NextResponse.json({
+      success: true,
+      message: "Doctor profile deleted successfully.",
+    });
+  } catch (error) {
+    console.error("Error deleting doctor:", error);
+    return NextResponse.json(
+      { success: false, error: "Failed to delete doctor profile." },
+      { status: 500 },
+    );
+  }
+}

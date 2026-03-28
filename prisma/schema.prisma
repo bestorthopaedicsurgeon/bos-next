@@ -78,7 +78,7 @@ model DoctorProfile {
   userId                    String?                      @unique
   title                     String?
   experience                Int?
-  designation               Designation?
+  designation               String?
   about                     String?
   DoctorAvailabilityDays    String[]
   name                      String?
@@ -101,6 +101,7 @@ model DoctorProfile {
   specificAvailability      DoctorSpecificAvailability[]
   Question                  Question[]
   slug                      String?                      @unique
+  featuredQualifications    String[]                     @default([])
 }
 
 model DoctorReview {
@@ -227,12 +228,6 @@ enum Title {
   MR
   MSa
   PROF
-}
-
-enum Designation {
-  DOCTOR
-  SURGEON
-  GENERAL
 }
 
 enum DayOfWeek {

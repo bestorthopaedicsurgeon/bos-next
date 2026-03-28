@@ -15,6 +15,7 @@ const DoctorCard = ({
   location,
   avgRating,
   designation,
+  featuredQualifications,
   reviewButton = false,
 }) => {
   const router = useRouter();
@@ -40,7 +41,9 @@ const DoctorCard = ({
             height={24}
           />
           <p className="text-lg text-neutral-800 max-w-64 max-sm:w-full max-sm:max-w-full">
-            {subspecialities?.[0]?.split(", ")[0] || "Not specified"}
+            {featuredQualifications && featuredQualifications.length > 0 
+              ? featuredQualifications.join(", ") 
+              : (subspecialities?.[0]?.split(", ")[0] || "Not specified")}
           </p>
         </div>
         <div className="flex items-center gap-2">

@@ -55,3 +55,22 @@ export const fetchDoctorReviews = async (doctorId) => {
     throw error;
   }
 };
+
+export const getDoctorProfileBySlug = async (slug) => {
+  try {
+    const res = await fetch(`/api/doctors/${slug}`, {
+      method: "GET",
+    });
+
+    const data = await res.json();
+
+    if (!res.ok) {
+      throw new Error(data?.error || "Failed to fetch doctor profile");
+    }
+
+    return data.data;
+  } catch (error) {
+    console.error("API error (doctor profile by slug):", error);
+    return null;
+  }
+};

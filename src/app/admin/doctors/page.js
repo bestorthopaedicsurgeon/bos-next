@@ -22,22 +22,22 @@ const DoctorsPage = () => {
   const [currentPage, setCurrentPage] = useState(1)
   const itemsPerPage = 6
 
+  const fetchDoctors = async () => {
+    try {
+      setLoading(true)
+      const doctorsData = await getAllDoctors()
+      if (doctorsData) {
+        setDoctors(doctorsData)
+      }
+    } catch (error) {
+      console.error("Error fetching doctors:", error)
+    } finally {
+      setLoading(false)
+    }
+  }
+
   // Fetch doctors from API
   useEffect(() => {
-    const fetchDoctors = async () => {
-      try {
-        setLoading(true)
-        const doctorsData = await getAllDoctors()
-        if (doctorsData) {
-          setDoctors(doctorsData)
-        }
-      } catch (error) {
-        console.error("Error fetching doctors:", error)
-      } finally {
-        setLoading(false)
-      }
-    }
-
     fetchDoctors()
   }, [])
 
@@ -92,6 +92,25 @@ const DoctorsPage = () => {
       }
     } catch (error) {
       console.error('Error updating doctor hidden status:', error)
+    }
+  }
+
+  const handleDelete = async (doctorId) => {
+    if (!confirm("Are you sure you want to delete this doctor? This action cannot be undone and will delete all associated availabilities, reviews, and data.")) return;
+    
+    try {
+      const res = await fetch(`/api/doctors/${doctorId}`, { method: 'DELETE' });
+      if (res.ok) {
+        toast.success("Doctor deleted successfully.");
+        // Recall the doctors API to update the list
+        fetchDoctors();
+      } else {
+        const result = await res.json();
+        toast.error(result.error || "Failed to delete doctor.");
+      }
+    } catch (err) {
+      console.error(err);
+      toast.error("An error occurred while deleting the doctor.");
     }
   }
 
@@ -314,7 +333,10 @@ const DoctorsPage = () => {
                         </>
                       )}
                     </DropdownMenuItem>
-                    <DropdownMenuItem className="text-red-600">
+                    <DropdownMenuItem 
+                      className="text-red-600"
+                      onClick={() => handleDelete(doctor.id)}
+                    >
                       <Trash2 className="h-4 w-4 mr-2" />
                       Delete
                     </DropdownMenuItem>

@@ -38,7 +38,7 @@ export const DoctorProfileSchema = z.object({
   title: z.string().nullable().optional(),
   name: z.string().nullable().optional(),
   experience: z.number().nullable().optional(),
-  designation: DesignationEnum.nullable().optional(),
+  designation: z.string().nullable().optional(),
   about: z.string().nullable().optional(),
   practices: z.any().nullable().optional(), // Json in Prisma
   subspecialities: z.array(z.string()).optional(),
@@ -52,6 +52,7 @@ export const DoctorProfileSchema = z.object({
   userId: z.string().optional(),
   doctorAvailability: z.array(DoctorAvailabilitySchema).optional(),
   specificAvailability: z.array(SpecificAvailabilitySchema).optional(),
+  featuredQualifications: z.array(z.string()).optional(),
 });
 
 export type DoctorProfileInput = z.infer<typeof DoctorProfileSchema>;
