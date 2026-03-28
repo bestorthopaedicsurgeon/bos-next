@@ -93,6 +93,8 @@ const Page = async ({ params }) => {
     return title.charAt(0).toUpperCase() + title.slice(1).toLowerCase();
   };
   const formattedTitle = formatTitle(doctData?.title);
+  const designation = doctData?.designation || "Orthopaedic Surgeon";
+  const pageTitle = `${formattedTitle ? `${formattedTitle}. ` : ""}${doctData?.name || "Doctor"}`;
 
   return (
     <div className="">
@@ -103,7 +105,7 @@ const Page = async ({ params }) => {
             "@context": "https://schema.org",
             "@type": ["Person", "MedicalBusiness", "LocalBusiness"],
             name: pageTitle,
-            jobTitle: designation.replace(' - ', '') || "Orthopaedic Surgeon",
+            jobTitle: designation.replace(' - ', ''),
             image: doctData?.image || undefined,
             address: doctData?.location || undefined,
             url: `${process.env.NEXT_PUBLIC_BASE_URL || "https://www.bestorthopaedicsurgeon.com.au"}/doctor/${doctData?.slug}`
