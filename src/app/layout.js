@@ -28,13 +28,35 @@ const dmSans = DM_Sans({
 });
 
 export const metadata = {
+  metadataBase: new URL(process.env.NEXT_PUBLIC_BASE_URL || "https://www.bestorthopaedicsurgeon.com.au"),
+  title: {
+    template: "%s | Best Orthopaedic Surgeons",
+    default: "Best Orthopaedic Surgeons | BOS",
+  },
+  description: "Find the Best Orthopaedic Surgeons in Australia. Comprehensive platform for patients and doctors.",
+  alternates: {
+    canonical: "/",
+  },
+  openGraph: {
+    title: "Best Orthopaedic Surgeons",
+    description: "Find the Best Orthopaedic Surgeons in Australia.",
+    url: "/",
+    siteName: "Best Orthopaedic Surgeons",
+    images: [
+      {
+        url: "/bos_logo.png",
+        width: 1200,
+        height: 630,
+      },
+    ],
+    locale: "en_AU",
+    type: "website",
+  },
   icons: {
     icon: "/bos_favicon.svg",
     shortcut: "/bos_favicon.svg",
     apple: "/bos_favicon.svg",
   },
-  title: "BOS - Best Orthopaedic Surgeons",
-  description: "BOS - Best Orthopaedic Surgeons",
 };
 
 export default function RootLayout({ children }) {

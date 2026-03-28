@@ -4,6 +4,7 @@ import Header from "@/components/header/Header";
 export const metadata = {
   title: "Review & Rating Policy | Best Orthopaedic Surgeon",
   description: "Review & Rating Policy for www.bestorthopaedicsurgeon.com.au - How reviews, ratings, and user-submitted content are managed",
+  alternates: { canonical: '/review-policy' },
 };
 
 export default function ReviewPolicyLayout({ children }) {

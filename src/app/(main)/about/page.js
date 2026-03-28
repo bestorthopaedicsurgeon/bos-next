@@ -1,3 +1,8 @@
+export const metadata = {
+  title: 'About Us',
+  description: 'Learn more about Best Orthopaedic Surgeons, our mission, and our team.',
+  alternates: { canonical: '/about' },
+};
 
 import { AboutUsSection } from "@/components/aboutPage/AboutUsSection";
 import { CtaSectionAbout } from "@/components/aboutPage/CtaSection";
