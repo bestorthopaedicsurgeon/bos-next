@@ -13,6 +13,51 @@ import { authOptions } from "@/lib/auth";
 import { getServerSession } from "next-auth";
 import { redirect } from "next/navigation";
 import { getDoctorProfile } from "@/lib/apiCalls/server/doctor";
+
+export async function generateMetadata({ params }) {
+  const { slug } = await params;
+  const res = await getDoctorProfile(slug);
+  
+  if (!res || !res.success || !res.data) {
+    return {
+      title: "Doctor Profile Not Found | Best Orthopaedic Surgeons",
+    };
+  }
+
+  const doctData = res.data;
+  const formatTitle = (title) => {
+    if (!title) return "";
+    return title.charAt(0).toUpperCase() + title.slice(1).toLowerCase();
+  };
+  
+  const formattedTitle = formatTitle(doctData?.title);
+  const doctorName = doctData?.name || "Doctor";
+  const designation = doctData?.designation ? ` - ${doctData.designation.charAt(0).toUpperCase() + doctData.designation.slice(1).toLowerCase()}` : "";
+  const location = doctData?.location ? ` in ${doctData.location}` : "";
+  
+  const pageTitle = `${formattedTitle ? `${formattedTitle}. ` : ""}${doctorName}${designation}${location}`;
+  
+  let description = `View the profile of ${formattedTitle ? `${formattedTitle}. ` : ""}${doctorName} on Best Orthopaedic Surgeons.`;
+  if (doctData?.about) {
+    description = doctData.about.length > 160 ? doctData.about.substring(0, 157) + "..." : doctData.about;
+  }
+
+  const ogImages = [];
+  if (doctData?.image) {
+    ogImages.push(doctData.image);
+  }
+
+  return {
+    title: pageTitle,
+    description: description,
+    openGraph: {
+      title: pageTitle,
+      description: description,
+      images: ogImages.length > 0 ? ogImages : undefined,
+    },
+  };
+}
+
 const Page = async ({ params }) => {
   // const session = await getServerSession(authOptions);
   const { slug } = await params
@@ -51,6 +96,20 @@ const Page = async ({ params }) => {
 
   return (
     <div className="">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": ["Person", "MedicalBusiness", "LocalBusiness"],
+            name: pageTitle,
+            jobTitle: designation.replace(' - ', '') || "Orthopaedic Surgeon",
+            image: doctData?.image || undefined,
+            address: doctData?.location || undefined,
+            url: `${process.env.NEXT_PUBLIC_BASE_URL || "https://www.bestorthopaedicsurgeon.com.au"}/doctor/${doctData?.slug}`
+          }),
+        }}
+      />
       {docProfile_Details.stepper.map((data) => (
         <ProfileHeader
           key={data.heading}
