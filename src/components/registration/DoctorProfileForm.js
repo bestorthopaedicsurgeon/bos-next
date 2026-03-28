@@ -34,6 +34,11 @@ import Select from "react-select";
 const toTitleCase = (str) =>
   str.replace(/\w\S*/g, (t) => t.charAt(0).toUpperCase() + t.substr(1).toLowerCase());
 
+const DayOfWeekMap = {
+  Mon: "MONDAY", Tue: "TUESDAY", Wed: "WEDNESDAY", Thu: "THURSDAY",
+  Fri: "FRIDAY", Sat: "SATURDAY", Sun: "SUNDAY",
+};
+
 const DoctorProfileForm = ({ mode = "create", userRole = "DOCTOR", initialData = null, doctorId = null }) => {
   const { data: session } = useSession();
   const router = useRouter();
@@ -105,6 +110,7 @@ const DoctorProfileForm = ({ mode = "create", userRole = "DOCTOR", initialData =
       populateData(initialData);
       setDataLoading(false);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [mode, initialData]);
 
   const populateData = (doctorData) => {
@@ -277,11 +283,6 @@ const DoctorProfileForm = ({ mode = "create", userRole = "DOCTOR", initialData =
     }).filter(Boolean);
     setDoctorAvailability(updatedAvailability);
   }, [scheduleTimes]);
-
-  const DayOfWeekMap = {
-    Mon: "MONDAY", Tue: "TUESDAY", Wed: "WEDNESDAY", Thu: "THURSDAY",
-    Fri: "FRIDAY", Sat: "SATURDAY", Sun: "SUNDAY",
-  };
 
   const generateTimeOptions = (start = "06:00", end = "22:00") => {
     const options = [];
@@ -539,7 +540,7 @@ const DoctorProfileForm = ({ mode = "create", userRole = "DOCTOR", initialData =
                   <span className="ml-2 cursor-help"><Info size={16} className="text-gray-400" /></span>
                 </TooltipTrigger>
                 <TooltipContent>
-                  <p className="max-w-[250px] text-sm">The first subspeciality entered will appear on the doctor's card; all will show in the about section.</p>
+                  <p className="max-w-[250px] text-sm">The first subspeciality entered will appear on the doctor&apos;s card; all will show in the about section.</p>
                 </TooltipContent>
               </Tooltip>
             </TooltipProvider>
