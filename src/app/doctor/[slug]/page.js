@@ -30,7 +30,6 @@ export async function generateMetadata({ params }) {
   const { slug } = await params;
   const res = await getDoctorProfile(slug);
 
-  // If doctor not found — noindex the page
   if (!res || !res.success || !res.data) {
     return {
       title: "Doctor Profile Not Found | Best Orthopaedic Surgeons",
@@ -39,9 +38,6 @@ export async function generateMetadata({ params }) {
   }
 
   const doctData = res.data;
-
-  // Duplicate slug detection (e.g. omar-khorshid-1) — noindex duplicates
-  const isDuplicateSlug = /-\d+$/.test(slug);
 
   const formattedTitle = formatTitle(doctData?.title);
   const doctorName = doctData?.name || "Doctor";
@@ -53,35 +49,28 @@ export async function generateMetadata({ params }) {
 
   const pageTitle = `${formattedTitle ? `${formattedTitle}. ` : ""}${doctorName} - ${designation}${location}`;
 
-  // Use the about field for description if available (best for SEO)
+  // Use about field for description if available
   let description = `View the profile of ${
     formattedTitle ? `${formattedTitle}. ` : ""
   }${doctorName}, ${designation} in Australia. Book an appointment on Best Orthopaedic Surgeons.`;
 
   if (doctData?.about) {
-    const stripped = doctData.about.replace(/<[^>]*>/g, ""); // strip any HTML tags
+    const stripped = doctData.about.replace(/<[^>]*>/g, ""); // strip HTML tags
     description =
       stripped.length > 160 ? stripped.substring(0, 157) + "..." : stripped;
   }
 
-  // Always point canonical to the real slug from DB, not the URL slug
   const canonicalSlug = doctData?.slug || slug;
   const canonicalUrl = `${BASE_URL}/doctor/${canonicalSlug}`;
 
   return {
     title: pageTitle,
     description: description,
-
-    // ✅ Canonical URL — fixes duplicate page issues
+    // ✅ Canonical URL
     alternates: {
       canonical: canonicalUrl,
     },
-
-    // ✅ Noindex duplicate slugs (-1, -2 etc), index real pages
-    robots: isDuplicateSlug
-      ? { index: false, follow: true }
-      : { index: true, follow: true },
-
+    robots: { index: true, follow: true },
     openGraph: {
       title: pageTitle,
       description: description,
@@ -96,7 +85,6 @@ export async function generateMetadata({ params }) {
           ]
         : undefined,
     },
-
     twitter: {
       card: "summary_large_image",
       title: pageTitle,
@@ -112,24 +100,28 @@ export async function generateMetadata({ params }) {
 const Page = async ({ params }) => {
   const { slug } = await params;
 
-  // If slug is a numeric ID, redirect to the real slug for SEO
+  // Check if we should redirect from numeric ID to slug
   const isNumeric = !isNaN(Number(slug));
 
   const res = await getDoctorProfile(slug);
 
   if (res?.success && res.data) {
+    // If it was a numeric ID, redirect to the slug for SEO
     if (isNumeric && res.data.slug) {
       redirect(`/doctor/${res.data.slug}`);
     }
   }
 
   if (!res || !res.success) {
-    console.error("Doctor profile not found for slug:", slug);
+    console.error("Doctor profile not found");
+    // redirect("/doctor-registration");
   }
 
   let doctData;
-  if (res?.success && res.data) {
+
+  if (res.success && res.data) {
     doctData = res.data;
+    console.log("doctData", doctData);
   }
 
   const formattedTitle = formatTitle(doctData?.title);
@@ -189,13 +181,12 @@ const Page = async ({ params }) => {
       ))}
 
       <div className="w-full max-w-7xl mx-auto flex flex-col min-lg:flex-row items-start gap-10 mt-10">
-        {/* Left area */}
+        {/* left area */}
         <div className="flex-1 w-full flex flex-col gap-5">
           <DocProfile docProfile_Details={doctData} />
           <DocInfo docProfile_Details={doctData} />
         </div>
-
-        {/* Right area */}
+        {/* right area */}
         <div className="w-full min-lg:w-[450px] xl:w-[500px] flex flex-col gap-5 min-lg:self-stretch">
           <AvailabilityCalendar
             availability={doctData?.DoctorAvailabilityTime}

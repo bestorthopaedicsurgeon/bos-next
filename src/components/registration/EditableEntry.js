@@ -63,7 +63,7 @@ const EditableEntry = ({ entries, setEntries, fieldNames, renderLabel }) => {
               {renderLabel(entry)}
               <button
                 type="button"
-                className="ml-2 text-white hover:text-red-200 cursor-pointer"
+                className="ml-2 text-white hover:text-red-200"
                 onClick={(e) => {
                   e.stopPropagation();
                   handleRemove(idx);
@@ -110,8 +110,8 @@ const EditableEntry = ({ entries, setEntries, fieldNames, renderLabel }) => {
       {/* Add Button */}
       <Popover>
         <PopoverTrigger asChild>
-          <button className="bg-primary hover:bg-primary-hover flex h-8 px-4 cursor-pointer items-center justify-center rounded text-white text-sm font-medium">
-            Add
+          <button className="bg-primary hover:bg-primary-hover flex h-8 w-8 cursor-pointer items-center justify-center rounded-full text-white">
+            <Plus size={16} />
           </button>
         </PopoverTrigger>
         <PopoverContent className="w-[260px] text-sm">
