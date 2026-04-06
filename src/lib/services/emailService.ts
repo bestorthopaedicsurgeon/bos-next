@@ -5,6 +5,7 @@ import {
   getOTPEmailTemplate,
   getNotificationTemplate,
   getWelcomeEmailTemplate,
+  getDoctorWelcomeEmailTemplate,
   getAppointmentConfirmationTemplate,
   getDoctorAppointmentNotificationTemplate,
   getPasswordResetTemplate,
@@ -110,15 +111,21 @@ export async function sendEmail({ to, subject, message, actionText, actionLink }
 }
 
 /**
- * Send a welcome email to a new user
+ * Send a welcome email to a new user based on their role
  */
-export async function sendWelcomeEmail(email: string, userName: string): Promise<void> {
-  const { html, text } = getWelcomeEmailTemplate(userName);
+export async function sendWelcomeEmail(email: string, userName: string, role?: string): Promise<void> {
+  const { html, text } = role === 'DOCTOR' 
+    ? getDoctorWelcomeEmailTemplate(userName)
+    : getWelcomeEmailTemplate(userName);
+
+  const subject = role === 'DOCTOR'
+    ? 'Welcome to the Best Orthopedic Surgeons Network! 🩺'
+    : 'Welcome to Best Orthopedic Surgeons! 🎉';
 
   const mailOptions = {
     from: `"Best Orthopedic Surgeons" <${process.env.EMAIL_USERNAME}>`,
     to: email,
-    subject: 'Welcome to Best Orthopedic Surgeons! 🎉',
+    subject,
     text,
     html,
     attachments: commonAttachments,

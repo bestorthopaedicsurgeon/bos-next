@@ -146,6 +146,7 @@ export async function verifyOTP(email: string, otp: string): Promise<User> {
       lastName: payload.lastName || null,
       password: payload.passwordHash,
       role: payload.role,
+      emailVerified: new Date(),
       ...(payload.role === "DOCTOR" && {
         doctorProfile: { create: {} },
       }),
@@ -158,7 +159,11 @@ export async function verifyOTP(email: string, otp: string): Promise<User> {
 
   // Send welcome email (don't block registration if email fails)
   try {
-    await sendWelcomeEmail(createdUser.email, createdUser.name || createdUser.firstName || 'User');
+    await sendWelcomeEmail(
+      createdUser.email, 
+      createdUser.name || createdUser.firstName || 'User',
+      createdUser.role
+    );
     console.log('✅ Welcome email sent successfully');
   } catch (emailError: any) {
     console.error('⚠️ Failed to send welcome email (non-critical):', emailError.message);

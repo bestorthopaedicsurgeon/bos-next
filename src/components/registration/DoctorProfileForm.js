@@ -428,10 +428,10 @@ const DoctorProfileForm = ({
   const heading =
     mode === "edit"
       ? userRole === "ADMIN"
-        ? "Edit Doctor Profile (Admin)"
+        ? "Edit Doctor Profile"
         : "Edit Your Profile"
       : userRole === "ADMIN"
-        ? "Create New Doctor Profile (Admin)"
+        ? "Create New Doctor Profile"
         : "Doctor Profile Registration";
 
   // ── Render ───────────────────────────────────────────────────────────────

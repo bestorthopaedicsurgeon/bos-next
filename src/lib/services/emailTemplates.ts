@@ -176,6 +176,61 @@ export function getWelcomeEmailTemplate(userName: string): { html: string; text:
 }
 
 /**
+ * Doctor Welcome Email Template
+ */
+export function getDoctorWelcomeEmailTemplate(userName: string): { html: string; text: string } {
+  const content = `
+    <div style="text-align: center;">
+      <div style="margin-bottom: 30px;">
+        <svg width="80" height="80" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M19 3H5C3.89543 3 3 3.89543 3 5V19C3 20.1046 3.89543 21 5 21H19C20.1046 21 21 20.1046 21 19V5C21 3.89543 20.1046 3 19 3Z" stroke="${PRIMARY_COLOR}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M7 7H17" stroke="${PRIMARY_COLOR}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M7 12H17" stroke="${PRIMARY_COLOR}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M7 17H13" stroke="${PRIMARY_COLOR}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+      
+      <h2 style="margin: 0 0 15px 0; color: ${TEXT_PRIMARY}; font-size: 28px; font-weight: 700;">
+        Welcome to our Network! 🩺
+      </h2>
+      
+      <p style="margin: 0 0 10px 0; color: ${TEXT_PRIMARY}; font-size: 18px;">
+        Hello <strong>Dr. ${userName}</strong>,
+      </p>
+      
+      <p style="margin: 0 0 30px 0; color: ${TEXT_SECONDARY}; font-size: 16px; line-height: 1.6;">
+        Welcome to Best Orthopedic Surgeons. We're proud to have you as part of our exclusive directory of specialists in Australia.
+      </p>
+      
+      <div style="background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%); border-radius: 8px; padding: 25px; margin-bottom: 30px; text-align: left;">
+        <h3 style="margin: 0 0 15px 0; color: ${TEXT_PRIMARY}; font-size: 18px; font-weight: 600;">
+          Getting Started
+        </h3>
+        <ul style="margin: 0; padding-left: 20px; color: ${TEXT_SECONDARY}; font-size: 15px; line-height: 1.8;">
+          <li>Complete your profile to increase your visibility</li>
+          <li>Review and respond to patient inquiries</li>
+          <li>Manage your weekly availability for appointments</li>
+          <li>Monitor patient ratings and feedback</li>
+        </ul>
+      </div>
+      
+      <a href="${process.env.NEXTAUTH_URL}/doctor/registration" style="display: inline-block; background: linear-gradient(135deg, ${PRIMARY_COLOR} 0%, ${PRIMARY_HOVER} 100%); color: #ffffff; text-decoration: none; padding: 14px 32px; border-radius: 8px; font-size: 16px; font-weight: 600; box-shadow: 0 4px 6px rgba(47, 121, 123, 0.3);">
+        Complete Your Profile
+      </a>
+      
+      <p style="margin: 30px 0 0 0; color: ${TEXT_SECONDARY}; font-size: 14px; line-height: 1.6;">
+        Our team is dedicated to supporting your practice. If you have any questions, please reach out to our provider support.
+      </p>
+    </div>
+  `;
+
+  return {
+    html: getEmailWrapper(content),
+    text: `Welcome to Best Orthopedic Surgeons Specialist Network!\n\nHello Dr. ${userName},\n\nWelcome to Best Orthopedic Surgeons. We're proud to have you as part of our exclusive directory of specialists in Australia.\n\nGetting Started:\n- Complete your profile to increase your visibility\n- Review and respond to patient inquiries\n- Manage your weekly availability\n- Monitor patient ratings and feedback\n\nComplete Your Profile: ${process.env.NEXTAUTH_URL}/doctor/registration\n\nIf you have any questions, our provider support team is here to help!\n\n© ${new Date().getFullYear()} Best Orthopedic Surgeons. All rights reserved.`
+  };
+}
+
+/**
  * Appointment Confirmation Email Template
  */
 export function getAppointmentConfirmationTemplate(details: {
