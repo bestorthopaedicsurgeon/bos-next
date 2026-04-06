@@ -1,6 +1,6 @@
 import { prisma } from "@/lib/prisma";
 import { NextResponse } from "next/server";
-import { title } from "process";
+
 
 export async function GET() {
   try {

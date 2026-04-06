@@ -4,8 +4,7 @@ import React from "react";
 
 const DoctorRegistrationPage = () => {
   return (
-    <div className="p-8">
-      <h1 className="text-3xl font-bold mb-8 text-primary">Doctor Profile Registration</h1>
+    <div className="">
       <DoctorProfileForm 
         mode="create" 
         userRole="DOCTOR" 

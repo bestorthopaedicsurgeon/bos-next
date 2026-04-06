@@ -425,366 +425,309 @@ const DoctorProfileForm = ({
     );
   }
 
+  const heading =
+    mode === "edit"
+      ? userRole === "ADMIN"
+        ? "Edit Doctor Profile (Admin)"
+        : "Edit Your Profile"
+      : userRole === "ADMIN"
+        ? "Create New Doctor Profile (Admin)"
+        : "Doctor Profile Registration";
+
   // ── Render ───────────────────────────────────────────────────────────────
   return (
-    <div className="container m-auto">
-      <div
-        className="container m-auto grid grid-cols-2 gap-[32px] pt-16"
-        autoComplete="off"
-      >
-        {/* ── Title ─────────────────────────────────────────────────────── */}
-        <div className={formField}>
-          <label htmlFor="title">Title</label>
-          <Select
-            id="title"
-            isSearchable={false}
-            isClearable
-            className="react-select-container"
-            classNamePrefix="react-select"
-            value={
-              form.title
-                ? { value: form.title, label: { DR: "Dr", MS: "Ms", MR: "Mr", PROF: "Prof" }[form.title] }
-                : null
-            }
-            onChange={(selected) =>
-              setForm((prev) => ({ ...prev, title: selected ? selected.value : "" }))
-            }
-            options={[
-              { value: "DR", label: "Dr" },
-              { value: "MS", label: "Ms" },
-              { value: "MR", label: "Mr" },
-              { value: "PROF", label: "Prof" },
-            ]}
-            placeholder="Select your title"
-            unstyled
-            classNames={{
-              control: (state) => `${inputField} bg-transparent ${state.isFocused ? "ring-1 ring-(--primary)" : ""}`,
-              menu: () => "bg-white border border-gray-200 rounded-md shadow-lg mt-1 z-50",
-              option: (state) => `cursor-pointer p-2 ${state.isFocused ? "bg-(--primary) text-white" : "hover:bg-gray-100"}`,
-              placeholder: () => "text-gray-500",
-              valueContainer: () => "flex gap-1",
-              indicatorsContainer: () => "text-gray-500 cursor-pointer",
-            }}
-          />
-        </div>
-
-        {/* ── Profile Picture ───────────────────────────────────────────── */}
-        <div className={formField}>
-          <label htmlFor="image">Upload Profile Picture</label>
-          <input type="file" name="image" id="image" className="hidden" onChange={handleInputChange("image")} />
-          <label
-            htmlFor="image"
-            className="flex cursor-pointer items-center justify-center gap-2 rounded-md bg-[#83C5BE] px-4 py-2 text-white"
-          >
-            <span>Click to upload</span>
-            <span>
-              <svg width="32" height="33" viewBox="0 0 32 33" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path
-                  d="M12.6668 4.99936C7.88 4.99936 4 8.86616 4 13.6662C4 13.6662 3.9992 13.6582 4 13.791C1.6216 14.991 0 17.399 0 20.3326C0 24.3326 3.2832 27.6662 7.3332 27.6662H25.3332C29.0148 27.6662 32 24.5994 32 20.9994C32 18.1994 30.2708 15.7746 27.8332 14.7074C27.928 14.441 28 14.0662 28 13.6662C28 10.9994 25.9108 8.99936 23.3332 8.99936C22.2692 8.99936 21.2852 9.24936 20.5 9.91616C19.1092 6.98256 16.124 4.99936 12.6668 4.99936ZM16 11.6662L21.3332 18.3326H18.6668V24.999H13.3332V18.333H10.6668L16 11.6662Z"
-                  fill="white"
-                />
-              </svg>
-            </span>
-          </label>
-        </div>
-
-        {/* ── First Name ───────────────────────────────────────────────── */}
-        <div className={formField}>
-          <label htmlFor="fname">First Name</label>
-          <input type="text" name="fname" id="fname" placeholder="Enter first name" className={inputField} value={form.fname} onChange={handleInputChange("fname")} />
-        </div>
-
-        {/* ── Last Name ────────────────────────────────────────────────── */}
-        <div className={formField}>
-          <label htmlFor="lname">Last Name</label>
-          <input type="text" name="lname" id="lname" placeholder="Enter last name" className={inputField} value={form.lname} onChange={handleInputChange("lname")} />
-        </div>
-
-        {/* ── Designation ─────────────────────────────────────────────── */}
-        <div className={formField}>
-          <label htmlFor="desig">Designation</label>
-          <CreatableSelect
-            isClearable
-            id="desig"
-            className="react-select-container"
-            classNamePrefix="react-select"
-            value={form.desig ? { label: form.desig, value: form.desig } : null}
-            onChange={(selected) =>
-              setForm((prev) => ({ ...prev, desig: selected ? selected.value : "" }))
-            }
-            options={[
-              { value: "Orthopaedic Surgeon", label: "Orthopaedic Surgeon" },
-              { value: "A/ Professor", label: "A/ Professor" },
-              { value: "Professor", label: "Professor" },
-              { value: "Spinal Surgeon", label: "Spinal Surgeon" },
-            ]}
-            placeholder="Select or type..."
-            unstyled
-            classNames={{
-              control: (state) => `${inputField} bg-transparent ${state.isFocused ? "ring-1 ring-(--primary)" : ""}`,
-              menu: () => "bg-white border border-gray-200 rounded-md shadow-lg mt-1 z-50",
-              option: (state) => `cursor-pointer p-2 ${state.isFocused ? "bg-(--primary) text-white" : "hover:bg-gray-100"}`,
-              placeholder: () => "text-gray-500",
-              valueContainer: () => "flex gap-1",
-              indicatorsContainer: () => "text-gray-500 cursor-pointer",
-            }}
-          />
-        </div>
-
-        {/* ── City ────────────────────────────────────────────────────── */}
-        <div className={formField}>
-          <label htmlFor="location">City</label>
-          <Select
-            id="location"
-            className="react-select-container"
-            classNamePrefix="react-select"
-            value={form.location ? { value: form.location, label: form.location } : null}
-            onChange={(selected) =>
-              setForm((prev) => ({ ...prev, location: selected ? selected.value : "" }))
-            }
-            options={auCities.map((cityObj) => ({ value: cityObj.city, label: cityObj.city }))}
-            placeholder="Select your city"
-            unstyled
-            classNames={{
-              control: (state) => `${inputField} bg-transparent ${state.isFocused ? "ring-1 ring-(--primary)" : ""}`,
-              menu: () => "bg-white border border-gray-200 rounded-md shadow-lg mt-1 z-50",
-              option: (state) => `cursor-pointer p-2 ${state.isFocused ? "bg-(--primary) text-white" : "hover:bg-gray-100"}`,
-              placeholder: () => "text-gray-500",
-              valueContainer: () => "flex gap-1",
-              indicatorsContainer: () => "text-gray-500 cursor-pointer",
-            }}
-          />
-        </div>
-
-        {/* ── Official Email ───────────────────────────────────────────── */}
-        <div className={formField}>
-          <label htmlFor="officialEmail" className="flex items-center">
-            Official Email Address
-            <InfoTooltip text="This email will be used to securely notify you about your appointments booked through our platform." />
-          </label>
-          <input
-            type="email"
-            name="officialEmail"
-            id="officialEmail"
-            placeholder="Enter official email address"
-            className={inputField}
-            value={form.officialEmail}
-            onChange={handleInputChange("officialEmail")}
-          />
-        </div>
-
-        {/* ── Group Name ──────────────────────────────────────────────── */}
-        <div className={formField}>
-          <label htmlFor="groupName">Group Name</label>
-          <input
-            type="text"
-            name="groupName"
-            id="groupName"
-            placeholder="Enter group or practice name"
-            className={inputField}
-            value={form.groupName}
-            onChange={handleInputChange("groupName")}
-          />
-        </div>
-
-        {/* ── Hospital Affiliations ────────────────────────────────────── */}
-        <div className={`${formField} col-span-2`}>
-          <label htmlFor="hosp_aff">Hospital affiliations</label>
-          <div className="flex flex-col gap-2">
-            <EditableEntry
-              entries={form.hospitalAffiliations}
-              setEntries={(val) => {
-                const newEntries = typeof val === "function" ? val(form.hospitalAffiliations) : val;
-                setForm((prev) => ({ ...prev, hospitalAffiliations: newEntries }));
-              }}
-              fieldNames={["name", "address", "phone"]}
-              renderLabel={(entry) => entry.name}
-            />
-            <span className="text-xs text-gray-500">Click + to add a hospital affiliation.</span>
-          </div>
-        </div>
-
-        {/* ── Subspecialities — left panel (checkboxes) ────────────────── */}
-        <div className={formField}>
-          <label className="flex items-center">
-            Subspeciality/Special Interests
-            <InfoTooltip text="The first subspeciality entered will appear on the doctor's card; all will show in the about section." />
-          </label>
-          <div className="border-1 border-(--primary) p-3">
-            <div
-              className="max-h-[240px] overflow-auto"
-              style={{ scrollbarWidth: "thin", scrollbarColor: "#2F797B #D9D9D9" }}
-            >
-              {/* Custom specialty input */}
-              <div className="flex gap-2 mb-2">
-                <input
-                  type="text"
-                  value={customInput}
-                  onChange={(e) => setCustomInput(e.target.value)}
-                  placeholder="Enter other specialty"
-                  className="w-full rounded border border-(--primary) px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-(--primary) focus:ring-inset"
-                />
-                <button
-                  type="button"
-                  onClick={handleAddCustomSpecialty}
-                  className="rounded bg-primary p-2 text-white hover:bg-primary/80"
-                >
-                  <Plus size={18} />
-                </button>
-              </div>
-
-              {subspecialities.map((specialty, idx) => {
-                if (specialty.value === "Other") {
-                  return (
-                    <div key={idx} className="mt-2 space-y-2">
-                      {customSpecialties.map((label, cIdx) => (
-                        <div key={cIdx} className="flex items-center justify-between rounded border px-3 py-2 text-sm shadow-sm">
-                          <span>{label}</span>
-                          <button type="button" onClick={() => handleRemoveCustomSpecialty(label)} className="text-red-500 hover:text-red-700">
-                            <X size={18} />
-                          </button>
-                        </div>
-                      ))}
-                    </div>
-                  );
-                }
-                return (
-                  <div key={specialty.value} className="flex items-center gap-2 py-1">
-                    {/* ✅ Real checkbox — same layout/text as before, just checkbox instead of circle */}
-                    <input
-                      type="checkbox"
-                      id={specialty.value.toLowerCase()}
-                      checked={selectedSpecialties.some((s) => s.value === specialty.value)}
-                      onChange={() => handleSpecialtyChange(specialty)}
-                      className="h-4 w-4 cursor-pointer accent-primary"
-                    />
-                    <label
-                      htmlFor={specialty.value.toLowerCase()}
-                      className="cursor-pointer select-none"
-                    >
-                      {specialty.label}
-                    </label>
-                  </div>
-                );
-              })}
-            </div>
-          </div>
-        </div>
-
-        {/* ── Subspecialities — right panel (selected) ─────────────────── */}
-        <div className={formField}>
-          <div className="mt-9 border-1 border-(--primary) p-3">
-            <div
-              className="h-[240px] overflow-auto"
-              style={{ scrollbarWidth: "thin", scrollbarColor: "#2F797B #D9D9D9" }}
-            >
-              {selectedSpecialties.map((specialty, idx) => (
-                <div key={idx}>
-                  <label className="flex cursor-pointer items-center rounded-full py-2 select-none">
-                    <span className="mr-2 inline-block h-4 w-4 rounded-full border border-primary bg-primary"></span>
-                    {specialty.label}
-                  </label>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-
-        {/* ── About ───────────────────────────────────────────────────── */}
-        <div className={formField}>
-          <label htmlFor="about_self">Tell us about yourself</label>
-          <textarea
-            name="about_self"
-            id="about_self"
-            className={`h-[240px] resize-none ${inputField}`}
-            placeholder="Write a brief introduction about yourself."
-            value={form.about_self}
-            onChange={handleInputChange("about_self")}
-          ></textarea>
-        </div>
-
-        {/* ── Registrations & Associations ────────────────────────────── */}
-        <div className={formField}>
-          <label htmlFor="reg_assoc">Registrations & Associations</label>
-          <div className="flex flex-col gap-2">
-            <div className="items-starts border-primary flex min-h-[240px] flex-wrap content-start gap-2 rounded-md border bg-transparent p-3 focus-within:ring-1 focus-within:ring-(--primary)">
-              {form?.registrationsAssociations?.map((q, idx) => (
-                <span key={idx} className="mr-2 mb-2 flex h-fit items-center rounded-md bg-[#83C5BE] px-3 py-1 text-sm text-white">
-                  {q}
-                  <button type="button" className="ml-2 cursor-pointer text-white hover:text-red-400" onClick={() => handleRemoveValue("registrationsAssociations", idx)} aria-label="Remove">
-                    &times;
-                  </button>
-                </span>
-              ))}
-              <div className="flex min-w-[120px] flex-1 basis-full items-center gap-2">
-                <input
-                  type="text"
-                  className="h-fit flex-1 border-none outline-none"
-                  placeholder="Type then press Enter, click Add, or tap outside"
-                  value={inputs?.registrationsAssociations ?? ""}
-                  onChange={handleMultiInputChange("registrationsAssociations")}
-                  onKeyDown={handleKeyDown("registrationsAssociations")}
-                  onBlur={handleTagInputBlur("registrationsAssociations")}
-                />
-                <Button type="button" size="sm" className="shrink-0 bg-(--primary) text-white px-3 py-1 rounded-md text-sm hover:bg-(--primary-hover) hover:text-white transition-colors" onClick={() => addCurrentInputAsTag("registrationsAssociations")}>
-                  Add
-                </Button>
-              </div>
-            </div>
-            <span className="text-xs text-gray-500">Add each item (e.g. AHPRA, AOA, FRACS). Press Enter, click Add, or leave the field to save.</span>
-          </div>
-        </div>
-
-        {/* ── Qualifications (Primary + Additional) ────────────────────── */}
-        <div className="flex flex-col gap-[20px] max-lg:col-span-2 h-full">
-          {/* Primary Qualification */}
-          <div className="flex flex-col gap-2">
-            <label htmlFor="primaryQualification" className="flex items-center">
-              Primary Qualification
-              <InfoTooltip text="This will be prominently displayed on your profile at the top, under your doctor information." />
-            </label>
-            <CreatableSelect
-              isMulti
-              id="primaryQualification"
+    <>
+      <ProfileHeader
+        heading={heading}
+        step1="Doctors"
+        step2={form.fname || form.lname ? `${form.fname} ${form.lname}` : ""}
+        step3={mode === "edit" ? "Edit Profile" : "Registration"}
+      />
+      <div className="container m-auto pb-16">
+        <div
+          className="container m-auto grid grid-cols-2 gap-[32px] pt-16"
+          autoComplete="off"
+        >
+          {/* ── Title ─────────────────────────────────────────────────────── */}
+          <div className={formField}>
+            <label htmlFor="title">Title</label>
+            <Select
+              id="title"
+              isSearchable={false}
+              isClearable
               className="react-select-container"
               classNamePrefix="react-select"
-              value={form.primaryQualification}
-              onChange={(selected) => setForm((prev) => ({ ...prev, primaryQualification: selected || [] }))}
+              value={
+                form.title
+                  ? { value: form.title, label: { DR: "Dr", MS: "Ms", MR: "Mr", PROF: "Prof" }[form.title] }
+                  : null
+              }
+              onChange={(selected) =>
+                setForm((prev) => ({ ...prev, title: selected ? selected.value : "" }))
+              }
               options={[
-                { value: "FRCS", label: "FRCS" },
-                { value: "FRACS", label: "FRACS" },
-                { value: "FAOrthoA", label: "FAOrthoA" },
-                { value: "DMCC", label: "DMCC" },
+                { value: "DR", label: "Dr" },
+                { value: "MS", label: "Ms" },
+                { value: "MR", label: "Mr" },
+                { value: "PROF", label: "Prof" },
               ]}
-              isOptionDisabled={() => form.primaryQualification?.length >= 4}
-              placeholder="Select or type up to 4..."
+              placeholder="Select your title"
               unstyled
               classNames={{
                 control: (state) => `${inputField} bg-transparent ${state.isFocused ? "ring-1 ring-(--primary)" : ""}`,
                 menu: () => "bg-white border border-gray-200 rounded-md shadow-lg mt-1 z-50",
                 option: (state) => `cursor-pointer p-2 ${state.isFocused ? "bg-(--primary) text-white" : "hover:bg-gray-100"}`,
                 placeholder: () => "text-gray-500",
-                multiValue: () => "bg-[#83C5BE] text-white rounded-md m-1 flex items-center",
-                multiValueLabel: () => "p-1 px-2 text-sm",
-                multiValueRemove: () => "hover:text-red-400 p-1 rounded-r-md cursor-pointer",
-                valueContainer: () => "flex gap-1 flex-wrap",
+                valueContainer: () => "flex gap-1",
                 indicatorsContainer: () => "text-gray-500 cursor-pointer",
               }}
             />
           </div>
 
-          {/* Additional Qualifications */}
-          <div className="flex flex-col gap-2 flex-1">
-            <label htmlFor="qual" className="flex items-center">
-              Additional Qualifications
-              <InfoTooltip text="These will be grouped as descriptive qualifications and shown within the About section of your profile." />
+          {/* ── Profile Picture ───────────────────────────────────────────── */}
+          <div className={formField}>
+            <label htmlFor="image">Upload Profile Picture</label>
+            <input type="file" name="image" id="image" className="hidden" onChange={handleInputChange("image")} />
+            <label
+              htmlFor="image"
+              className="flex cursor-pointer items-center justify-center gap-2 rounded-md bg-[#83C5BE] px-4 py-2 text-white"
+            >
+              <span>Click to upload</span>
+              <span>
+                <svg width="32" height="33" viewBox="0 0 32 33" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path
+                    d="M12.6668 4.99936C7.88 4.99936 4 8.86616 4 13.6662C4 13.6662 3.9992 13.6582 4 13.791C1.6216 14.991 0 17.399 0 20.3326C0 24.3326 3.2832 27.6662 7.3332 27.6662H25.3332C29.0148 27.6662 32 24.5994 32 20.9994C32 18.1994 30.2708 15.7746 27.8332 14.7074C27.928 14.441 28 14.0662 28 13.6662C28 10.9994 25.9108 8.99936 23.3332 8.99936C22.2692 8.99936 21.2852 9.24936 20.5 9.91616C19.1092 6.98256 16.124 4.99936 12.6668 4.99936ZM16 11.6662L21.3332 18.3326H18.6668V24.999H13.3332V18.333H10.6668L16 11.6662Z"
+                    fill="white"
+                  />
+                </svg>
+              </span>
             </label>
-            <div className="flex flex-col gap-2 flex-1">
-              <div className="items-starts border-primary flex min-h-[140px] flex-wrap content-start gap-2 rounded-md border bg-transparent p-3 flex-1 focus-within:ring-1 focus-within:ring-(--primary)">
-                {form?.qualifications?.map((q, idx) => (
-                  <span key={idx} className="mr-2 mb-2 flex h-fit items-center rounded-full bg-[#83C5BE] px-3 py-1 text-sm text-white">
+          </div>
+
+          {/* ── First Name ───────────────────────────────────────────────── */}
+          <div className={formField}>
+            <label htmlFor="fname">First Name</label>
+            <input type="text" name="fname" id="fname" placeholder="Enter first name" className={inputField} value={form.fname} onChange={handleInputChange("fname")} />
+          </div>
+
+          {/* ── Last Name ────────────────────────────────────────────────── */}
+          <div className={formField}>
+            <label htmlFor="lname">Last Name</label>
+            <input type="text" name="lname" id="lname" placeholder="Enter last name" className={inputField} value={form.lname} onChange={handleInputChange("lname")} />
+          </div>
+
+          {/* ── Designation ─────────────────────────────────────────────── */}
+          <div className={formField}>
+            <label htmlFor="desig">Designation</label>
+            <CreatableSelect
+              isClearable
+              id="desig"
+              className="react-select-container"
+              classNamePrefix="react-select"
+              value={form.desig ? { label: form.desig, value: form.desig } : null}
+              onChange={(selected) =>
+                setForm((prev) => ({ ...prev, desig: selected ? selected.value : "" }))
+              }
+              options={[
+                { value: "Orthopaedic Surgeon", label: "Orthopaedic Surgeon" },
+                { value: "A/ Professor", label: "A/ Professor" },
+                { value: "Professor", label: "Professor" },
+                { value: "Spinal Surgeon", label: "Spinal Surgeon" },
+              ]}
+              placeholder="Select or type..."
+              unstyled
+              classNames={{
+                control: (state) => `${inputField} bg-transparent ${state.isFocused ? "ring-1 ring-(--primary)" : ""}`,
+                menu: () => "bg-white border border-gray-200 rounded-md shadow-lg mt-1 z-50",
+                option: (state) => `cursor-pointer p-2 ${state.isFocused ? "bg-(--primary) text-white" : "hover:bg-gray-100"}`,
+                placeholder: () => "text-gray-500",
+                valueContainer: () => "flex gap-1",
+                indicatorsContainer: () => "text-gray-500 cursor-pointer",
+              }}
+            />
+          </div>
+
+          {/* ── City ────────────────────────────────────────────────────── */}
+          <div className={formField}>
+            <label htmlFor="location">City</label>
+            <Select
+              id="location"
+              className="react-select-container"
+              classNamePrefix="react-select"
+              value={form.location ? { value: form.location, label: form.location } : null}
+              onChange={(selected) =>
+                setForm((prev) => ({ ...prev, location: selected ? selected.value : "" }))
+              }
+              options={auCities.map((cityObj) => ({ value: cityObj.city, label: cityObj.city }))}
+              placeholder="Select your city"
+              unstyled
+              classNames={{
+                control: (state) => `${inputField} bg-transparent ${state.isFocused ? "ring-1 ring-(--primary)" : ""}`,
+                menu: () => "bg-white border border-gray-200 rounded-md shadow-lg mt-1 z-50",
+                option: (state) => `cursor-pointer p-2 ${state.isFocused ? "bg-(--primary) text-white" : "hover:bg-gray-100"}`,
+                placeholder: () => "text-gray-500",
+                valueContainer: () => "flex gap-1",
+                indicatorsContainer: () => "text-gray-500 cursor-pointer",
+              }}
+            />
+          </div>
+
+          {/* ── Official Email ───────────────────────────────────────────── */}
+          <div className={formField}>
+            <label htmlFor="officialEmail" className="flex items-center">
+              Official Email Address
+              <InfoTooltip text="This email will be used to securely notify you about your appointments booked through our platform." />
+            </label>
+            <input
+              type="email"
+              name="officialEmail"
+              id="officialEmail"
+              placeholder="Enter official email address"
+              className={inputField}
+              value={form.officialEmail}
+              onChange={handleInputChange("officialEmail")}
+            />
+          </div>
+
+          {/* ── Group Name ──────────────────────────────────────────────── */}
+          <div className={formField}>
+            <label htmlFor="groupName">Group Name</label>
+            <input
+              type="text"
+              name="groupName"
+              id="groupName"
+              placeholder="Enter group or practice name"
+              className={inputField}
+              value={form.groupName}
+              onChange={handleInputChange("groupName")}
+            />
+          </div>
+
+          {/* ── Hospital Affiliations ────────────────────────────────────── */}
+          <div className={`${formField} col-span-2`}>
+            <label htmlFor="hosp_aff">Hospital affiliations</label>
+            <div className="flex flex-col gap-2">
+              <EditableEntry
+                entries={form.hospitalAffiliations}
+                setEntries={(val) => {
+                  const newEntries = typeof val === "function" ? val(form.hospitalAffiliations) : val;
+                  setForm((prev) => ({ ...prev, hospitalAffiliations: newEntries }));
+                }}
+                fieldNames={["name", "address", "phone"]}
+                renderLabel={(entry) => entry.name}
+              />
+              <span className="text-xs text-gray-500">Click + to add a hospital affiliation.</span>
+            </div>
+          </div>
+
+          {/* ── Subspecialities — left panel (checkboxes) ────────────────── */}
+          <div className={formField}>
+            <label className="flex items-center">
+              Subspeciality/Special Interests
+              <InfoTooltip text="The first subspeciality entered will appear on the doctor's card; all will show in the about section." />
+            </label>
+            <div className="border-1 border-(--primary) p-3">
+              <div
+                className="max-h-[240px] overflow-auto"
+                style={{ scrollbarWidth: "thin", scrollbarColor: "#2F797B #D9D9D9" }}
+              >
+                {/* Custom specialty input */}
+                <div className="flex gap-2 mb-2">
+                  <input
+                    type="text"
+                    value={customInput}
+                    onChange={(e) => setCustomInput(e.target.value)}
+                    placeholder="Enter other specialty"
+                    className="w-full rounded border border-(--primary) px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-(--primary) focus:ring-inset"
+                  />
+                  <button
+                    type="button"
+                    onClick={handleAddCustomSpecialty}
+                    className="rounded bg-primary p-2 text-white hover:bg-primary/80"
+                  >
+                    <Plus size={18} />
+                  </button>
+                </div>
+
+                {subspecialities.map((specialty, idx) => {
+                  if (specialty.value === "Other") {
+                    return (
+                      <div key={idx} className="mt-2 space-y-2">
+                        {customSpecialties.map((label, cIdx) => (
+                          <div key={cIdx} className="flex items-center justify-between rounded border px-3 py-2 text-sm shadow-sm">
+                            <span>{label}</span>
+                            <button type="button" onClick={() => handleRemoveCustomSpecialty(label)} className="text-red-500 hover:text-red-700">
+                              <X size={18} />
+                            </button>
+                          </div>
+                        ))}
+                      </div>
+                    );
+                  }
+                  return (
+                    <div key={specialty.value} className="flex items-center gap-2 py-1">
+                      {/* ✅ Real checkbox — same layout/text as before, just checkbox instead of circle */}
+                      <input
+                        type="checkbox"
+                        id={specialty.value.toLowerCase()}
+                        checked={selectedSpecialties.some((s) => s.value === specialty.value)}
+                        onChange={() => handleSpecialtyChange(specialty)}
+                        className="h-4 w-4 cursor-pointer accent-primary"
+                      />
+                      <label
+                        htmlFor={specialty.value.toLowerCase()}
+                        className="cursor-pointer select-none"
+                      >
+                        {specialty.label}
+                      </label>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          </div>
+
+          {/* ── Subspecialities — right panel (selected) ─────────────────── */}
+          <div className={formField}>
+            <div className="mt-9 border-1 border-(--primary) p-3">
+              <div
+                className="h-[240px] overflow-auto"
+                style={{ scrollbarWidth: "thin", scrollbarColor: "#2F797B #D9D9D9" }}
+              >
+                {selectedSpecialties.map((specialty, idx) => (
+                  <div key={idx}>
+                    <label className="flex cursor-pointer items-center rounded-full py-2 select-none">
+                      <span className="mr-2 inline-block h-4 w-4 rounded-full border border-primary bg-primary"></span>
+                      {specialty.label}
+                    </label>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          {/* ── About ───────────────────────────────────────────────────── */}
+          <div className={formField}>
+            <label htmlFor="about_self">Tell us about yourself</label>
+            <textarea
+              name="about_self"
+              id="about_self"
+              className={`h-[240px] resize-none ${inputField}`}
+              placeholder="Write a brief introduction about yourself."
+              value={form.about_self}
+              onChange={handleInputChange("about_self")}
+            ></textarea>
+          </div>
+
+          {/* ── Registrations & Associations ────────────────────────────── */}
+          <div className={formField}>
+            <label htmlFor="reg_assoc">Registrations & Associations</label>
+            <div className="flex flex-col gap-2">
+              <div className="items-starts border-primary flex min-h-[240px] flex-wrap content-start gap-2 rounded-md border bg-transparent p-3 focus-within:ring-1 focus-within:ring-(--primary)">
+                {form?.registrationsAssociations?.map((q, idx) => (
+                  <span key={idx} className="mr-2 mb-2 flex h-fit items-center rounded-md bg-[#83C5BE] px-3 py-1 text-sm text-white">
                     {q}
-                    <button type="button" className="ml-2 cursor-pointer text-white hover:text-red-400" onClick={() => handleRemoveValue("qualifications", idx)} aria-label="Remove">
+                    <button type="button" className="ml-2 cursor-pointer text-white hover:text-red-400" onClick={() => handleRemoveValue("registrationsAssociations", idx)} aria-label="Remove">
                       &times;
                     </button>
                   </span>
@@ -794,206 +737,279 @@ const DoctorProfileForm = ({
                     type="text"
                     className="h-fit flex-1 border-none outline-none"
                     placeholder="Type then press Enter, click Add, or tap outside"
-                    value={inputs?.qualifications ?? ""}
-                    onChange={handleMultiInputChange("qualifications")}
-                    onKeyDown={handleKeyDown("qualifications")}
-                    onBlur={handleTagInputBlur("qualifications")}
+                    value={inputs?.registrationsAssociations ?? ""}
+                    onChange={handleMultiInputChange("registrationsAssociations")}
+                    onKeyDown={handleKeyDown("registrationsAssociations")}
+                    onBlur={handleTagInputBlur("registrationsAssociations")}
                   />
-                  <Button type="button" size="sm" className="shrink-0 bg-(--primary) text-white px-3 py-1 rounded-md text-sm hover:bg-(--primary-hover) hover:text-white transition-colors" onClick={() => addCurrentInputAsTag("qualifications")}>
+                  <Button type="button" size="sm" className="shrink-0 bg-(--primary) text-white px-3 py-1 rounded-md text-sm hover:bg-(--primary-hover) hover:text-white transition-colors" onClick={() => addCurrentInputAsTag("registrationsAssociations")}>
                     Add
                   </Button>
                 </div>
               </div>
-              <span className="text-xs text-gray-500">Add each qualification. Press Enter, click Add, or leave the field to save.</span>
+              <span className="text-xs text-gray-500">Add each item (e.g. AHPRA, AOA, FRACS). Press Enter, click Add, or leave the field to save.</span>
             </div>
           </div>
-        </div>
 
-        {/* ── Awards & Publications ────────────────────────────────────── */}
-        <div className={`${formField} h-full`}>
-          <label htmlFor="qual">Awards & Publications</label>
-          <div className="flex flex-col gap-2 flex-1">
-            <div className="items-starts border-primary flex min-h-[240px] flex-wrap content-start gap-2 rounded-md border bg-transparent p-3 flex-1 focus-within:ring-1 focus-within:ring-(--primary)">
-              {form?.awardsPublications?.map((q, idx) => (
-                <span key={idx} className="mr-2 mb-2 flex h-fit items-center rounded-md bg-[#83C5BE] px-3 py-1 text-sm text-white">
-                  {q}
-                  <button type="button" className="ml-2 cursor-pointer text-white hover:text-red-400" onClick={() => handleRemoveValue("awardsPublications", idx)} aria-label="Remove">
-                    &times;
-                  </button>
-                </span>
-              ))}
-              <div className="flex min-w-[120px] flex-1 basis-full items-center gap-2">
-                <input
-                  type="text"
-                  className="h-fit flex-1 border-none outline-none"
-                  placeholder="Type then press Enter, click Add, or tap outside"
-                  value={inputs?.awardsPublications ?? ""}
-                  onChange={handleMultiInputChange("awardsPublications")}
-                  onKeyDown={handleKeyDown("awardsPublications")}
-                  onBlur={handleTagInputBlur("awardsPublications")}
-                />
-                <Button type="button" size="sm" className="shrink-0 bg-(--primary) text-white px-3 py-1 rounded-md text-sm hover:bg-(--primary-hover) hover:text-white transition-colors" onClick={() => addCurrentInputAsTag("awardsPublications")}>
-                  Add
-                </Button>
+          {/* ── Qualifications (Primary + Additional) ────────────────────── */}
+          <div className="flex flex-col gap-[20px] max-lg:col-span-2 h-full">
+            {/* Primary Qualification */}
+            <div className="flex flex-col gap-2">
+              <label htmlFor="primaryQualification" className="flex items-center">
+                Primary Qualification
+                <InfoTooltip text="This will be prominently displayed on your profile at the top, under your doctor information." />
+              </label>
+              <CreatableSelect
+                isMulti
+                id="primaryQualification"
+                className="react-select-container"
+                classNamePrefix="react-select"
+                value={form.primaryQualification}
+                onChange={(selected) => setForm((prev) => ({ ...prev, primaryQualification: selected || [] }))}
+                options={[
+                  { value: "FRCS", label: "FRCS" },
+                  { value: "FRACS", label: "FRACS" },
+                  { value: "FAOrthoA", label: "FAOrthoA" },
+                  { value: "DMCC", label: "DMCC" },
+                ]}
+                isOptionDisabled={() => form.primaryQualification?.length >= 4}
+                placeholder="Select or type up to 4..."
+                unstyled
+                classNames={{
+                  control: (state) => `${inputField} bg-transparent ${state.isFocused ? "ring-1 ring-(--primary)" : ""}`,
+                  menu: () => "bg-white border border-gray-200 rounded-md shadow-lg mt-1 z-50",
+                  option: (state) => `cursor-pointer p-2 ${state.isFocused ? "bg-(--primary) text-white" : "hover:bg-gray-100"}`,
+                  placeholder: () => "text-gray-500",
+                  multiValue: () => "bg-[#83C5BE] text-white rounded-md m-1 flex items-center",
+                  multiValueLabel: () => "p-1 px-2 text-sm",
+                  multiValueRemove: () => "hover:text-red-400 p-1 rounded-r-md cursor-pointer",
+                  valueContainer: () => "flex gap-1 flex-wrap",
+                  indicatorsContainer: () => "text-gray-500 cursor-pointer",
+                }}
+              />
+            </div>
+
+            {/* Additional Qualifications */}
+            <div className="flex flex-col gap-2 flex-1">
+              <label htmlFor="qual" className="flex items-center">
+                Additional Qualifications
+                <InfoTooltip text="These will be grouped as descriptive qualifications and shown within the About section of your profile." />
+              </label>
+              <div className="flex flex-col gap-2 flex-1">
+                <div className="items-starts border-primary flex min-h-[140px] flex-wrap content-start gap-2 rounded-md border bg-transparent p-3 flex-1 focus-within:ring-1 focus-within:ring-(--primary)">
+                  {form?.qualifications?.map((q, idx) => (
+                    <span key={idx} className="mr-2 mb-2 flex h-fit items-center rounded-full bg-[#83C5BE] px-3 py-1 text-sm text-white">
+                      {q}
+                      <button type="button" className="ml-2 cursor-pointer text-white hover:text-red-400" onClick={() => handleRemoveValue("qualifications", idx)} aria-label="Remove">
+                        &times;
+                      </button>
+                    </span>
+                  ))}
+                  <div className="flex min-w-[120px] flex-1 basis-full items-center gap-2">
+                    <input
+                      type="text"
+                      className="h-fit flex-1 border-none outline-none"
+                      placeholder="Type then press Enter, click Add, or tap outside"
+                      value={inputs?.qualifications ?? ""}
+                      onChange={handleMultiInputChange("qualifications")}
+                      onKeyDown={handleKeyDown("qualifications")}
+                      onBlur={handleTagInputBlur("qualifications")}
+                    />
+                    <Button type="button" size="sm" className="shrink-0 bg-(--primary) text-white px-3 py-1 rounded-md text-sm hover:bg-(--primary-hover) hover:text-white transition-colors" onClick={() => addCurrentInputAsTag("qualifications")}>
+                      Add
+                    </Button>
+                  </div>
+                </div>
+                <span className="text-xs text-gray-500">Add each qualification. Press Enter, click Add, or leave the field to save.</span>
               </div>
             </div>
-            <span className="text-xs text-gray-500">Add each award or publication. Press Enter, click Add, or leave the field to save.</span>
           </div>
-        </div>
 
-        {/* ── Practice / Clinic Details ────────────────────────────────── */}
-        <div className={formField}>
-          <label>Practice/Clinic Details</label>
-          <div className="flex flex-col gap-2">
-            <EditableEntry
-              entries={form.practices}
-              setEntries={(val) => {
-                const newEntries = typeof val === "function" ? val(form.practices) : val;
-                setForm((prev) => ({ ...prev, practices: newEntries }));
-              }}
-              fieldNames={["practiceName", "clinicName", "clinicAddress", "postCode", "phone", "fax"]}
-              renderLabel={(entry) =>
-                entry.clinicName
-                  ? `${entry.practiceName} (${entry.clinicName})`
-                  : entry.practiceName
-              }
-            />
-            <span className="text-xs text-gray-500">Click + to add a practice or clinic location.</span>
+          {/* ── Awards & Publications ────────────────────────────────────── */}
+          <div className={`${formField} h-full`}>
+            <label htmlFor="qual">Awards & Publications</label>
+            <div className="flex flex-col gap-2 flex-1">
+              <div className="items-starts border-primary flex min-h-[240px] flex-wrap content-start gap-2 rounded-md border bg-transparent p-3 flex-1 focus-within:ring-1 focus-within:ring-(--primary)">
+                {form?.awardsPublications?.map((q, idx) => (
+                  <span key={idx} className="mr-2 mb-2 flex h-fit items-center rounded-md bg-[#83C5BE] px-3 py-1 text-sm text-white">
+                    {q}
+                    <button type="button" className="ml-2 cursor-pointer text-white hover:text-red-400" onClick={() => handleRemoveValue("awardsPublications", idx)} aria-label="Remove">
+                      &times;
+                    </button>
+                  </span>
+                ))}
+                <div className="flex min-w-[120px] flex-1 basis-full items-center gap-2">
+                  <input
+                    type="text"
+                    className="h-fit flex-1 border-none outline-none"
+                    placeholder="Type then press Enter, click Add, or tap outside"
+                    value={inputs?.awardsPublications ?? ""}
+                    onChange={handleMultiInputChange("awardsPublications")}
+                    onKeyDown={handleKeyDown("awardsPublications")}
+                    onBlur={handleTagInputBlur("awardsPublications")}
+                  />
+                  <Button type="button" size="sm" className="shrink-0 bg-(--primary) text-white px-3 py-1 rounded-md text-sm hover:bg-(--primary-hover) hover:text-white transition-colors" onClick={() => addCurrentInputAsTag("awardsPublications")}>
+                    Add
+                  </Button>
+                </div>
+              </div>
+              <span className="text-xs text-gray-500">Add each award or publication. Press Enter, click Add, or leave the field to save.</span>
+            </div>
           </div>
-        </div>
 
-        {/* ── Availability ─────────────────────────────────────────────── */}
-        <div className={formField}>
-          <label htmlFor="avail">Set Your Availability</label>
+          {/* ── Practice / Clinic Details ────────────────────────────────── */}
+          <div className={formField}>
+            <label>Practice/Clinic Details</label>
+            <div className="flex flex-col gap-2">
+              <EditableEntry
+                entries={form.practices}
+                setEntries={(val) => {
+                  const newEntries = typeof val === "function" ? val(form.practices) : val;
+                  setForm((prev) => ({ ...prev, practices: newEntries }));
+                }}
+                fieldNames={["practiceName", "clinicName", "clinicAddress", "postCode", "phone", "fax"]}
+                renderLabel={(entry) =>
+                  entry.clinicName
+                    ? `${entry.practiceName} (${entry.clinicName})`
+                    : entry.practiceName
+                }
+              />
+              <span className="text-xs text-gray-500">Click + to add a practice or clinic location.</span>
+            </div>
+          </div>
 
-          {/* Trigger button */}
-          <button
-            type="button"
-            className={`flex h-[48px] items-center justify-center gap-2 rounded-md px-4 py-4 text-white ${
-              form.practices.length === 0
+          {/* ── Availability ─────────────────────────────────────────────── */}
+          <div className={formField}>
+            <label htmlFor="avail">Set Your Availability</label>
+
+            {/* Trigger button */}
+            <button
+              type="button"
+              className={`flex h-[48px] items-center justify-center gap-2 rounded-md px-4 py-4 text-white ${form.practices.length === 0
                 ? "cursor-not-allowed bg-[#83C5BE]"
                 : "cursor-pointer bg-primary"
-            }`}
-            onClick={() => {
-              if (form.practices.length === 0) {
-                toast.error("Please add at least one Practice before setting availability.");
-              } else {
-                setIsDialogOpen(true);
-              }
-            }}
-          >
-            <span>Click to set availability</span>
-          </button>
+                }`}
+              onClick={() => {
+                if (form.practices.length === 0) {
+                  toast.error("Please add at least one Practice before setting availability.");
+                } else {
+                  setIsDialogOpen(true);
+                }
+              }}
+            >
+              <span>Click to set availability</span>
+            </button>
 
-          {/* ✅ Dialog now contains the NEW weekly availability card grid */}
-          <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-            <DialogContent className="w-full max-w-[90%] overflow-y-auto max-h-[90vh]">
-              <DialogHeader>
-                <DialogTitle className="text-primary text-xl font-bold">
-                  Weekly Availability
-                </DialogTitle>
-                <DialogDescription>
-                  Set your availability to let patients choose timeslots to conveniently book appointments.
-                </DialogDescription>
-              </DialogHeader>
+            {/* ✅ Dialog now contains the NEW weekly availability card grid */}
+            <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+              <DialogContent className="w-full max-w-[90%] overflow-y-auto max-h-[90vh]">
+                <DialogHeader>
+                  <DialogTitle className="text-primary text-xl font-bold">
+                    Weekly Availability
+                  </DialogTitle>
+                  <DialogDescription>
+                    Set your availability to let patients choose timeslots to conveniently book appointments.
+                  </DialogDescription>
+                </DialogHeader>
 
-              {/* ── Weekly cards grid ──────────────────────────────────── */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mt-4">
-                {scheduleTimes.map((item, idx) => (
-                  <div key={idx} className="border rounded-lg p-4 bg-white shadow-sm">
-                    <p className="font-bold text-sm mb-3">
-                      {schedule_date[idx]?.day} Availability
-                    </p>
+                {/* ── Weekly cards grid ──────────────────────────────────── */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mt-4">
+                  {scheduleTimes.map((item, idx) => (
+                    <div key={idx} className="border rounded-lg p-4 bg-white shadow-sm">
+                      <p className="font-bold text-sm mb-3">
+                        {schedule_date[idx]?.day} Availability
+                      </p>
 
-                    {/* Location dropdown */}
-                    <div className="mb-2">
-                      <select
-                        value={item.location}
-                        onChange={(e) => {
-                          const newTimes = [...scheduleTimes];
-                          newTimes[idx].location = e.target.value;
-                          setScheduleTimes(newTimes);
-                        }}
-                        className="w-full border rounded px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-primary"
-                      >
-                        <option value="">Unavailable</option>
-                        <option value="ONLINE">Online</option>
-                        {form.practices.map((practice, pIdx) => (
-                          <option key={pIdx} value={practice.clinicName || practice.practiceName}>
-                            {practice.clinicName || practice.practiceName}
-                          </option>
-                        ))}
-                      </select>
-                    </div>
-
-                    {/* Time selectors — only show if not unavailable */}
-                    {item.location && (
-                      <div className="flex gap-2 mt-2">
+                      {/* Location dropdown */}
+                      <div className="mb-2">
                         <select
-                          value={item.startTime}
+                          value={item.location}
                           onChange={(e) => {
                             const newTimes = [...scheduleTimes];
-                            newTimes[idx].startTime = e.target.value;
+                            newTimes[idx].location = e.target.value;
                             setScheduleTimes(newTimes);
                           }}
-                          className="flex-1 border rounded px-2 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-primary"
+                          className="w-full border rounded px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-primary"
                         >
-                          {timeOptions.map((time) => (
-                            <option key={time} value={time}>{time}</option>
-                          ))}
-                        </select>
-                        <select
-                          value={item.endTime}
-                          onChange={(e) => {
-                            const newTimes = [...scheduleTimes];
-                            newTimes[idx].endTime = e.target.value;
-                            setScheduleTimes(newTimes);
-                          }}
-                          className="flex-1 border rounded px-2 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-primary"
-                        >
-                          {timeOptions.map((time) => (
-                            <option key={time} value={time}>{time}</option>
+                          <option value="">Unavailable</option>
+                          <option value="ONLINE">Online</option>
+                          {form.practices.map((practice, pIdx) => (
+                            <option key={pIdx} value={practice.clinicName || practice.practiceName}>
+                              {practice.clinicName || practice.practiceName}
+                            </option>
                           ))}
                         </select>
                       </div>
-                    )}
-                  </div>
-                ))}
-              </div>
 
-              {/* Save & close */}
-              <div className="flex justify-end mt-6">
-                <button
-                  type="button"
-                  onClick={() => {
-                    toast.success("Availability saved!");
-                    setIsDialogOpen(false);
-                  }}
-                  className="rounded bg-primary px-8 py-2 text-white transition-colors hover:bg-primary/80"
-                >
-                  Save & Close
-                </button>
-              </div>
-            </DialogContent>
-          </Dialog>
+                      {/* Time selectors — only show if not unavailable */}
+                      {item.location && (
+                        <div className="flex gap-2 mt-2">
+                          <select
+                            value={item.startTime}
+                            onChange={(e) => {
+                              const newTimes = [...scheduleTimes];
+                              newTimes[idx].startTime = e.target.value;
+                              setScheduleTimes(newTimes);
+                            }}
+                            className="flex-1 border rounded px-2 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-primary"
+                          >
+                            {timeOptions.map((time) => (
+                              <option key={time} value={time}>{time}</option>
+                            ))}
+                          </select>
+                          <select
+                            value={item.endTime}
+                            onChange={(e) => {
+                              const newTimes = [...scheduleTimes];
+                              newTimes[idx].endTime = e.target.value;
+                              setScheduleTimes(newTimes);
+                            }}
+                            className="flex-1 border rounded px-2 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-primary"
+                          >
+                            {timeOptions.map((time) => (
+                              <option key={time} value={time}>{time}</option>
+                            ))}
+                          </select>
+                        </div>
+                      )}
+                    </div>
+                  ))}
+                </div>
+
+                {/* Save & close */}
+                <div className="flex justify-end mt-6">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      toast.success("Availability saved!");
+                      setIsDialogOpen(false);
+                    }}
+                    className="rounded bg-primary px-8 py-2 text-white transition-colors hover:bg-primary/80"
+                  >
+                    Save & Close
+                  </button>
+                </div>
+              </DialogContent>
+            </Dialog>
+          </div>
+        </div>
+
+        {/* ── Submit ──────────────────────────────────────────────────────── */}
+        <div className="flex items-center justify-center max-sm:flex-col">
+          <button
+            className="btn_fill col-span-2 m-auto mt-10 mb-10 flex cursor-pointer justify-center px-14 py-2 max-sm:mb-0 max-sm:w-full"
+            onClick={handleSubmit}
+            disabled={loading}
+          >
+            {loading
+              ? "Saving..."
+              : mode === "edit"
+                ? "Update Doctor Profile"
+                : "Create Doctor Profile"}
+          </button>
         </div>
       </div>
-
-      {/* ── Submit ──────────────────────────────────────────────────────── */}
-      <div className="flex items-center justify-center max-sm:flex-col">
-        <button
-          className="btn_fill col-span-2 m-auto mt-10 mb-10 flex cursor-pointer justify-center px-14 py-2 max-sm:mb-0 max-sm:w-full"
-          onClick={handleSubmit}
-          disabled={loading}
-        >
-          {loading
-            ? "Saving..."
-            : mode === "edit"
-            ? "Update Doctor Profile"
-            : "Create Doctor Profile"}
-        </button>
-      </div>
-    </div>
+    </>
   );
 };
 

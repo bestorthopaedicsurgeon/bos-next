@@ -45,8 +45,7 @@ const AdminEditDoctorPage = ({ params }) => {
   }
 
   return (
-    <div className="p-8">
-      <h1 className="text-3xl font-bold mb-8 text-primary">Edit Doctor Profile (Admin)</h1>
+    <div className="">
       <DoctorProfileForm 
         mode="edit" 
         userRole="ADMIN" 
