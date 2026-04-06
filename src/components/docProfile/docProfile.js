@@ -14,28 +14,25 @@ const {
 const DocProfile = ({ docProfile_Details, editProfile }) => {
   const [data, setData] = useState(docProfile_Details);
   const doctorProfile = data || {};
-  const [editField, setEditField] = useState(null); // which field is being edited
+  const [editField, setEditField] = useState(null);
   const [editValue, setEditValue] = useState("");
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
   const id = doctorProfile.id;
 
   console.log("this is the doctor profile", doctorProfile);
-  // Helper to open popover for a field
+
   const handleEditClick = (field, value) => {
     setEditField(field);
     setEditValue(value || "");
     setMessage("");
   };
 
-  // Save handler
   const handleSave = async () => {
     setLoading(true);
     setMessage("");
     try {
-      // Prepare payload
       let updatedProfile = { ...doctorProfile, [editField]: editValue };
-      // Call PUT API (adjust endpoint as needed)
       const res = await fetch(`/api/doctor-profile`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
@@ -45,11 +42,9 @@ const DocProfile = ({ docProfile_Details, editProfile }) => {
         }),
       });
       if (!res.ok) throw new Error("Failed to update");
-      // Update local state
       setData((prev) => ({
         ...prev,
         doctorProfile: { ...prev.doctorProfile, [editField]: editValue },
-        // For name, update at root
         ...(editField === "name" ? { name: editValue } : {}),
       }));
       setMessage("Saved!");
@@ -61,7 +56,6 @@ const DocProfile = ({ docProfile_Details, editProfile }) => {
     }
   };
 
-  // Render editable field
   const renderEditable = (label, field, value, isRoot = false) => (
     <div className="flex items-center gap-2">
       <span>{value}</span>
@@ -114,7 +108,6 @@ const DocProfile = ({ docProfile_Details, editProfile }) => {
     </div>
   );
 
-  // Helper to standardise titles like DR. to Dr.
   const formatTitle = (title) => {
     if (!title) return "";
     return title.charAt(0).toUpperCase() + title.slice(1).toLowerCase();
@@ -135,7 +128,9 @@ const DocProfile = ({ docProfile_Details, editProfile }) => {
             className="object-cover"
           />
         </div>
-        <div className="flex flex-col flex-wrap gap-2 min-lg:w-[220px] max-md:items-center">
+
+        {/* ✅ Added w-full on mobile so the button inside stretches full width */}
+        <div className="flex flex-col flex-wrap gap-2 w-full max-md:items-center min-lg:w-[220px]">
           <h3 className="font-[500]">
             {`${formattedTitle ? `${formattedTitle}. ` : ""}${data.name}`}
           </h3>
@@ -144,7 +139,6 @@ const DocProfile = ({ docProfile_Details, editProfile }) => {
           </p>
           {doctorProfile?.location && (
             <p className="flex items-center gap-3 text-[13px] max-md:justify-center">
-              {" "}
               <MapPin className="text-primary h-5 w-5" />
               {doctorProfile?.location}, Australia
             </p>
@@ -165,23 +159,28 @@ const DocProfile = ({ docProfile_Details, editProfile }) => {
             </svg>
             {5}
           </p>
-          <ClaimProfileModal doctorId={doctorProfile.id}>
-            <button className="text-primary hover:text-primary-hover underline text-md font-medium transition-colors hover:cursor-pointer">
-              Is this you? Claim your profile
-            </button>
-          </ClaimProfileModal>
+
+          <div className="w-full max-md:text-center">
+  <ClaimProfileModal doctorId={doctorProfile.id}>
+    <button className="text-primary hover:text-primary-hover underline text-md font-medium transition-colors hover:cursor-pointer">
+      Is this you? Claim your profile
+    </button>
+  </ClaimProfileModal>
+</div>
+
           <Link href={`/book-appointment?doctorId=${doctorProfile.id}&doctorName=${encodeURIComponent(data.name)}`}>
-            <button className="bg-primary text-secondary mt-2 flex w-full cursor-pointer items-center justify-center gap-2 rounded-md py-2 text-sm font-medium transition-colors hover:bg-opacity-90">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M19 4H5C3.89543 4 3 4.89543 3 6V20C3 21.1046 3.89543 22 5 22H19C20.1046 22 21 21.1046 21 20V6C21 4.89543 20.1046 4 19 4Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-                <path d="M16 2V6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-                <path d="M8 2V6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-                <path d="M3 10H21" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-              </svg>
-              Book Appointment
-            </button>
-          </Link>
+  <button className="bg-primary text-secondary mt-2 flex cursor-pointer items-center justify-center gap-2 rounded-md px-6 py-2 text-sm font-medium transition-colors hover:bg-opacity-90">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M19 4H5C3.89543 4 3 4.89543 3 6V20C3 21.1046 3.89543 22 5 22H19C20.1046 22 21 21.1046 21 20V6C21 4.89543 20.1046 4 19 4Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+      <path d="M16 2V6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+      <path d="M8 2V6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+      <path d="M3 10H21" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+    </svg>
+    Book Appointment
+  </button>
+</Link>
         </div>
+
         {editProfile && (
           <Link href={`/doctor/edit/`}>
             <button className="bg-primary text-secondary flex cursor-pointer items-center gap-4 self-end rounded-full px-8 py-4 text-[12px] font-[500]">
