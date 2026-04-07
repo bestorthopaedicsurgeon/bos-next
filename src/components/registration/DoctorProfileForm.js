@@ -63,7 +63,7 @@ const DoctorProfileForm = ({
     desig: "",
     about_self: "",
     location: "",
-    officialEmail: "",
+    officialEmail: null,
     groupName: "",
     qualifications: [],
     primaryQualification: [],
@@ -159,7 +159,7 @@ const DoctorProfileForm = ({
       desig: doctorData.designation || "",
       about_self: doctorData.about || "",
       location: doctorData.location || "",
-      officialEmail: doctorData.officialEmail || "",
+      officialEmail: doctorData.officialEmail || null,
       groupName: doctorData.groupName || "",
       qualifications: doctorData.qualifications ? doctorData.qualifications.slice(1) : [],
       primaryQualification: doctorData.qualifications?.[0]
