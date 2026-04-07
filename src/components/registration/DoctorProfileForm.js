@@ -215,8 +215,9 @@ const DoctorProfileForm = ({
 
   // ── Form Handlers ────────────────────────────────────────────────────────
   const handleInputChange = (field) => (e) => {
-    const value =
+    let value =
       field === "image" ? e.target.files?.[0] : sanitizeFormValue(e.target.value);
+    if (field === "officialEmail" && value === "") value = null;
     setForm((prev) => ({ ...prev, [field]: value }));
   };
 
