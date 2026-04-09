@@ -20,14 +20,32 @@ const DoctorsPage = () => {
   const [searchTerm, setSearchTerm] = useState("")
   const [loading, setLoading] = useState(true)
   const [currentPage, setCurrentPage] = useState(1)
-  const itemsPerPage = 6
+  const [totalPages, setTotalPages] = useState(0)
+  const [totalDocs, setTotalDocs] = useState(0)
+  const [stats, setStats] = useState({
+    total: 0,
+    active: 0,
+    pending: 0,
+    featured: 0,
+    hidden: 0
+  })
+  const itemsPerPage = 12
+
+  const isFirstRender = React.useRef(true)
 
   const fetchDoctors = async () => {
     try {
       setLoading(true)
-      const doctorsData = await getAllDoctors()
-      if (doctorsData) {
-        setDoctors(doctorsData)
+      const res = await getAllDoctors({
+        page: currentPage,
+        limit: itemsPerPage,
+        name: searchTerm
+      })
+      if (res?.success) {
+        setDoctors(res.data)
+        setTotalPages(res.pagination.totalPages)
+        setTotalDocs(res.pagination.totalCount)
+        setStats(res.stats)
       }
     } catch (error) {
       console.error("Error fetching doctors:", error)
@@ -36,29 +54,27 @@ const DoctorsPage = () => {
     }
   }
 
-  // Fetch doctors from API
+  // Fetch doctors when page or category changes
   useEffect(() => {
     fetchDoctors()
-  }, [])
+  }, [currentPage])
 
-  const filteredDoctors = doctors.filter(doctor =>
-    doctor.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    doctor.user?.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    doctor.subspecialities?.some(sub => 
-      sub.toLowerCase().includes(searchTerm.toLowerCase())
-    )
-  )
-
-  // Reset to page 1 when search changes
+  // Debounced search
   useEffect(() => {
-    setCurrentPage(1)
-  }, [searchTerm])
+    if (isFirstRender.current) {
+      isFirstRender.current = false
+      return
+    }
 
-  // Pagination calculations
-  const totalPages = Math.ceil(filteredDoctors.length / itemsPerPage)
-  const startIndex = (currentPage - 1) * itemsPerPage
-  const endIndex = startIndex + itemsPerPage
-  const currentDoctors = filteredDoctors.slice(startIndex, endIndex)
+    const timer = setTimeout(() => {
+      if (currentPage !== 1) {
+        setCurrentPage(1)
+      } else {
+        fetchDoctors()
+      }
+    }, 500)
+    return () => clearTimeout(timer)
+  }, [searchTerm])
 
   const handleToggleFeatured = (doctorId) => {
     setDoctors(prev => prev.map(doctor => 
@@ -217,14 +233,14 @@ const DoctorsPage = () => {
       <div className="grid grid-cols-1 sm:grid-cols-5 gap-4">
         <Card>
           <CardContent className="p-6 text-center">
-            <div className="text-2xl font-bold text-gray-900">{doctors.length}</div>
+            <div className="text-2xl font-bold text-gray-900">{stats.total}</div>
             <div className="text-sm text-gray-600">Total Doctors</div>
           </CardContent>
         </Card>
         <Card>
           <CardContent className="p-6 text-center">
             <div className="text-2xl font-bold text-green-600">
-              {doctors.filter(d => d.registrationCompleted).length}
+              {stats.active}
             </div>
             <div className="text-sm text-gray-600">Active</div>
           </CardContent>
@@ -232,7 +248,7 @@ const DoctorsPage = () => {
         <Card>
           <CardContent className="p-6 text-center">
             <div className="text-2xl font-bold text-yellow-600">
-              {doctors.filter(d => !d.registrationCompleted).length}
+              {stats.pending}
             </div>
             <div className="text-sm text-gray-600">Pending</div>
           </CardContent>
@@ -240,7 +256,7 @@ const DoctorsPage = () => {
         <Card>
           <CardContent className="p-6 text-center">
             <div className="text-2xl font-bold text-blue-600">
-              {doctors.filter(d => d.featured).length}
+              {stats.featured}
             </div>
             <div className="text-sm text-gray-600">Featured</div>
           </CardContent>
@@ -248,7 +264,7 @@ const DoctorsPage = () => {
         <Card>
           <CardContent className="p-6 text-center">
             <div className="text-2xl font-bold text-gray-600">
-              {doctors.filter(d => d.hidden).length}
+              {stats.hidden}
             </div>
             <div className="text-sm text-gray-600">Hidden</div>
           </CardContent>
@@ -256,10 +272,10 @@ const DoctorsPage = () => {
       </div>
 
       {/* Results Info */}
-      {filteredDoctors.length > 0 && (
+      {doctors.length > 0 && (
         <div className="flex justify-between items-center text-sm text-gray-600">
           <p>
-            Showing {startIndex + 1}-{Math.min(endIndex, filteredDoctors.length)} of {filteredDoctors.length} doctors
+            Showing {(currentPage - 1) * itemsPerPage + 1}-{Math.min(currentPage * itemsPerPage, totalDocs)} of {totalDocs} doctors
           </p>
           <p>
             Page {currentPage} of {totalPages}
@@ -269,7 +285,7 @@ const DoctorsPage = () => {
 
       {/* Doctors Grid - Original Admin Design */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {currentDoctors.map((doctor) => (
+        {doctors.map((doctor) => (
           <Card key={doctor.id} className="hover:shadow-lg transition-shadow">
             <CardContent className="p-6">
               <div className="flex items-start justify-between mb-4">
@@ -482,7 +498,7 @@ const DoctorsPage = () => {
         </div>
       )}
 
-      {filteredDoctors.length === 0 && (
+      {doctors.length === 0 && (
         <Card>
           <CardContent className="p-12 text-center">
             <div className="text-gray-400 mb-4">

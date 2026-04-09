@@ -82,6 +82,7 @@ model DoctorProfile {
   about                     String?
   DoctorAvailabilityDays    String[]
   name                      String?
+  groupName                 String?
   practices                 Json?
   subspecialities           String[]                     @default([])
   registrationsAssociations String[]                     @default([])

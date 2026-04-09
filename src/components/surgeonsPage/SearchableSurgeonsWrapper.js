@@ -4,8 +4,11 @@ import { HeroSection } from "./Hero";
 import { AllSurgeons } from "./AllSurgeons";
 
 export const SearchableSurgeonsWrapper = () => {
-  const [searchResults, setSearchResults] = useState(null);
-  const [isSearching, setIsSearching] = useState(false);
+  const [searchParams, setSearchParams] = useState({
+    name: "",
+    subspecialty: "",
+    location: "",
+  });
   const heroRef = useRef(null);
 
   // When landing with ?scroll=section (+100) or ?scroll=section_high (-100): scroll then clean URL
@@ -37,15 +40,13 @@ export const SearchableSurgeonsWrapper = () => {
     <>
       <div >
         <HeroSection
-          onSearchResults={setSearchResults}
-          onSearchStateChange={setIsSearching}
+          onSearch={(params) => setSearchParams(params)}
         />
       </div>
       <div ref={heroRef}>
-      <AllSurgeons
-        searchResults={searchResults}
-        isSearching={isSearching}
-      />
+        <AllSurgeons
+          searchParams={searchParams}
+        />
       </div>
     </>
   );

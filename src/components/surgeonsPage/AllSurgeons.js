@@ -1,66 +1,66 @@
 "use client";
 import DoctorCard from "@/components/reusable/doctorCard";
 import { Button } from "@/components/ui/button";
-import { allDoctors, featuredDoctors } from "@/data/doctors";
+import { getAllDoctors } from "@/lib/apiCalls/client/allDoctor";
 import { ExternalLink, ChevronLeft, ChevronRight } from "lucide-react";
 import Image from "next/image";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 
 const DOCTORS_PER_PAGE = 12;
 
-export const AllSurgeons = ({ searchResults = null, isSearching = false }) => {
-  const [allDoctorsApi, setAllDoctorsApi] = useState(null);
+export const AllSurgeons = ({ searchParams = {} }) => {
+  const [doctorsResponse, setDoctorsResponse] = useState(null);
   const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
 
-  useEffect(() => {
-    const fetchAllDoctors = async () => {
-      try {
-        // Ensure minimum loading time for skeleton visibility
-        const [response] = await Promise.all([
-          fetch("/api/doctors/all"),
-          new Promise(resolve => setTimeout(resolve, 800)) // Minimum 800ms loading
-        ]);
-        const res = await response.json();
-        setAllDoctorsApi(res?.success ? res.data : null);
-      } catch (error) {
-        console.error("Error fetching all doctors:", error);
-        setAllDoctorsApi(null);
-      } finally {
-        setLoading(false);
+  const fetchDoctors = useCallback(async () => {
+    setLoading(true);
+    try {
+      const res = await getAllDoctors({
+        page: currentPage,
+        limit: DOCTORS_PER_PAGE,
+        name: searchParams.name,
+        subspecialty: searchParams.subspecialty,
+        location: searchParams.location,
+      });
+
+      if (res?.success) {
+        setDoctorsResponse(res);
+      } else {
+        setDoctorsResponse(null);
       }
-    };
-
-    // Only fetch all doctors if we're not in search mode
-    if (searchResults === null) {
-      setLoading(true); // Ensure loading state is set
-      fetchAllDoctors();
+    } catch (error) {
+      console.error("Error fetching surgeons:", error);
+      setDoctorsResponse(null);
+    } finally {
+      setLoading(false);
     }
-    // Don't set loading to false here - let the fetch complete
-  }, [searchResults]);
+  }, [currentPage, searchParams]);
 
-  // Reset to page 1 when search results change
+  useEffect(() => {
+    fetchDoctors();
+  }, [fetchDoctors]);
+
+  // Reset to page 1 when search filters change
   useEffect(() => {
     setCurrentPage(1);
-  }, [searchResults]);
+  }, [searchParams]);
 
-  // Determine which doctors to display and filter out hidden doctors
-  const rawDoctors = searchResults !== null ? searchResults : allDoctorsApi;
-  const displayDoctors = rawDoctors ? rawDoctors.filter(doctor => !doctor.hidden) : null;
-  const isSearchMode = searchResults !== null;
-  const hasResults = displayDoctors && displayDoctors.length > 0;
+  const displayDoctors = doctorsResponse?.data || [];
+  const pagination = doctorsResponse?.pagination || { totalPages: 0, totalCount: 0 };
+  const totalDoctors = pagination.totalCount;
+  const totalPages = pagination.totalPages;
+  const hasResults = displayDoctors.length > 0;
+  const isSearchMode = Object.keys(searchParams).length > 0;
 
-  // Pagination calculations
-  const totalDoctors = displayDoctors?.length || 0;
-  const totalPages = Math.ceil(totalDoctors / DOCTORS_PER_PAGE);
+  // Pagination calculations for display info
   const startIndex = (currentPage - 1) * DOCTORS_PER_PAGE;
-  const endIndex = startIndex + DOCTORS_PER_PAGE;
-  const currentDoctors = displayDoctors?.slice(startIndex, endIndex);
+  const endIndex = startIndex + displayDoctors.length;
 
   // Pagination handlers
   const goToPage = (page) => {
     setCurrentPage(page);
-    // Smooth scroll to top of section
+    // Smooth scroll to results section
     document.getElementById('all_surgeons')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
   };
 
@@ -106,41 +106,14 @@ export const AllSurgeons = ({ searchResults = null, isSearching = false }) => {
     return pages;
   };
 
-  // Show loading skeleton for initial load
-  if (loading && !isSearchMode) {
+  // Show loading skeleton
+  if (loading) {
     return (
       <section className="mb-40" id="all_surgeons">
         <div className="mb-8 flex items-center justify-between">
-          <h1 className="font-syne text-primary">Loading All Surgeons...</h1>
-        </div>
-        <div className="grid grid-cols-1 gap-8 lg:grid-cols-2">
-          {[...Array(6)].map((_, index) => (
-            <div key={index} className="border-primary flex max-sm:flex-col-reverse w-full items-center max-sm:justify-center max-sm:items-start justify-evenly gap-7 rounded-3xl border px-11 py-10 animate-pulse">
-              <div className="flex flex-col gap-3.5 max-sm:w-full flex-1">
-                <div className="h-6 w-3/4 rounded bg-white"></div>
-                <div className="h-4 w-1/2 rounded bg-white"></div>
-                <div className="h-4 w-2/3 rounded bg-white"></div>
-                <div className="h-4 w-1/2 rounded bg-white"></div>
-                <div className="h-4 w-3/5 rounded bg-white"></div>
-                <div className="flex gap-2">
-                  <div className="h-8 w-20 rounded bg-white"></div>
-                  <div className="h-8 w-24 rounded bg-white"></div>
-                </div>
-              </div>
-              <div className="relative h-[120px] w-[120px] rounded-full bg-white"></div>
-            </div>
-          ))}
-        </div>
-      </section>
-    );
-  }
-
-  // Show loading skeleton during search
-  if (isSearching) {
-    return (
-      <section className="mb-40" id="all_surgeons">
-        <div className="mb-8 flex items-center justify-between">
-          <h1 className="font-syne text-primary">Searching...</h1>
+          <h1 className="font-syne text-primary">
+            {isSearchMode ? "Searching..." : "Loading All Surgeons..."}
+          </h1>
         </div>
         <div className="grid grid-cols-1 gap-8 lg:grid-cols-2">
           {[...Array(6)].map((_, index) => (
@@ -169,7 +142,7 @@ export const AllSurgeons = ({ searchResults = null, isSearching = false }) => {
       <div className="mb-8 flex items-center justify-between">
         <h1 className="font-syne text-primary">
           {isSearchMode ? 
-            `Search Results ${displayDoctors?.length ? `(${displayDoctors.length})` : ''}` : 
+            `Search Results ${totalDoctors ? `(${totalDoctors})` : ''}` : 
             "All Orthopaedic Surgeons"
           }
         </h1>
@@ -200,7 +173,7 @@ export const AllSurgeons = ({ searchResults = null, isSearching = false }) => {
 
           {/* Doctors grid */}
           <div className="grid grid-cols-1 gap-8 lg:grid-cols-2 mb-8">
-            {currentDoctors?.map((doctor, index) => (
+            {displayDoctors?.map((doctor, index) => (
               <DoctorCard key={doctor.id || index} {...doctor} reviewButton={true} />
             ))}
           </div>

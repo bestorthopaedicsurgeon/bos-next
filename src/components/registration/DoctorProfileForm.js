@@ -161,17 +161,15 @@ const DoctorProfileForm = ({
       location: doctorData.location || "",
       officialEmail: doctorData.officialEmail || null,
       groupName: doctorData.groupName || "",
-      qualifications: doctorData.qualifications ? doctorData.qualifications.slice(1) : [],
-      primaryQualification: doctorData.qualifications?.[0]
-        ? [{ value: doctorData.qualifications[0], label: doctorData.qualifications[0] }]
-        : [],
-      awardsPublications: doctorData.awardsPublications || [],
-      registrationsAssociations: doctorData.registrationsAssociations || [],
-      hospitalAffiliations: doctorData.hospitalAffiliations || [],
-      featuredQualifications: (doctorData.featuredQualifications || []).map((q) => ({
+      qualifications: doctorData.qualifications || [],
+      primaryQualification: (doctorData.featuredQualifications || []).map((q) => ({
         value: q,
         label: q,
       })),
+      awardsPublications: doctorData.awardsPublications || [],
+      registrationsAssociations: doctorData.registrationsAssociations || [],
+      hospitalAffiliations: doctorData.hospitalAffiliations || [],
+      featuredQualifications: [], // No longer used in state, mapped to primaryQualification instead
       image: doctorData.image || null,
       practices: doctorData.practices || [],
     });
@@ -345,18 +343,8 @@ const DoctorProfileForm = ({
         specificAvailability: specificAvailability,
       };
 
-      const finalQualifications = [];
-      if (Array.isArray(form.primaryQualification)) {
-        form.primaryQualification.forEach((q) => {
-          if (!finalQualifications.includes(q.value)) finalQualifications.push(q.value);
-        });
-      }
-      if (Array.isArray(form.qualifications)) {
-        form.qualifications.forEach((q) => {
-          if (!finalQualifications.includes(q)) finalQualifications.push(q);
-        });
-      }
-      if (finalQualifications.length > 0) data.qualifications = finalQualifications;
+      data.featuredQualifications = form.primaryQualification.map((q) => q.value).slice(0, 4);
+      data.qualifications = form.qualifications;
 
       if (mode === "edit" || userRole === "DOCTOR") {
         if (doctorId) data.id = parseInt(doctorId);
@@ -868,11 +856,11 @@ const DoctorProfileForm = ({
                   const newEntries = typeof val === "function" ? val(form.practices) : val;
                   setForm((prev) => ({ ...prev, practices: newEntries }));
                 }}
-                fieldNames={["practiceName", "clinicName", "clinicAddress", "postCode", "phone", "fax"]}
+                fieldNames={["clinicName", "clinicAddress", "postCode", "phone", "fax"]}
                 renderLabel={(entry) =>
                   entry.clinicName
-                    ? `${entry.practiceName} (${entry.clinicName})`
-                    : entry.practiceName
+                    ? `${entry.clinicName}`
+                    : ""
                 }
               />
               <span className="text-xs text-gray-500">Click + to add a practice or clinic location.</span>

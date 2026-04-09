@@ -2,13 +2,52 @@ import { prisma } from "@/lib/prisma";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(request: NextRequest) {
-
   try {
+    const { searchParams } = new URL(request.url);
+    const page = parseInt(searchParams.get("page") || "1");
+    const limit = parseInt(searchParams.get("limit") || "1000"); // Standard high limit if not specified
+    const skip = (page - 1) * limit;
+
+    const name = searchParams.get("name") || "";
+    const subspecialty = searchParams.get("subspecialty") || "";
+    const location = searchParams.get("location") || "";
+
+    // Construct the where clause
+    const where: any = {};
+
+    // Filter by name
+    if (name) {
+      where.name = { contains: name, mode: 'insensitive' };
+    }
+
+    // Filter by subspecialty
+    if (subspecialty) {
+      where.subspecialities = {
+        hasSome: [subspecialty]
+      };
+    }
+
+    // Filter by location
+    if (location) {
+      where.location = {
+        contains: location,
+        mode: 'insensitive'
+      };
+    }
+
+    // Get counts for dashboard stats
+    const [totalCount, activeCount, pendingCount, featuredCount, hiddenCount] = await Promise.all([
+      prisma.doctorProfile.count({ where }),
+      prisma.doctorProfile.count({ where: { ...where, registrationCompleted: true } }),
+      prisma.doctorProfile.count({ where: { ...where, registrationCompleted: false } }),
+      prisma.doctorProfile.count({ where: { ...where, featured: true } }),
+      prisma.doctorProfile.count({ where: { ...where, hidden: true } }),
+    ]);
+
     const doctors = await prisma.doctorProfile.findMany({
-      // We will handle it from the frontend
-      // where: {
-      //   hidden: false,
-      // },
+      where,
+      skip,
+      take: limit,
       include: {
         user: {
           select: {
@@ -16,6 +55,7 @@ export async function GET(request: NextRequest) {
             name: true,
             email: true,
             image: true,
+            role: true,
           },
         },
         reviews: {
@@ -34,21 +74,29 @@ export async function GET(request: NextRequest) {
           },
         },
       },
+      orderBy: {
+        id: 'desc'
+      }
     });
-
-    if (!doctors || doctors.length === 0) {
-      return NextResponse.json(
-        { success: false, error: "No doctors found." },
-        { status: 404 },
-      );
-    }
 
     return NextResponse.json(
       {
         success: true,
         data: doctors,
+        pagination: {
+          totalCount,
+          totalPages: Math.ceil(totalCount / limit),
+          currentPage: page,
+          limit
+        },
+        stats: {
+          total: totalCount,
+          active: activeCount,
+          pending: pendingCount,
+          featured: featuredCount,
+          hidden: hiddenCount
+        },
         message: "Doctors fetched successfully",
-        count: doctors.length,
       },
       { status: 200 },
     );

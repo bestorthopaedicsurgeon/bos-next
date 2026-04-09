@@ -17,13 +17,12 @@ import Image from "next/image";
 import Link from "next/link";
 import React, { useState, useCallback, useMemo } from "react";
 
-export const HeroSection = ({ onSearchResults, onSearchStateChange }) => {
+export const HeroSection = ({ onSearch }) => {
   const [searchForm, setSearchForm] = useState({
     name: "",
     subspecialty: "",
     location: "",
   });
-  const [isSearching, setIsSearching] = useState(false);
   const [hasSearched, setHasSearched] = useState(false);
 
   const subspecialities = useMemo(
@@ -49,83 +48,21 @@ export const HeroSection = ({ onSearchResults, onSearchStateChange }) => {
     [],
   );
 
-  const handleSearch = useCallback(async () => {
-    setIsSearching(true);
-    onSearchStateChange?.(true);
-    try {
-      const allDoctors = await getAllDoctors();
-      if (!allDoctors) {
-        onSearchResults([]);
-        return;
-      }
-
-      // Filter doctors based on search criteria
-      let filteredDoctors = allDoctors;
-
-      // Filter by name if provided
-      if (searchForm.name.trim()) {
-        filteredDoctors = filteredDoctors.filter((doctor) => {
-          const doctorName = doctor.name?.toLowerCase() || "";
-          const searchTerm = searchForm.name.toLowerCase();
-          return doctorName.includes(searchTerm);
-        });
-      }
-
-      // Filter by subspecialty if provided
-      if (searchForm.subspecialty.trim()) {
-        filteredDoctors = filteredDoctors.filter((doctor) => {
-          if (
-            !doctor.subspecialities ||
-            !Array.isArray(doctor.subspecialities)
-          ) {
-            return false;
-          }
-          return doctor.subspecialities.some(
-            (subspecialty) =>
-              subspecialty
-                .toLowerCase()
-                .includes(searchForm.subspecialty.toLowerCase()) ||
-              subspecialities.find(
-                (sub) =>
-                  sub.value.toLowerCase() ===
-                    searchForm.subspecialty.toLowerCase() &&
-                  subspecialty.toLowerCase().includes(sub.label.toLowerCase()),
-              ),
-          );
-        });
-      }
-
-      // Filter by location if provided
-      if (searchForm.location.trim()) {
-        filteredDoctors = filteredDoctors.filter((doctor) =>
-          doctor.location
-            ?.toLowerCase()
-            .includes(searchForm.location.toLowerCase()),
-        );
-      }
-
-      onSearchResults(filteredDoctors);
-      setHasSearched(true);
-    } catch (error) {
-      console.error("Search error:", error);
-      onSearchResults([]);
-      setHasSearched(true);
-    } finally {
-      setIsSearching(false);
-      onSearchStateChange?.(false);
-    }
-  }, [searchForm, onSearchResults, onSearchStateChange, subspecialities]);
+  const handleSearch = useCallback(() => {
+    onSearch(searchForm);
+    setHasSearched(true);
+  }, [searchForm, onSearch]);
 
   const handleClearSearch = useCallback(() => {
-    setSearchForm({
+    const emptyForm = {
       name: "",
       subspecialty: "",
       location: "",
-    });
+    };
+    setSearchForm(emptyForm);
     setHasSearched(false);
-    onSearchResults(null); // null indicates show all doctors
-    onSearchStateChange?.(false);
-  }, [onSearchResults, onSearchStateChange]);
+    onSearch(emptyForm);
+  }, [onSearch]);
   return (
     <section className="mb-20">
       <div className="bg-primary text-primary-foreground mb-8 flex gap-10 rounded-4xl px-20 py-16 max-lg:justify-center max-md:px-10">
@@ -229,13 +166,8 @@ export const HeroSection = ({ onSearchResults, onSearchStateChange }) => {
             variant={"primary"}
             size={"primary"}
             onClick={hasSearched ? handleClearSearch : handleSearch}
-            disabled={isSearching}
           >
-            {isSearching
-              ? "Searching..."
-              : hasSearched
-                ? "Clear Search"
-                : "Search"}
+            {hasSearched ? "Clear Search" : "Search"}
           </Button>
         </div>
       </div>
