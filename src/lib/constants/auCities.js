@@ -3531,6 +3531,9 @@ export const auCities = [
     city: "Bailup",
   },
   {
+    city: "Busselton",
+  },
+  {
     city: "Balcatta",
   },
   {

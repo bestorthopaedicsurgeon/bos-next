@@ -1,9 +1,16 @@
 "use client";
 import { useState } from "react";
+import { MapPin, Phone, Building2 } from "lucide-react";
 
 export default function HospitalAffiliations({ hospitals, className = "" }) {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [animateDirection, setAnimateDirection] = useState(null);
+
+  const [touchStart, setTouchStart] = useState(null);
+  const [touchEnd, setTouchEnd] = useState(null);
+
+  // Minimum swipe distance (in px) to trigger slide
+  const minSwipeDistance = 50;
 
   if (!hospitals || hospitals.length === 0) {
     return <div className=""></div>;
@@ -27,6 +34,33 @@ export default function HospitalAffiliations({ hospitals, className = "" }) {
       setCurrentIndex((prev) => prev + (dir === "next" ? 1 : -1));
       setAnimateDirection(null);
     }, 250);
+  };
+
+  // Touch handlers
+  const onTouchStart = (e) => {
+    setTouchEnd(null); 
+    setTouchStart(e.targetTouches[0].clientX);
+  };
+
+  const onTouchMove = (e) => {
+    setTouchEnd(e.targetTouches[0].clientX);
+  };
+
+  const onTouchEndHandler = () => {
+    if (!touchStart || !touchEnd) return;
+    const distance = touchStart - touchEnd;
+    const isLeftSwipe = distance > minSwipeDistance;
+    const isRightSwipe = distance < -minSwipeDistance;
+
+    const isDesktop = typeof window !== 'undefined' && window.innerWidth >= 768;
+    const canGoNext = isDesktop ? canGoNextDesktop : canGoNextMobile;
+
+    if (isLeftSwipe && canGoNext) {
+      go("next");
+    }
+    if (isRightSwipe && canGoPrev) {
+      go("prev");
+    }
   };
 
   // Show arrows if there's more than 1 hospital on mobile or more than 2 on desktop
@@ -65,32 +99,71 @@ export default function HospitalAffiliations({ hospitals, className = "" }) {
   );
 
   const HospitalCard = ({ hospital }) => (
-    <div className="w-full py-4">
-      <p className="mb-1 text-base font-semibold tracking-wide text-gray-500">Hospital Name</p>
-      <h3 className="mb-4 text-lg font-semibold text-[#82889C]">
-        {hospital.name?.replace(/^undefined\s+/i, "")}
-      </h3>
-      <p className="mb-1 text-base font-semibold tracking-wide text-gray-500">Address</p>
-      <a
-        href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(hospital.address)}`}
-        target="_blank"
-        rel="noopener noreferrer"
-        className="text-lg text-gray-600 hover:text-primary underline-offset-2 hover:underline transition-colors"
-      >
-        {hospital.address}
-      </a>
-      <p className="mt-4 mb-1 text-base font-semibold tracking-wide text-gray-500">Phone Number</p>
-      <a
-        href={`tel:${hospital.phone}`}
-        className="text-lg text-gray-600 hover:text-primary hover:underline underline-offset-2 transition-colors"
-      >
-        {hospital.phone}
-      </a>
+    <div className="w-full py-4 flex flex-col h-full">
+      <div className="flex-1">
+        <div className="mb-3 flex items-start gap-3">
+          <Building2 className="text-primary mt-[2px] h-4 w-4 shrink-0" />
+          <div>
+            <p className="text-[14px] text-gray-500">Hospital Name</p>
+            <h3 className="text-[13px] font-[600] text-[#82889C] mt-1">
+              {hospital.name?.replace(/^undefined\s+/i, "")}
+            </h3>
+          </div>
+        </div>
+
+        <div className="mb-3 flex items-start gap-3">
+          <MapPin className="text-primary mt-[2px] h-4 w-4 shrink-0" />
+          <div>
+            <p className="text-[14px] text-gray-500">Address</p>
+            <a
+              href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(hospital.address)}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-[13px] font-[600] text-gray-600 hover:text-primary underline-offset-2 hover:underline transition-colors block mt-1"
+            >
+              {hospital.address}
+            </a>
+          </div>
+        </div>
+
+        {hospital.phone && (
+          <div className="mb-3 flex items-start gap-3">
+            <Phone className="text-primary mt-[2px] h-4 w-4 shrink-0" />
+            <div>
+              <p className="text-[14px] text-gray-500">Phone Number</p>
+              <a
+                href={`tel:${hospital.phone}`}
+                className="text-[13px] font-[600] text-gray-600 hover:text-primary hover:underline underline-offset-2 transition-colors block mt-1"
+              >
+                {hospital.phone}
+              </a>
+            </div>
+          </div>
+        )}
+      </div>
+
+      {hospital.address && (
+        <div className="w-full mt-4 h-[150px] sm:h-[170px] rounded-lg overflow-hidden border">
+          <iframe
+            src={`https://www.google.com/maps?q=${encodeURIComponent(hospital.address)}&output=embed&z=15&t=m`}
+            className="w-full h-full"
+            style={{ border: "0" }}
+            allowFullScreen=""
+            loading="lazy"
+            referrerPolicy="no-referrer-when-downgrade"
+          ></iframe>
+        </div>
+      )}
     </div>
   );
 
   return (
-    <div className={`mx-auto mt-10 w-full rounded-lg bg-white px-8 py-5 shadow min-md:p-6 ${className}`}>
+    <div 
+      className={`mx-auto mt-10 w-full rounded-lg bg-white px-8 py-5 shadow min-md:p-6 ${className}`}
+      onTouchStart={onTouchStart}
+      onTouchMove={onTouchMove}
+      onTouchEnd={onTouchEndHandler}
+    >
 
       {/* ── Mobile header (shows 1 at a time) ───────────────────────── */}
       <div className="flex items-center justify-between md:hidden">
@@ -158,7 +231,7 @@ export default function HospitalAffiliations({ hospitals, className = "" }) {
               hospitals.length === 1 ? "md:w-full" : "md:w-1/2"
             } ${index === 1 ? "md:pl-4" : "md:pr-4"}`}
           >
-            <div className={`h-full w-full overflow-hidden ${hospitals.length === 1 ? "" : "max-w-[220px]"}`}>
+            <div className={`h-full w-full overflow-hidden ${hospitals.length === 1 ? "" : "max-w-[800px]"}`}>
               <HospitalCard hospital={hospital} />
             </div>
           </div>
