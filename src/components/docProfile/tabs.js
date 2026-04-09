@@ -68,6 +68,7 @@ export function DocTabs({ doctData, ownProfile }) {
             (
               <ReviewForm
                 doctorId={doctData.id}
+                doctorName={doctData.name}
                 /*  onReviewSubmit={handleReviewSubmit} */
               />
             ))}
@@ -83,6 +84,7 @@ export function DocTabs({ doctData, ownProfile }) {
           {!ownProfile && (
             <ReviewForm
               doctorId={doctData.id}
+              doctorName={doctData.name}
               /*  onReviewSubmit={handleReviewSubmit} */
             />
           )}
@@ -96,6 +98,7 @@ export function DocTabs({ doctData, ownProfile }) {
           {!ownProfile && (
             <ReviewForm
               doctorId={doctData.id}
+              doctorName={doctData.name}
               /*  onReviewSubmit={handleReviewSubmit} */
             />
           )}

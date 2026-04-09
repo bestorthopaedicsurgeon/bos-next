@@ -7,7 +7,7 @@ import { submitDoctorReview } from "@/lib/apiCalls/client/doctor";
 import { toast } from "sonner";
 import { useSanitizedForm } from "@/hooks/useSanitizedForm";
 
-export default function ReviewForm({ className, doctorId, onReviewSubmit }) {
+export default function ReviewForm({ className, doctorId, doctorName, onReviewSubmit }) {
   const { data: session, status } = useSession();
   const isLoggedIn = status === 'authenticated';
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -128,7 +128,7 @@ export default function ReviewForm({ className, doctorId, onReviewSubmit }) {
   return (
     <div className={`h-full rounded-lg bg-white p-6 shadow-md ${className}`}>
       <p className="text-primary mb-4 font-[700]">
-        Rate & Review Dr. Smith Brown
+        Rate & Review Dr. {doctorName}
       </p>
       <p className="mb-6 text-[14px]">
         Let us know about your experience of your appointment with the surgeon.

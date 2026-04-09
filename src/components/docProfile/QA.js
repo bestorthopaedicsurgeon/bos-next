@@ -195,7 +195,7 @@ export default function QuestionsAndAnswers({
 
       <p className="mb-6 text-[14px]">
         The following questions have been posted by the B.O.S users and answered
-        by Dr Smith Brown.
+        by Dr {doctData?.name}.
         <br />
         Got any question? Ask below!
       </p>
