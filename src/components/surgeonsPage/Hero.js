@@ -15,7 +15,8 @@ import { auCities } from "@/lib/constants/auCities";
 import { getAllDoctors } from "@/lib/apiCalls/client/allDoctor";
 import Image from "next/image";
 import Link from "next/link";
-import React, { useState, useCallback, useMemo } from "react";
+import React, { useState, useCallback, useMemo, useEffect } from "react";
+import { debounce } from "lodash";
 
 export const HeroSection = ({ onSearch }) => {
   const [searchForm, setSearchForm] = useState({
@@ -23,6 +24,23 @@ export const HeroSection = ({ onSearch }) => {
     subspecialty: "",
     location: "",
   });
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const params = new URLSearchParams(window.location.search);
+      const name = params.get("name");
+      const subspecialty = params.get("subspecialty");
+      const location = params.get("location");
+      
+      if (name || subspecialty || location) {
+        setSearchForm({
+          name: name || "",
+          subspecialty: subspecialty || "",
+          location: location || "",
+        });
+      }
+    }
+  }, []);
   const [hasSearched, setHasSearched] = useState(false);
 
   const subspecialities = useMemo(
@@ -48,10 +66,22 @@ export const HeroSection = ({ onSearch }) => {
     [],
   );
 
-  const handleSearch = useCallback(() => {
-    onSearch(searchForm);
-    setHasSearched(true);
-  }, [searchForm, onSearch]);
+  // Stable debounced search function
+  const debouncedSearch = useMemo(
+    () => debounce((params) => onSearch(params), 500),
+    [onSearch]
+  );
+
+  // Trigger search whenever searchForm changes
+  useEffect(() => {
+    const isFiltered = Object.values(searchForm).some((val) => val !== "");
+    setHasSearched(isFiltered);
+
+    debouncedSearch(searchForm);
+
+    // Cleanup
+    return () => debouncedSearch.cancel();
+  }, [searchForm, debouncedSearch]);
 
   const handleClearSearch = useCallback(() => {
     const emptyForm = {
@@ -60,9 +90,7 @@ export const HeroSection = ({ onSearch }) => {
       location: "",
     };
     setSearchForm(emptyForm);
-    setHasSearched(false);
-    onSearch(emptyForm);
-  }, [onSearch]);
+  }, []);
   return (
     <section className="mb-20">
       <div className="bg-primary text-primary-foreground mb-8 flex gap-10 rounded-4xl px-20 py-16 max-lg:justify-center max-md:px-10">
@@ -161,14 +189,16 @@ export const HeroSection = ({ onSearch }) => {
             }
             className="w-full"
           />
-          <Button
-            className={"w-36"}
-            variant={"primary"}
-            size={"primary"}
-            onClick={hasSearched ? handleClearSearch : handleSearch}
-          >
-            {hasSearched ? "Clear Search" : "Search"}
-          </Button>
+          {hasSearched && (
+            <Button
+              className={"w-36"}
+              variant={"primary"}
+              size={"primary"}
+              onClick={handleClearSearch}
+            >
+              Reset Filters
+            </Button>
+          )}
         </div>
       </div>
     </section>

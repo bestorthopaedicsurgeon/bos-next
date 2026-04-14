@@ -14,18 +14,17 @@ import {
 import { auCities } from "@/lib/constants/auCities";
 import { getAllDoctors } from "@/lib/apiCalls/client/allDoctor";
 import Image from "next/image";
-import { redirect } from "next/navigation";
+import { useRouter } from "next/navigation";
 import React, { useState, useCallback, useMemo } from "react";
 import Link from "next/link";
 
-export const HeroSection = ({ onSearchResults, onSearchStateChange }) => {
+export const HeroSection = () => {
+  const router = useRouter();  
   const [searchForm, setSearchForm] = useState({
     name: "",
     subspecialty: "",
     location: "",
   });
-  const [isSearching, setIsSearching] = useState(false);
-  const [hasSearched, setHasSearched] = useState(false);
 
   const subspecialities = useMemo(
     () => [
@@ -50,83 +49,14 @@ export const HeroSection = ({ onSearchResults, onSearchStateChange }) => {
     [],
   );
 
-  const handleSearch = useCallback(async () => {
-    setIsSearching(true);
-    onSearchStateChange?.(true);
-    try {
-      const allDoctors = await getAllDoctors();
-      if (!allDoctors) {
-        onSearchResults([]);
-        return;
-      }
-
-      // Filter doctors based on search criteria
-      let filteredDoctors = allDoctors;
-
-      // Filter by name if provided
-      if (searchForm.name.trim()) {
-        filteredDoctors = filteredDoctors.filter((doctor) => {
-          const doctorName = doctor.name?.toLowerCase() || "";
-          const searchTerm = searchForm.name.toLowerCase();
-          return doctorName.includes(searchTerm);
-        });
-      }
-
-      // Filter by subspecialty if provided
-      if (searchForm.subspecialty.trim()) {
-        filteredDoctors = filteredDoctors.filter((doctor) => {
-          if (
-            !doctor.subspecialities ||
-            !Array.isArray(doctor.subspecialities)
-          ) {
-            return false;
-          }
-          return doctor.subspecialities.some(
-            (subspecialty) =>
-              subspecialty
-                .toLowerCase()
-                .includes(searchForm.subspecialty.toLowerCase()) ||
-              subspecialities.find(
-                (sub) =>
-                  sub.value.toLowerCase() ===
-                    searchForm.subspecialty.toLowerCase() &&
-                  subspecialty.toLowerCase().includes(sub.label.toLowerCase()),
-              ),
-          );
-        });
-      }
-
-      // Filter by location if provided
-      if (searchForm.location.trim()) {
-        filteredDoctors = filteredDoctors.filter((doctor) =>
-          doctor.location
-            ?.toLowerCase()
-            .includes(searchForm.location.toLowerCase()),
-        );
-      }
-
-      onSearchResults(filteredDoctors);
-      setHasSearched(true);
-    } catch (error) {
-      console.error("Search error:", error);
-      onSearchResults([]);
-      setHasSearched(true);
-    } finally {
-      setIsSearching(false);
-      onSearchStateChange?.(false);
-    }
-  }, [searchForm, onSearchResults, onSearchStateChange, subspecialities]);
-
-  const handleClearSearch = useCallback(() => {
-    setSearchForm({
-      name: "",
-      subspecialty: "",
-      location: "",
-    });
-    setHasSearched(false);
-    onSearchResults(null); // null indicates show featured doctors
-    onSearchStateChange?.(false);
-  }, [onSearchResults, onSearchStateChange]);
+  const handleSearch = useCallback(() => {
+    const params = new URLSearchParams();
+    if (searchForm.name.trim()) params.append("name", searchForm.name.trim());
+    if (searchForm.subspecialty.trim()) params.append("subspecialty", searchForm.subspecialty.trim());
+    if (searchForm.location.trim()) params.append("location", searchForm.location.trim());
+    
+    router.push(`/surgeons?${params.toString()}`);
+  }, [searchForm, router]);
 
   return (
     <section className="mb-40">
@@ -166,7 +96,7 @@ export const HeroSection = ({ onSearchResults, onSearchStateChange }) => {
             </Link>
             <div
               onClick={() => {
-                redirect("/about");
+                router.push("/about");
               }}
               className="cursor-pointer"
             >
@@ -235,14 +165,9 @@ export const HeroSection = ({ onSearchResults, onSearchStateChange }) => {
             className={"w-36"}
             variant={"primary"}
             size={"primary"}
-            onClick={hasSearched ? handleClearSearch : handleSearch}
-            disabled={isSearching}
+            onClick={handleSearch}
           >
-            {isSearching
-              ? "Searching..."
-              : hasSearched
-                ? "Clear Search"
-                : "Search"}
+            Search
           </Button>
         </div>
       </div>

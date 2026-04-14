@@ -22,8 +22,15 @@ export async function GET(request: NextRequest) {
 
     // Filter by subspecialty
     if (subspecialty) {
-      where.subspecialities = {
-        hasSome: [subspecialty]
+      const rawResult = await prisma.$queryRaw<{id: number}[]>`
+        SELECT id FROM "DoctorProfile"
+        WHERE EXISTS (
+          SELECT 1 FROM unnest(subspecialities) as sub
+          WHERE sub ILIKE ${'%' + subspecialty + '%'}
+        )
+      `;
+      where.id = {
+        in: rawResult.map(r => r.id)
       };
     }
 
