@@ -1,30 +1,8 @@
 "use client";
 import { useState } from "react";
 
-export default function QuestionReview({ className }) {
-  const [questions, setQuestions] = useState([
-    {
-      id: 1,
-      title: "Robotic vs traditional knee replacement surgery",
-      content:
-        "I am having a knee replacement. I need some information regarding robotic surgery compared to traditional surgery in regards to recovery time, accuracy etc. Who performs robotic knee surgery and where can I get it done?",
-      answered: false,
-    },
-    {
-      id: 2,
-      title: "Sample question 2",
-      content:
-        "This is a second sample question that would appear when clicking the arrow.",
-      answered: true,
-    },
-    {
-      id: 3,
-      title: "Sample question 3",
-      content:
-        "This is a third sample question that would appear when clicking the arrow again.",
-      answered: false,
-    },
-  ]);
+export default function QuestionReview({ className, questions: questionsProp = [], currentQuestion }) {
+  const [questions, setQuestions] = useState(questionsProp);
 
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
 
@@ -40,6 +18,9 @@ export default function QuestionReview({ className }) {
     );
   };
 
+  const activeQuestion = currentQuestion || questions[currentQuestionIndex];
+  const patientName = activeQuestion?.patient?.name || "A patient";
+
   return (
     <div className={`h-full rounded-lg bg-white p-6 shadow-md ${className}`}>
       <p className="text-primary mb-6 text-2xl font-[700]">
@@ -49,7 +30,7 @@ export default function QuestionReview({ className }) {
       <div className="mb-6">
         <div className="mb-2 flex items-center">
           <span className="font-semibold text-gray-700">
-            Sarah asked you a question and is waiting for your answer!
+            {patientName} asked you a question and is waiting for your answer!
           </span>
         </div>
       </div>
