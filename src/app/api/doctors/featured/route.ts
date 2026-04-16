@@ -4,12 +4,29 @@ import { NextResponse } from "next/server";
 
 export async function GET() {
   try {
-    // 1. Get manually featured doctors
-    let featuredDoctors = await prisma.doctorProfile.findMany({
-      where: { featured: true, hidden: false },
+    const topDoctorId = 20;
+
+    // 1. Get the pinned doctor (Rhys Clark) if he exists and is not hidden
+    const topDoctor = await prisma.doctorProfile.findFirst({
+      where: { id: topDoctorId, hidden: false },
       include: { reviews: true },
-      take: 4,
     });
+
+    // 2. Get other manually featured doctors
+    let featuredDoctors = await prisma.doctorProfile.findMany({
+      where: { 
+        featured: true, 
+        hidden: false,
+        id: { not: topDoctorId } 
+      },
+      include: { reviews: true },
+      take: topDoctor ? 3 : 4,
+    });
+
+    // Prepend the top doctor if found
+    if (topDoctor) {
+      featuredDoctors = [topDoctor, ...featuredDoctors];
+    }
 
     console.log("Featured Doctors backend:", featuredDoctors);
 
