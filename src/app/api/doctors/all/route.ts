@@ -42,6 +42,13 @@ export async function GET(request: NextRequest) {
       };
     }
 
+    const filter = searchParams.get("filter") || "all";
+    if (filter === "featured") {
+      where.featured = true;
+    } else if (filter === "hidden") {
+      where.hidden = true;
+    }
+
     // Get counts for dashboard stats
     const [totalCount, activeCount, pendingCount, featuredCount, hiddenCount] = await Promise.all([
       prisma.doctorProfile.count({ where }),
@@ -81,9 +88,10 @@ export async function GET(request: NextRequest) {
           },
         },
       },
-      orderBy: {
-        id: 'desc'
-      }
+      orderBy: [
+        { featured: 'desc' },
+        { id: 'desc' }
+      ]
     });
 
     return NextResponse.json(

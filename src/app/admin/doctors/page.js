@@ -18,6 +18,7 @@ import Image from "next/image"
 const DoctorsPage = () => {
   const [doctors, setDoctors] = useState([])
   const [searchTerm, setSearchTerm] = useState("")
+  const [filterStatus, setFilterStatus] = useState("all")
   const [loading, setLoading] = useState(true)
   const [currentPage, setCurrentPage] = useState(1)
   const [totalPages, setTotalPages] = useState(0)
@@ -39,13 +40,16 @@ const DoctorsPage = () => {
       const res = await getAllDoctors({
         page: currentPage,
         limit: itemsPerPage,
-        name: searchTerm
+        name: searchTerm,
+        filter: filterStatus !== "all" ? filterStatus : undefined
       })
       if (res?.success) {
         setDoctors(res.data)
         setTotalPages(res.pagination.totalPages)
         setTotalDocs(res.pagination.totalCount)
-        setStats(res.stats)
+        if (!searchTerm && filterStatus === "all") {
+          setStats(res.stats)
+        }
       }
     } catch (error) {
       console.error("Error fetching doctors:", error)
@@ -58,6 +62,15 @@ const DoctorsPage = () => {
   useEffect(() => {
     fetchDoctors()
   }, [currentPage])
+
+  useEffect(() => {
+    if (isFirstRender.current) return
+    if (currentPage !== 1) {
+      setCurrentPage(1)
+    } else {
+      fetchDoctors()
+    }
+  }, [filterStatus])
 
   // Debounced search
   useEffect(() => {
@@ -76,12 +89,31 @@ const DoctorsPage = () => {
     return () => clearTimeout(timer)
   }, [searchTerm])
 
-  const handleToggleFeatured = (doctorId) => {
-    setDoctors(prev => prev.map(doctor => 
-      doctor.id === doctorId 
-        ? { ...doctor, featured: !doctor.featured }
-        : doctor
-    ))
+  const handleToggleFeatured = async (doctorId) => {
+    try {
+      const doctor = doctors.find(d => d.id === doctorId)
+      const newFeaturedStatus = !doctor.featured
+
+      const response = await fetch(`/api/doctors/${doctorId}/feature`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ featured: newFeaturedStatus }),
+      })
+
+      if (response.ok) {
+        setDoctors(prev => prev.map(doctor =>
+          doctor.id === doctorId
+            ? { ...doctor, featured: newFeaturedStatus }
+            : doctor
+        ))
+      } else {
+        console.error('Failed to update doctor featured status')
+      }
+    } catch (error) {
+      console.error('Error updating doctor featured status:', error)
+    }
   }
 
   const handleToggleHidden = async (doctorId) => {
@@ -98,8 +130,8 @@ const DoctorsPage = () => {
       })
 
       if (response.ok) {
-        setDoctors(prev => prev.map(doctor => 
-          doctor.id === doctorId 
+        setDoctors(prev => prev.map(doctor =>
+          doctor.id === doctorId
             ? { ...doctor, hidden: newHiddenStatus }
             : doctor
         ))
@@ -113,7 +145,7 @@ const DoctorsPage = () => {
 
   const handleDelete = async (doctorId) => {
     if (!confirm("Are you sure you want to delete this doctor? This action cannot be undone and will delete all associated availabilities, reviews, and data.")) return;
-    
+
     try {
       const res = await fetch(`/api/doctors/${doctorId}`, { method: 'DELETE' });
       if (res.ok) {
@@ -146,50 +178,20 @@ const DoctorsPage = () => {
   const generatePageNumbers = () => {
     const pages = []
     const showPages = 5 // Number of page buttons to show
-    
+
     let startPage = Math.max(1, currentPage - Math.floor(showPages / 2))
     let endPage = Math.min(totalPages, startPage + showPages - 1)
-    
+
     // Adjust start page if we're near the end
     if (endPage - startPage < showPages - 1) {
       startPage = Math.max(1, endPage - showPages + 1)
     }
-    
+
     for (let i = startPage; i <= endPage; i++) {
       pages.push(i)
     }
-    
-    return pages
-  }
 
-  if (loading) {
-    return (
-      <div className="space-y-6">
-        <div className="flex justify-between items-center">
-          <div>
-            <h1 className="text-2xl font-bold">All Doctors</h1>
-            <p className="text-gray-600">Manage doctor profiles</p>
-          </div>
-          <Button asChild>
-            <Link href="/admin/doctors/create">
-              <Plus className="h-4 w-4 mr-2" />
-              Add Doctor
-            </Link>
-          </Button>
-        </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {[...Array(6)].map((_, i) => (
-            <Card key={i} className="animate-pulse">
-              <CardContent className="p-6">
-                <div className="h-32 bg-gray-200 rounded mb-4"></div>
-                <div className="h-4 bg-gray-200 rounded mb-2"></div>
-                <div className="h-3 bg-gray-200 rounded w-2/3"></div>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
-      </div>
-    )
+    return pages
   }
 
   return (
@@ -221,10 +223,29 @@ const DoctorsPage = () => {
                 className="pl-10"
               />
             </div>
-            <Button variant="outline" size="sm">
-              <Filter className="h-4 w-4 mr-2" />
-              Filters
-            </Button>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="outline" className="w-[140px] flex justify-between items-center">
+                  <div className="flex items-center">
+                    <Filter className="h-4 w-4 mr-2" />
+                    {filterStatus === 'all' && 'All'}
+                    {filterStatus === 'featured' && 'Featured'}
+                    {filterStatus === 'hidden' && 'Hidden'}
+                  </div>
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                <DropdownMenuItem onClick={() => setFilterStatus('all')}>
+                  All Doctors
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => setFilterStatus('featured')}>
+                  Featured Only
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => setFilterStatus('hidden')}>
+                  Hidden Only
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
           </div>
         </CardContent>
       </Card>
@@ -284,6 +305,19 @@ const DoctorsPage = () => {
       )}
 
       {/* Doctors Grid - Original Admin Design */}
+      {loading ? (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {[...Array(6)].map((_, i) => (
+            <Card key={i} className="animate-pulse">
+              <CardContent className="p-6">
+                <div className="h-32 bg-gray-200 rounded mb-4"></div>
+                <div className="h-4 bg-gray-200 rounded mb-2"></div>
+                <div className="h-3 bg-gray-200 rounded w-2/3"></div>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+      ) : (
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {doctors.map((doctor) => (
           <Card key={doctor.id} className="hover:shadow-lg transition-shadow">
@@ -293,7 +327,7 @@ const DoctorsPage = () => {
                   <div className="w-12 h-12 bg-gray-200 rounded-full flex items-center justify-center">
                     {doctor.image || doctor.user?.image ? (
                       <Image
-                        src={doctor.image || doctor.user?.image} 
+                        src={doctor.image || doctor.user?.image}
                         alt={doctor.name || doctor.user?.name}
                         width={48}
                         height={48}
@@ -349,7 +383,7 @@ const DoctorsPage = () => {
                         </>
                       )}
                     </DropdownMenuItem>
-                    <DropdownMenuItem 
+                    <DropdownMenuItem
                       className="text-red-600"
                       onClick={() => handleDelete(doctor.id)}
                     >
@@ -378,8 +412,8 @@ const DoctorsPage = () => {
                         {truncateText(sub, 15)}
                       </span>
                     )) || (
-                      <span className="text-xs text-gray-500">No subspecialities</span>
-                    )}
+                        <span className="text-xs text-gray-500">No subspecialities</span>
+                      )}
                     {doctor.subspecialities?.length > 2 && (
                       <span className="inline-flex items-center px-2 py-1 rounded-full text-xs bg-gray-100 text-gray-600">
                         +{doctor.subspecialities.length - 2}
@@ -390,11 +424,10 @@ const DoctorsPage = () => {
 
                 <div className="flex items-center justify-between pt-2">
                   <div className="flex items-center gap-2">
-                    <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${
-                      doctor.registrationCompleted 
-                        ? 'bg-green-100 text-green-800' 
-                        : 'bg-yellow-100 text-yellow-800'
-                    }`}>
+                    <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${doctor.registrationCompleted
+                      ? 'bg-green-100 text-green-800'
+                      : 'bg-yellow-100 text-yellow-800'
+                      }`}>
                       {doctor.registrationCompleted ? 'Active' : 'Pending'}
                     </span>
                     {doctor.featured && (
@@ -414,9 +447,10 @@ const DoctorsPage = () => {
           </Card>
         ))}
       </div>
+      )}
 
       {/* Pagination Controls */}
-      {totalPages > 1 && (
+      {!loading && totalPages > 1 && (
         <div className="flex items-center justify-center space-x-2 mt-8">
           {/* Previous Button */}
           <Button
@@ -456,11 +490,10 @@ const DoctorsPage = () => {
                 variant={currentPage === pageNum ? "default" : "outline"}
                 size="sm"
                 onClick={() => handlePageChange(pageNum)}
-                className={`w-8 h-8 p-0 ${
-                  currentPage === pageNum 
-                    ? "bg-[#2F797B] hover:bg-[#236B6D] text-white" 
-                    : ""
-                }`}
+                className={`w-8 h-8 p-0 ${currentPage === pageNum
+                  ? "bg-[#2F797B] hover:bg-[#236B6D] text-white"
+                  : ""
+                  }`}
               >
                 {pageNum}
               </Button>
@@ -498,7 +531,7 @@ const DoctorsPage = () => {
         </div>
       )}
 
-      {doctors.length === 0 && (
+      {!loading && doctors.length === 0 && (
         <Card>
           <CardContent className="p-12 text-center">
             <div className="text-gray-400 mb-4">
@@ -508,11 +541,11 @@ const DoctorsPage = () => {
             <p className="text-gray-600 mb-4">
               {searchTerm ? `No doctors match "${searchTerm}"` : "No doctors have been added yet."}
             </p>
-            {!searchTerm && (
+            {/* {!searchTerm && (
               <Button asChild>
                 <Link href="/admin/doctors/create">Add First Doctor</Link>
               </Button>
-            )}
+            )} */}
           </CardContent>
         </Card>
       )}
