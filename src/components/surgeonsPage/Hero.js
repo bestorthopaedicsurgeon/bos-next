@@ -15,33 +15,25 @@ import { auCities } from "@/lib/constants/auCities";
 import { getAllDoctors } from "@/lib/apiCalls/client/allDoctor";
 import Image from "next/image";
 import Link from "next/link";
-import React, { useState, useCallback, useMemo, useEffect } from "react";
+import React, { useState, useCallback, useMemo, useEffect, useRef } from "react";
 import { debounce } from "lodash";
 
-export const HeroSection = ({ onSearch }) => {
-  const [searchForm, setSearchForm] = useState({
+export const HeroSection = ({ onSearch, initialParams }) => {
+  const [searchForm, setSearchForm] = useState(initialParams || {
     name: "",
     subspecialty: "",
     location: "",
   });
 
-  useEffect(() => {
-    if (typeof window !== "undefined") {
-      const params = new URLSearchParams(window.location.search);
-      const name = params.get("name");
-      const subspecialty = params.get("subspecialty");
-      const location = params.get("location");
-      
-      if (name || subspecialty || location) {
-        setSearchForm({
-          name: name || "",
-          subspecialty: subspecialty || "",
-          location: location || "",
-        });
-      }
-    }
-  }, []);
+  const isFirstMount = useRef(true);
   const [hasSearched, setHasSearched] = useState(false);
+
+  // Keep local form in sync with props (e.g. if URL changes from homepage search)
+  useEffect(() => {
+    if (initialParams) {
+      setSearchForm(initialParams);
+    }
+  }, [initialParams]);
 
   const subspecialities = useMemo(
     () => [
@@ -76,6 +68,12 @@ export const HeroSection = ({ onSearch }) => {
   useEffect(() => {
     const isFiltered = Object.values(searchForm).some((val) => val !== "");
     setHasSearched(isFiltered);
+
+    // Skip initial search call (wrapper already handles initial data fetch)
+    if (isFirstMount.current) {
+      isFirstMount.current = false;
+      return; 
+    }
 
     debouncedSearch(searchForm);
 

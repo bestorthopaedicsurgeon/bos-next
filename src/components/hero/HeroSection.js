@@ -134,7 +134,13 @@ export const HeroSection = () => {
         <div className="mb-4">
           <h1 className="font-syne text-primary">Find A Surgeon</h1>
         </div>
-        <div className="flex gap-4 max-md:flex-wrap">
+        <form 
+          onSubmit={(e) => {
+            e.preventDefault();
+            handleSearch();
+          }}
+          className="flex gap-4 max-md:flex-wrap"
+        >
           <input
             className="border-primary min-h-[56px] w-full rounded-md border px-4 py-3.5"
             placeholder="Doctor Name"
@@ -165,11 +171,11 @@ export const HeroSection = () => {
             className={"w-36"}
             variant={"primary"}
             size={"primary"}
-            onClick={handleSearch}
+            type="submit"
           >
             Search
           </Button>
-        </div>
+        </form>
       </div>
     </section>
   );

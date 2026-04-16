@@ -2,14 +2,16 @@ import { SearchableSurgeonsWrapper } from "@/components/surgeonsPage/SearchableS
 import InfoSectionLeft from "@/components/surgeonsPage/InfoSectionLeft";
 import InfoSectionRight from "@/components/surgeonsPage/InfoSectionRight";
 import Types from "@/components/surgeonsPage/Types";
-import React from "react";
+import React, { Suspense } from "react";
 import InfoSectionLefta from "@/components/surgeonsPage/infoSectionLefta";
 import InfoSectionRightb from "@/components/surgeonsPage/infoSectionRightb";
 
 const SurgeonsPage = () => {
   return (
     <div className="container">
-      <SearchableSurgeonsWrapper />
+      <Suspense fallback={<div>Loading Surgeons...</div>}>
+        <SearchableSurgeonsWrapper />
+      </Suspense>
       <InfoSectionLeft image={"/surgeons/info1.png"} />
       <InfoSectionRight image={"/surgeons/info2.png"} />
       <Types />

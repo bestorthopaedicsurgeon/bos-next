@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { getAllDoctors } from "@/lib/apiCalls/client/allDoctor";
 import { ExternalLink, ChevronLeft, ChevronRight } from "lucide-react";
 import Image from "next/image";
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback, useRef } from "react";
 
 const DOCTORS_PER_PAGE = 12;
 
@@ -13,38 +13,58 @@ export const AllSurgeons = ({ searchParams = {} }) => {
   const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
 
-  const fetchDoctors = useCallback(async () => {
-    setLoading(true);
-    try {
-      const res = await getAllDoctors({
-        page: currentPage,
-        limit: DOCTORS_PER_PAGE,
-        name: searchParams.name,
-        subspecialty: searchParams.subspecialty,
-        location: searchParams.location,
-      });
+  const prevSearchParams = useRef(searchParams);
+  const lastFetchedParams = useRef("");
 
-      if (res?.success) {
-        setDoctorsResponse(res);
-      } else {
-        setDoctorsResponse(null);
-      }
-    } catch (error) {
-      console.error("Error fetching surgeons:", error);
-      setDoctorsResponse(null);
-    } finally {
-      setLoading(false);
+  useEffect(() => {
+    // Check if search parameters actually changed
+    const searchChanged = 
+      prevSearchParams.current.name !== (searchParams.name || "") ||
+      prevSearchParams.current.subspecialty !== (searchParams.subspecialty || "") ||
+      prevSearchParams.current.location !== (searchParams.location || "");
+    
+    // Update ref for next comparison
+    prevSearchParams.current = searchParams;
+
+    // If search changed and we are not on page 1, reset to page 1
+    // This will trigger a re-render and this effect will run again with currentPage = 1
+    if (searchChanged && currentPage !== 1) {
+      setCurrentPage(1);
+      return;
     }
-  }, [currentPage, searchParams]);
 
-  useEffect(() => {
-    fetchDoctors();
-  }, [fetchDoctors]);
+    // Fetch doctors
+    const fetchDoctorsData = async () => {
+      // Avoid fetching if parameters haven't changed since last fetch
+      const currentParamsKey = `${searchParams.name}-${searchParams.subspecialty}-${searchParams.location}-${currentPage}`;
+      if (lastFetchedParams.current === currentParamsKey) return;
+      lastFetchedParams.current = currentParamsKey;
 
-  // Reset to page 1 when search filters change
-  useEffect(() => {
-    setCurrentPage(1);
-  }, [searchParams]);
+      setLoading(true);
+      try {
+        const res = await getAllDoctors({
+          page: currentPage,
+          limit: DOCTORS_PER_PAGE,
+          name: searchParams.name,
+          subspecialty: searchParams.subspecialty,
+          location: searchParams.location,
+        });
+
+        if (res?.success) {
+          setDoctorsResponse(res);
+        } else {
+          setDoctorsResponse(null);
+        }
+      } catch (error) {
+        console.error("Error fetching surgeons:", error);
+        setDoctorsResponse(null);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchDoctorsData();
+  }, [currentPage, searchParams.name, searchParams.subspecialty, searchParams.location]);
 
   const displayDoctors = doctorsResponse?.data || [];
   const pagination = doctorsResponse?.pagination || { totalPages: 0, totalCount: 0 };
