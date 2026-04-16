@@ -42,6 +42,7 @@ export async function GET(request: NextRequest) {
       };
     }
 
+    const topDoctorId = 20;
     const filter = searchParams.get("filter") || "all";
     if (filter === "featured") {
       where.featured = true;
@@ -58,46 +59,65 @@ export async function GET(request: NextRequest) {
       prisma.doctorProfile.count({ where: { ...where, hidden: true } }),
     ]);
 
-    const doctors = await prisma.doctorProfile.findMany({
-      where,
-      skip,
-      take: limit,
-      include: {
-        user: {
-          select: {
-            id: true,
-            name: true,
-            email: true,
-            image: true,
-            role: true,
-          },
+    // Define inclusion criteria once for reuse
+    const includeQuery = {
+      user: {
+        select: {
+          id: true,
+          name: true,
+          email: true,
+          image: true,
+          role: true,
         },
-        reviews: {
-          select: {
-            id: true,
-            professionalism: true,
-            punctuality: true,
-            helpfulness: true,
-            knowledge: true,
-            review: true,
-            user: {
-              select: {
-                name: true,
-              },
+      },
+      reviews: {
+        select: {
+          id: true,
+          professionalism: true,
+          punctuality: true,
+          helpfulness: true,
+          knowledge: true,
+          review: true,
+          user: {
+            select: {
+              name: true,
             },
           },
         },
       },
+    };
+
+    // 1. Check if we should pin the specific doctor to the top (on page 1)
+    let topDoctor = null;
+    if (page === 1) {
+      topDoctor = await prisma.doctorProfile.findFirst({
+        where: { ...where, id: topDoctorId },
+        include: includeQuery,
+      });
+    }
+
+    // 2. Fetch the rest of the doctors, excluding the pinned one if found
+    const doctors = await prisma.doctorProfile.findMany({
+      where: {
+        ...where,
+        ...(topDoctor ? { id: { not: topDoctorId } } : {})
+      },
+      skip: page === 1 ? 0 : skip - (topDoctor ? 1 : 0),
+      take: topDoctor && page === 1 ? limit - 1 : limit,
+      include: includeQuery,
       orderBy: [
         { featured: 'desc' },
         { id: 'desc' }
       ]
     });
 
+    // 3. Combine results
+    const finalDoctors = topDoctor && page === 1 ? [topDoctor, ...doctors] : doctors;
+
     return NextResponse.json(
       {
         success: true,
-        data: doctors,
+        data: finalDoctors,
         pagination: {
           totalCount,
           totalPages: Math.ceil(totalCount / limit),
