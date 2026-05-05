@@ -91,7 +91,7 @@ export const HeroSection = ({ onSearch, initialParams }) => {
   }, []);
   return (
     <section className="mb-20">
-      <div className="bg-primary text-primary-foreground mb-8 flex gap-10 rounded-4xl px-20 py-16 max-lg:justify-center max-md:px-10">
+      <div className="bg-primary text-primary-foreground mb-8 flex items-center justify-between gap-10 rounded-4xl px-20 py-16 max-lg:justify-center max-md:px-10">
         <div className="flex w-full max-w-[570px] flex-col max-md:max-w-full">
           {/* <p className="mb-4">Find your surgeon!</p>
             <div className="bg-primary-foreground mb-4 h-[2px] w-full" /> */}
@@ -102,15 +102,15 @@ export const HeroSection = ({ onSearch, initialParams }) => {
           <h1 className="font-syne mb-4">
             Find the Right Orthopedic Specialist
           </h1>
-          <div className="hidden h-[352px] w-full max-w-[308px] max-lg:mx-auto max-lg:flex max-lg:justify-center">
+          <div className="hidden h-[352px] w-[308px] max-lg:mx-auto max-lg:flex max-lg:justify-center max-sm:h-full max-sm:w-full">
             <Image
               src="/surgeons/surgeons.png"
               alt="hero"
-              width={500}
-              height={500}
+              width={600}
+              height={600}
               quality={100}
               priority
-              className="h-full w-full object-contain"
+              className="h-auto w-full object-contain"
             />
           </div>
           <p className="mb-4">
@@ -139,20 +139,20 @@ export const HeroSection = ({ onSearch, initialParams }) => {
               className="h-[42px] w-[172px] flex-shrink-0"
             />
             <div>
-              <p>More than 52k</p>
-              <p>Patients reviews</p>
+              <p className="font-bold text-xl leading-tight">Trusted by 100+ Orthopaedic Surgeons</p>
+              <p className="text-sm opacity-90">Across Western Australia</p>
             </div>
           </div>
         </div>
-        <div className="mb-[-64px] max-h-[607px] w-full max-w-[596px] max-lg:hidden">
+        <div className="flex w-full max-w-[500px] items-center justify-center max-lg:hidden">
           <Image
             src="/surgeons/surgeons.png"
             alt="hero"
-            width={500}
-            height={500}
+            width={600}
+            height={600}
             quality={100}
             priority
-            className="h-full w-full object-contain"
+            className="h-auto w-full object-contain"
           />
         </div>
       </div>

@@ -44,7 +44,7 @@ export const FeaturedSurgeonsSection = () => {
           <h1 className="font-syne text-primary">Loading Featured Surgeons...</h1>
         </div>
         <div className="grid grid-cols-1 gap-8 lg:grid-cols-2">
-          {[...Array(4)].map((_, index) => (
+          {[...Array(6)].map((_, index) => (
             <div key={index} className="border-primary flex max-sm:flex-col-reverse w-full items-center max-sm:justify-center max-sm:items-start justify-evenly gap-7 rounded-3xl border px-11 py-10 animate-pulse">
               <div className="flex flex-col gap-3.5 max-sm:w-full flex-1">
                 <div className="h-6 w-3/4 rounded bg-white"></div>

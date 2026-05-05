@@ -20,7 +20,7 @@ export async function GET() {
         id: { not: topDoctorId } 
       },
       include: { reviews: true },
-      take: topDoctor ? 3 : 4,
+      take: topDoctor ? 5 : 6,
     });
 
     // Prepend the top doctor if found
@@ -32,9 +32,9 @@ export async function GET() {
 
     const featuredIds = featuredDoctors.map((d) => d.id);
 
-    // 2. If fewer than 4, get top-rated doctors to fill the rest
-    if (featuredDoctors.length < 4) {
-      const remaining = 4 - featuredDoctors.length;
+    // 2. If fewer than 6, get top-rated doctors to fill the rest
+    if (featuredDoctors.length < 6) {
+      const remaining = 6 - featuredDoctors.length;
 
       const allDoctors = await prisma.doctorProfile.findMany({
         where: {

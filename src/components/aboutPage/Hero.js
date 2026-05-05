@@ -16,7 +16,7 @@ import React from "react";
 export const HeroSection = () => {
   return (
     <section className="mb-40">
-      <div className="bg-primary text-primary-foreground gap-10 flex mb-8 rounded-4xl px-20 max-md:px-10 py-16 max-lg:justify-center">
+      <div className="bg-primary text-primary-foreground gap-10 flex items-center mb-8 rounded-4xl px-20 max-md:px-10 py-16 max-lg:justify-center overflow-hidden">
         <div className="max-w-[570px] max-md:max-w-full w-full flex flex-col">
           {/* <p className="mb-4">Find your surgeon!</p>
             <div className="bg-primary-foreground mb-4 h-[2px] w-full" /> */}
@@ -36,7 +36,7 @@ export const HeroSection = () => {
               height={500}
               quality={100}
               priority
-              className="h-full w-full object-cover"
+              className="h-auto w-full object-contain"
             />
           </div>
           <p className="mb-4">
@@ -64,21 +64,22 @@ export const HeroSection = () => {
               className="flex-shrink-0 w-[172px] h-[42px]"
             />
             <div>
-              <p>More than 52k</p>
-              <p>Patients reviews</p>
+              <p className="font-bold text-xl leading-tight">Trusted by 100+ Orthopaedic Surgeons</p>
+              <p className="text-sm opacity-90">Across Western Australia</p>
             </div>
           </div>
         </div>
-        <div className="mt-[-170px] h-full max-h-[600px] max-w-[579px] w-full max-lg:hidden  max-[1367px]:mb-0 max-[1367px]:mt-0">
-          <Image
-            src="/about/about.png"
-            alt="hero"
-            width={500}
-            height={500}
-            quality={100}
-            priority
-            className="h-full w-full object-cover"
-          />
+        <div className="self-stretch flex flex-col justify-center max-w-[579px] w-full max-lg:hidden overflow-visible">
+          <div className="relative w-full aspect-square scale-[1.45]">
+            <Image
+              src="/about/about.png"
+              alt="hero"
+              fill
+              quality={100}
+              priority
+              className="object-contain"
+            />
+          </div>
         </div>
       </div>
     </section>

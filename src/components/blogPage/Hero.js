@@ -61,8 +61,8 @@ export const HeroSection = () => {
               className="flex-shrink-0"
             />
             <div>
-              <p>More than 52k</p>
-              <p>Patients reviews</p>
+              <p className="font-bold text-xl leading-tight">Trusted by 100+ Orthopaedic Surgeons</p>
+              <p className="text-sm opacity-90">Across Western Australia</p>
             </div>
           </div>
         </div>

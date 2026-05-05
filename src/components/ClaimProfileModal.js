@@ -97,7 +97,7 @@ const ClaimProfileModal = ({ children, doctorId }) => {
       <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
         <DialogHeader className="text-left">
           <DialogTitle className="text-primary text-2xl font-bold mb-2 text-left">
-            CLAIM YOUR PROFILE ON BOS
+            Claim Your Profile On BOS
           </DialogTitle>
           <DialogDescription className="text-gray-600 text-left mb-4">
             Your profile is integrated into the prescribing software of thousands of GPs -
@@ -119,7 +119,7 @@ const ClaimProfileModal = ({ children, doctorId }) => {
               name="name"
               value={formData.name}
               onChange={handleInputChange}
-              placeholder="Prof Piers Yates"
+              placeholder="Enter your name"
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
               required
             />
@@ -138,6 +138,7 @@ const ClaimProfileModal = ({ children, doctorId }) => {
               name="email"
               value={formData.email}
               onChange={handleInputChange}
+              placeholder="Enter your personal email"
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
               required
             />
@@ -156,6 +157,7 @@ const ClaimProfileModal = ({ children, doctorId }) => {
               name="phone"
               value={formData.phone}
               onChange={handleInputChange}
+              placeholder="Enter your mobile number"
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
               required
             />
@@ -164,7 +166,7 @@ const ClaimProfileModal = ({ children, doctorId }) => {
           {/* AHPRA Number Field */}
           <div>
             <label className="block text-gray-700 font-medium mb-1">
-              AHPRA number<span className="text-red-500">*</span>
+              AHPRA Number<span className="text-red-500">*</span>
             </label>
             <p className="text-sm text-gray-500 mb-2">e.g. MED0123456789</p>
             <input
@@ -172,7 +174,7 @@ const ClaimProfileModal = ({ children, doctorId }) => {
               name="ahpraNumber"
               value={formData.ahpraNumber}
               onChange={handleInputChange}
-              placeholder="MED0123456789"
+              placeholder="Enter your AHPRA Number"
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
               required
             />

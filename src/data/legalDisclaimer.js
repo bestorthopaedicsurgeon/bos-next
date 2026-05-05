@@ -52,13 +52,21 @@ export const legalDisclaimerData = {
     },
     {
       number: "4",
+      title: "Data Sourcing & Ownership",
+      paragraphs: [
+        "Best Orthopaedic Surgeons compiles doctors' data from publicly available sources to assist users in finding specialists. We do not claim ownership of this publicly sourced information.",
+        "These profiles are provided as a public service directory. Doctors may claim, update, or request the removal of their profiles at any time by contacting us or using the claim profile feature on the Website."
+      ]
+    },
+    {
+      number: "5",
       title: "Independence & Impartiality",
       paragraphs: [
         "The Website is independent and not affiliated with any hospital, medical group, or government department. Paid profile enhancements do not influence search ranking or patient ratings."
       ]
     },
     {
-      number: "5",
+      number: "6",
       title: "Limitation of Liability",
       intro: "To the fullest extent permitted under Australian law, we:",
       items: [
@@ -72,14 +80,14 @@ export const legalDisclaimerData = {
       }
     },
     {
-      number: "6",
+      number: "7",
       title: "External Links",
       paragraphs: [
         "This Website may contain links to third-party sites. We do not control, endorse, or assume responsibility for their content, policies, or accuracy."
       ]
     },
     {
-      number: "7",
+      number: "8",
       title: "Review Content & Moderation",
       paragraphs: [
         "User-generated reviews represent individual opinions and experiences. They are not factual statements and should not be interpreted as clinical assessments.",
@@ -87,7 +95,7 @@ export const legalDisclaimerData = {
       ]
     },
     {
-      number: "8",
+      number: "9",
       title: "Intellectual Property",
       paragraphs: [
         "All Website material—including text, branding, layout, graphics, and data—is protected by copyright and intellectual property laws.",
@@ -95,7 +103,7 @@ export const legalDisclaimerData = {
       ]
     },
     {
-      number: "9",
+      number: "10",
       title: "Changes to This Disclaimer",
       paragraphs: [
         "We may update this Disclaimer at any time. Continued use of the Website constitutes acceptance of any updated terms."

@@ -48,7 +48,9 @@ const DoctorCard = ({
         </div>
         <div className="flex items-center gap-2">
           <Image src="/icons/star.png" alt="Star icon" width={24} height={24} />
-          <p className="text-lg text-neutral-800 max-sm:w-full">{avgRating}</p>
+          <p className="text-lg text-neutral-800 max-sm:w-full">
+            {avgRating && avgRating > 0 ? (typeof avgRating === 'number' ? avgRating.toFixed(1) : avgRating) : "No ratings yet"}
+          </p>
         </div>
         <div className="flex items-center gap-2 max-sm:flex-col">
           <div

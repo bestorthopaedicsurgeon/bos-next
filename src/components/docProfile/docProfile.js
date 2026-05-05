@@ -114,6 +114,19 @@ const DocProfile = ({ docProfile_Details, editProfile }) => {
   };
   const formattedTitle = formatTitle(doctorProfile?.title);
 
+  // Calculate average rating
+  const reviews = doctorProfile?.reviews || [];
+  const avgRating =
+    reviews.length === 0
+      ? null
+      : reviews.reduce(
+          (sum, r) =>
+            sum +
+            (r.professionalism + r.punctuality + r.helpfulness + r.knowledge) /
+              4,
+          0,
+        ) / reviews.length;
+
   return (
     <div>
       <div
@@ -157,7 +170,7 @@ const DocProfile = ({ docProfile_Details, editProfile }) => {
                 fill="#F3CD03"
               />
             </svg>
-            {5}
+            {avgRating && avgRating > 0 ? avgRating.toFixed(1) : "No ratings yet"}
           </p>
 
           <div className="w-full max-md:text-center">
