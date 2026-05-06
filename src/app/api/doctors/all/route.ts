@@ -24,10 +24,7 @@ export async function GET(request: NextRequest) {
     if (subspecialty) {
       const rawResult = await prisma.$queryRaw<{id: number}[]>`
         SELECT id FROM "DoctorProfile"
-        WHERE EXISTS (
-          SELECT 1 FROM unnest(subspecialities) as sub
-          WHERE sub ILIKE ${'%' + subspecialty + '%'}
-        )
+        WHERE subspecialities[1] ILIKE ${'%' + subspecialty + '%'}
       `;
       where.id = {
         in: rawResult.map(r => r.id)
@@ -89,7 +86,7 @@ export async function GET(request: NextRequest) {
 
     // 1. Check if we should pin the specific doctor to the top (on page 1)
     let topDoctor = null;
-    if (page === 1) {
+    if (page === 1 && !subspecialty) {
       topDoctor = await prisma.doctorProfile.findFirst({
         where: { ...where, id: topDoctorId },
         include: includeQuery,
@@ -97,11 +94,18 @@ export async function GET(request: NextRequest) {
     }
 
     // 2. Fetch the rest of the doctors, excluding the pinned one if found
+    let findManyWhere: any = { ...where };
+    if (topDoctor) {
+      findManyWhere = {
+        AND: [
+          where,
+          { id: { not: topDoctorId } }
+        ]
+      };
+    }
+
     const doctors = await prisma.doctorProfile.findMany({
-      where: {
-        ...where,
-        ...(topDoctor ? { id: { not: topDoctorId } } : {})
-      },
+      where: findManyWhere,
       skip: page === 1 ? 0 : skip - (topDoctor ? 1 : 0),
       take: topDoctor && page === 1 ? limit - 1 : limit,
       include: includeQuery,

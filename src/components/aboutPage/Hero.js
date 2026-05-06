@@ -25,7 +25,7 @@ export const HeroSection = () => {
             <div className="bg-primary-foreground mx-auto h-[2px] w-full" />
           </div>
           <h1 className="font-syne mb-4">
-          We Help Discover a Pain Free Path 
+            We Help Discover a Pain Free Path
 
           </h1>
           <div className="hidden max-lg:flex max-lg:justify-center max-lg:mx-auto max-h-[352px] w-full max-w-[348px] h-full mb-6">
@@ -40,18 +40,18 @@ export const HeroSection = () => {
             />
           </div>
           <p className="mb-4">
-          Helping patients find the right orthopaedic surgeons with ease. Our platform lets you discover, review, and rate healthcare professionals based on real patient experiences.
+            Helping patients find the right orthopaedic surgeons with ease. Our platform lets you discover, review, and rate healthcare professionals based on real patient experiences.
           </p>
           <div className="mb-4 flex flex-wrap gap-4">
             <Link href="/surgeons?scroll=section">
-            <Button variant={"primaryForeground"} size={"primaryForeground"}>
-              Find Your Doctor
-            </Button>
+              <Button variant={"primaryForeground"} size={"primaryForeground"}>
+                Find Your Doctor
+              </Button>
             </Link>
             <Link href="/contactUs">
-            <Button variant={"primaryForeground"} size={"primaryForeground"}>
-              Need Help?
-            </Button>
+              <Button variant={"primaryForeground"} size={"primaryForeground"}>
+                Need Help?
+              </Button>
             </Link>
           </div>
           <div className="flex items-center flex-wrap gap-4 ">
@@ -64,8 +64,8 @@ export const HeroSection = () => {
               className="flex-shrink-0 w-[172px] h-[42px]"
             />
             <div>
-              <p className="font-bold text-xl leading-tight">Trusted by 100+ Orthopaedic Surgeons</p>
-              <p className="text-sm opacity-90">Across Western Australia</p>
+              <p>More than 100</p>
+              <p>Orthopaedic surgeons</p>
             </div>
           </div>
         </div>
