@@ -4,7 +4,7 @@ import { useRef, useEffect } from "react";
 import { HeroSection } from "./Hero";
 import { Blogs } from "./Blogs";
 
-export const BlogPageWrapper = () => {
+export const BlogPageWrapper = ({ initialBlogs = [] }) => {
   const heroRef = useRef(null);
 
   // When landing with ?scroll=section: scroll to hero height + 100, then clean URL
@@ -33,7 +33,8 @@ export const BlogPageWrapper = () => {
       <div ref={heroRef}>
         <HeroSection />
       </div>
-      <Blogs />
+      <Blogs initialBlogs={initialBlogs} />
     </>
   );
 };
+

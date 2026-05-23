@@ -505,7 +505,7 @@ const Page = () => {
           {/* Blog Selection */}
           <div className="mb-8">
             <label className="block text-sm font-medium mb-2">Select Existing Blog</label>
-            <div className="w-96">
+            <div className="w-full max-w-lg">
               <SearchableBlogSelect
                 blogs={blogs}
                 value={selectedBlog}

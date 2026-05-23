@@ -17,20 +17,30 @@ import { useState } from "react";
 
 export function SearchableBlogSelect({ blogs, value, onChange, className }) {
   const [open, setOpen] = useState(false);
+  const [triggerWidth, setTriggerWidth] = useState(0);
 
   const selected = blogs?.find((blog) => blog.value === value);
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
-        <div className={cn("relative", className)}>
+        <div
+          ref={(el) => {
+            if (el && el.offsetWidth !== triggerWidth) {
+              setTriggerWidth(el.offsetWidth);
+            }
+          }}
+          className={cn("relative", className)}
+        >
           <Button
             variant="outline"
             role="combobox"
             aria-expanded={open}
-            className="w-full justify-between pr-10 bg-white"
+            className="w-full justify-between pr-10 bg-white overflow-hidden"
           >
-            {selected ? selected.label : "Search by blog title"}
+            <span className="truncate min-w-0 text-left">
+              {selected ? selected.label : "Select New"}
+            </span>
             <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
           </Button>
 
@@ -48,11 +58,24 @@ export function SearchableBlogSelect({ blogs, value, onChange, className }) {
         </div>
       </PopoverTrigger>
 
-      <PopoverContent className="w-full p-0">
+      <PopoverContent
+        className="p-0"
+        style={{ width: triggerWidth ? `${triggerWidth}px` : "100%" }}
+      >
         <Command>
           <CommandInput placeholder="Search blog title..." />
           <CommandEmpty>No blog found.</CommandEmpty>
           <CommandGroup>
+            <CommandItem
+              value="Select New"
+              onSelect={() => {
+                onChange(null);
+                setOpen(false);
+              }}
+              className="text-primary font-bold border-b border-neutral-100 cursor-pointer"
+            >
+              Select New
+            </CommandItem>
             {blogs?.map((blog) => (
               <CommandItem
                 key={blog.value}
@@ -61,8 +84,9 @@ export function SearchableBlogSelect({ blogs, value, onChange, className }) {
                   onChange(blog.value);
                   setOpen(false);
                 }}
+                className="truncate"
               >
-                {blog.label}
+                <span className="truncate block">{blog.label}</span>
               </CommandItem>
             ))}
           </CommandGroup>

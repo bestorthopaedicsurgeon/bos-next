@@ -1,4 +1,4 @@
-"use client"
+// Server component — no hooks or browser APIs used
 
 import Link from "next/link";
 import { redirect } from "next/navigation";
