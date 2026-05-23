@@ -13,6 +13,7 @@ import { authOptions } from "@/lib/auth";
 import { getServerSession } from "next-auth";
 import { redirect } from "next/navigation";
 import { getDoctorProfileSelf } from "@/lib/apiCalls/server/doctor";
+import { FindAnotherSurgeonCTA } from "@/components/docProfile/FindAnotherSurgeonCTA";
 const Page = async () => {
   const session = await getServerSession(authOptions);
 
@@ -59,6 +60,7 @@ const Page = async () => {
         </div>
       </div>
       <DocTabs doctData={doctData} ownProfile={true} />
+      <FindAnotherSurgeonCTA />
     </div>
   );
 };

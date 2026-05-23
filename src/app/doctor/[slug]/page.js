@@ -13,6 +13,7 @@ import { authOptions } from "@/lib/auth";
 import { getServerSession } from "next-auth";
 import { redirect } from "next/navigation";
 import { getDoctorProfile } from "@/lib/apiCalls/server/doctor";
+import { FindAnotherSurgeonCTA } from "@/components/docProfile/FindAnotherSurgeonCTA";
 
 const BASE_URL =
   process.env.NEXT_PUBLIC_BASE_URL || "https://www.bestorthopaedicsurgeon.com.au";
@@ -199,6 +200,8 @@ const Page = async ({ params }) => {
       </div>
 
       <DocTabs doctData={doctData} />
+
+      <FindAnotherSurgeonCTA />
     </div>
   );
 };
