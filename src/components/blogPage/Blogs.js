@@ -6,16 +6,15 @@ import React, { useState } from "react";
 
 export const Blogs = ({ initialBlogs = [] }) => {
   const [allBlogs] = useState(initialBlogs);
-  const [visibleCount, setVisibleCount] = useState(3);
+  const [visibleCount, setVisibleCount] = useState(6);
   const [loadingMore, setLoadingMore] = useState(false);
-
-  const BLOGS_PER_PAGE = 3;
 
   const handleLoadMore = async () => {
     setLoadingMore(true);
     // Simulate a small delay for better UX
     setTimeout(() => {
-      setVisibleCount(prev => prev + BLOGS_PER_PAGE);
+      // Load all remaining blogs at once
+      setVisibleCount(allBlogs.length);
       setLoadingMore(false);
     }, 300);
   };
