@@ -1,9 +1,9 @@
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
-import Link from "next/link";
+import ScrollLink from "@/components/reusable/ScrollLink";
 import React from "react";
 
-export const CtaCard = ({ icon, title, description, button, href = "/surgeons?scroll=section" }) => {
+export const CtaCard = ({ icon, title, description, button, href = "/surgeons", scrollTarget = "section" }) => {
   return (
     <div className="relative flex flex-col items-center justify-center rounded-4xl bg-white px-8 py-24">
       <Image
@@ -22,7 +22,7 @@ export const CtaCard = ({ icon, title, description, button, href = "/surgeons?sc
         size="primary"
         asChild
       >
-        <Link href={href}>{button}</Link>
+        <ScrollLink href={href} scrollTarget={scrollTarget}>{button}</ScrollLink>
       </Button>
     </div>
   );

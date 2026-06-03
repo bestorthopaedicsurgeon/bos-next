@@ -35,7 +35,7 @@ export const metadata = {
   },
   description: "Find the Best Orthopaedic Surgeons in Australia. Comprehensive platform for patients and doctors.",
   alternates: {
-    canonical: "/",
+    canonical: "https://www.bestorthopaedicsurgeon.com.au",
   },
   openGraph: {
     title: "Best Orthopaedic Surgeons",

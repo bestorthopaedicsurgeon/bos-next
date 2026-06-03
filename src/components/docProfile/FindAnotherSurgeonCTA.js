@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import Link from "next/link";
+import ScrollLink from "@/components/reusable/ScrollLink";
 import React from "react";
 
 export const FindAnotherSurgeonCTA = () => {
@@ -20,9 +20,9 @@ export const FindAnotherSurgeonCTA = () => {
           className="whitespace-nowrap px-8 py-5 rounded-full text-sm md:text-base shadow-sm hover:shadow transition-all duration-300 shrink-0 cursor-pointer w-full sm:w-auto"
           asChild
         >
-          <Link href="/surgeons?scroll=section">
+          <ScrollLink href="/surgeons" scrollTarget="section">
             Find Another Surgeon
-          </Link>
+          </ScrollLink>
         </Button>
       </div>
     </div>

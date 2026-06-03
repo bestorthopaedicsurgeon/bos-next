@@ -22,6 +22,17 @@ const nextConfig = {
       },
     ],
   },
+  async redirects() {
+    return [
+      // Force www
+      {
+        source: '/:path*',
+        has: [{ type: 'host', value: 'bestorthopaedicsurgeon.com.au' }],
+        destination: 'https://www.bestorthopaedicsurgeon.com.au/:path*',
+        permanent: true,
+      },
+    ];
+  },
 };
 
 export default nextConfig;

@@ -14,7 +14,7 @@ export const authOptions: NextAuthOptions = {
     GoogleProvider({
       clientId: process.env.GOOGLE_CLIENT_ID!,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
-      profile(profile) {
+      profile(profile: any) {
         return {
           id: profile.sub,
           name: profile.name || profile.email.split('@')[0],
@@ -38,7 +38,7 @@ export const authOptions: NextAuthOptions = {
         email: { label: "Email", type: "email" },
         password: { label: "Password", type: "password" },
       },
-      async authorize(credentials, req) {
+      async authorize(credentials: any, req: any) {
         // Type checking fix
         if (!credentials?.email || !credentials?.password) {
           throw new Error("Missing email or password");

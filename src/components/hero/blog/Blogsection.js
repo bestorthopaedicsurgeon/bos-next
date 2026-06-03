@@ -1,7 +1,7 @@
 import { BlogCarousel } from "@/components/hero/blog/BlogCarousel";
 import { Button } from "@/components/ui/button";
 import { getAllBlogsApi } from "@/lib/apiCalls/server/blogs";
-import Link from "next/link";
+import ScrollLink from "@/components/reusable/ScrollLink";
 import React from "react";
 
 export const Blogsection = async () => {
@@ -27,9 +27,9 @@ export const Blogsection = async () => {
               className="mt-8 flex items-center gap-2"
               asChild
             >
-              <Link href="/blog?scroll=section">
+              <ScrollLink href="/blog" scrollTarget="section">
               Read More Blogs
-              </Link>
+              </ScrollLink>
             </Button>
         </div>
       </div>

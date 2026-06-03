@@ -6,25 +6,31 @@ import { Blogs } from "./Blogs";
 
 export const BlogPageWrapper = ({ initialBlogs = [] }) => {
   const heroRef = useRef(null);
+  const blogsRef = useRef(null);
 
-  // When landing with ?scroll=section: scroll to hero height + 100, then clean URL
+  // When landing: check sessionStorage or URL params (backward compat) and scroll
   useEffect(() => {
     if (typeof window === "undefined") return;
     const params = new URLSearchParams(window.location.search);
-    if (params.get("scroll") !== "section") return;
+    let scroll = params.get("scroll");
 
-    const scrollToPosition = () => {
-      const heroHeight = (heroRef.current?.offsetHeight ?? 0) + 300;
-      window.scrollTo({ top: heroHeight, behavior: "smooth" });
-    };
-    const cleanUrl = () => {
-      window.history.replaceState({}, "", "/blog");
-    };
+    if (!scroll) {
+      scroll = sessionStorage.getItem("scroll_to_surgeons");
+      if (scroll) {
+        sessionStorage.removeItem("scroll_to_surgeons");
+      }
+    }
+
+    if (scroll !== "section") return;
 
     const t = setTimeout(() => {
-      scrollToPosition();
-      cleanUrl();
-    }, 100);
+      blogsRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+
+      // Clean up URL if it came from query parameter
+      if (params.get("scroll")) {
+        window.history.replaceState({}, "", "/blog");
+      }
+    }, 150);
     return () => clearTimeout(t);
   }, []);
 
@@ -33,8 +39,9 @@ export const BlogPageWrapper = ({ initialBlogs = [] }) => {
       <div ref={heroRef}>
         <HeroSection />
       </div>
-      <Blogs initialBlogs={initialBlogs} />
+      <div ref={blogsRef}>
+        <Blogs initialBlogs={initialBlogs} />
+      </div>
     </>
   );
 };
-

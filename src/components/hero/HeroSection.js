@@ -17,6 +17,7 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import React, { useState, useCallback, useMemo } from "react";
 import Link from "next/link";
+import ScrollLink from "@/components/reusable/ScrollLink";
 
 export const HeroSection = () => {
   const router = useRouter();  
@@ -89,11 +90,11 @@ export const HeroSection = () => {
             throughout Perth, Fremantle, Bunbury, Geraldton, and beyond.
           </p>
           <div className="mb-4 flex flex-wrap gap-4">
-            <Link href="/surgeons?scroll=section">
+            <ScrollLink href="/surgeons" scrollTarget="section">
               <Button variant={"primaryForeground"} size={"primaryForeground"}>
                 Find Your Doctor
               </Button>
-            </Link>
+            </ScrollLink>
             <div
               onClick={() => {
                 router.push("/about");

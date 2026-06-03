@@ -27,41 +27,52 @@ export const SearchableSurgeonsWrapper = () => {
     });
   }, [searchParamsHook]);
   const heroRef = useRef(null);
+  const surgeonsRef = useRef(null);
 
-  // When landing with ?scroll=section (+100) or ?scroll=section_high (-100): scroll then clean URL
+  // When landing: check sessionStorage or URL params (for backward compatibility) and scroll
   useEffect(() => {
     if (typeof window === "undefined") return;
     const params = new URLSearchParams(window.location.search);
-    const scroll = params.get("scroll");
+    let scroll = params.get("scroll");
+
+    if (!scroll) {
+      scroll = sessionStorage.getItem("scroll_to_surgeons");
+      if (scroll) {
+        sessionStorage.removeItem("scroll_to_surgeons");
+      }
+    }
+
     if (scroll !== "section" && scroll !== "section_high") return;
 
-    const baseHeight = heroRef.current?.offsetHeight ?? 0;
-    const offset = scroll === "section" ? 100 : -180;
-    const scrollTop = Math.max(0, baseHeight + offset);
-
-    const scrollToPosition = () => {
-      window.scrollTo({ top: scrollTop, behavior: "smooth" });
-    };
-    const cleanUrl = () => {
-      window.history.replaceState({}, "", "/surgeons");
-    };
-
     const t = setTimeout(() => {
-      scrollToPosition();
-      cleanUrl();
-    }, 100);
+      if (scroll === "section") {
+        surgeonsRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+      } else if (scroll === "section_high") {
+        const searchForm = heroRef.current?.querySelector("form") || heroRef.current?.querySelector(".rounded-4xl.bg-white");
+        if (searchForm) {
+          searchForm.scrollIntoView({ behavior: "smooth", block: "center" });
+        } else {
+          heroRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+        }
+      }
+
+      // Clean up URL if it came from query parameter
+      if (params.get("scroll")) {
+        window.history.replaceState({}, "", "/surgeons");
+      }
+    }, 150);
     return () => clearTimeout(t);
   }, []);
 
   return (
     <>
-      <div >
+      <div ref={heroRef}>
         <HeroSection
           onSearch={(params) => setSearchParams(params)}
           initialParams={searchParams}
         />
       </div>
-      <div ref={heroRef}>
+      <div ref={surgeonsRef}>
         <AllSurgeons
           searchParams={searchParams}
         />

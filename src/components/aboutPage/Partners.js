@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
-import Link from "next/link";
+import ScrollLink from "@/components/reusable/ScrollLink";
 import React from "react";
 
 export const Partners = () => {
@@ -14,9 +14,9 @@ export const Partners = () => {
         Bone pain, stiffness, or unusual swelling could be early warning signs of an underlying condition. Don’t delay—consult a specialist today and protect your mobility.
         </p>
         <Button className="mt-8" variant="primaryForeground" size="primaryForeground" asChild>
-          <Link href="/surgeons?scroll=section">
+          <ScrollLink href="/surgeons" scrollTarget="section">
             Get Consultation
-          </Link>
+          </ScrollLink>
         </Button>
       </div>
     </section>

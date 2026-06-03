@@ -9,7 +9,8 @@ export const CtaSection = () => {
       description:
         "Search verified orthopaedic surgeons across Perth and regional WA by subspecialty, location, and conditions treated.",
       button: "Find Now",
-      href: "/surgeons?scroll=section_high",
+      href: "/surgeons",
+      scrollTarget: "section_high",
     },
     {
       icon: "/icons/CtaCard-2.png",
@@ -17,7 +18,8 @@ export const CtaSection = () => {
       description:
         "You can access clinic locations, contact details with options for direct appointment booking through us (requires referral from your GP).",
       button: "Book An Appointment",
-      href: "/surgeons?scroll=section",
+      href: "/surgeons",
+      scrollTarget: "section",
     },
     {
       icon: "/icons/CtaCard-1.png",
@@ -25,7 +27,8 @@ export const CtaSection = () => {
       description:
         "We believe that patient feedback matters — and it helps others make more informed choices about their healthcare.",
       button: "Rate Now",
-      href: "/surgeons?scroll=section",
+      href: "/surgeons",
+      scrollTarget: "section",
     },
   ];
   return (
@@ -55,6 +58,7 @@ export const CtaSection = () => {
             description={card.description}
             button={card.button}
             href={card.href}
+            scrollTarget={card.scrollTarget}
           />
         ))}
         {/* Additional CtaCards for demonstration */}

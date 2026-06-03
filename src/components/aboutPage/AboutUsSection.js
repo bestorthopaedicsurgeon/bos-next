@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
-import Link from "next/link";
+import ScrollLink from "@/components/reusable/ScrollLink";
 import React from "react";
 
 export const AboutUsSection = () => {
@@ -26,9 +26,9 @@ export const AboutUsSection = () => {
             health with confidence and ease.
           </p>
           <Button className="mt-8" variant="primary" size="primary" asChild>
-            <Link href="/surgeons?scroll=section_high">
+            <ScrollLink href="/surgeons" scrollTarget="section_high">
               Find Your Surgeon
-            </Link>  
+            </ScrollLink>  
           </Button>
         </div>
       </div>
