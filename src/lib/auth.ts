@@ -15,7 +15,7 @@ export const authOptions: NextAuthOptions = {
     GoogleProvider({
       clientId: process.env.GOOGLE_CLIENT_ID!,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
-      async profile(profile) {
+      async profile(profile: any) {
         const cookieStore = await cookies();
         const oauthRole = cookieStore.get("oauth_signup_role")?.value;
         return {
@@ -41,7 +41,7 @@ export const authOptions: NextAuthOptions = {
         email: { label: "Email", type: "email" },
         password: { label: "Password", type: "password" },
       },
-      async authorize(credentials, req) {
+      async authorize(credentials: any, req: any) {
         // Type checking fix
         if (!credentials?.email || !credentials?.password) {
           throw new Error("Missing email or password");

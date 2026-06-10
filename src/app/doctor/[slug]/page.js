@@ -13,6 +13,7 @@ import { authOptions } from "@/lib/auth";
 import { getServerSession } from "next-auth";
 import { redirect } from "next/navigation";
 import { getDoctorProfile } from "@/lib/apiCalls/server/doctor";
+import { FindAnotherSurgeonCTA } from "@/components/docProfile/FindAnotherSurgeonCTA";
 
 const BASE_URL =
   process.env.NEXT_PUBLIC_BASE_URL || "https://www.bestorthopaedicsurgeon.com.au";
@@ -43,16 +44,15 @@ export async function generateMetadata({ params }) {
   const doctorName = doctData?.name || "Doctor";
   const designation = doctData?.designation
     ? doctData.designation.charAt(0).toUpperCase() +
-      doctData.designation.slice(1).toLowerCase()
+    doctData.designation.slice(1).toLowerCase()
     : "Orthopaedic Surgeon";
   const location = doctData?.location ? ` in ${doctData.location}` : "";
 
   const pageTitle = `${formattedTitle ? `${formattedTitle}. ` : ""}${doctorName} - ${designation}${location}`;
 
   // Use about field for description if available
-  let description = `View the profile of ${
-    formattedTitle ? `${formattedTitle}. ` : ""
-  }${doctorName}, ${designation} in Australia. Book an appointment on Best Orthopaedic Surgeons.`;
+  let description = `View the profile of ${formattedTitle ? `${formattedTitle}. ` : ""
+    }${doctorName}, ${designation} in Australia. Book an appointment on Best Orthopaedic Surgeons.`;
 
   if (doctData?.about) {
     const stripped = doctData.about.replace(/<[^>]*>/g, ""); // strip HTML tags
@@ -78,11 +78,11 @@ export async function generateMetadata({ params }) {
       type: "profile",
       images: doctData?.image
         ? [
-            {
-              url: doctData.image,
-              alt: `${formattedTitle ? `${formattedTitle}. ` : ""}${doctorName}`,
-            },
-          ]
+          {
+            url: doctData.image,
+            alt: `${formattedTitle ? `${formattedTitle}. ` : ""}${doctorName}`,
+          },
+        ]
         : undefined,
     },
     twitter: {
@@ -128,9 +128,8 @@ const Page = async ({ params, searchParams }) => {
 
   const formattedTitle = formatTitle(doctData?.title);
   const designation = doctData?.designation || "Orthopaedic Surgeon";
-  const pageTitle = `${formattedTitle ? `${formattedTitle}. ` : ""}${
-    doctData?.name || "Doctor"
-  }`;
+  const pageTitle = `${formattedTitle ? `${formattedTitle}. ` : ""}${doctData?.name || "Doctor"
+    }`;
 
   const canonicalSlug = doctData?.slug || slug;
 
@@ -176,9 +175,8 @@ const Page = async ({ params, searchParams }) => {
           key={data.heading}
           heading={data.heading}
           step1={data.step1}
-          step2={`${formattedTitle ? `${formattedTitle}. ` : ""}${
-            doctData?.name || "Doctor"
-          }`}
+          step2={`${formattedTitle ? `${formattedTitle}. ` : ""}${doctData?.name || "Doctor"
+            }`}
         />
       ))}
 
@@ -201,6 +199,7 @@ const Page = async ({ params, searchParams }) => {
       </div>
 
       <DocTabs doctData={doctData} writeReview={writeReview} />
+      <FindAnotherSurgeonCTA />
     </div>
   );
 };

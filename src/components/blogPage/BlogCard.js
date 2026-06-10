@@ -1,7 +1,6 @@
-"use client"
+// Server component — no hooks or browser APIs used
 
 import Link from "next/link";
-import { redirect } from "next/navigation";
 import React from "react";
 import { format } from "date-fns";
 import Image from "next/image";
@@ -80,18 +79,27 @@ export const BlogCard = (card) => {
     return `${readingTime} min read`;
   };
 
+  // Build image URL with cache-busting based on slug to avoid stale cached images
+  const imageUrl = card?.image
+    ? `${card.image}${card.image.includes('?') ? '&' : '?'}slug=${card.slug}`
+    : null;
+
   return (
-    <div className="bg-white p-7 rounded-lg shadow-sm hover:shadow-md transition-shadow h-full flex flex-col">
-      {card?.image && (
+    <Link
+      href={`/blog/${card.slug}`}
+      className="bg-white p-7 rounded-lg shadow-sm hover:shadow-md transition-shadow h-full flex flex-col cursor-pointer group block"
+    >
+      {imageUrl && (
         <Image
-          src={card.image}
+          src={imageUrl}
           alt={card.title || "Blog"}
-          width={343}
-          height={220}
+          width={600}
+          height={385}
+          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
           className="mb-4 rounded-md object-cover w-full h-[220px]"
         />
       )}
-      <h3 className="font-dm-sans text-primary mb-2 text-[20px] font-medium h-[60px] flex items-center">
+      <h3 className="font-dm-sans text-primary mb-2 text-[20px] font-medium h-[60px] flex items-center group-hover:underline">
         {truncateTitle(card.title, 8)}
       </h3>
       <p className="text-[14px] text-neutral-700 mb-2">
@@ -100,15 +108,12 @@ export const BlogCard = (card) => {
       <p className="text-[16px] text-neutral-700 mb-4 line-clamp-3 flex-grow min-h-[72px] overflow-hidden">
         {extractDescription(card.content, 25)}
       </p>
-      <Link
-        href={`/blog/${card.slug}`}
-        className="mt-auto flex items-center gap-4 cursor-pointer group"
-      >
+      <div className="mt-auto flex items-center gap-4">
         <p className="font-dm-sans text-[16px] font-bold text-primary transition-colors">
           Read More
         </p>
         <ArrowRight className="text-primary h-4 w-4 group-hover:translate-x-1 transition-transform" />
-      </Link>
-    </div>
+      </div>
+    </Link>
   );
 };

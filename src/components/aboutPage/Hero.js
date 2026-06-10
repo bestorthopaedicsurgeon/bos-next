@@ -11,6 +11,7 @@ import {
 } from "@/components/ui/select";
 import Image from "next/image";
 import Link from "next/link";
+import ScrollLink from "@/components/reusable/ScrollLink";
 import React from "react";
 
 export const HeroSection = () => {
@@ -43,11 +44,11 @@ export const HeroSection = () => {
             Helping patients find the right orthopaedic surgeons with ease. Our platform lets you discover, review, and rate healthcare professionals based on real patient experiences.
           </p>
           <div className="mb-4 flex flex-wrap gap-4">
-            <Link href="/surgeons?scroll=section">
+            <ScrollLink href="/surgeons" scrollTarget="section">
               <Button variant={"primaryForeground"} size={"primaryForeground"}>
                 Find Your Doctor
               </Button>
-            </Link>
+            </ScrollLink>
             <Link href="/contactUs">
               <Button variant={"primaryForeground"} size={"primaryForeground"}>
                 Need Help?
@@ -64,8 +65,8 @@ export const HeroSection = () => {
               className="flex-shrink-0 w-[172px] h-[42px]"
             />
             <div>
-              <p>More than 100</p>
-              <p>Orthopaedic surgeons</p>
+              <p className="font-bold text-xl leading-tight">Trusted by 100+ Orthopaedic Surgeons</p>
+              <p className="text-sm opacity-90">Across Western Australia</p>
             </div>
           </div>
         </div>

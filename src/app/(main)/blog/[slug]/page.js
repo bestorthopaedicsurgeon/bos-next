@@ -345,14 +345,13 @@ const Page = async ({ params }) => {
 
       {/* Hero Image */}
       {blog?.image && (
-        <div
-          className="mb-8 h-[300px] w-full rounded-xl bg-contain bg-center bg-no-repeat sm:h-[400px] md:h-[500px] lg:h-[553px] xl:h-[553px]"
-          style={{
-            backgroundImage: `url(${blog?.image}?v=${Date.now()})`,
-          }}
-          role="img"
-          aria-label={blog.title}
-        />
+        <div className="mb-8 w-full rounded-xl overflow-hidden">
+          <img
+            src={`${blog.image}?v=${Date.now()}`}
+            alt={blog.title}
+            className="w-full h-auto rounded-xl"
+          />
+        </div>
       )}
 
       {/* Author and Date Section */}

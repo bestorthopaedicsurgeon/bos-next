@@ -1,0 +1,11 @@
+User-agent: *
+Disallow: /*?scroll=*
+Disallow: /*?doctorId=*
+Disallow: /*?doctorName=*
+Disallow: /doctor/registration
+Disallow: /book-appointment
+Disallow: /admin/
+Disallow: /login
+Disallow: /signup
+
+Sitemap: https://www.bestorthopaedicsurgeon.com.au/sitemap.xml

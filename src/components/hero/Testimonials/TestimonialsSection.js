@@ -6,7 +6,7 @@ import {
   CarouselContent,
   CarouselItem,
 } from "@/components/ui/carousel";
-import Link from "next/link";
+import ScrollLink from "@/components/reusable/ScrollLink";
 import React from "react";
 
 export const TestimonialsSection = () => {
@@ -70,9 +70,9 @@ export const TestimonialsSection = () => {
           className="mt-8 flex items-center gap-2"
           asChild
         >
-          <Link href="/surgeons?scroll=section">
+          <ScrollLink href="/surgeons" scrollTarget="section">
             Rate your doctor
-          </Link>
+          </ScrollLink>
         </Button>
       </div>
     </section>
