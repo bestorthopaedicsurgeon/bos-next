@@ -30,7 +30,7 @@ export function DocTabs({ doctData, ownProfile }) {
 
   const line = "h-5 w-[1px] bg-primary";
   return (
-    <div className="mt-7 flex w-full flex-col gap-6">
+    <div id="write-review" className="mt-7 flex w-full flex-col gap-6 scroll-mt-24">
       <Tabs defaultValue="reviews">
         <TabsList className="text-muted-foreground inline-flex items-center justify-center p-[3px] border-primary w-full max-w-7xl mx-auto rounded-none border-t-[1px] border-b-[1px] bg-transparent py-5">
           <TabsTrigger

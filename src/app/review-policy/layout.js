@@ -2,7 +2,7 @@ import Footer from "@/components/Footer/Footer";
 import Header from "@/components/header/Header";
 
 export const metadata = {
-  title: "Review & Rating Policy | Best Orthopaedic Surgeon",
+  title: "Review & Rating Policy",
   description: "Review & Rating Policy for www.bestorthopaedicsurgeon.com.au - How reviews, ratings, and user-submitted content are managed",
   alternates: { canonical: '/review-policy' },
 };

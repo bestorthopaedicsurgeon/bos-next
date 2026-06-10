@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
+import Link from "next/link";
 import { faqData } from "@/data/faq";
 import { ChevronDown, Search } from "lucide-react";
 
@@ -113,12 +114,12 @@ const FAQPage = () => {
           <p className="text-white/80 mb-6 max-w-lg mx-auto">
             Can&apos;t find the answer you&apos;re looking for? Please reach out to our friendly team.
           </p>
-          <a
+          <Link
             href="/contactUs"
             className="inline-block bg-white text-[#217B7E] px-8 py-3 rounded-lg font-semibold hover:bg-gray-100 transition-colors"
           >
             Contact Us
-          </a>
+          </Link>
         </div>
       </div>
     </div>

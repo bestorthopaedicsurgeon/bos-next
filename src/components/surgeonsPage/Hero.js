@@ -37,14 +37,19 @@ export const HeroSection = ({ onSearch, initialParams }) => {
 
   const subspecialities = useMemo(
     () => [
-      { value: "UPPER_LIMB", label: "Upper Limb" },
-      { value: "LOWER_LIMB", label: "Lower Limb" },
-      { value: "SPINE", label: "Spine" },
-      { value: "PEDIATRICS", label: "Paediatrics" },
-      { value: "ONCOLOGY", label: "Oncology" },
-      { value: "TRAUMA", label: "Trauma" },
-      { value: "SPORTS", label: "Sports" },
-      { value: "ARTHROPLASTY", label: "Arthroplasty" },
+      { value: "Hip & Knee", label: "Hip & Knee" },
+      { value: "Foot & Ankle", label: "Foot & Ankle" },
+      { value: "Sports", label: "Sports" },
+      { value: "Hip Arthroscopy", label: "Hip Arthroscopy" },
+      { value: "Shoulder", label: "Shoulder" },
+      { value: "Upper Limb", label: "Upper Limb" },
+      { value: "Lower Limb", label: "Lower Limb" },
+      { value: "Elbow", label: "Elbow" },
+      { value: "Trauma", label: "Trauma" },
+      { value: "Paediatric Orthopaedics", label: "Paediatric Orthopaedics" },
+      { value: "Spine", label: "Spine" },
+      { value: "General Orthopaedics", label: "General Orthopaedics" },
+      { value: "Tumour", label: "Tumour" },
     ],
     [],
   );

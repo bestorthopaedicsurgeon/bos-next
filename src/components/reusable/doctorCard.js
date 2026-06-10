@@ -1,8 +1,8 @@
 "use client";
 import { Button } from "@/components/ui/button";
-import { MapPin } from "lucide-react";
 import Image from "next/image";
-import { redirect, useRouter } from "next/navigation";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
 import React from "react";
 
 const DoctorCard = ({
@@ -35,9 +35,24 @@ const DoctorCard = ({
   }
 
   const reviewCount = reviews?.length || 0;
+  const profileHref = `/doctor/${slug || id}`;
+
+  const goToProfile = () => router.push(profileHref);
+  const goToReview = () => {
+    // Flag for the profile page to scroll to the review form (see ReviewScroller)
+    if (typeof window !== "undefined") {
+      sessionStorage.setItem("scroll_to_review", "1");
+    }
+    router.push(profileHref);
+  };
 
   return (
     <div className="border-primary flex h-full w-full max-sm:flex-col-reverse items-center max-sm:items-start justify-between gap-4 xl:gap-7 rounded-3xl border p-6 xl:px-11 xl:py-10">
+      {/* Crawlable profile link for SEO. sr-only = invisible, no layout/visual
+          impact; gives search engines a real anchor with the surgeon's name. */}
+      <Link href={profileHref} className="sr-only">
+        {`View profile of ${title} ${name}`}
+      </Link>
       <div className="flex h-full flex-1 flex-col max-sm:w-full">
         <div className="flex flex-col gap-3.5">
           <h2 className="font-syne text-neutral-800">{`${title} ${name}`}</h2>
@@ -74,9 +89,7 @@ const DoctorCard = ({
 
         <div className="mt-auto pt-6 flex flex-wrap items-center gap-2 max-sm:flex-col">
           <div
-            onClick={() => {
-              router.push(`/doctor/${slug || id}`);
-            }}
+            onClick={goToProfile}
             className="cursor-pointer max-sm:w-full"
           >
             <Button className="w-fit max-sm:w-full" variant={"primary"} size={"primary"}>
@@ -84,9 +97,14 @@ const DoctorCard = ({
             </Button>
           </div>
           {reviewButton && (
-            <Button className="w-fit max-sm:w-full" variant={"primary"} size={"primary"}>
-              Write a Review
-            </Button>
+            <div
+              onClick={goToReview}
+              className="cursor-pointer max-sm:w-full"
+            >
+              <Button className="w-fit max-sm:w-full" variant={"primary"} size={"primary"}>
+                Write a Review
+              </Button>
+            </div>
           )}
         </div>
       </div>

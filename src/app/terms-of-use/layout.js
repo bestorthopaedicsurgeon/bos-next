@@ -2,7 +2,7 @@ import Footer from "@/components/Footer/Footer";
 import Header from "@/components/header/Header";
 
 export const metadata = {
-  title: "Terms of Use | Best Orthopaedic Surgeon",
+  title: "Terms of Use",
   description: "Terms of Use for www.bestorthopaedicsurgeon.com.au - Terms and conditions governing your access to and use of the Website",
   alternates: { canonical: '/terms-of-use' },
 };

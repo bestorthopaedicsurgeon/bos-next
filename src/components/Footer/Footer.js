@@ -2,9 +2,21 @@ import Image from "next/image";
 import Link from "next/link";
 
 const socialIcons = [
-  { src: "/fb_icon.svg", alt: "Facebook", href: "#" },
-  { src: "/insta_icon.svg", alt: "Instagram", href: "#" },
-  { src: "/twitt_icon.svg", alt: "Twitter", href: "#" },
+  {
+    src: "/fb_icon.svg",
+    alt: "Facebook",
+    href: "https://www.facebook.com/bestorthopaedicsurgeon",
+  },
+  {
+    src: "/insta_icon.svg",
+    alt: "Instagram",
+    href: "https://www.instagram.com/best.orthopaedicsurgeon/",
+  },
+  {
+    src: "/linkedin_icon.svg",
+    alt: "LinkedIn",
+    href: "https://www.linkedin.com/company/best-orthopaedic-surgeon",
+  },
 ];
 
 const Footer = () => {
@@ -29,6 +41,8 @@ const Footer = () => {
               <a
                 key={icon.alt}
                 href={icon.href}
+                target="_blank"
+                rel="noopener noreferrer"
                 aria-label={icon.alt}
                 className="flex items-center justify-center rounded-full bg-[#F1F8F6] p-3 transition hover:bg-[#e0ecea]"
               >

@@ -29,14 +29,19 @@ export const HeroSection = () => {
 
   const subspecialities = useMemo(
     () => [
-      { value: "UPPER_LIMB", label: "Upper Limb" },
-      { value: "LOWER_LIMB", label: "Lower Limb" },
-      { value: "SPINE", label: "Spine" },
-      { value: "PEDIATRICS", label: "Paediatrics" },
-      { value: "ONCOLOGY", label: "Oncology" },
-      { value: "TRAUMA", label: "Trauma" },
-      { value: "SPORTS", label: "Sports" },
-      { value: "ARTHROPLASTY", label: "Arthroplasty" },
+      { value: "Hip & Knee", label: "Hip & Knee" },
+      { value: "Foot & Ankle", label: "Foot & Ankle" },
+      { value: "Sports", label: "Sports" },
+      { value: "Hip Arthroscopy", label: "Hip Arthroscopy" },
+      { value: "Shoulder", label: "Shoulder" },
+      { value: "Upper Limb", label: "Upper Limb" },
+      { value: "Lower Limb", label: "Lower Limb" },
+      { value: "Elbow", label: "Elbow" },
+      { value: "Trauma", label: "Trauma" },
+      { value: "Paediatric Orthopaedics", label: "Paediatric Orthopaedics" },
+      { value: "Spine", label: "Spine" },
+      { value: "General Orthopaedics", label: "General Orthopaedics" },
+      { value: "Tumour", label: "Tumour" },
     ],
     [],
   );
@@ -69,9 +74,12 @@ export const HeroSection = () => {
             <p className="mb-4">Welcome to Best Orthopaedic Surgeon (BOS)</p>
             <div className="bg-primary-foreground mx-auto h-[2px] w-full" />
           </div>
-          <h1 className="font-syne mb-4">
-            Built for Orthopaedic Surgeons. Trusted by Patients!
+          <h1 className="font-syne mb-2">
+            Best Orthopaedic Surgeons in Western Australia
           </h1>
+          <p className="font-syne mb-4 text-xl font-semibold opacity-95">
+            Built for Orthopaedic Surgeons. Trusted by Patients!
+          </p>
           <div className="hidden h-[352px] w-[308px] max-lg:mx-auto max-lg:flex max-lg:justify-center max-sm:h-full max-sm:w-full">
             <Image
               src="/home/bones.png"
@@ -133,7 +141,9 @@ export const HeroSection = () => {
       </div>
       <div className="rounded-4xl bg-white px-20 py-8">
         <div className="mb-4">
-          <h1 className="font-syne text-primary">Find A Surgeon</h1>
+          <h2 className="font-syne text-primary font-[700] max-lg:text-[24px] min-lg:text-[48px]">
+            Find A Surgeon
+          </h2>
         </div>
         <form 
           onSubmit={(e) => {
