@@ -29,6 +29,12 @@ export async function registerUser(data: any): Promise<{ user: User; message: st
   const existingUser = await prisma.user.findUnique({ where: { email } });
   if (existingUser) throw new Error("User already exists");
 
+  // Validate password strength: min 8 chars, 1 uppercase, 1 number
+  const passwordRegex = /^(?=.*[A-Z])(?=.*\d).{8,}$/;
+  if (!passwordRegex.test(password)) {
+    throw new Error("Password must be at least 8 characters long and contain at least one uppercase letter and one number.");
+  }
+
   // Hash password but do NOT create user yet
   const hashedPassword = await bcrypt.hash(password, 10);
 

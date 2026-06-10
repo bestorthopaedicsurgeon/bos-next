@@ -97,8 +97,10 @@ export async function generateMetadata({ params }) {
 // ─────────────────────────────────────────────
 // PAGE
 // ─────────────────────────────────────────────
-const Page = async ({ params }) => {
+const Page = async ({ params, searchParams }) => {
   const { slug } = await params;
+  const resolvedSearchParams = await searchParams;
+  const writeReview = resolvedSearchParams?.writeReview === "true";
 
   // Check if we should redirect from numeric ID to slug
   const isNumeric = !isNaN(Number(slug));
@@ -198,7 +200,7 @@ const Page = async ({ params }) => {
         </div>
       </div>
 
-      <DocTabs doctData={doctData} />
+      <DocTabs doctData={doctData} writeReview={writeReview} />
     </div>
   );
 };

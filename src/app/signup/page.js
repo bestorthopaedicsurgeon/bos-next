@@ -5,7 +5,6 @@ import { input } from "@data/input.js";
 import CustomBtn from "@components/reusable/customBtn";
 import { Checkbox } from "@/components/ui/checkbox";
 import SocialLogin from "@/components/reusable/socialLogin";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import WelcomeTxt from "@/components/reusable/welcomeTxt";
 import login_banner from "../../../public/login_banner.png";
 import Image from "next/image";
@@ -13,10 +12,11 @@ import PhoneInput from "react-phone-input-2";
 import "react-phone-input-2/lib/style.css";
 import Link from "next/link";
 import { signIn } from "next-auth/react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { toast } from "sonner";
 import OtpVerification from "@/components/auth/OtpVerification";
 import { useSanitizedForm } from "@/hooks/useSanitizedForm";
+import { User, Stethoscope } from "lucide-react";
 
 const Page = () => {
   const [formData, setFormData, handleInputChange] = useSanitizedForm({
@@ -32,6 +32,11 @@ const Page = () => {
   const [showOtpModal, setShowOtpModal] = useState(false);
   const [otpLoading, setOtpLoading] = useState(false);
   const router = useRouter();
+  const searchParams = useSearchParams();
+
+  const hasMinLength = formData.password.length >= 8;
+  const hasCapital = /[A-Z]/.test(formData.password);
+  const hasNumber = /[0-9]/.test(formData.password);
 
   const handlePhoneChange = (phone) => {
     setFormData(prev => ({
@@ -43,6 +48,14 @@ const Page = () => {
   const handleSignUp = async (e) => {
     e.preventDefault();
     setLoading(true);
+
+    // Password validation: at least 8 characters, at least 1 uppercase letter, at least 1 number
+    const passwordRegex = /^(?=.*[A-Z])(?=.*\d).{8,}$/;
+    if (!passwordRegex.test(formData.password)) {
+      toast.error("Password must be at least 8 characters long and contain at least one uppercase letter and one number.");
+      setLoading(false);
+      return;
+    }
 
     // Basic validation
     if (formData.password !== formData.confirmPassword) {
@@ -105,7 +118,9 @@ const Page = () => {
 
       if (signInResult?.ok) {
         toast.success("Account verified successfully!");
-        router.push(formData.role === "DOCTOR" ? "/doctor/registration" : "/");
+        const defaultCallback = formData.role === "DOCTOR" ? "/doctor/registration" : "/";
+        const callbackUrl = searchParams.get("callbackUrl") || defaultCallback;
+        router.push(callbackUrl);
       } else {
         throw new Error("Failed to sign in after verification");
       }
@@ -162,23 +177,6 @@ const Page = () => {
         />
 
         <form onSubmit={handleSignUp}>
-          <RadioGroup
-            value={formData.role}
-            onValueChange={(value) =>
-              setFormData(prev => ({ ...prev, role: value }))
-            }
-            className="m-auto mt-[40px] flex items-center justify-center gap-[40px]"
-          >
-            <div className="flex items-center space-x-2">
-              <RadioGroupItem value="PATIENT" id="r1" />
-              <label htmlFor="r1" className="cursor-pointer">Patient</label>
-            </div>
-            <div className="flex items-center space-x-2">
-              <RadioGroupItem value="DOCTOR" id="r2" />
-              <label htmlFor="r2" className="cursor-pointer">Doctor</label>
-            </div>
-          </RadioGroup>
-
           <div className="flex w-full gap-5 max-lg:flex-wrap mt-6">
             <div className="max-lg:w-full min-lg:w-[50%]">
               <InputField
@@ -261,6 +259,61 @@ const Page = () => {
             />
           </div>
 
+          {/* Password Validation Checklist */}
+          {formData.password && (
+            <div className="mt-3 text-xs space-y-1.5 bg-gray-50 p-3.5 rounded-lg border border-gray-200">
+              <p className="text-gray-500 font-semibold mb-1">Password requirements:</p>
+              <div className="flex items-center gap-1.5">
+                <span className={hasMinLength ? "text-green-600 font-semibold" : "text-gray-400"}>
+                  {hasMinLength ? "✓" : "○"} At least 8 characters
+                </span>
+              </div>
+              <div className="flex items-center gap-1.5">
+                <span className={hasCapital ? "text-green-600 font-semibold" : "text-gray-400"}>
+                  {hasCapital ? "✓" : "○"} At least one capital letter (A-Z)
+                </span>
+              </div>
+              <div className="flex items-center gap-1.5">
+                <span className={hasNumber ? "text-green-600 font-semibold" : "text-gray-400"}>
+                  {hasNumber ? "✓" : "○"} At least one number (0-9)
+                </span>
+              </div>
+            </div>
+          )}
+
+          {/* Role Selection */}
+          <div className="mt-6">
+            <label className="block text-sm font-semibold text-gray-700 mb-2">
+              Select Your Role <span className="text-red-500">*</span>
+            </label>
+            <div className="flex w-full gap-4">
+              <button
+                type="button"
+                onClick={() => setFormData(prev => ({ ...prev, role: "PATIENT" }))}
+                className={`flex-1 flex flex-col items-center justify-center p-4 rounded-lg border-2 cursor-pointer transition-all ${
+                  formData.role === "PATIENT"
+                    ? "border-primary bg-primary/5 text-primary shadow-sm font-semibold"
+                    : "border-gray-200 hover:border-gray-300 text-gray-600 bg-white"
+                }`}
+              >
+                <User className="h-6 w-6 mb-2" />
+                <span className="text-sm">Patient</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => setFormData(prev => ({ ...prev, role: "DOCTOR" }))}
+                className={`flex-1 flex flex-col items-center justify-center p-4 rounded-lg border-2 cursor-pointer transition-all ${
+                  formData.role === "DOCTOR"
+                    ? "border-primary bg-primary/5 text-primary shadow-sm font-semibold"
+                    : "border-gray-200 hover:border-gray-300 text-gray-600 bg-white"
+                }`}
+              >
+                <Stethoscope className="h-6 w-6 mb-2" />
+                <span className="text-sm">Doctor</span>
+              </button>
+            </div>
+          </div>
+
           <div className="mt-8">
             <CustomBtn
               btnText={loading ? "Processing..." : "Sign Up"}
@@ -288,7 +341,7 @@ const Page = () => {
               <span className="px-2 bg-white text-gray-500">Or continue with</span>
             </div>
           </div>
-          <SocialLogin headerTxt="" />
+          <SocialLogin headerTxt="" role={formData.role} />
         </div>
       </div>
 

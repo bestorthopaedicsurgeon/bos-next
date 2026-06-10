@@ -11,7 +11,7 @@ import login_banner from "../../../public/login_banner.png";
 import Image from "next/image";
 import Link from "next/link";
 import { signIn, useSession } from "next-auth/react";
-import { redirect, useRouter } from "next/navigation";
+import { redirect, useRouter, useSearchParams } from "next/navigation";
 import { toast } from "sonner";
 import ForgotPasswordModal from "@/components/auth/ForgotPasswordModal";
 import Cookies from "js-cookie";
@@ -19,6 +19,8 @@ import { useSanitizedForm } from "@/hooks/useSanitizedForm";
 
 const Page = () => {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const callbackUrl = searchParams.get("callbackUrl") || "/";
 
   const [form, setForm, handleChange] = useSanitizedForm({ email: "", password: "" });
   const [rememberMe, setRememberMe] = useState(false);
@@ -55,7 +57,7 @@ const Page = () => {
         redirect: false,
         email: form.email,
         password: form.password,
-        callbackUrl: "/",
+        callbackUrl: callbackUrl,
       });
 
       if (result?.error) {
@@ -76,7 +78,7 @@ const Page = () => {
         }
 
         toast.success("Login successful!");
-        router.push("/");
+        router.push(callbackUrl);
       }
     } catch (error) {
       setError("An error occurred during login.");

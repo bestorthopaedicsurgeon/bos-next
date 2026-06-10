@@ -84,7 +84,14 @@ const DoctorCard = ({
             </Button>
           </div>
           {reviewButton && (
-            <Button className="w-fit max-sm:w-full" variant={"primary"} size={"primary"}>
+            <Button
+              className="w-fit max-sm:w-full"
+              variant={"primary"}
+              size={"primary"}
+              onClick={() => {
+                router.push(`/doctor/${slug || id}?writeReview=true`);
+              }}
+            >
               Write a Review
             </Button>
           )}

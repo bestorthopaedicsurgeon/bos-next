@@ -4,6 +4,7 @@ import { NextAuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import GoogleProvider from "next-auth/providers/google";
 import bcrypt from "bcryptjs";
+import { cookies } from "next/headers";
 
 export const authOptions: NextAuthOptions = {
   adapter: PrismaAdapter(prisma),
@@ -14,13 +15,15 @@ export const authOptions: NextAuthOptions = {
     GoogleProvider({
       clientId: process.env.GOOGLE_CLIENT_ID!,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
-      profile(profile) {
+      async profile(profile) {
+        const cookieStore = await cookies();
+        const oauthRole = cookieStore.get("oauth_signup_role")?.value;
         return {
           id: profile.sub,
           name: profile.name || profile.email.split('@')[0],
           email: profile.email,
           image: profile.picture,
-          role: 'PATIENT' // Default role for OAuth users
+          role: oauthRole === "DOCTOR" ? "DOCTOR" : "PATIENT"
         };
       },
       authorization: {
@@ -92,26 +95,30 @@ export const authOptions: NextAuthOptions = {
     async jwt({ token, user, account, profile }) {
       if (user && account) {
         if (account.provider === 'google' && profile) {
-
-          const existingUser = await prisma.user.upsert({
+          const existingUser = await prisma.user.findUnique({
             where: { email: user.email! },
-            update: {
-              name: user.name!,
-              image: user.image || undefined,
-              emailVerified: new Date(),
-            },
-            create: {
-              email: user.email!,
-              name: user.name!,
-              role: "PATIENT",
-              image: user.image || undefined,
-              emailVerified: new Date(),
-              password: '', // Temporary password for OAuth users
-            },
           });
-          token.id = existingUser.id;
-          token.role = existingUser.role;
-          token.image = existingUser.image!;
+
+          if (existingUser) {
+            // Ensure DoctorProfile exists if user is a DOCTOR
+            if (existingUser.role === 'DOCTOR') {
+              const existingProfile = await prisma.doctorProfile.findUnique({
+                where: { userId: existingUser.id },
+              });
+              if (!existingProfile) {
+                await prisma.doctorProfile.create({
+                  data: {
+                    userId: existingUser.id,
+                    registrationCompleted: false,
+                  },
+                });
+              }
+            }
+
+            token.id = existingUser.id;
+            token.role = existingUser.role;
+            token.image = existingUser.image || '';
+          }
         } else {
           token.id = user.id as string;
           token.role = user.role as string;
