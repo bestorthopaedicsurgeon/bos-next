@@ -5,9 +5,9 @@ const ProfileHeader = (props) => {
   
   return (
     <div className="profile_head">
-      <h1 className="text-(--secondary)">{heading}</h1>
+      <h1 className="text-(--secondary) text-center">{heading}</h1>
       {step1 && (
-        <p className="text-(--secondary)">{`${step1[0].toUpperCase() + step1.slice(1)} ${step2? `> ${step2}` : ""}  ${step3? `> ${step3}` : ""}`}</p>
+        <p className="text-(--secondary) text-center">{`${step1[0].toUpperCase() + step1.slice(1)} ${step2? `> ${step2}` : ""}  ${step3? `> ${step3}` : ""}`}</p>
       )}
     </div>
   );

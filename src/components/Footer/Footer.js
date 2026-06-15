@@ -32,7 +32,7 @@ const Footer = () => {
             Built for Orthopaedic Surgeons. Trusted by Patients! <br />
             Your Trusted Orthopaedic Surgeon Directory
           </p>
-          <p className="mb-6 text-base font-bold text-[#F1F8F6]">
+          <p className="mb-6 text-base font-bold text-[#F1F8F6] break-words">
             info@bestorthopaedicsurgeon.com.au
           </p>
 

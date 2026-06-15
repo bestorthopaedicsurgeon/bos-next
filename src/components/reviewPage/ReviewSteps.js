@@ -16,8 +16,8 @@ export const ReviewSteps = () => {
     },
     {
       step: "Step 3",
-      title: "Click &quot;Leave a Review&quot;",
-      description: "You&apos;ll find the review section near the bottom of the profile. Simply click &quot;Leave a Review&quot; or &quot;Rate This Surgeon.&quot;"
+      title: 'Click "Leave a Review"',
+      description: "You'll find the review section near the bottom of the profile. Simply click \"Leave a Review\" or \"Rate This Surgeon.\""
     },
     {
       step: "Step 4",

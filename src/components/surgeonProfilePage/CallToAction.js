@@ -30,7 +30,7 @@ export const CallToAction = () => {
             ))}
           </div>
 
-          <div className="mb-8 flex gap-4 justify-center">
+          <div className="mb-8 flex flex-col sm:flex-row gap-4 justify-center items-center">
             <Link href="/doctor/registration">
               <Button 
                 variant="primaryForeground" 

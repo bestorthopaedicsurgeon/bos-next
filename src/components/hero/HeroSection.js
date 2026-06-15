@@ -139,7 +139,7 @@ export const HeroSection = () => {
           />
         </div>
       </div>
-      <div className="rounded-4xl bg-white px-20 py-8">
+      <div className="rounded-4xl bg-white px-5 py-6 sm:px-10 sm:py-8 lg:px-20">
         <div className="mb-4">
           <h2 className="font-syne text-primary font-[700] max-lg:text-[24px] min-lg:text-[48px]">
             Find A Surgeon

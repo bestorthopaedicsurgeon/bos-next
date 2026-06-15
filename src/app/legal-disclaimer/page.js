@@ -15,7 +15,7 @@ const LegalDisclaimerPage = () => {
       {/* Content Section */}
       <div className="mt-20 mx-auto pb-16">
         {/* Legal Disclaimer Introduction */}
-        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-8 mb-8">
+        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 sm:p-8 mb-8">
           <div className="text-center mb-8">
             <p className="text-gray-500 text-sm">Last Updated: {header.lastUpdated}</p>
           </div>
@@ -90,14 +90,14 @@ const LegalDisclaimerPage = () => {
 // Reusable Components
 const DisclaimerSection = ({ number, title, children }) => {
   return (
-    <div className="bg-gray-50 rounded-2xl shadow-sm border border-gray-100 p-8 mb-6">
+    <div className="bg-gray-50 rounded-2xl shadow-sm border border-gray-100 p-6 sm:p-8 mb-6">
       <div className="flex items-start gap-4 mb-4">
         <span className="flex-shrink-0 w-10 h-10 bg-[#217B7E] text-white rounded-full flex items-center justify-center font-bold text-lg">
           {number}
         </span>
         <h3 className="text-xl font-bold text-gray-800 pt-1">{title}</h3>
       </div>
-      <div className="ml-14">
+      <div className="ml-0 sm:ml-14">
         {children}
       </div>
     </div>

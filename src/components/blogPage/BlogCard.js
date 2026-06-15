@@ -96,7 +96,7 @@ export const BlogCard = (card) => {
           width={600}
           height={385}
           sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-          className="mb-4 rounded-md object-cover w-full h-[220px]"
+          className="mb-4 rounded-md object-cover max-sm:object-contain w-full h-[220px] bg-gray-50"
         />
       )}
       <h3 className="font-dm-sans text-primary mb-2 text-[20px] font-medium h-[60px] flex items-center group-hover:underline">

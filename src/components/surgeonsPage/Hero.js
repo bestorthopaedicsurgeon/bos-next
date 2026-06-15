@@ -161,7 +161,7 @@ export const HeroSection = ({ onSearch, initialParams }) => {
           />
         </div>
       </div>
-      <div className="rounded-4xl bg-white px-20 py-8">
+      <div className="rounded-4xl bg-white px-5 py-6 sm:px-10 sm:py-8 lg:px-20">
         <div className="mb-4">
           <h1 className="font-syne text-primary">Find A Surgeon</h1>
         </div>

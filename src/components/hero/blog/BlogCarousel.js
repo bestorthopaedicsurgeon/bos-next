@@ -66,7 +66,7 @@ export function BlogCarousel({ blogs }) {
                 alt={blog.title || "Blog"}
                 width={343}
                 height={220}
-                className="mb-6 rounded-md object-cover w-full h-[220px]"
+                className="mb-6 rounded-md object-cover max-sm:object-contain w-full h-[220px] bg-gray-50"
               />
               <h3 className="font-dm-sans text-primary my-2 text-[20px] font-medium h-[60px] flex items-center ">
                 <span className="hidden sm:inline">{truncateTitle(blog.title, 6)}</span>

@@ -47,7 +47,11 @@ function DialogContent({
   // If using SSR, fallback to usePathname from next/navigation
   // const pathname = usePathname ? usePathname() : "";
   const isDocRegistration = pathname.includes("/doctor_registration");
-  const widthClass = isDocRegistration ? "w-full !max-w-[95%]" : "max-w-lg";
+  // On phones, default dialogs fill the viewport width (minus small margins)
+  // instead of shrinking to content. Desktop keeps the content-sized max-w-lg.
+  const widthClass = isDocRegistration
+    ? "w-full !max-w-[95%]"
+    : "max-w-lg max-sm:w-[calc(100%-1.5rem)]";
   const heightClass = isDocRegistration ? "h-[90%]" : "h-auto";
   return (
     <DialogPortal

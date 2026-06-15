@@ -15,7 +15,7 @@ const PrivacyPolicyPage = () => {
       {/* Content Section */}
       <div className="mt-20 mx-auto pb-16">
         {/* Privacy Policy Introduction */}
-        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-8 mb-8">
+        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 sm:p-8 mb-8">
           <div className="text-center mb-8">
             <span className="inline-block bg-[#217B7E]/10 text-[#217B7E] px-4 py-2 rounded-full text-sm font-medium mb-4">
               {header.badge}
@@ -74,7 +74,7 @@ const PrivacyPolicyPage = () => {
               <div className="bg-[#217B7E]/5 border border-[#217B7E]/20 p-4 rounded-lg mt-4">
                 <p className="text-gray-700 text-sm">
                   <strong>{section.contactBox.label}</strong>{" "}
-                  <a href={`mailto:${contactEmail}`} className="text-[#217B7E] hover:underline">
+                  <a href={`mailto:${contactEmail}`} className="text-[#217B7E] hover:underline break-words">
                     {contactEmail}
                   </a>
                 </p>
@@ -87,7 +87,7 @@ const PrivacyPolicyPage = () => {
             {/* Show contact email (for section 12) */}
             {section.showContactEmail && (
               <div className="bg-[#217B7E]/5 border border-[#217B7E]/20 p-4 rounded-lg">
-                <a href={`mailto:${contactEmail}`} className="text-[#217B7E] hover:underline font-medium">
+                <a href={`mailto:${contactEmail}`} className="text-[#217B7E] hover:underline break-words font-medium">
                   {contactEmail}
                 </a>
               </div>
@@ -98,13 +98,13 @@ const PrivacyPolicyPage = () => {
               <div className="bg-[#217B7E]/5 border border-[#217B7E]/20 p-6 rounded-lg">
                 <p className="text-gray-700 mb-2">
                   <strong>Website:</strong>{" "}
-                  <a href={`https://${websiteUrl}`} className="text-[#217B7E] hover:underline">
+                  <a href={`https://${websiteUrl}`} className="text-[#217B7E] hover:underline break-words">
                     {websiteUrl}
                   </a>
                 </p>
                 <p className="text-gray-700">
                   <strong>Email:</strong>{" "}
-                  <a href={`mailto:${contactEmail}`} className="text-[#217B7E] hover:underline">
+                  <a href={`mailto:${contactEmail}`} className="text-[#217B7E] hover:underline break-words">
                     {contactEmail}
                   </a>
                 </p>
@@ -136,14 +136,14 @@ const PrivacyPolicyPage = () => {
 const PolicySection = ({ number, title, children, variant = "policy" }) => {
   const bgColor = variant === "disclaimer" ? "bg-gray-50" : "bg-white";
   return (
-    <div className={`${bgColor} rounded-2xl shadow-sm border border-gray-100 p-8 mb-6`}>
+    <div className={`${bgColor} rounded-2xl shadow-sm border border-gray-100 p-6 sm:p-8 mb-6`}>
       <div className="flex items-start gap-4 mb-4">
         <span className="flex-shrink-0 w-10 h-10 bg-[#217B7E] text-white rounded-full flex items-center justify-center font-bold text-lg">
           {number}
         </span>
         <h3 className="text-xl font-bold text-gray-800 pt-1">{title}</h3>
       </div>
-      <div className="ml-14">
+      <div className="ml-0 sm:ml-14">
         {children}
       </div>
     </div>
