@@ -1,5 +1,5 @@
 "use client";
-import { React, useState } from "react";
+import React, { useState, Suspense } from "react";
 import InputField from "@components/reusable/inputField";
 import { input } from "@data/input.js";
 import CustomBtn from "@components/reusable/customBtn";
@@ -18,7 +18,7 @@ import OtpVerification from "@/components/auth/OtpVerification";
 import { useSanitizedForm } from "@/hooks/useSanitizedForm";
 import { User, Stethoscope } from "lucide-react";
 
-const Page = () => {
+const SignupPageContent = () => {
   const [formData, setFormData, handleInputChange] = useSanitizedForm({
     firstName: "",
     lastName: "",
@@ -358,4 +358,17 @@ const Page = () => {
   );
 };
 
-export default Page;
+export default function Page() {
+  return (
+    <Suspense fallback={
+      <div className="flex min-h-screen items-center justify-center">
+        <div className="text-center">
+          <div className="mx-auto mb-4 h-12 w-12 animate-spin rounded-full border-b-2 border-[#83C5BE]"></div>
+          <p className="text-lg text-gray-600">Loading...</p>
+        </div>
+      </div>
+    }>
+      <SignupPageContent />
+    </Suspense>
+  );
+}

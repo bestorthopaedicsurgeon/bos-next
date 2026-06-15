@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, Suspense } from "react";
 import InputField from "@components/reusable/inputField";
 import { input } from "@data/input.js";
 import CustomBtn from "@components/reusable/customBtn";
@@ -17,7 +17,7 @@ import ForgotPasswordModal from "@/components/auth/ForgotPasswordModal";
 import Cookies from "js-cookie";
 import { useSanitizedForm } from "@/hooks/useSanitizedForm";
 
-const Page = () => {
+const LoginPageContent = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
   const callbackUrl = searchParams.get("callbackUrl") || "/";
@@ -187,4 +187,17 @@ const Page = () => {
   );
 };
 
-export default Page;
+export default function Page() {
+  return (
+    <Suspense fallback={
+      <div className="flex min-h-screen items-center justify-center">
+        <div className="text-center">
+          <div className="mx-auto mb-4 h-12 w-12 animate-spin rounded-full border-b-2 border-[#83C5BE]"></div>
+          <p className="text-lg text-gray-600">Loading...</p>
+        </div>
+      </div>
+    }>
+      <LoginPageContent />
+    </Suspense>
+  );
+}
