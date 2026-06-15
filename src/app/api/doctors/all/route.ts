@@ -20,11 +20,12 @@ export async function GET(request: NextRequest) {
       where.name = { contains: name, mode: 'insensitive' };
     }
 
-    // Filter by subspecialty
+    // Filter by subspecialty — match the term anywhere across ALL of a
+    // surgeon's subspecialities (not just the first array element).
     if (subspecialty) {
       const rawResult = await prisma.$queryRaw<{id: number}[]>`
         SELECT id FROM "DoctorProfile"
-        WHERE subspecialities[1] ILIKE ${'%' + subspecialty + '%'}
+        WHERE array_to_string(subspecialities, ' ') ILIKE ${'%' + subspecialty + '%'}
       `;
       where.id = {
         in: rawResult.map(r => r.id)

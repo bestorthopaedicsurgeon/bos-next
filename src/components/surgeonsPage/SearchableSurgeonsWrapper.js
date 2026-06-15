@@ -33,14 +33,12 @@ export const SearchableSurgeonsWrapper = () => {
   useEffect(() => {
     if (typeof window === "undefined") return;
     const params = new URLSearchParams(window.location.search);
-    let scroll = params.get("scroll");
-
-    if (!scroll) {
-      scroll = sessionStorage.getItem("scroll_to_surgeons");
-      if (scroll) {
-        sessionStorage.removeItem("scroll_to_surgeons");
-      }
-    }
+    const urlScroll = params.get("scroll");
+    // Read but do NOT consume sessionStorage here. React Strict Mode in dev
+    // double-invokes effects (setup -> cleanup -> setup); removing the value on
+    // the first pass left nothing for the second pass, so the scroll never
+    // fired in dev. We remove it inside the timeout, after the scroll runs.
+    const scroll = urlScroll || sessionStorage.getItem("scroll_to_surgeons");
 
     if (scroll !== "section" && scroll !== "section_high") return;
 
@@ -56,8 +54,10 @@ export const SearchableSurgeonsWrapper = () => {
         }
       }
 
+      // Consume the flag only after the scroll has run.
+      sessionStorage.removeItem("scroll_to_surgeons");
       // Clean up URL if it came from query parameter
-      if (params.get("scroll")) {
+      if (urlScroll) {
         window.history.replaceState({}, "", "/surgeons");
       }
     }, 150);

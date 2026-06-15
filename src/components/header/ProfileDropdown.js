@@ -6,7 +6,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { User } from "lucide-react";
+import { User, LogIn, UserPlus } from "lucide-react";
 import { useRouter } from "next/navigation";
 import React from "react";
 import { signOut, useSession } from "next-auth/react";
@@ -42,9 +42,21 @@ const ProfileDropdown = () => {
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
         {!session && (
-          <DropdownMenuItem asChild className="cursor-pointer">
-            <Link href="/login" className="w-full">Login</Link>
-          </DropdownMenuItem>
+          <>
+            <DropdownMenuItem asChild className="cursor-pointer gap-2 transition-all duration-200 hover:translate-x-0.5 hover:!bg-primary/10 hover:!text-primary">
+              <Link href="/login" className="w-full flex items-center gap-2">
+                <LogIn className="h-4 w-4" />
+                Login
+              </Link>
+            </DropdownMenuItem>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem asChild className="cursor-pointer gap-2 transition-all duration-200 hover:translate-x-0.5 hover:!bg-primary/10 hover:!text-primary">
+              <Link href="/signup" className="w-full flex items-center gap-2">
+                <UserPlus className="h-4 w-4" />
+                Sign Up
+              </Link>
+            </DropdownMenuItem>
+          </>
         )}
 
         {session?.user?.role === "PATIENT" && (

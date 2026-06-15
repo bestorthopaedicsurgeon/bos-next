@@ -51,9 +51,9 @@ export const HowItWorks = () => {
           ))}
         </div>
 
-        <div className="text-center">
+        <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
           <Link href="/doctor/registration">
-            <Button variant="primary" size="lg" className="mr-4">
+            <Button variant="primary" size="lg">
               Create Your Profile Now
             </Button>
           </Link>

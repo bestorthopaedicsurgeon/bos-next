@@ -1,4 +1,12 @@
+# Best Orthopaedic Surgeons — robots.txt
+#
+# AI / answer-engine crawlers (GPTBot, ClaudeBot, PerplexityBot, Google-Extended,
+# CCBot, etc.) are INTENTIONALLY ALLOWED. They are covered by the wildcard group
+# below, so they may crawl all public pages for AEO/GEO visibility while still
+# being kept out of the private/admin paths. Do not add Disallow rules for them.
+
 User-agent: *
+Allow: /
 Disallow: /*?scroll=*
 Disallow: /*?doctorId=*
 Disallow: /*?doctorName=*

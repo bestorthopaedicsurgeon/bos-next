@@ -3,9 +3,10 @@ import { getAllBlogsApi } from "@/lib/apiCalls/server/blogs";
 import React from "react";
 
 export const metadata = {
-  title: "Orthopaedic Blogs & Health Tips | Best Orthopaedic Surgeon",
+  title: "Orthopaedic Blogs & Health Tips",
   description:
     "Read expert orthopaedic blogs covering surgical procedures, recovery tips, and health insights from top orthopaedic surgeons across Western Australia.",
+  alternates: { canonical: "/blog" },
 };
 
 const BlogPage = async () => {

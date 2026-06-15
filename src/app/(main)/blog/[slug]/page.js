@@ -3,10 +3,45 @@ import { getBlogBySlugApi } from "@/lib/apiCalls/server/blogs";
 import Image from "next/image";
 import React from "react";
 import { format } from "date-fns";
+import { JsonLd } from "@/components/seo/JsonLd";
+
+const BLOG_BASE_URL =
+  process.env.NEXT_PUBLIC_BASE_URL ||
+  "https://www.bestorthopaedicsurgeon.com.au";
 
 export async function generateMetadata({ params }) {
+  const { slug } = await params;
+  const response = await getBlogBySlugApi(slug);
+  const blog = response?.data;
+
+  if (!blog) {
+    return {
+      title: "Blog Not Found",
+      robots: { index: false, follow: false },
+    };
+  }
+
+  const plain = String(blog.content || "")
+    .replace(/<[^>]*>/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+  const description =
+    (plain.length > 160 ? plain.slice(0, 157) + "..." : plain) ||
+    "Read the latest orthopaedic health insights and surgical guidance from Best Orthopaedic Surgeons.";
+
   return {
-    title: `Read Blog: ${params.slug}`,
+    title: blog.title || "Blog",
+    description,
+    alternates: { canonical: `/blog/${slug}` },
+    openGraph: blog.image
+      ? {
+          title: blog.title,
+          description,
+          url: `/blog/${slug}`,
+          type: "article",
+          images: [{ url: blog.image }],
+        }
+      : undefined,
   };
 }
 
@@ -18,6 +53,26 @@ const Page = async ({ params }) => {
   if (!blog) {
     return <div className="container">Blog not found.</div>;
   }
+
+  const breadcrumbSchema = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      { "@type": "ListItem", position: 1, name: "Home", item: BLOG_BASE_URL },
+      {
+        "@type": "ListItem",
+        position: 2,
+        name: "Blog",
+        item: `${BLOG_BASE_URL}/blog`,
+      },
+      {
+        "@type": "ListItem",
+        position: 3,
+        name: blog.title || slug,
+        item: `${BLOG_BASE_URL}/blog/${slug}`,
+      },
+    ],
+  };
 
   // Format the date from API
   const formatDate = (dateString) => {
@@ -328,6 +383,9 @@ const Page = async ({ params }) => {
 
   return (
     <div className="container">
+      {/* ✅ Breadcrumb structured data */}
+      <JsonLd data={breadcrumbSchema} />
+
       {/* Inject CSS styles for blog content */}
       <style dangerouslySetInnerHTML={{ __html: blogContentStyles }} />
       

@@ -14,6 +14,9 @@ import { getServerSession } from "next-auth";
 import { redirect } from "next/navigation";
 import { getDoctorProfile } from "@/lib/apiCalls/server/doctor";
 import { FindAnotherSurgeonCTA } from "@/components/docProfile/FindAnotherSurgeonCTA";
+import { prisma } from "@/lib/prisma";
+import { JsonLd } from "@/components/seo/JsonLd";
+import ReviewScroller from "@/components/docProfile/ReviewScroller";
 
 const BASE_URL =
   process.env.NEXT_PUBLIC_BASE_URL || "https://www.bestorthopaedicsurgeon.com.au";
@@ -138,37 +141,129 @@ const Page = async ({ params, searchParams }) => {
     ? doctData.about.replace(/<[^>]*>/g, "").substring(0, 300)
     : `${pageTitle} is a specialist orthopaedic surgeon in Australia.`;
 
-  // ✅ Physician JSON-LD Schema
+  // ── Build structured postal addresses from the doctor's practice locations ──
+  const practices = Array.isArray(doctData?.practices) ? doctData.practices : [];
+  const parsePostcode = (val) => {
+    const m = String(val || "").match(/\d{4}/);
+    return m ? m[0] : undefined;
+  };
+  const parseLocality = (addr, fallback) => {
+    const m = String(addr || "").match(/([A-Za-z][A-Za-z\s]*?)\s+WA\s*\d{4}/);
+    return m ? m[1].trim() : fallback || undefined;
+  };
+  const practiceAddresses = practices
+    .filter((p) => p && (p.clinicAddress || p.postCode))
+    .map((p) => ({
+      "@type": "PostalAddress",
+      streetAddress: p.clinicAddress || undefined,
+      addressLocality: parseLocality(p.clinicAddress, doctData?.location),
+      addressRegion: "WA",
+      postalCode: parsePostcode(p.postCode),
+      addressCountry: "AU",
+    }));
+  const primaryPhone = practices.find((p) => p?.phone)?.phone || doctData?.phone;
+
+  // ── Review aggregate for aggregateRating (only when reviews exist). ──
+  // Queried directly via Prisma and fully guarded so a failure never breaks
+  // the page — it simply omits the rating from the schema.
+  let aggregateRating = null;
+  try {
+    if (doctData?.id) {
+      const reviewRows = await prisma.doctorReview.findMany({
+        where: { doctorId: doctData.id },
+        select: {
+          professionalism: true,
+          punctuality: true,
+          helpfulness: true,
+          knowledge: true,
+        },
+      });
+      if (reviewRows.length > 0) {
+        const avg =
+          reviewRows.reduce(
+            (sum, r) =>
+              sum +
+              (r.professionalism + r.punctuality + r.helpfulness + r.knowledge) /
+                4,
+            0
+          ) / reviewRows.length;
+        aggregateRating = {
+          "@type": "AggregateRating",
+          ratingValue: Number(avg.toFixed(1)),
+          reviewCount: reviewRows.length,
+          bestRating: 5,
+          worstRating: 1,
+        };
+      }
+    }
+  } catch (e) {
+    aggregateRating = null;
+  }
+
+  const cleanSubspecialties = Array.isArray(doctData?.subspecialities)
+    ? doctData.subspecialities.filter(Boolean)
+    : [];
+
+  // ✅ Physician JSON-LD Schema (undefined fields are dropped by JSON.stringify)
   const schemaData = {
     "@context": "https://schema.org",
     "@type": "Physician",
+    "@id": `${BASE_URL}/doctor/${canonicalSlug}#physician`,
     name: pageTitle,
     jobTitle: designation,
-    medicalSpecialty: "Orthopedic Surgery",
+    medicalSpecialty: "Orthopedic",
     description: schemaDescription,
     url: `${BASE_URL}/doctor/${canonicalSlug}`,
+    areaServed: { "@type": "State", name: "Western Australia" },
     ...(doctData?.image && { image: doctData.image }),
-    ...(doctData?.phone && { telephone: doctData.phone }),
-    address: {
-      "@type": "PostalAddress",
-      addressLocality: doctData?.location || "",
-      addressCountry: "AU",
-    },
-    ...(doctData?.hospitalAffiliations?.length > 0 && {
-      hospitalAffiliation: doctData.hospitalAffiliations.map((h) => ({
-        "@type": "Hospital",
-        name: h.name || h,
-      })),
+    ...(primaryPhone && { telephone: primaryPhone }),
+    ...(cleanSubspecialties.length > 0 && { knowsAbout: cleanSubspecialties }),
+    ...(practiceAddresses.length > 0 && {
+      address:
+        practiceAddresses.length === 1
+          ? practiceAddresses[0]
+          : practiceAddresses,
     }),
+    ...(aggregateRating && { aggregateRating }),
+    ...(Array.isArray(doctData?.hospitalAffiliations) &&
+      doctData.hospitalAffiliations.length > 0 && {
+        hospitalAffiliation: doctData.hospitalAffiliations.map((h) => ({
+          "@type": "Hospital",
+          name: (h && (h.name || h)) || undefined,
+          ...(h?.address && { address: h.address }),
+        })),
+      }),
+  };
+
+  // ✅ Breadcrumb JSON-LD Schema
+  const breadcrumbSchema = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      { "@type": "ListItem", position: 1, name: "Home", item: BASE_URL },
+      {
+        "@type": "ListItem",
+        position: 2,
+        name: "Surgeons",
+        item: `${BASE_URL}/surgeons`,
+      },
+      {
+        "@type": "ListItem",
+        position: 3,
+        name: pageTitle,
+        item: `${BASE_URL}/doctor/${canonicalSlug}`,
+      },
+    ],
   };
 
   return (
     <div className="">
-      {/* ✅ JSON-LD Physician Schema */}
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(schemaData) }}
-      />
+      {/* ✅ JSON-LD structured data */}
+      <JsonLd data={schemaData} />
+      <JsonLd data={breadcrumbSchema} />
+
+      {/* Scrolls to the review form when arriving via a "Write a Review" button */}
+      <ReviewScroller />
 
       {docProfile_Details.stepper.map((data) => (
         <ProfileHeader
