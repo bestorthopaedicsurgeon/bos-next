@@ -61,6 +61,8 @@ export const HeroSection = () => {
     if (searchForm.subspecialty.trim()) params.append("subspecialty", searchForm.subspecialty.trim());
     if (searchForm.location.trim()) params.append("location", searchForm.location.trim());
     
+    // Set scroll flag so the surgeons page scrolls down to the surgeon list
+    sessionStorage.setItem("scroll_to_surgeons", "section");
     router.push(`/surgeons?${params.toString()}`);
   }, [searchForm, router]);
 
