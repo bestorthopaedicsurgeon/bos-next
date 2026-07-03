@@ -2,6 +2,9 @@
 
 import { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
+import { usePathname } from "next/navigation";
+import Link from "next/link";
+import { LockKeyhole, LogIn, UserPlus } from "lucide-react";
 import { Checkbox } from "@/components/ui/checkbox";
 import { submitDoctorReview } from "@/lib/apiCalls/client/doctor";
 import { toast } from "sonner";
@@ -9,11 +12,12 @@ import { useSanitizedForm } from "@/hooks/useSanitizedForm";
 
 export default function ReviewForm({ className, doctorId, doctorName, onReviewSubmit }) {
   const { data: session, status } = useSession();
+  const pathname = usePathname();
+  const loginHref = `/login?callbackUrl=${encodeURIComponent(`${pathname}?writeReview=true`)}`;
   const isLoggedIn = status === 'authenticated';
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
-  const [showAuthModal, setShowAuthModal] = useState(false);
 
   const [formData, setFormData, handleChange] = useSanitizedForm({
     name: "",
@@ -38,10 +42,6 @@ export default function ReviewForm({ className, doctorId, doctorName, onReviewSu
   }, [isLoggedIn, session]);
 
   const handleRatingChange = (category, value) => {
-    if (!isLoggedIn) {
-      setShowAuthModal(true);
-      return;
-    }
     setFormData((prev) => ({
       ...prev,
       [category]: value,
@@ -51,7 +51,6 @@ export default function ReviewForm({ className, doctorId, doctorName, onReviewSu
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!isLoggedIn) {
-      setShowAuthModal(true);
       return;
     }
 
@@ -129,6 +128,62 @@ export default function ReviewForm({ className, doctorId, doctorName, onReviewSu
       </div>
     );
   };
+
+  if (status === "loading") {
+    return (
+      <div className={`h-full rounded-lg bg-white p-6 shadow-md ${className}`}>
+        <p className="text-primary mb-4 font-[700]">
+          Rate & Review Dr. {doctorName}
+        </p>
+        <div className="rounded-lg border border-gray-100 bg-gray-50 p-6 text-center">
+          <p className="text-sm text-gray-600">Checking your sign in status...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (!isLoggedIn) {
+    return (
+      <div className={`h-full rounded-lg bg-white p-6 shadow-md ${className}`}>
+        <p className="text-primary mb-4 font-[700]">
+          Rate & Review Dr. {doctorName}
+        </p>
+        <p className="mb-6 text-[14px] text-gray-700">
+          Let us know about your experience of your appointment with the surgeon.
+          Your feedback matters!
+        </p>
+
+        <div className="flex min-h-[360px] flex-col items-center justify-center rounded-lg border border-primary/10 bg-primary/5 px-5 py-10 text-center">
+          <div className="mb-5 flex h-12 w-12 items-center justify-center rounded-full bg-white text-primary shadow-sm">
+            <LockKeyhole className="h-5 w-5" />
+          </div>
+          <p className="mb-3 text-lg font-semibold text-primary">
+            Please login to leave a review
+          </p>
+          <p className="mb-8 max-w-md text-sm leading-relaxed text-gray-700">
+            To keep reviews genuine and helpful for patients, only logged-in
+            users can submit a surgeon review.
+          </p>
+          <div className="flex w-full max-w-sm flex-col justify-center gap-3 sm:flex-row">
+            <Link
+              href={loginHref}
+              className="inline-flex min-h-11 flex-1 items-center justify-center gap-2 rounded-full bg-primary px-7 py-3 text-sm font-semibold text-primary-foreground transition hover:bg-primary/90"
+            >
+              <LogIn className="h-4 w-4" />
+              Login
+            </Link>
+            <Link
+              href="/signup"
+              className="inline-flex min-h-11 flex-1 items-center justify-center gap-2 rounded-full border border-primary px-7 py-3 text-sm font-semibold text-primary transition hover:bg-primary/10"
+            >
+              <UserPlus className="h-4 w-4" />
+              Sign Up
+            </Link>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className={`h-full rounded-lg bg-white p-6 shadow-md ${className}`}>
@@ -235,55 +290,6 @@ export default function ReviewForm({ className, doctorId, doctorName, onReviewSu
           {isSubmitting ? 'Submitting...' : 'Submit'}
         </button>
       </form>
-
-      {/* Auth Prompt Modal */}
-      {showAuthModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 transition-all">
-          <div className="w-full max-w-md bg-white rounded-2xl p-6 shadow-xl border border-gray-100 flex flex-col items-center text-center">
-            <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center mb-4 text-primary">
-              <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.907c.961 0 1.36 1.252.583 1.833l-3.978 2.892a1 1 0 00-.364 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.977-2.893a1 1 0 00-1.176 0l-3.977 2.893c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.364-1.118L2.98 9.927c-.777-.58-.378-1.833.583-1.833h4.908a1 1 0 00.95-.69l1.519-4.674z" />
-              </svg>
-            </div>
-            
-            <h3 className="text-xl font-bold text-gray-800 mb-2">Sign up to leave a review</h3>
-            <p className="text-sm text-gray-600 mb-6 font-dm-sans">
-              You must have an account to rate and review surgeons on Best Orthopaedic Surgeons. Share your experience to help other patients!
-            </p>
-            
-            <div className="w-full flex flex-col gap-3">
-              <button
-                type="button"
-                onClick={() => {
-                  const dest = `/signup?callbackUrl=${encodeURIComponent(window.location.pathname + "?writeReview=true")}`;
-                  window.location.href = dest;
-                }}
-                className="w-full py-3 bg-primary hover:bg-primary/95 text-white font-semibold rounded-lg shadow-sm cursor-pointer transition-colors"
-              >
-                Sign Up
-              </button>
-              <button
-                type="button"
-                onClick={() => {
-                  const dest = `/login?callbackUrl=${encodeURIComponent(window.location.pathname + "?writeReview=true")}`;
-                  window.location.href = dest;
-                }}
-                className="w-full py-3 border border-gray-200 hover:bg-gray-50 text-gray-700 font-semibold rounded-lg cursor-pointer transition-colors"
-              >
-                Log In
-              </button>
-            </div>
-            
-            <button
-              type="button"
-              onClick={() => setShowAuthModal(false)}
-              className="mt-4 text-sm text-gray-400 hover:text-gray-600 transition-colors cursor-pointer"
-            >
-              Cancel
-            </button>
-          </div>
-        </div>
-      )}
     </div>
   );
 }

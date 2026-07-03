@@ -20,7 +20,11 @@ import { useSanitizedForm } from "@/hooks/useSanitizedForm";
 const LoginPageContent = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const callbackUrl = searchParams.get("callbackUrl") || "/";
+  const rawCallbackUrl = searchParams.get("callbackUrl") || "/";
+  // Only allow internal paths so a crafted link can't redirect users off-site
+  const callbackUrl = rawCallbackUrl.startsWith("/") && !rawCallbackUrl.startsWith("//")
+    ? rawCallbackUrl
+    : "/";
 
   const [form, setForm, handleChange] = useSanitizedForm({ email: "", password: "" });
   const [rememberMe, setRememberMe] = useState(false);
