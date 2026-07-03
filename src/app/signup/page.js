@@ -154,20 +154,22 @@ const SignupPageContent = () => {
   };
 
   return (
-    <div className="flex items-center justify-center min-xl:pr-[170px]">
+    <div className="flex items-start justify-center min-xl:pr-[200px]">
       {/* Left Side - Banner */}
-      <div className="max-lg:hidden min-lg:w-[65%]">
-        <Link href="#" className="h-full">
-          <Image
-            src={login_banner}
-            alt="login banner"
-            className="h-[990px] w-full object-cover"
-          />
-        </Link>
+      <div className="max-lg:hidden min-lg:w-[60%] min-lg:self-stretch">
+        <div className="sticky top-0 flex h-screen items-center">
+          <Link href="#">
+            <Image
+              src={login_banner}
+              alt="login banner"
+              className="h-auto w-[1000px]"
+            />
+          </Link>
+        </div>
       </div>
 
       {/* Right Side - Form */}
-      <div className="w-[100%] max-md:mt-30 max-xl:mx-[20px] min-lg:w-[35%]">
+      <div className="w-[100%] max-md:mt-30 max-xl:mx-[20px] min-lg:w-[40%] max-w-md mx-auto pb-16 max-md:pb-10">
         <WelcomeTxt
           header="Sign up"
           cta="Login"
@@ -175,6 +177,17 @@ const SignupPageContent = () => {
           subTxt="Already have an account ?"
           color="--primary"
         />
+
+        <SocialLogin headerTxt="Sign up with" role={formData.role} />
+
+        <div className="relative mb-6">
+          <div className="absolute inset-0 flex items-center">
+            <div className="w-full border-t border-gray-300"></div>
+          </div>
+          <div className="relative flex justify-center text-sm">
+            <span className="px-2 bg-background text-gray-500">Or sign up with email</span>
+          </div>
+        </div>
 
         <form onSubmit={handleSignUp}>
           <div className="flex w-full gap-5 max-lg:flex-wrap mt-6">
@@ -314,6 +327,32 @@ const SignupPageContent = () => {
             </div>
           </div>
 
+          <div className="mt-6 flex items-start gap-2">
+            <Checkbox id="terms" required className="mt-0.5" />
+            <p className="text-sm text-gray-600">
+              <label htmlFor="terms" className="cursor-pointer">
+                I agree to the{" "}
+              </label>
+              <Link
+                href="/terms-of-use"
+                target="_blank"
+                className="text-primary underline underline-offset-2 hover:text-primary/80"
+              >
+                Terms & Conditions
+              </Link>
+              <label htmlFor="terms" className="cursor-pointer">
+                {" "}and{" "}
+              </label>
+              <Link
+                href="/privacy-policy"
+                target="_blank"
+                className="text-primary underline underline-offset-2 hover:text-primary/80"
+              >
+                Privacy Policy
+              </Link>
+            </p>
+          </div>
+
           <div className="mt-8">
             <CustomBtn
               btnText={loading ? "Processing..." : "Sign Up"}
@@ -323,26 +362,7 @@ const SignupPageContent = () => {
               disabled={loading}
             />
           </div>
-
-          <div className="flex items-center space-x-2 mt-4">
-            <Checkbox id="terms" required />
-            <label htmlFor="terms" className="text-sm text-gray-600">
-              I agree to the Terms & Conditions and Privacy Policy
-            </label>
-          </div>
         </form>
-
-        <div className="my-6">
-          <div className="relative">
-            <div className="absolute inset-0 flex items-center">
-              <div className="w-full border-t border-gray-300"></div>
-            </div>
-            <div className="relative flex justify-center text-sm">
-              <span className="px-2 bg-white text-gray-500">Or continue with</span>
-            </div>
-          </div>
-          <SocialLogin headerTxt="" role={formData.role} />
-        </div>
       </div>
 
       {/* OTP Verification Modal */}

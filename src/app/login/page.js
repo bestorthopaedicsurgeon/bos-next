@@ -111,6 +111,18 @@ const LoginPageContent = () => {
           subTxt="Don't have an account?"
           color="--primary"
         />
+
+        <SocialLogin headerTxt="Login with" />
+
+        <div className="relative mb-6">
+          <div className="absolute inset-0 flex items-center">
+            <div className="w-full border-t border-gray-300"></div>
+          </div>
+          <div className="relative flex justify-center text-sm">
+            <span className="px-2 bg-background text-gray-500">Or login with email</span>
+          </div>
+        </div>
+
         {/* input form start */}
         <form onSubmit={handleSubmit}>
           {/* <RadioGroup
@@ -183,9 +195,6 @@ const LoginPageContent = () => {
           {error && <div className="mt-2 text-red-500">{error}</div>}
         </form>
         {/* input form end */}
-
-        {/* social login */}
-        <SocialLogin headerTxt="Or login with" />
       </div>
     </div>
   );
