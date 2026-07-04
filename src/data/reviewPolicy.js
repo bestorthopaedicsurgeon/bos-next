@@ -9,7 +9,7 @@ export const reviewPolicyData = {
     ]
   },
 
-  contactEmail: "info@bestorthopaedicsurgeon.com.au",
+  contactEmail: "support@bestorthopaedicsurgeon.com.au",
 
   sections: [
     {

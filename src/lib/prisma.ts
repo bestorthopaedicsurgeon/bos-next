@@ -1,17 +1,19 @@
 
-import { PrismaClient } from '@prisma/client';
-import { env } from 'process';
+import { Prisma, PrismaClient } from '@prisma/client';
 
 const globalForPrisma = globalThis as unknown as {
   prisma: PrismaClient | undefined;
 };
 
-console.log("Initializing Prisma Client...", env.DATABASE_URL);
+const prismaLogLevels: Prisma.LogLevel[] =
+  process.env.NODE_ENV === 'development'
+    ? ['query', 'error', 'warn']
+    : ['error', 'warn'];
 
 export const prisma =
   globalForPrisma.prisma ??
   new PrismaClient({
-    log: ['query'],
+    log: prismaLogLevels,
   });
 
 if (process.env.NODE_ENV !== 'production') globalForPrisma.prisma = prisma;

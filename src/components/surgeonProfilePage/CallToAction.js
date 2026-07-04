@@ -63,7 +63,7 @@ export const CallToAction = () => {
                 You &apos;re now part of a growing network of specialists committed to improving mobility and musculoskeletal health across WA.
               </p>
               <div className="text-sm opacity-80">
-                <p><strong>📧 Email:</strong> support@bestorthopaedicsurgeon.com</p>
+                <p><strong>📧 Email:</strong> support@bestorthopaedicsurgeon.com.au</p>
                 <p><strong>📞 Phone:</strong> 1300-ORTHO-WA</p>
               </div>
             </div>

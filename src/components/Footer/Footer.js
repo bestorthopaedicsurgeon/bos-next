@@ -33,7 +33,7 @@ const Footer = () => {
             Your Trusted Orthopaedic Surgeon Directory
           </p>
           <p className="mb-6 text-base font-bold text-[#F1F8F6] break-words">
-            info@bestorthopaedicsurgeon.com.au
+            support@bestorthopaedicsurgeon.com.au
           </p>
 
           <div className="mt-4 flex gap-4">

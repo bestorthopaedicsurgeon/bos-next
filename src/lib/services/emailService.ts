@@ -13,24 +13,64 @@ import {
   getClaimSubmittedTemplate
 } from './emailTemplates';
 
-// Configure nodemailer with GoDaddy Email (Outlook/Office 365)
-// If you get authentication errors, try these alternatives:
-// Option 1: Office 365 (most common for GoDaddy Outlook)
-// Option 2: GoDaddy's direct SMTP - change host to 'smtp.secureserver.net'
-// Option 3: Use port 465 with secure: true instead of 587
+// Google Workspace SMTP: the domain's mail is hosted on Google, so sending
+// through Google keeps same-domain delivery internal and matches SPF.
+// EMAIL_USERNAME = the Workspace mailbox (e.g. support@bestorthopaedicsurgeon.com.au)
+// EMAIL_PASSWORD = an app password for that account (requires 2-Step Verification)
+// EMAIL_FROM     = optional send-as alias (e.g. noreply@...), must be added as a
+//                  "Send mail as" alias in Gmail or Google rewrites it back.
+const DEFAULT_EMAIL_PORT = 587;
+
+function getOptionalEmailSetting(name: string): string | undefined {
+  const value = process.env[name]?.trim();
+  return value || undefined;
+}
+
+function getRequiredEmailSetting(name: string): string {
+  const value = getOptionalEmailSetting(name);
+
+  if (!value || value === 'PASTE_GMAIL_APP_PASSWORD_HERE') {
+    throw new Error(`${name} must be configured for outgoing email`);
+  }
+
+  return value;
+}
+
+function parseEmailPort(value: string | undefined): number {
+  if (!value) {
+    return DEFAULT_EMAIL_PORT;
+  }
+
+  const port = Number(value);
+
+  if (!Number.isInteger(port) || port < 1 || port > 65535) {
+    throw new Error(`EMAIL_PORT must be a valid TCP port, received "${value}"`);
+  }
+
+  return port;
+}
+
+const EMAIL_HOST = getOptionalEmailSetting('EMAIL_HOST') || 'smtp.gmail.com';
+const EMAIL_PORT = parseEmailPort(getOptionalEmailSetting('EMAIL_PORT'));
+const EMAIL_USERNAME = getRequiredEmailSetting('EMAIL_USERNAME');
+const EMAIL_PASSWORD = getRequiredEmailSetting('EMAIL_PASSWORD');
 
 export const transporter = nodemailer.createTransport({
-  host: 'smtp.office365.com', // Try 'smtp.office365.com' if this doesn't work
-  port: 587,
-  secure: false, // Use true for port 465, false for port 587
+  host: EMAIL_HOST,
+  port: EMAIL_PORT,
+  secure: EMAIL_PORT === 465,
+  requireTLS: EMAIL_PORT !== 465,
   auth: {
-    user: process.env.EMAIL_USERNAME, // Your full GoDaddy email address (e.g., info@yourdomain.com)
-    pass: process.env.EMAIL_PASSWORD, // Your email password (NOT app-specific password for GoDaddy)
-  },
-  tls: {
-    rejectUnauthorized: false,
+    user: EMAIL_USERNAME,
+    pass: EMAIL_PASSWORD,
   },
 });
+
+const FROM_NAME = getOptionalEmailSetting('EMAIL_FROM_NAME') || 'Best Orthopaedic Surgeons';
+const FROM_ADDRESS = getOptionalEmailSetting('EMAIL_FROM') || EMAIL_USERNAME;
+const REPLY_TO = getOptionalEmailSetting('EMAIL_REPLY_TO');
+
+export const EMAIL_SENDER = `"${FROM_NAME}" <${FROM_ADDRESS}>`;
 
 // Common attachments for all emails
 const commonAttachments = [
@@ -50,7 +90,8 @@ export async function sendOTP(email: string, otp: string): Promise<void> {
   const { html, text } = getOTPEmailTemplate(otp);
 
   const mailOptions = {
-    from: `"Best Orthopedic Surgeons" <${process.env.EMAIL_USERNAME}>`,
+    from: EMAIL_SENDER,
+    replyTo: REPLY_TO,
     to: email,
     subject: 'Verify Your Email - Best Orthopedic Surgeons',
     text,
@@ -86,7 +127,8 @@ export async function sendEmail({ to, subject, message, actionText, actionLink }
   const { html, text } = getNotificationTemplate(subject, message, actionText, actionLink);
 
   const mailOptions = {
-    from: `"Best Orthopedic Surgeons" <${process.env.EMAIL_USERNAME}>`,
+    from: EMAIL_SENDER,
+    replyTo: REPLY_TO,
     to,
     subject,
     text,
@@ -95,7 +137,7 @@ export async function sendEmail({ to, subject, message, actionText, actionLink }
   };
 
   try {
-    console.log('Attempting to send email from:', process.env.EMAIL_USERNAME);
+    console.log('Attempting to send email from:', EMAIL_USERNAME);
     await transporter.sendMail(mailOptions);
     console.log('Email sent successfully!');
   } catch (error: any) {
@@ -123,7 +165,8 @@ export async function sendWelcomeEmail(email: string, userName: string, role?: s
     : 'Welcome to Best Orthopedic Surgeons! 🎉';
 
   const mailOptions = {
-    from: `"Best Orthopedic Surgeons" <${process.env.EMAIL_USERNAME}>`,
+    from: EMAIL_SENDER,
+    replyTo: REPLY_TO,
     to: email,
     subject,
     text,
@@ -156,7 +199,8 @@ export async function sendAppointmentConfirmation(
   const { html, text } = getAppointmentConfirmationTemplate(details);
 
   const mailOptions = {
-    from: `"Best Orthopedic Surgeons" <${process.env.EMAIL_USERNAME}>`,
+    from: EMAIL_SENDER,
+    replyTo: REPLY_TO,
     to: email,
     subject: 'Appointment Confirmed - Best Orthopedic Surgeons',
     text,
@@ -194,7 +238,8 @@ export async function sendAppointmentNotificationToDoctor(
   const { html, text } = getDoctorAppointmentNotificationTemplate(details);
 
   const mailOptions = {
-    from: `"Best Orthopedic Surgeons" <${process.env.EMAIL_USERNAME}>`,
+    from: EMAIL_SENDER,
+    replyTo: REPLY_TO,
     to: email,
     subject: `New Appointment: ${details.patientName} - Best Orthopedic Surgeons`,
     text,
@@ -218,7 +263,8 @@ export async function sendPasswordReset(email: string, resetLink: string, userNa
   const { html, text } = getPasswordResetTemplate(resetLink, userName);
 
   const mailOptions = {
-    from: `"Best Orthopedic Surgeons" <${process.env.EMAIL_USERNAME}>`,
+    from: EMAIL_SENDER,
+    replyTo: REPLY_TO,
     to: email,
     subject: 'Reset Your Password - Best Orthopedic Surgeons',
     text,
@@ -242,7 +288,8 @@ export async function sendClaimApprovedEmail(email: string, userName: string, pa
   const { html, text } = getClaimApprovedTemplate(userName, email, password);
 
   const mailOptions = {
-    from: `"Best Orthopedic Surgeons" <${process.env.EMAIL_USERNAME}>`,
+    from: EMAIL_SENDER,
+    replyTo: REPLY_TO,
     to: email,
     subject: 'Doctor Profile Claim Approved! 🩺',
     text,
@@ -266,7 +313,8 @@ export async function sendClaimSubmittedEmail(email: string, userName: string): 
   const { html, text } = getClaimSubmittedTemplate(userName);
 
   const mailOptions = {
-    from: `"Best Orthopedic Surgeons" <${process.env.EMAIL_USERNAME}>`,
+    from: EMAIL_SENDER,
+    replyTo: REPLY_TO,
     to: email,
     subject: 'Claim Request Received - Best Orthopedic Surgeons 🩺',
     text,

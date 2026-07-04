@@ -1,10 +1,10 @@
 import { NextResponse, NextRequest } from 'next/server';
 import path from 'path';
-import { transporter } from '@/lib/services/emailService';
+import { transporter, EMAIL_SENDER } from '@/lib/services/emailService';
 import { getNotificationTemplate } from '@/lib/services/emailTemplates';
 
 // The email address where collaboration requests will be sent
-const COLLABORATE_EMAIL = 'info@bestorthopaedicsurgeon.com.au';
+const COLLABORATE_EMAIL = process.env.CONTACT_EMAIL || 'support@bestorthopaedicsurgeon.com.au';
 
 export async function POST(req: NextRequest) {
   try {
@@ -33,7 +33,7 @@ ${reason}
     );
 
     const mailOptions = {
-      from: `"Best Orthopedic Surgeons" <${process.env.EMAIL_USERNAME}>`,
+      from: EMAIL_SENDER,
       to: COLLABORATE_EMAIL,
       replyTo: email,
       subject: `Collaboration Request from ${name}`,

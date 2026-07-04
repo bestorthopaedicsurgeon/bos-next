@@ -9,7 +9,7 @@ export const legalDisclaimerData = {
     ]
   },
 
-  contactEmail: "info@bestorthopaedicsurgeon.com.au",
+  contactEmail: "support@bestorthopaedicsurgeon.com.au",
   websiteUrl: "www.bestorthopaedicsurgeon.com.au",
 
   sections: [
