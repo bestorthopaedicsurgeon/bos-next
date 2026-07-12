@@ -5,8 +5,10 @@ export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
     const page = parseInt(searchParams.get("page") || "1");
-    const limit = parseInt(searchParams.get("limit") || "1000"); // Standard high limit if not specified
+    const limit = parseInt(searchParams.get("limit") || "100");
     const skip = (page - 1) * limit;
+    // Dashboard stat counts are only needed by the admin doctors page.
+    const withStats = searchParams.get("stats") === "true";
 
     const name = searchParams.get("name") || "";
     const subspecialty = searchParams.get("subspecialty") || "";
@@ -48,13 +50,14 @@ export async function GET(request: NextRequest) {
       where.hidden = true;
     }
 
-    // Get counts for dashboard stats
+    // totalCount always feeds pagination; the dashboard breakdown counts only
+    // run for the admin page (stats=true) so public visitors cost 1 count, not 5.
     const [totalCount, activeCount, pendingCount, featuredCount, hiddenCount] = await Promise.all([
       prisma.doctorProfile.count({ where }),
-      prisma.doctorProfile.count({ where: { ...where, registrationCompleted: true } }),
-      prisma.doctorProfile.count({ where: { ...where, registrationCompleted: false } }),
-      prisma.doctorProfile.count({ where: { ...where, featured: true } }),
-      prisma.doctorProfile.count({ where: { ...where, hidden: true } }),
+      withStats ? prisma.doctorProfile.count({ where: { ...where, registrationCompleted: true } }) : Promise.resolve(0),
+      withStats ? prisma.doctorProfile.count({ where: { ...where, registrationCompleted: false } }) : Promise.resolve(0),
+      withStats ? prisma.doctorProfile.count({ where: { ...where, featured: true } }) : Promise.resolve(0),
+      withStats ? prisma.doctorProfile.count({ where: { ...where, hidden: true } }) : Promise.resolve(0),
     ]);
 
     // Define inclusion criteria once for reuse
@@ -129,13 +132,15 @@ export async function GET(request: NextRequest) {
           currentPage: page,
           limit
         },
-        stats: {
-          total: totalCount,
-          active: activeCount,
-          pending: pendingCount,
-          featured: featuredCount,
-          hidden: hiddenCount
-        },
+        ...(withStats && {
+          stats: {
+            total: totalCount,
+            active: activeCount,
+            pending: pendingCount,
+            featured: featuredCount,
+            hidden: hiddenCount
+          },
+        }),
         message: "Doctors fetched successfully",
       },
       { status: 200 },

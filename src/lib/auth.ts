@@ -125,19 +125,32 @@ export const authOptions: NextAuthOptions = {
           token.image = user.image as string;
         }
       }
+
+      // Resolve doctorId once and store it on the token so session reads do
+      // not query the database. Doctors without a profile yet (registration
+      // in progress) are re-checked until the profile exists.
+      if (token.id) {
+        if (token.role === "DOCTOR") {
+          if (token.doctorId === undefined || token.doctorId === null) {
+            const doctor = await prisma.doctorProfile.findUnique({
+              where: { userId: token.id },
+              select: { id: true },
+            });
+            token.doctorId = doctor?.id ?? null;
+          }
+        } else if (token.doctorId === undefined) {
+          token.doctorId = null;
+        }
+      }
+
       return token;
     },
     async session({ session, token }) {
       if (token) {
-        const doctor = await prisma.doctorProfile.findUnique({
-          where: { userId: token.id },
-          select: { id: true },
-        });
-
         session.user.id = token.id;
         session.user.role = token.role;
         session.user.image = token.image || undefined;
-        session.user.doctorId = doctor?.id || null;
+        session.user.doctorId = token.doctorId ?? null;
       }
 
       return session;

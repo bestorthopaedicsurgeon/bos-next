@@ -1,6 +1,9 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   // reactStrictMode: false,
+  // Optional isolated build dir for local QA (set TEST_DIST_DIR=.next-qa).
+  // Has no effect on normal/production builds.
+  ...(process.env.TEST_DIST_DIR ? { distDir: process.env.TEST_DIST_DIR } : {}),
   images: {
     remotePatterns: [
       {

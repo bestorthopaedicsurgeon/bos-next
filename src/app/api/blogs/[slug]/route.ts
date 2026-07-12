@@ -1,7 +1,7 @@
 import { prisma } from "@/lib/prisma";
 import { uploadBlogImageToSupabase } from "@/lib/supabase/upload";
-import { m } from "motion/dist/react";
 import { NextRequest, NextResponse } from "next/server";
+import { revalidateBlogContent } from "@/lib/data/publicData";
 
 export async function GET(
   request: NextRequest,
@@ -92,6 +92,8 @@ export async function PATCH(
       data: updateData,
     });
 
+    revalidateBlogContent(updatedBlog.slug);
+
     return NextResponse.json({
       success: true,
       data: updatedBlog,
@@ -126,6 +128,8 @@ export async function DELETE(
     const blog = await prisma.blog.delete({
       where: { slug: slugString },
     });
+
+    revalidateBlogContent();
 
     return NextResponse.json(
       { success: true, data: blog, message: "Blog deleted successfully" },

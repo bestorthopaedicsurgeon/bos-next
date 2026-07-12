@@ -9,17 +9,27 @@ import DocInfo from "@/components/docProfile/docInfo";
 import DocProfile from "@/components/docProfile/docProfile";
 import { TabsList } from "@/components/ui/tabs";
 import { DocTabs } from "@/components/docProfile/tabs";
-import { authOptions } from "@/lib/auth";
-import { getServerSession } from "next-auth";
 import { redirect } from "next/navigation";
-import { getDoctorProfile } from "@/lib/apiCalls/server/doctor";
 import { FindAnotherSurgeonCTA } from "@/components/docProfile/FindAnotherSurgeonCTA";
-import { prisma } from "@/lib/prisma";
+import {
+  getDoctorPageData,
+  getPublicDoctorSlugs,
+} from "@/lib/data/publicData";
 import { JsonLd } from "@/components/seo/JsonLd";
 import ReviewScroller from "@/components/docProfile/ReviewScroller";
 
 const BASE_URL =
   process.env.NEXT_PUBLIC_BASE_URL || "https://www.bestorthopaedicsurgeon.com.au";
+
+// Prerendered per doctor with a daily safety net; the doctor mutation APIs
+// call revalidateDoctorContent() so edits show up immediately. Unknown or
+// hidden slugs still render on demand (dynamicParams default).
+export const revalidate = 86400;
+
+export async function generateStaticParams() {
+  const slugs = await getPublicDoctorSlugs();
+  return slugs.map((slug) => ({ slug }));
+}
 
 // Helper to capitalise first letter only
 const formatTitle = (title) => {
@@ -32,9 +42,9 @@ const formatTitle = (title) => {
 // ─────────────────────────────────────────────
 export async function generateMetadata({ params }) {
   const { slug } = await params;
-  const res = await getDoctorProfile(slug);
+  const res = await getDoctorPageData(slug);
 
-  if (!res || !res.success || !res.data) {
+  if (!res || !res.data) {
     return {
       title: "Doctor Profile Not Found | Best Orthopaedic Surgeons",
       robots: { index: false, follow: false },
@@ -100,34 +110,27 @@ export async function generateMetadata({ params }) {
 // ─────────────────────────────────────────────
 // PAGE
 // ─────────────────────────────────────────────
-const Page = async ({ params, searchParams }) => {
+const Page = async ({ params }) => {
   const { slug } = await params;
-  const resolvedSearchParams = await searchParams;
-  const writeReview = resolvedSearchParams?.writeReview === "true";
 
   // Check if we should redirect from numeric ID to slug
   const isNumeric = !isNaN(Number(slug));
 
-  const res = await getDoctorProfile(slug);
+  const res = await getDoctorPageData(slug);
 
-  if (res?.success && res.data) {
+  if (res?.data) {
     // If it was a numeric ID, redirect to the slug for SEO
     if (isNumeric && res.data.slug) {
       redirect(`/doctor/${res.data.slug}`);
     }
   }
 
-  if (!res || !res.success) {
+  if (!res) {
     console.error("Doctor profile not found");
     // redirect("/doctor-registration");
   }
 
-  let doctData;
-
-  if (res.success && res.data) {
-    doctData = res.data;
-    console.log("doctData", doctData);
-  }
+  const doctData = res?.data;
 
   const formattedTitle = formatTitle(doctData?.title);
   const designation = doctData?.designation || "Orthopaedic Surgeon";
@@ -163,42 +166,9 @@ const Page = async ({ params, searchParams }) => {
     }));
   const primaryPhone = practices.find((p) => p?.phone)?.phone || doctData?.phone;
 
-  // ── Review aggregate for aggregateRating (only when reviews exist). ──
-  // Queried directly via Prisma and fully guarded so a failure never breaks
-  // the page — it simply omits the rating from the schema.
-  let aggregateRating = null;
-  try {
-    if (doctData?.id) {
-      const reviewRows = await prisma.doctorReview.findMany({
-        where: { doctorId: doctData.id },
-        select: {
-          professionalism: true,
-          punctuality: true,
-          helpfulness: true,
-          knowledge: true,
-        },
-      });
-      if (reviewRows.length > 0) {
-        const avg =
-          reviewRows.reduce(
-            (sum, r) =>
-              sum +
-              (r.professionalism + r.punctuality + r.helpfulness + r.knowledge) /
-                4,
-            0
-          ) / reviewRows.length;
-        aggregateRating = {
-          "@type": "AggregateRating",
-          ratingValue: Number(avg.toFixed(1)),
-          reviewCount: reviewRows.length,
-          bestRating: 5,
-          worstRating: 1,
-        };
-      }
-    }
-  } catch (e) {
-    aggregateRating = null;
-  }
+  // Review aggregate for the schema, computed in the same single query as the
+  // profile (see getDoctorPageData).
+  const aggregateRating = res?.aggregateRating || null;
 
   const cleanSubspecialties = Array.isArray(doctData?.subspecialities)
     ? doctData.subspecialities.filter(Boolean)
@@ -293,7 +263,7 @@ const Page = async ({ params, searchParams }) => {
         </div>
       </div>
 
-      <DocTabs doctData={doctData} writeReview={writeReview} />
+      <DocTabs doctData={doctData} />
       <FindAnotherSurgeonCTA />
     </div>
   );

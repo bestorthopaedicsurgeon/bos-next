@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth/next';
 import { authOptions } from '@/lib/auth';
 import { prisma } from "@/lib/prisma";
+import { revalidateDoctorContent } from "@/lib/data/publicData";
 
 export async function GET(
     request: Request,
@@ -148,6 +149,14 @@ export async function POST(
                 }
             }
         });
+
+        // The doctor page bakes the review aggregate into its static render,
+        // so a new review must revalidate that page (and the listings).
+        const reviewedDoctor = await prisma.doctorProfile.findUnique({
+            where: { id: doctorId },
+            select: { slug: true }
+        });
+        revalidateDoctorContent(reviewedDoctor?.slug);
 
         return NextResponse.json({ success: true, message: "Review submitted successfully" }, { status: 200 });
     } catch (error) {

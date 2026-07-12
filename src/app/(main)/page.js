@@ -4,7 +4,12 @@ import { FAQSection } from "@/components/hero/FAQ/FAQSection";
 import { SearchableDoctorsWrapper } from "@/components/hero/SearchableDoctorsWrapper";
 import { ServicesSection } from "@/components/hero/ServicesSection";
 import { TestimonialsSection } from "@/components/hero/Testimonials/TestimonialsSection";
+import { getFeaturedDoctors } from "@/lib/data/publicData";
 import Image from "next/image";
+
+// Prerendered with hourly refresh; doctor and blog mutations revalidate this
+// page directly, so content changes still appear immediately.
+export const revalidate = 3600;
 
 export const metadata = {
   title: {
@@ -19,11 +24,13 @@ export const metadata = {
   // remain page-specific for search.
 };
 
-export default function Home() {
+export default async function Home() {
+  const featuredDoctors = await getFeaturedDoctors();
+
   return (
     <>
       <div className="mx-auto container px-4 sm:px-6 lg:px-8">
-        <SearchableDoctorsWrapper />
+        <SearchableDoctorsWrapper featuredDoctors={featuredDoctors} />
       </div>
       <TestimonialsSection />
       <div className="mx-auto container px-4 sm:px-6 lg:px-8">

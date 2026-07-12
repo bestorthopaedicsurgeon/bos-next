@@ -4,6 +4,7 @@ import { getServerSession } from "next-auth";
 import { NextResponse } from "next/server";
 import { DoctorProfileSchema } from "@/lib/validations/doctor";
 import { slugify } from "@/lib/utils";
+import { revalidateDoctorContent } from "@/lib/data/publicData";
 
 export async function POST(req: Request): Promise<NextResponse> {
   try {
@@ -107,6 +108,8 @@ export async function POST(req: Request): Promise<NextResponse> {
         }),
       },
     });
+
+    revalidateDoctorContent(profile.slug);
 
     return NextResponse.json({ success: true, profile }, { status: 201 });
   } catch (error: Error | any) {
@@ -310,6 +313,8 @@ export async function PATCH(req: Request) {
         });
       }
     }
+
+    revalidateDoctorContent(updatedProfile.slug);
 
     return NextResponse.json(
       { success: true, data: updatedProfile },

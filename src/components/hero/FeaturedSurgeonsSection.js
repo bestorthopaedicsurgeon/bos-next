@@ -1,69 +1,15 @@
 "use client";
 import DoctorCard from "@/components/reusable/doctorCard";
 import { Button } from "@/components/ui/button";
-import { featuredDoctors } from "@/data/doctors";
-import { ExternalLink } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-import React, { useState, useEffect } from "react";
+import React from "react";
 
-export const FeaturedSurgeonsSection = () => {
-  const [featuredDoctorsApi, setFeaturedDoctorsApi] = useState(null);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    const fetchFeaturedDoctors = async () => {
-      try {
-        // Ensure minimum loading time for skeleton visibility
-        const [response] = await Promise.all([
-          fetch("/api/doctors/featured"),
-          new Promise(resolve => setTimeout(resolve, 800)) // Minimum 800ms loading
-        ]);
-        const res = await response.json();
-        setFeaturedDoctorsApi(res?.success ? res.data : null);
-      } catch (error) {
-        console.error("Error fetching featured doctors:", error);
-        setFeaturedDoctorsApi(null);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    setLoading(true);
-    fetchFeaturedDoctors();
-  }, []);
-
-  const displayDoctors = featuredDoctorsApi;
-  const hasResults = displayDoctors && displayDoctors.length > 0;
-
-  // Show loading skeleton for initial load
-  if (loading) {
-    return (
-      <section className="mb-40">
-        <div className="mb-8 flex max-sm:flex-wrap items-center justify-between">
-          <h1 className="font-syne text-primary">Loading Featured Surgeons...</h1>
-        </div>
-        <div className="grid grid-cols-1 gap-8 lg:grid-cols-2">
-          {[...Array(6)].map((_, index) => (
-            <div key={index} className="border-primary flex max-sm:flex-col-reverse w-full items-center max-sm:justify-center max-sm:items-start justify-evenly gap-7 rounded-3xl border px-11 py-10 animate-pulse">
-              <div className="flex flex-col gap-3.5 max-sm:w-full flex-1">
-                <div className="h-6 w-3/4 rounded bg-white"></div>
-                <div className="h-4 w-1/2 rounded bg-white"></div>
-                <div className="h-4 w-2/3 rounded bg-white"></div>
-                <div className="h-4 w-1/2 rounded bg-white"></div>
-                <div className="h-4 w-3/5 rounded bg-white"></div>
-                <div className="flex gap-2">
-                  <div className="h-8 w-20 rounded bg-white"></div>
-                  <div className="h-8 w-24 rounded bg-white"></div>
-                </div>
-              </div>
-              <div className="relative h-[120px] w-[120px] rounded-full bg-white"></div>
-            </div>
-          ))}
-        </div>
-      </section>
-    );
-  }
+// Featured surgeons arrive as a prop from the server-rendered homepage
+// (see getFeaturedDoctors), so this renders in the initial HTML with no
+// client fetch, no loading skeleton and no extra API/database hit.
+export const FeaturedSurgeonsSection = ({ doctors }) => {
+  const hasResults = doctors && doctors.length > 0;
 
   return (
     <section className="mb-40">
@@ -85,7 +31,7 @@ export const FeaturedSurgeonsSection = () => {
             </Button>
           </Link>
       </div>
-      
+
       {!hasResults ? (
         <div className="flex flex-col items-center justify-center py-16 text-center">
           <div className="mb-4 text-6xl">👨‍⚕️</div>
@@ -96,7 +42,7 @@ export const FeaturedSurgeonsSection = () => {
         </div>
       ) : (
         <div className="grid grid-cols-1 gap-8 lg:grid-cols-2">
-          {displayDoctors?.map((doctor, index) => (
+          {doctors?.map((doctor, index) => (
             <DoctorCard key={doctor.id || index} {...doctor} reviewButton={true} />
           ))}
         </div>
