@@ -4,6 +4,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import bcrypt from "bcryptjs";
 import { sendClaimApprovedEmail } from "@/lib/services/emailService";
+import { revalidateDoctorContent } from "@/lib/data/publicData";
 
 type Params = { params: Promise<{ id: string }> };
 
@@ -161,6 +162,8 @@ export async function PATCH(request: Request, { params }: Params) {
         // We don't fail the whole request if email fails, but we log it
       }
     }
+
+    revalidateDoctorContent();
 
     return NextResponse.json(updatedClaim.updatedClaim);
   } catch (error) {

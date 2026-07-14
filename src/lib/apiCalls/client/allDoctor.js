@@ -1,7 +1,7 @@
 export const getAllDoctors = async (params = {}) => {
   try {
-    const { page = 1, limit = 12, name = "", subspecialty = "", location = "", filter = "" } = params;
-    
+    const { page = 1, limit = 12, name = "", subspecialty = "", location = "", filter = "", stats = false } = params;
+
     const queryParams = new URLSearchParams();
     if (page) queryParams.append("page", page.toString());
     if (limit) queryParams.append("limit", limit.toString());
@@ -9,6 +9,7 @@ export const getAllDoctors = async (params = {}) => {
     if (subspecialty) queryParams.append("subspecialty", subspecialty);
     if (location) queryParams.append("location", location);
     if (filter) queryParams.append("filter", filter);
+    if (stats) queryParams.append("stats", "true");
 
     const res = await fetch(`/api/doctors/all?${queryParams.toString()}`, {
       method: "GET",

@@ -2,6 +2,7 @@ import { prisma } from "@/lib/prisma";
 import { uploadBlogImageToSupabase } from "@/lib/supabase/upload";
 import { Blog } from "@prisma/client";
 import { NextRequest, NextResponse } from "next/server";
+import { revalidateBlogContent } from "@/lib/data/publicData";
 
 export async function GET(request: NextRequest) {
   try {
@@ -74,6 +75,8 @@ export async function POST(req: NextRequest) {
         image: imageUrl,
       },
     });
+
+    revalidateBlogContent(newBlog.slug);
 
     return NextResponse.json({ success: true, data: newBlog }, { status: 201 });
   } catch (err) {

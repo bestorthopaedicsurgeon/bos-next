@@ -1,6 +1,10 @@
 import { BlogPageWrapper } from "@/components/blogPage/BlogPageWrapper";
-import { getAllBlogsApi } from "@/lib/apiCalls/server/blogs";
+import { getAllBlogs } from "@/lib/data/publicData";
 import React from "react";
+
+// Prerendered with hourly refresh; blog mutations revalidate this page
+// directly via revalidateBlogContent().
+export const revalidate = 3600;
 
 export const metadata = {
   title: "Orthopaedic Blogs & Health Tips",
@@ -10,8 +14,7 @@ export const metadata = {
 };
 
 const BlogPage = async () => {
-  const blogsResponse = await getAllBlogsApi();
-  const blogs = blogsResponse?.data || [];
+  const blogs = (await getAllBlogs()) || [];
 
   return (
     <div className="container">

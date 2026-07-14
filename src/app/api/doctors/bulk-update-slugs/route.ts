@@ -1,5 +1,6 @@
 import { prisma } from "@/lib/prisma";
 import { NextResponse } from "next/server";
+import { revalidateDoctorContent } from "@/lib/data/publicData";
 
 function slugify(text: string) {
   return text
@@ -55,10 +56,14 @@ export async function POST() {
       updatedCount++;
     }
 
-    return NextResponse.json({ 
-      success: true, 
+    if (updatedCount > 0) {
+      revalidateDoctorContent();
+    }
+
+    return NextResponse.json({
+      success: true,
       message: `Updated ${updatedCount} doctors with slugs.`,
-      updatedCount 
+      updatedCount
     });
   } catch (error: any) {
     console.error("Error bulk updating slugs:", error);

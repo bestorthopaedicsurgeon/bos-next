@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
+import { revalidateDoctorContent } from "@/lib/data/publicData";
 
 type Params = { params: Promise<{ id: string }> };
 
@@ -34,8 +35,11 @@ export async function PATCH(request: Request, { params }: Params) {
         name: true,
         featured: true,
         userId: true,
+        slug: true,
       },
     });
+
+    revalidateDoctorContent(updatedDoctor.slug);
 
     return NextResponse.json({
       message: `Doctor profile has been ${featured ? "featured" : "unfeatured"} successfully`,

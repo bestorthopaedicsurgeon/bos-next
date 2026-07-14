@@ -1,5 +1,5 @@
 import ProfileHeader from "@/components/reusable/profileHeader";
-import { getBlogBySlugApi } from "@/lib/apiCalls/server/blogs";
+import { getBlogBySlug, getPublicBlogSlugs } from "@/lib/data/publicData";
 import Image from "next/image";
 import React from "react";
 import { format } from "date-fns";
@@ -9,10 +9,18 @@ const BLOG_BASE_URL =
   process.env.NEXT_PUBLIC_BASE_URL ||
   "https://www.bestorthopaedicsurgeon.com.au";
 
+// Prerendered per post with a daily safety net; blog mutations revalidate
+// the affected paths immediately via revalidateBlogContent().
+export const revalidate = 86400;
+
+export async function generateStaticParams() {
+  const slugs = await getPublicBlogSlugs();
+  return slugs.map((slug) => ({ slug }));
+}
+
 export async function generateMetadata({ params }) {
   const { slug } = await params;
-  const response = await getBlogBySlugApi(slug);
-  const blog = response?.data;
+  const blog = await getBlogBySlug(slug);
 
   if (!blog) {
     return {
@@ -46,9 +54,8 @@ export async function generateMetadata({ params }) {
 }
 
 const Page = async ({ params }) => {
-  const { slug } = params;
-  const response = await getBlogBySlugApi(slug);
-  const blog = response?.data;
+  const { slug } = await params;
+  const blog = await getBlogBySlug(slug);
 
   if (!blog) {
     return <div className="container">Blog not found.</div>;

@@ -1,5 +1,6 @@
 import { prisma } from "@/lib/prisma";
 import { NextRequest, NextResponse } from "next/server";
+import { revalidateDoctorContent } from "@/lib/data/publicData";
 
 export async function GET(
   request: NextRequest,
@@ -67,6 +68,8 @@ export async function DELETE(
       prisma.question.deleteMany({ where: { doctorId: numericId } }), // Automatically cascades to related answers based on schema
       prisma.doctorProfile.delete({ where: { id: numericId } }),
     ]);
+
+    revalidateDoctorContent();
 
     return NextResponse.json({
       success: true,

@@ -41,7 +41,8 @@ const DoctorsPage = () => {
         page: currentPage,
         limit: itemsPerPage,
         name: searchTerm,
-        filter: filterStatus !== "all" ? filterStatus : undefined
+        filter: filterStatus !== "all" ? filterStatus : undefined,
+        stats: !searchTerm && filterStatus === "all"
       })
       if (res?.success) {
         setDoctors(res.data)

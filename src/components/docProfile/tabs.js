@@ -1,6 +1,7 @@
 "use client";
 import { AppWindowIcon, CodeIcon } from "lucide-react";
-import { useEffect, useRef } from "react";
+import { Suspense, useEffect, useRef } from "react";
+import { useSearchParams } from "next/navigation";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -20,16 +21,35 @@ import ReviewForm from "./ReviewForm";
 import About from "./About";
 import QuestionsAndAnswers from "./QA";
 
-export function DocTabs({ doctData, ownProfile, writeReview }) {
-  const tabsRef = useRef(null);
+// Reads ?writeReview=true on the client so the page itself can stay static.
+// Wrapped in Suspense by DocTabs because useSearchParams opts its subtree out
+// of prerendering.
+function WriteReviewScroll({ targetRef }) {
+  const searchParams = useSearchParams();
+  const writeReview = searchParams?.get("writeReview") === "true";
 
   useEffect(() => {
-    if (writeReview && tabsRef.current) {
-      setTimeout(() => {
-        tabsRef.current.scrollIntoView({ behavior: "smooth", block: "start" });
-      }, 100);
-    }
-  }, [writeReview]);
+    if (!writeReview || !targetRef.current) return;
+    // Retries with an instant fallback: programmatic smooth scrolls can be
+    // swallowed during page load (global scroll-behavior:smooth plus the
+    // router's own scroll restoration), so keep trying until it lands.
+    let attempts = 0;
+    const interval = setInterval(() => {
+      attempts += 1;
+      targetRef.current?.scrollIntoView({
+        behavior: attempts === 1 ? "smooth" : "instant",
+        block: "start",
+      });
+      if (window.scrollY > 100 || attempts >= 5) clearInterval(interval);
+    }, 400);
+    return () => clearInterval(interval);
+  }, [writeReview, targetRef]);
+
+  return null;
+}
+
+export function DocTabs({ doctData, ownProfile }) {
+  const tabsRef = useRef(null);
 
   const handleReviewSubmit = () => {
     console.log("Review submitted");
@@ -43,6 +63,9 @@ export function DocTabs({ doctData, ownProfile, writeReview }) {
   const line = "h-5 w-[1px] bg-primary";
   return (
     <div ref={tabsRef} id="write-review" className="mt-7 flex w-full flex-col gap-6 scroll-mt-24">
+      <Suspense fallback={null}>
+        <WriteReviewScroll targetRef={tabsRef} />
+      </Suspense>
       <Tabs defaultValue="reviews">
         <TabsList className="text-muted-foreground inline-flex items-center justify-center p-[3px] border-primary w-full max-w-7xl mx-auto rounded-none border-t-[1px] border-b-[1px] bg-transparent py-5">
           <TabsTrigger

@@ -14,6 +14,14 @@ const BASE_URL =
   process.env.NEXT_PUBLIC_BASE_URL ||
   "https://www.bestorthopaedicsurgeon.com.au";
 
+// Prerendered per location, refreshed hourly and on doctor mutations via
+// revalidateDoctorContent(). Mirrors the [specialty] pages setup.
+export const revalidate = 3600;
+
+export function generateStaticParams() {
+  return seoLocations.map((loc) => ({ location: loc.slug }));
+}
+
 export async function generateMetadata({ params }) {
   const { location: slug } = await params;
   const location = getLocationBySlug(slug);
