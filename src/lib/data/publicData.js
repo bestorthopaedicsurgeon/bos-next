@@ -68,24 +68,37 @@ export async function getPublicDoctorSlugs() {
   }
 }
 
+// Homepage featured lineup: pinned profiles first (in this order), then the
+// remaining slots filled from the featured pool in a stable order so the
+// same six always appear. All featured doctors still rank first on the
+// surgeons page regardless of whether they make the homepage six.
+const HOMEPAGE_PINNED_IDS = [20, 104]; // Rhys Clark, Riaz JK Khan
+
 // Homepage featured surgeons; mirrors /api/doctors/featured.
 export async function getFeaturedDoctors() {
   try {
-    const topDoctorId = 20;
-
-    const topDoctor = await prisma.doctorProfile.findFirst({
-      where: { id: topDoctorId, hidden: false },
+    const pinnedDocs = await prisma.doctorProfile.findMany({
+      where: { id: { in: HOMEPAGE_PINNED_IDS }, hidden: false },
       include: { reviews: true },
     });
+    const pinned = HOMEPAGE_PINNED_IDS.map((id) =>
+      pinnedDocs.find((d) => d.id === id)
+    ).filter(Boolean);
 
-    let featuredDoctors = await prisma.doctorProfile.findMany({
-      where: { featured: true, hidden: false, id: { not: topDoctorId } },
-      include: { reviews: true },
-      take: topDoctor ? 5 : 6,
-    });
-
-    if (topDoctor) {
-      featuredDoctors = [topDoctor, ...featuredDoctors];
+    let featuredDoctors = pinned;
+    const fillCount = 6 - pinned.length;
+    if (fillCount > 0) {
+      const fill = await prisma.doctorProfile.findMany({
+        where: {
+          featured: true,
+          hidden: false,
+          id: { notIn: HOMEPAGE_PINNED_IDS },
+        },
+        include: { reviews: true },
+        orderBy: { id: "asc" },
+        take: fillCount,
+      });
+      featuredDoctors = [...pinned, ...fill];
     }
 
     if (featuredDoctors.length < 6) {
