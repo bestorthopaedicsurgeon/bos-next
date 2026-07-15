@@ -2,37 +2,43 @@ import { prisma } from "@/lib/prisma";
 import { NextResponse } from "next/server";
 
 
+// Homepage featured lineup: pinned profiles first (in this order), then the
+// remaining slots filled from the featured pool in a stable order so the
+// same six always appear. Keep in sync with getFeaturedDoctors() in
+// src/lib/data/publicData.js.
+const HOMEPAGE_PINNED_IDS = [20, 104]; // Rhys Clark, Riaz JK Khan
+
 export async function GET() {
   try {
-    const topDoctorId = 20;
-
-    // 1. Get the pinned doctor (Rhys Clark) if he exists and is not hidden
-    const topDoctor = await prisma.doctorProfile.findFirst({
-      where: { id: topDoctorId, hidden: false },
+    // 1. Pinned doctors, in pinned order, skipping any that are hidden
+    const pinnedDocs = await prisma.doctorProfile.findMany({
+      where: { id: { in: HOMEPAGE_PINNED_IDS }, hidden: false },
       include: { reviews: true },
     });
+    const pinned = HOMEPAGE_PINNED_IDS.map((id) =>
+      pinnedDocs.find((d) => d.id === id)
+    ).filter((d): d is NonNullable<typeof d> => Boolean(d));
 
-    // 2. Get other manually featured doctors
-    let featuredDoctors = await prisma.doctorProfile.findMany({
-      where: { 
-        featured: true, 
-        hidden: false,
-        id: { not: topDoctorId } 
-      },
-      include: { reviews: true },
-      take: topDoctor ? 5 : 6,
-    });
-
-    // Prepend the top doctor if found
-    if (topDoctor) {
-      featuredDoctors = [topDoctor, ...featuredDoctors];
+    // 2. Fill the remaining slots from the featured pool, deterministically
+    let featuredDoctors = pinned;
+    const fillCount = 6 - pinned.length;
+    if (fillCount > 0) {
+      const fill = await prisma.doctorProfile.findMany({
+        where: {
+          featured: true,
+          hidden: false,
+          id: { notIn: HOMEPAGE_PINNED_IDS },
+        },
+        include: { reviews: true },
+        orderBy: { id: "asc" },
+        take: fillCount,
+      });
+      featuredDoctors = [...pinned, ...fill];
     }
-
-    console.log("Featured Doctors backend:", featuredDoctors);
 
     const featuredIds = featuredDoctors.map((d) => d.id);
 
-    // 2. If fewer than 6, get top-rated doctors to fill the rest
+    // 3. If fewer than 6, get top-rated doctors to fill the rest
     if (featuredDoctors.length < 6) {
       const remaining = 6 - featuredDoctors.length;
 
