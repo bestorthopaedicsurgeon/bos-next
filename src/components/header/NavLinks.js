@@ -10,7 +10,7 @@ export function NavLinks({ isMobile = false }) {
     { href: "/", label: "Home" },
     { href: "/about", label: "About" },
     { href: "/surgeons", label: "Surgeons" },
-    { href: "/blog", label: "Blog" },
+    { href: "/blog", label: "Blogs" },
     { href: "/contactUs", label: "Contact" },
     { href: "/faq", label: "FAQs" },
   ];
@@ -26,8 +26,8 @@ export function NavLinks({ isMobile = false }) {
               ? "text-primary font-bold"
               : "hover:text-primary/90 text-gray-700"
           } ${
-            isMobile 
-              ? "block px-6 py-3 text-lg border-b border-gray-100 last:border-b-0 hover:bg-gray-50" 
+            isMobile
+              ? "block border-b border-gray-100 px-6 py-3 text-lg last:border-b-0 hover:bg-gray-50"
               : ""
           }`}
         >
