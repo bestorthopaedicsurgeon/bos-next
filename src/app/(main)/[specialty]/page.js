@@ -12,6 +12,8 @@ import DoctorCard from "@/components/reusable/doctorCard";
 import ProfileHeader from "@/components/reusable/profileHeader";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { LinkPillsSection } from "@/components/seo/LinkPillsSection";
+import { AnswerSummary } from "@/components/seo/AnswerSummary";
+import { SeoFaq } from "@/components/seo/SeoFaq";
 
 const BASE_URL =
   process.env.NEXT_PUBLIC_BASE_URL ||
@@ -97,6 +99,53 @@ export default async function SubspecialtyPage({ params }) {
       label: `${sub.name} surgeons in ${x.l.name}`,
     }));
 
+  // Data for the extractable answer block and FAQ (computed from the live
+  // directory so every page carries unique, factual numbers).
+  const perthLoc = seoLocations.find((l) => l.slug === "perth");
+  const perthCount = perthLoc
+    ? surgeons.filter((s) => matchesLocation(s, perthLoc)).length
+    : 0;
+  const singular = sub.keyword.replace(/s$/, "");
+  const summaryText =
+    `Best Orthopaedic Surgeons (BOS) lists ${surgeons.length} verified ` +
+    `${sub.keyword} across Western Australia` +
+    (perthCount > 0
+      ? `, including ${perthCount} practising in the Perth metropolitan area`
+      : "") +
+    `. Each profile shows the surgeon's qualifications, subspecialties, ` +
+    `hospital affiliations and patient reviews, so you can compare ` +
+    `specialists and contact the right one for your condition.`;
+
+  const faqs =
+    surgeons.length > 0
+      ? [
+          {
+            q: `How many ${sub.keyword} are there in Western Australia?`,
+            a: `BOS currently lists ${surgeons.length} verified ${sub.keyword} across Western Australia${perthCount > 0 ? `, with ${perthCount} practising in and around Perth` : ""}. Each surgeon has a profile showing qualifications, hospital affiliations and reviews from patients.`,
+          },
+          {
+            q: `How do I choose the right ${singular} in Perth?`,
+            a: (
+              <>
+                Compare subspecialty focus, qualifications such as FRACS and
+                FAOrthA, hospital affiliations and reviews from patients who had
+                similar treatment. Once you have a shortlist, ask your GP for a
+                referral to that surgeon by name. You can{" "}
+                <Link href="/surgeons" className="text-primary underline">
+                  compare all surgeons in the directory
+                </Link>{" "}
+                before deciding.
+              </>
+            ),
+            aText: `Compare subspecialty focus, qualifications such as FRACS and FAOrthA, hospital affiliations and reviews from patients who had similar treatment. Once you have a shortlist, ask your GP for a referral to that surgeon by name.`,
+          },
+          {
+            q: `Do I need a GP referral to see a ${singular} in Australia?`,
+            a: `You can book a consultation without a referral, but Medicare only rebates specialist consultations when you have a valid referral from your GP or another specialist. Most patients visit their GP first, then book with the surgeon of their choice.`,
+          },
+        ]
+      : [];
+
   const otherSubLinks = seoSubspecialties
     .filter((s) => s.slug !== sub.slug)
     .map((s) => ({ href: `/${s.slug}`, label: s.heading }));
@@ -113,9 +162,12 @@ export default async function SubspecialtyPage({ params }) {
       />
 
       {/* Intro */}
-      <div className="mx-auto mt-12 mb-16 max-w-3xl text-center">
+      <div className="mx-auto mt-12 mb-10 max-w-3xl text-center">
         <p className="text-lg leading-relaxed text-neutral-700">{sub.intro}</p>
       </div>
+
+      {/* Extractable direct answer with live directory numbers */}
+      {surgeons.length > 0 && <AnswerSummary>{summaryText}</AnswerSummary>}
 
       {/* Surgeon grid */}
       <section className="mb-24">
@@ -169,6 +221,12 @@ export default async function SubspecialtyPage({ params }) {
           Browse the full directory
         </Link>
       </section>
+
+      {/* FAQ with FAQPage schema */}
+      <SeoFaq
+        title={`${sub.heading}: common questions`}
+        faqs={faqs}
+      />
 
       {/* Contextual internal links to the subspecialty x location matrix */}
       <LinkPillsSection

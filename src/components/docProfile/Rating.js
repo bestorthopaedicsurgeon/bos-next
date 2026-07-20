@@ -5,9 +5,12 @@ import { Star } from "lucide-react";
 import Image from "next/image";
 import { fetchDoctorReviews } from "@/lib/apiCalls/client/doctor";
 import { toast } from "sonner";
-const Rating = ({ className, doctorId }) => {
-  const [loading, setLoading] = useState(true);
-  const [data, setData] = useState({});
+const Rating = ({ className, doctorId, initialData }) => {
+  // Reviews arrive server side (initialData) so they render in the initial
+  // HTML for search and AI crawlers; the client fetch is only a fallback for
+  // callers that do not pass them.
+  const [loading, setLoading] = useState(!initialData);
+  const [data, setData] = useState(initialData || {});
   // const [reviews, setReviews] = useState([]);
   // const [averageRatings, setAverageRatings] = useState({
   //   professionalism: 0,
@@ -33,7 +36,7 @@ const Rating = ({ className, doctorId }) => {
       }
     };
 
-    if (doctorId) {
+    if (doctorId && !initialData) {
       loadReviews();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -65,7 +68,10 @@ const Rating = ({ className, doctorId }) => {
           <div key={key} className="mt-10 border-t-2 border-[#BDC6C6]">
             <div className="flex items-center gap-2 pt-5">
               <Image
-                src={data.user.image}
+                src={
+                  data.user?.image ||
+                  "https://www.gravatar.com/avatar/00000000000000000000000000000000?d=mp&f=y"
+                }
                 height={30}
                 width={30}
                 className="h-7 w-7 rounded-full border-[1px] border-[#737373]"
@@ -73,7 +79,7 @@ const Rating = ({ className, doctorId }) => {
                 loading="lazy"
               />
               <p className="text-[14px] font-[600] text-[#737373]">
-                {data.user.name} -  {new Date(data.createdAt).toLocaleDateString("en-AU", { year: "numeric", month: "2-digit", day: "2-digit" })}
+                {data.user?.name} -  {new Date(data.createdAt).toLocaleDateString("en-AU", { year: "numeric", month: "2-digit", day: "2-digit" })}
               </p>
             </div>
             <div className="flex items-start justify-between gap-2 max-md:mt-5 max-md:flex-col-reverse">

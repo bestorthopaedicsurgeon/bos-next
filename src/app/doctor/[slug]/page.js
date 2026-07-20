@@ -170,6 +170,24 @@ const Page = async ({ params }) => {
   // profile (see getDoctorPageData).
   const aggregateRating = res?.aggregateRating || null;
 
+  // Individual review objects for the Physician schema. Valid because the
+  // same reviews are now rendered in the page HTML (reviews tab).
+  const reviewSchemaItems = (res?.reviewsData?.reviews || [])
+    .slice(0, 5)
+    .filter((r) => r.review)
+    .map((r) => ({
+      "@type": "Review",
+      author: { "@type": "Person", name: r.user?.name || "Verified patient" },
+      datePublished: String(r.createdAt).slice(0, 10),
+      reviewBody: r.review,
+      reviewRating: {
+        "@type": "Rating",
+        ratingValue: r.averageRating,
+        bestRating: 5,
+        worstRating: 1,
+      },
+    }));
+
   const cleanSubspecialties = Array.isArray(doctData?.subspecialities)
     ? doctData.subspecialities.filter(Boolean)
     : [];
@@ -195,6 +213,7 @@ const Page = async ({ params }) => {
           : practiceAddresses,
     }),
     ...(aggregateRating && { aggregateRating }),
+    ...(reviewSchemaItems.length > 0 && { review: reviewSchemaItems }),
     ...(Array.isArray(doctData?.hospitalAffiliations) &&
       doctData.hospitalAffiliations.length > 0 && {
         hospitalAffiliation: doctData.hospitalAffiliations.map((h) => ({
@@ -263,7 +282,11 @@ const Page = async ({ params }) => {
         </div>
       </div>
 
-      <DocTabs doctData={doctData} />
+      <DocTabs
+        doctData={doctData}
+        initialReviews={res?.reviewsData}
+        initialQuestions={res?.questions}
+      />
       <FindAnotherSurgeonCTA />
     </div>
   );

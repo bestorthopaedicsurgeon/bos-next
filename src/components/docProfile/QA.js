@@ -62,12 +62,14 @@ export default function QuestionsAndAnswers({
   };
 
   useEffect(() => {
-    // Only fetch if we don't have questions from props and we have a doctData.id
-    if (!questionsFromProps && doctData?.id) {
+    // Server-provided questions cover the anonymous (public) view, so bots
+    // and visitors see Q&A in the initial HTML. Logged in users refetch so
+    // their own confidential questions are included as well.
+    if (doctData?.id && (!questionsFromProps || currentUserId)) {
       fetchQuestions();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [doctData?.id, questionsFromProps]);
+  }, [doctData?.id, questionsFromProps, currentUserId]);
 
   // const questions = [
   //   {

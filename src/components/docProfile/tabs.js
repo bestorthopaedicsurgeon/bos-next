@@ -48,7 +48,7 @@ function WriteReviewScroll({ targetRef }) {
   return null;
 }
 
-export function DocTabs({ doctData, ownProfile }) {
+export function DocTabs({ doctData, ownProfile, initialReviews, initialQuestions }) {
   const tabsRef = useRef(null);
 
   const handleReviewSubmit = () => {
@@ -95,6 +95,7 @@ export function DocTabs({ doctData, ownProfile }) {
         >
           <Rating
             doctorId={doctData.id}
+            initialData={initialReviews}
             className={` ${ownProfile ? "w-full" : "w-[60%] max-lg:w-full"}`}
           />
           {/* <QuestionReview className="w-[40%] max-lg:w-full" /> */}
@@ -128,6 +129,7 @@ export function DocTabs({ doctData, ownProfile }) {
           <QuestionsAndAnswers
             doctData={doctData}
             ownProfile={ownProfile}
+            questions={initialQuestions}
             className={` ${ownProfile ? "w-full" : "w-[60%] max-w-4xl max-lg:w-full"}`}
           />
           {!ownProfile && (

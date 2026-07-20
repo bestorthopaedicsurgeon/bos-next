@@ -2,6 +2,7 @@ import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { getServerSession } from "next-auth/next";
 import { NextResponse } from "next/server";
+import { revalidatePath } from "next/cache";
 
 export async function POST(req: Request) {
   try {
@@ -30,6 +31,15 @@ export async function POST(req: Request) {
         doctorId: parseInt(doctorId),
       },
     });
+
+    // Public Q&A is baked into the static doctor page; refresh it.
+    const questionedDoctor = await prisma.doctorProfile.findUnique({
+      where: { id: parseInt(doctorId) },
+      select: { slug: true },
+    });
+    if (questionedDoctor?.slug) {
+      revalidatePath(`/doctor/${questionedDoctor.slug}`);
+    }
 
     return NextResponse.json({ success: true, data: question });
   } catch (error) {

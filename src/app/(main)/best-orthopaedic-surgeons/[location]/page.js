@@ -9,6 +9,8 @@ import DoctorCard from "@/components/reusable/doctorCard";
 import ProfileHeader from "@/components/reusable/profileHeader";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { LinkPillsSection } from "@/components/seo/LinkPillsSection";
+import { AnswerSummary } from "@/components/seo/AnswerSummary";
+import { SeoFaq } from "@/components/seo/SeoFaq";
 
 const BASE_URL =
   process.env.NEXT_PUBLIC_BASE_URL ||
@@ -110,6 +112,41 @@ export default async function LocationPage({ params }) {
     label: `Orthopaedic surgeons in ${l.name}`,
   }));
 
+  // Extractable answer and FAQ built from live directory numbers.
+  const topSubs = seoSubspecialties
+    .map((s) => ({ s, count: surgeons.filter((d) => matchesSubspecialty(d, s)).length }))
+    .filter((x) => x.count > 0)
+    .sort((a, b) => b.count - a.count)
+    .slice(0, 3)
+    .map((x) => x.s.name.toLowerCase());
+  const summaryText =
+    `Best Orthopaedic Surgeons (BOS) lists ${surgeons.length} verified ` +
+    `orthopaedic ${surgeons.length === 1 ? "surgeon" : "surgeons"} practising ` +
+    `in ${location.name}, Western Australia` +
+    (topSubs.length > 0
+      ? `. The most common subspecialties in ${location.name} are ${topSubs.join(", ")} surgery`
+      : "") +
+    `. Each profile shows qualifications, hospital affiliations and patient ` +
+    `reviews so you can compare local specialists before booking.`;
+
+  const faqs =
+    surgeons.length > 0
+      ? [
+          {
+            q: `How many orthopaedic surgeons are there in ${location.name}?`,
+            a: `BOS currently lists ${surgeons.length} verified orthopaedic ${surgeons.length === 1 ? "surgeon" : "surgeons"} practising in ${location.name}${topSubs.length > 0 ? `, covering subspecialties including ${topSubs.join(", ")} surgery` : ""}. Each has a profile with qualifications, hospital affiliations and patient reviews.`,
+          },
+          {
+            q: `How do I choose an orthopaedic surgeon in ${location.name}?`,
+            a: `Match the surgeon's subspecialty to your condition first, then compare qualifications such as FRACS and FAOrthA, hospital affiliations and reviews from patients who had similar treatment. Once you have a shortlist, ask your GP for a referral to that surgeon by name.`,
+          },
+          {
+            q: `Do I need a GP referral to see an orthopaedic surgeon in ${location.name}?`,
+            a: `You can book a consultation without a referral, but Medicare only rebates specialist consultations when you have a valid referral from your GP or another specialist. Most patients visit their GP first, then book with the surgeon of their choice.`,
+          },
+        ]
+      : [];
+
   return (
     <div className="container">
       <JsonLd data={breadcrumbSchema} />
@@ -123,11 +160,14 @@ export default async function LocationPage({ params }) {
       />
 
       {/* Intro */}
-      <div className="mx-auto mt-12 mb-16 max-w-3xl text-center">
+      <div className="mx-auto mt-12 mb-10 max-w-3xl text-center">
         <p className="text-lg leading-relaxed text-neutral-700">
           {location.intro}
         </p>
       </div>
+
+      {/* Extractable direct answer with live directory numbers */}
+      {surgeons.length > 0 && <AnswerSummary>{summaryText}</AnswerSummary>}
 
       {/* Surgeon grid */}
       <section className="mb-24">
@@ -184,6 +224,12 @@ export default async function LocationPage({ params }) {
           Browse the full directory
         </Link>
       </section>
+
+      {/* FAQ with FAQPage schema */}
+      <SeoFaq
+        title={`Orthopaedic surgeons in ${location.name}: common questions`}
+        faqs={faqs}
+      />
 
       {/* Contextual internal links: specialties in this location + other areas */}
       <LinkPillsSection
