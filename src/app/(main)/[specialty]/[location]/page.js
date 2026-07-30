@@ -13,6 +13,7 @@ import DoctorCard from "@/components/reusable/doctorCard";
 import ProfileHeader from "@/components/reusable/profileHeader";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { LinkPillsSection } from "@/components/seo/LinkPillsSection";
+import { AnswerSummary } from "@/components/seo/AnswerSummary";
 
 const BASE_URL =
   process.env.NEXT_PUBLIC_BASE_URL ||
@@ -119,11 +120,17 @@ export default async function SubspecialtyLocationPage({ params }) {
         step2={`${sub.name} in ${loc.name}`}
       />
 
-      <div className="mx-auto mt-12 mb-16 max-w-3xl text-center">
+      <div className="mx-auto mt-12 mb-10 max-w-3xl text-center">
         <p className="text-lg leading-relaxed text-neutral-700">
           {`Looking for the best ${sub.name.toLowerCase()} surgeons in ${loc.name}? Browse experienced ${sub.keyword} practising in ${loc.name}, Western Australia. Compare their qualifications, hospital affiliations and patient reviews, then book an appointment with the right specialist.`}
         </p>
       </div>
+
+      {surgeons.length > 0 && (
+        <AnswerSummary>
+          {`Best Orthopaedic Surgeons (BOS) lists ${surgeons.length} verified ${sub.keyword} practising in ${loc.name}, Western Australia. Each profile shows the surgeon's qualifications, hospital affiliations and patient reviews so you can compare local ${sub.name.toLowerCase()} specialists before booking a consultation.`}
+        </AnswerSummary>
+      )}
 
       <section className="mb-20">
         <div className="mb-6 flex items-center justify-between">

@@ -1,13 +1,16 @@
 import { cache } from "react";
 import { revalidatePath } from "next/cache";
 import { prisma } from "@/lib/prisma";
+import { pingIndexNow } from "@/lib/seo/indexNow";
 
 // Direct-Prisma data helpers for the public (statically rendered) pages.
 // These replace the old self-HTTP fetches so pages can be prerendered and
 // served from cache instead of querying the database per request.
 
-// One query per render, shared between generateMetadata and the page via
-// React cache(). Accepts a slug or a numeric id (legacy URLs).
+// Shared between generateMetadata and the page via React cache(). Accepts a
+// slug or a numeric id (legacy URLs). Fetches the profile plus its full
+// public reviews and Q&A so they render in the initial HTML, where search
+// and AI crawlers (which do not run JS) can read them.
 export const getDoctorPageData = cache(async (slugOrId) => {
   const numericId = Number(slugOrId);
   const isNumeric = !isNaN(numericId);
@@ -16,12 +19,8 @@ export const getDoctorPageData = cache(async (slugOrId) => {
       where: isNumeric ? { id: numericId } : { slug: String(slugOrId) },
       include: {
         reviews: {
-          select: {
-            professionalism: true,
-            punctuality: true,
-            helpfulness: true,
-            knowledge: true,
-          },
+          include: { user: { select: { name: true, image: true } } },
+          orderBy: { createdAt: "desc" },
         },
       },
     });
@@ -30,25 +29,89 @@ export const getDoctorPageData = cache(async (slugOrId) => {
     const { reviews, ...data } = doctor;
 
     let aggregateRating = null;
+    const averageRatings = {
+      professionalism: 0,
+      punctuality: 0,
+      helpfulness: 0,
+      knowledge: 0,
+      overall: 0,
+    };
     if (reviews.length > 0) {
-      const avg =
-        reviews.reduce(
-          (sum, r) =>
-            sum +
-            (r.professionalism + r.punctuality + r.helpfulness + r.knowledge) /
-              4,
-          0
-        ) / reviews.length;
+      const sums = reviews.reduce(
+        (acc, r) => ({
+          professionalism: acc.professionalism + r.professionalism,
+          punctuality: acc.punctuality + r.punctuality,
+          helpfulness: acc.helpfulness + r.helpfulness,
+          knowledge: acc.knowledge + r.knowledge,
+        }),
+        { professionalism: 0, punctuality: 0, helpfulness: 0, knowledge: 0 }
+      );
+      averageRatings.professionalism = Number((sums.professionalism / reviews.length).toFixed(1));
+      averageRatings.punctuality = Number((sums.punctuality / reviews.length).toFixed(1));
+      averageRatings.helpfulness = Number((sums.helpfulness / reviews.length).toFixed(1));
+      averageRatings.knowledge = Number((sums.knowledge / reviews.length).toFixed(1));
+      averageRatings.overall = Number(
+        (
+          (averageRatings.professionalism +
+            averageRatings.punctuality +
+            averageRatings.helpfulness +
+            averageRatings.knowledge) /
+          4
+        ).toFixed(1)
+      );
       aggregateRating = {
         "@type": "AggregateRating",
-        ratingValue: Number(avg.toFixed(1)),
+        ratingValue: averageRatings.overall,
         reviewCount: reviews.length,
         bestRating: 5,
         worstRating: 1,
       };
     }
 
-    return { data, aggregateRating };
+    // Mirrors the /api/doctors/[id]/reviews response shape used by the
+    // reviews tab, with dates serialised for client component props.
+    const reviewsData = {
+      totalReviews: reviews.length,
+      averageRatings,
+      reviews: reviews.map((r) => ({
+        ...r,
+        createdAt: r.createdAt.toISOString(),
+        averageRating: Number(
+          (
+            (r.professionalism + r.punctuality + r.helpfulness + r.knowledge) /
+            4
+          ).toFixed(1)
+        ),
+      })),
+    };
+
+    // Public Q&A only: the static page is served to everyone, so confidential
+    // questions must never be baked in. Logged in users refetch client side.
+    const questionRows = await prisma.question.findMany({
+      where: { doctorId: doctor.id, isConfidential: false },
+      include: {
+        patient: { select: { id: true, name: true, image: true } },
+        answers: {
+          include: {
+            author: { select: { id: true, name: true, image: true } },
+          },
+          orderBy: { createdAt: "asc" },
+        },
+      },
+      orderBy: { createdAt: "desc" },
+    });
+    const questions = questionRows.map((q) => ({
+      ...q,
+      createdAt: q.createdAt.toISOString(),
+      updatedAt: q.updatedAt ? q.updatedAt.toISOString() : null,
+      answers: q.answers.map((a) => ({
+        ...a,
+        createdAt: a.createdAt.toISOString(),
+        updatedAt: a.updatedAt ? a.updatedAt.toISOString() : null,
+      })),
+    }));
+
+    return { data, aggregateRating, reviewsData, questions };
   } catch (e) {
     console.error("getDoctorPageData failed:", e?.message);
     return null;
@@ -208,6 +271,9 @@ export function revalidateDoctorContent(slug) {
     revalidatePath("/best-orthopaedic-surgeons/[location]", "page");
     revalidatePath("/[specialty]", "page");
     revalidatePath("/[specialty]/[location]", "page");
+
+    // Tell Bing (and therefore ChatGPT search / Copilot) to recrawl now.
+    pingIndexNow(["/", ...(slug ? [`/doctor/${slug}`] : [])]);
   } catch (e) {
     console.error("revalidateDoctorContent failed:", e?.message);
   }
@@ -222,6 +288,9 @@ export function revalidateBlogContent(slug) {
     } else {
       revalidatePath("/blog/[slug]", "page");
     }
+
+    // Tell Bing (and therefore ChatGPT search / Copilot) to recrawl now.
+    pingIndexNow(["/", "/blog", ...(slug ? [`/blog/${slug}`] : [])]);
   } catch (e) {
     console.error("revalidateBlogContent failed:", e?.message);
   }

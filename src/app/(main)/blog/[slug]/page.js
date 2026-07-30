@@ -91,6 +91,44 @@ const Page = async ({ params }) => {
     }
   };
 
+  // Show an updated date only when the post was meaningfully revised after
+  // publishing (more than a day later), as a freshness signal.
+  const wasUpdated =
+    blog.updatedAt &&
+    blog.createdAt &&
+    new Date(blog.updatedAt).getTime() - new Date(blog.createdAt).getTime() >
+      24 * 60 * 60 * 1000;
+
+  const plainExcerpt = String(blog.content || "")
+    .replace(/<[^>]*>/g, " ")
+    .replace(/\s+/g, " ")
+    .trim()
+    .slice(0, 160);
+
+  const articleSchema = {
+    "@context": "https://schema.org",
+    "@type": "BlogPosting",
+    headline: blog.title || slug,
+    description: plainExcerpt,
+    ...(blog.image && { image: blog.image }),
+    author: {
+      "@type": "Person",
+      name: blog.authorName || "Best Orthopaedic Surgeons",
+    },
+    publisher: {
+      "@type": "Organization",
+      name: "Best Orthopaedic Surgeons",
+      url: BLOG_BASE_URL,
+    },
+    ...(blog.createdAt && {
+      datePublished: new Date(blog.createdAt).toISOString(),
+    }),
+    ...(blog.updatedAt && {
+      dateModified: new Date(blog.updatedAt).toISOString(),
+    }),
+    mainEntityOfPage: `${BLOG_BASE_URL}/blog/${slug}`,
+  };
+
   // CSS styles for published blog content - Match TinyMCE editor styles
   const blogContentStyles = `
     /* Base typography and spacing to match editor */
@@ -390,8 +428,9 @@ const Page = async ({ params }) => {
 
   return (
     <div className="container">
-      {/* ✅ Breadcrumb structured data */}
+      {/* ✅ Breadcrumb + article structured data */}
       <JsonLd data={breadcrumbSchema} />
+      <JsonLd data={articleSchema} />
 
       {/* Inject CSS styles for blog content */}
       <style dangerouslySetInnerHTML={{ __html: blogContentStyles }} />
@@ -434,6 +473,7 @@ const Page = async ({ params }) => {
           </p>
           <p className="text-sm text-gray-600 dark:text-gray-400">
             Published on {formatDate(blog.createdAt)}
+            {wasUpdated && <> · Updated on {formatDate(blog.updatedAt)}</>}
           </p>
         </div>
       </div>
