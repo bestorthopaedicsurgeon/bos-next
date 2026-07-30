@@ -1,6 +1,7 @@
 import { cache } from "react";
 import { revalidatePath } from "next/cache";
 import { prisma } from "@/lib/prisma";
+import { pingIndexNow } from "@/lib/seo/indexNow";
 
 // Direct-Prisma data helpers for the public (statically rendered) pages.
 // These replace the old self-HTTP fetches so pages can be prerendered and
@@ -270,6 +271,9 @@ export function revalidateDoctorContent(slug) {
     revalidatePath("/best-orthopaedic-surgeons/[location]", "page");
     revalidatePath("/[specialty]", "page");
     revalidatePath("/[specialty]/[location]", "page");
+
+    // Tell Bing (and therefore ChatGPT search / Copilot) to recrawl now.
+    pingIndexNow(["/", ...(slug ? [`/doctor/${slug}`] : [])]);
   } catch (e) {
     console.error("revalidateDoctorContent failed:", e?.message);
   }
@@ -284,6 +288,9 @@ export function revalidateBlogContent(slug) {
     } else {
       revalidatePath("/blog/[slug]", "page");
     }
+
+    // Tell Bing (and therefore ChatGPT search / Copilot) to recrawl now.
+    pingIndexNow(["/", "/blog", ...(slug ? [`/blog/${slug}`] : [])]);
   } catch (e) {
     console.error("revalidateBlogContent failed:", e?.message);
   }
