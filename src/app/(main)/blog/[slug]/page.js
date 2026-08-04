@@ -9,6 +9,38 @@ const BLOG_BASE_URL =
   process.env.NEXT_PUBLIC_BASE_URL ||
   "https://www.bestorthopaedicsurgeon.com.au";
 
+const DEFAULT_BLOG_DESCRIPTION =
+  "Read the latest orthopaedic health insights and surgical guidance from Best Orthopaedic Surgeons.";
+
+const toPlainText = (html) =>
+  String(html || "")
+    .replace(/&nbsp;|&#160;/gi, " ")
+    .replace(/<[^>]*>/g, " ")
+    .replace(/&amp;/gi, "&")
+    .replace(/&quot;/gi, '"')
+    .replace(/&#(?:39|x27);|&apos;/gi, "'")
+    .replace(/&lt;/gi, "<")
+    .replace(/&gt;/gi, ">")
+    .replace(/\s+/g, " ")
+    .trim();
+
+const getBlogMetaDescription = (blog) => {
+  const savedDescription = String(blog.metaDescription || "").trim();
+  if (savedDescription) return savedDescription;
+
+  const plainContent = toPlainText(blog.content);
+  if (!plainContent) return DEFAULT_BLOG_DESCRIPTION;
+
+  return plainContent.length > 160
+    ? `${plainContent.slice(0, 157).trimEnd()}...`
+    : plainContent;
+};
+
+const normalizeBlogHeadings = (html) =>
+  String(html || "")
+    .replace(/<h1(\s[^>]*)?>/gi, "<h2$1>")
+    .replace(/<\/h1>/gi, "</h2>");
+
 // Prerendered per post with a daily safety net; blog mutations revalidate
 // the affected paths immediately via revalidateBlogContent().
 export const revalidate = 86400;
@@ -29,27 +61,27 @@ export async function generateMetadata({ params }) {
     };
   }
 
-  const plain = String(blog.content || "")
-    .replace(/<[^>]*>/g, " ")
-    .replace(/\s+/g, " ")
-    .trim();
-  const description =
-    (plain.length > 160 ? plain.slice(0, 157) + "..." : plain) ||
-    "Read the latest orthopaedic health insights and surgical guidance from Best Orthopaedic Surgeons.";
+  const savedMetaTitle = String(blog.metaTitle || "").trim();
+  const seoTitle = savedMetaTitle || blog.title || "Blog";
+  const description = getBlogMetaDescription(blog);
 
   return {
-    title: blog.title || "Blog",
+    title: savedMetaTitle ? { absolute: savedMetaTitle } : seoTitle,
     description,
     alternates: { canonical: `/blog/${slug}` },
-    openGraph: blog.image
-      ? {
-          title: blog.title,
-          description,
-          url: `/blog/${slug}`,
-          type: "article",
-          images: [{ url: blog.image }],
-        }
-      : undefined,
+    openGraph: {
+      title: seoTitle,
+      description,
+      url: `/blog/${slug}`,
+      type: "article",
+      ...(blog.image && { images: [{ url: blog.image }] }),
+    },
+    twitter: {
+      card: blog.image ? "summary_large_image" : "summary",
+      title: seoTitle,
+      description,
+      ...(blog.image && { images: [blog.image] }),
+    },
   };
 }
 
@@ -99,24 +131,34 @@ const Page = async ({ params }) => {
     new Date(blog.updatedAt).getTime() - new Date(blog.createdAt).getTime() >
       24 * 60 * 60 * 1000;
 
-  const plainExcerpt = String(blog.content || "")
-    .replace(/<[^>]*>/g, " ")
-    .replace(/\s+/g, " ")
-    .trim()
-    .slice(0, 160);
+  const description = getBlogMetaDescription(blog);
+  const authorName = String(blog.authorName || "").trim();
+  const organizationAuthor =
+    !authorName ||
+    ["bos", "best orthopaedic surgeon", "best orthopaedic surgeons"].includes(
+      authorName.toLowerCase(),
+    );
 
   const articleSchema = {
     "@context": "https://schema.org",
     "@type": "BlogPosting",
     headline: blog.title || slug,
-    description: plainExcerpt,
+    description,
     ...(blog.image && { image: blog.image }),
-    author: {
-      "@type": "Person",
-      name: blog.authorName || "Best Orthopaedic Surgeons",
-    },
+    author: organizationAuthor
+      ? {
+          "@type": "Organization",
+          "@id": `${BLOG_BASE_URL}/#organization`,
+          name: "Best Orthopaedic Surgeons",
+          url: BLOG_BASE_URL,
+        }
+      : {
+          "@type": "Person",
+          name: authorName,
+        },
     publisher: {
       "@type": "Organization",
+      "@id": `${BLOG_BASE_URL}/#organization`,
       name: "Best Orthopaedic Surgeons",
       url: BLOG_BASE_URL,
     },
@@ -438,7 +480,12 @@ const Page = async ({ params }) => {
       {/* Inject JavaScript to disable table editing */}
       <script dangerouslySetInnerHTML={{ __html: disableTableEditing }} />
       
-      <ProfileHeader heading={"Read Blog"} step1={"blog"} step2={slug} />
+      <ProfileHeader
+        heading={"Read Blog"}
+        headingAs="p"
+        step1={"blog"}
+        step2={slug}
+      />
       
       {/* Blog Title */}
       <div className="mb-8 mt-10">
@@ -480,7 +527,9 @@ const Page = async ({ params }) => {
 
       {/* Blog Content */}
       <article className="prose prose-lg max-w-none prose-headings:text-primary prose-headings:font-syne prose-a:text-primary prose-strong:text-gray-900 dark:prose-invert dark:prose-headings:text-primary dark:prose-a:text-primary">
-        <div dangerouslySetInnerHTML={{ __html: blog.content }}></div>
+        <div
+          dangerouslySetInnerHTML={{ __html: normalizeBlogHeadings(blog.content) }}
+        ></div>
       </article>
     </div>
   );

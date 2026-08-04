@@ -45,6 +45,8 @@ export async function PATCH(
     const authorName = formData.get("authorName") as string | null;
     const content = formData.get("content") as string | null;
     const newSlug = formData.get("newSlug") as string | null;
+    const metaTitle = formData.get("metaTitle") as string | null;
+    const metaDescription = formData.get("metaDescription") as string | null;
     const imageFile = formData.get("image") as File | null;
 
     // Validate required fields
@@ -61,6 +63,10 @@ export async function PATCH(
     if (authorName) updateData.authorName = authorName.trim();
     if (content) updateData.content = content.trim();
     if (newSlug) updateData.slug = newSlug.trim();
+    if (metaTitle !== null) updateData.metaTitle = metaTitle.trim() || null;
+    if (metaDescription !== null) {
+      updateData.metaDescription = metaDescription.trim() || null;
+    }
 
     // If updating to a new slug, check if it's already taken
     if (newSlug && newSlug !== slug) {

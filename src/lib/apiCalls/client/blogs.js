@@ -48,6 +48,8 @@ export const createBlogApi = async (blogData) => {
     formData.append("authorName", blogData.authorName);
     formData.append("content", blogData.content);
     formData.append("slug", blogData.slug);
+    formData.append("metaTitle", blogData.metaTitle || "");
+    formData.append("metaDescription", blogData.metaDescription || "");
 
     if (blogData.imageFile) {
       formData.append("image", blogData.imageFile); // actual File object
@@ -78,6 +80,8 @@ export const updateBlogApi = async (blogData) => {
     formData.append("title", blogData.title);
     formData.append("authorName", blogData.authorName);
     formData.append("content", blogData.content);
+    formData.append("metaTitle", blogData.metaTitle || "");
+    formData.append("metaDescription", blogData.metaDescription || "");
     
     // Add the new slug to the form data
     if (blogData.newSlug) {
