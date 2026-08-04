@@ -77,6 +77,8 @@ const Page = () => {
   const [blogs, setBlogs] = useState();
   const [editData, setEditData] = useState({
     title: "",
+    metaTitle: "",
+    metaDescription: "",
     authorName: "",
     slug: "",
     content: "",
@@ -346,6 +348,11 @@ const Page = () => {
       return;
     }
 
+    if (!editData.metaDescription?.trim()) {
+      toast.error("Please add a meta description");
+      return;
+    }
+
     // Use custom slug if provided, otherwise auto-generate from title
     const finalSlug = editData.slug || slugify(editData.title);
 
@@ -360,6 +367,8 @@ const Page = () => {
 
     const blog = await createBlogApi({
       title: editData.title,
+      metaTitle: editData.metaTitle,
+      metaDescription: editData.metaDescription,
       authorName: editData.authorName,
       content: editData.content,
       slug: finalSlug,
@@ -370,6 +379,8 @@ const Page = () => {
       toast.success("Blog created successfully");
       setEditData({
         title: "",
+        metaTitle: "",
+        metaDescription: "",
         authorName: "",
         slug: "",
         content: "",
@@ -399,6 +410,11 @@ const Page = () => {
       return;
     }
 
+    if (!editData.metaDescription?.trim()) {
+      toast.error("Please add a meta description");
+      return;
+    }
+
     try {
       // Use custom slug if provided, otherwise use the existing selectedBlog slug
       const finalSlug = editData.slug || selectedBlog;
@@ -419,6 +435,8 @@ const Page = () => {
       // For update, we need to pass both the old slug (to find the blog) and the new slug (to update to)
       const updateData = {
         title: editData.title,
+        metaTitle: editData.metaTitle,
+        metaDescription: editData.metaDescription,
         authorName: editData.authorName,
         content: editData.content,
         oldSlug: selectedBlog, // Use the old slug to find the blog
@@ -434,6 +452,8 @@ const Page = () => {
         toast.success("Blog updated successfully");
         setEditData({
           title: "",
+          metaTitle: "",
+          metaDescription: "",
           authorName: "",
           slug: "",
           content: "",
@@ -515,6 +535,8 @@ const Page = () => {
                     getBlogBySlugApi(value).then((blog) => {
                       setEditData({
                         title: blog.title,
+                        metaTitle: blog.metaTitle || "",
+                        metaDescription: blog.metaDescription || "",
                         authorName: blog.authorName,
                         content: blog.content,
                         slug: blog.slug,
@@ -529,6 +551,8 @@ const Page = () => {
                     setSelectedBlog(null);
                     setEditData({
                       title: "",
+                      metaTitle: "",
+                      metaDescription: "",
                       authorName: "",
                       content: "",
                       slug: "",
@@ -560,6 +584,68 @@ const Page = () => {
                       setEditData({ ...editData, title: e.target.value })
                     }
                     placeholder="e.g., Robotic Assisted vs. Conventional Total Knee Replacement"
+                  />
+                </div>
+
+                <div className={formField}>
+                  <div className="flex items-center justify-between gap-3">
+                    <label className="text-sm font-medium" htmlFor="metaTitle">
+                      SEO Title (optional)
+                    </label>
+                    <span
+                      className={`text-xs ${
+                        (editData?.metaTitle?.length || 0) > 60
+                          ? "text-amber-700"
+                          : "text-gray-500"
+                      }`}
+                    >
+                      {editData?.metaTitle?.length || 0} characters
+                    </span>
+                  </div>
+                  <input
+                    id="metaTitle"
+                    type="text"
+                    name="metaTitle"
+                    className={inputField}
+                    value={editData?.metaTitle || ""}
+                    onChange={(e) =>
+                      setEditData({ ...editData, metaTitle: e.target.value })
+                    }
+                    placeholder="Uses the blog title when empty"
+                  />
+                </div>
+
+                <div className={formField}>
+                  <div className="flex items-center justify-between gap-3">
+                    <label
+                      className="text-sm font-medium"
+                      htmlFor="metaDescription"
+                    >
+                      Meta Description *
+                    </label>
+                    <span
+                      className={`text-xs ${
+                        (editData?.metaDescription?.length || 0) > 160
+                          ? "text-amber-700"
+                          : "text-gray-500"
+                      }`}
+                    >
+                      {editData?.metaDescription?.length || 0} characters
+                    </span>
+                  </div>
+                  <textarea
+                    id="metaDescription"
+                    name="metaDescription"
+                    rows={3}
+                    className={`${inputField} resize-y`}
+                    value={editData?.metaDescription || ""}
+                    onChange={(e) =>
+                      setEditData({
+                        ...editData,
+                        metaDescription: e.target.value,
+                      })
+                    }
+                    placeholder="Summarise this article for search results"
                   />
                 </div>
 
@@ -952,6 +1038,8 @@ const Page = () => {
                           setSelectedBlog(null);
                           setEditData({
                             title: "",
+                            metaTitle: "",
+                            metaDescription: "",
                             authorName: "",
                             content: "",
                             slug: "",

@@ -50,6 +50,8 @@ export async function POST(req: NextRequest) {
   const content = formData.get("content") as string;
   const slug = formData.get("slug") as string;
   const authorName = formData.get("authorName") as string;
+  const metaTitle = formData.get("metaTitle") as string | null;
+  const metaDescription = formData.get("metaDescription") as string | null;
   const imageFile = formData.get("image") as File | null;
 
   if (!title || !content || !slug || !authorName) {
@@ -72,6 +74,8 @@ export async function POST(req: NextRequest) {
         content,
         slug,
         authorName,
+        metaTitle: metaTitle?.trim() || null,
+        metaDescription: metaDescription?.trim() || null,
         image: imageUrl,
       },
     });

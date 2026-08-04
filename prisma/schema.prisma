@@ -149,15 +149,17 @@ model DoctorSpecificAvailability {
 }
 
 model Blog {
-  id         String   @id @default(cuid())
-  title      String
-  authorName String
-  date       DateTime @default(now())
-  image      String?
-  content    String
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
-  slug       String   @unique
+  id              String   @id @default(cuid())
+  title           String
+  metaTitle       String?
+  metaDescription String?
+  authorName      String
+  date            DateTime @default(now())
+  image           String?
+  content         String
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  slug            String   @unique
 }
 
 model ContactUs {
