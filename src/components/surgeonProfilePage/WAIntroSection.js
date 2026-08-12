@@ -1,5 +1,6 @@
 import React from "react";
 import { CheckCircle } from "lucide-react";
+import { TutorialVideo } from "@/components/reusable/TutorialVideo";
 
 export const WAIntroSection = () => {
   const benefits = [
@@ -21,6 +22,11 @@ export const WAIntroSection = () => {
             Claim your profile or join and list your profile today to showcase your expertise.
           </p>
         </div>
+
+        <TutorialVideo
+          src="/videos/create-doctor-profile.webm"
+          title="Watch Tutorial"
+        />
 
         <div className="max-w-2xl mx-auto">
           <div className="bg-white rounded-lg p-8 shadow-md border-l-4 border-primary">

@@ -1,6 +1,7 @@
 import React from "react";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
+import { TutorialVideo } from "@/components/reusable/TutorialVideo";
 
 export const ReviewSteps = () => {
   const steps = [
@@ -40,6 +41,11 @@ export const ReviewSteps = () => {
             Leaving a review is quick, easy, and incredibly helpful for others. Here&apos;s how it works:
           </p>
         </div>
+
+        <TutorialVideo
+          src="/videos/doctor-review.webm"
+          title="Watch Tutorial"
+        />
 
         <div className=" mx-auto">
           {steps.map((step, index) => (
