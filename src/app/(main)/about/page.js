@@ -1,6 +1,6 @@
 export const metadata = {
   title: 'About Us',
-  description: 'Learn more about Best Orthopaedic Surgeons, our mission, and our team.',
+  description: 'Learn how Best Orthopaedic Surgeons helps patients compare orthopaedic specialists across Western Australia and why our directory exists.',
   alternates: { canonical: '/about' },
 };
 

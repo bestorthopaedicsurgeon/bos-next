@@ -3,7 +3,7 @@ import Header from "@/components/header/Header";
 
 export const metadata = {
   title: "Legal Disclaimer",
-  description: "Legal Disclaimer for www.bestorthopaedicsurgeon.com.au - Terms and conditions of use",
+  description: "Read the BOS legal disclaimer covering directory information, medical advice limitations, external links and use of bestorthopaedicsurgeon.com.au.",
   alternates: { canonical: '/legal-disclaimer' },
 };
 

@@ -3,7 +3,7 @@ import Header from "@/components/header/Header";
 
 export const metadata = {
   title: 'How to Leave a Review',
-  description: 'Learn how to leave a review for an orthopaedic surgeon on our platform.',
+  description: 'Learn how to find an orthopaedic surgeon profile, submit a patient review and understand how reviews are checked before publication on BOS.',
   alternates: { canonical: '/how-to-leave-review' },
 };
 

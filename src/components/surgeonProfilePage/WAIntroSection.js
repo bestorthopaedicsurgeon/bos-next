@@ -25,7 +25,7 @@ export const WAIntroSection = () => {
 
         <TutorialVideo
           src="/videos/create-doctor-profile.webm"
-          title="Watch Tutorial"
+          title="How to create your surgeon profile"
         />
 
         <div className="max-w-2xl mx-auto">

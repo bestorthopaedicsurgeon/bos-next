@@ -117,8 +117,8 @@ const DoctorCard = ({
       </div>
       <div className="relative h-[160px] w-[130px] xl:h-[221px] xl:w-[195px] shrink-0 overflow-hidden rounded-md">
         <Image
-          src={image || "/home/doctor-1.png"}
-          alt="Doctor"
+          src={image || "/home/doctor-1.jpg"}
+          alt={`${title ? `${title} ` : ""}${name || "Orthopaedic surgeon"}`}
           fill
           className="object-cover object-top"
         />

@@ -3,7 +3,7 @@ import Header from "@/components/header/Header";
 
 export const metadata = {
   title: 'Create Surgeon Profile',
-  description: 'Guide on how to create a surgeon profile on Best Orthopaedic Surgeons.',
+  description: 'Learn how Western Australian orthopaedic surgeons can create or claim a BOS profile, add practice details and help patients find their services.',
   alternates: { canonical: '/how-to-make-surgeons-profile' },
 };
 

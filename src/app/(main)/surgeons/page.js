@@ -17,7 +17,7 @@ const SITE_URL =
 export const metadata = {
   title: "Orthopaedic Surgeons in Western Australia",
   description:
-    "Browse and compare the best orthopaedic surgeons across Western Australia. Filter by subspecialty such as knee, hip, shoulder, spine, sports, hand and foot, and find the right specialist for your care.",
+    "Browse orthopaedic surgeons across Western Australia by specialty and location. Compare qualifications and reviews to find the right surgeon for your care.",
   alternates: { canonical: "/surgeons" },
   // No per-page `openGraph` override (would drop the site-wide og:image).
 };

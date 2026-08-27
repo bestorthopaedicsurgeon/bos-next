@@ -44,7 +44,7 @@ export const ReviewSteps = () => {
 
         <TutorialVideo
           src="/videos/doctor-review.webm"
-          title="Watch Tutorial"
+          title="How to leave a review"
         />
 
         <div className=" mx-auto">

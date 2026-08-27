@@ -135,8 +135,8 @@ const DocProfile = ({ docProfile_Details, editProfile }) => {
       >
         <div className="border-primary relative h-50 w-50 overflow-hidden rounded-md border-2">
           <Image
-            src={data?.image || "/placeholder.jpg"}
-            alt="Profile Image"
+            src={data?.image || "/home/doctor-1.jpg"}
+            alt={`${formattedTitle ? `${formattedTitle}. ` : ""}${data?.name || "Orthopaedic surgeon"}`}
             fill
             className="object-cover"
           />

@@ -39,7 +39,7 @@ export async function generateMetadata({ params }) {
     title: {
       absolute: `Best Orthopaedic Surgeons in ${location.name} | BOS`,
     },
-    description: `Find and compare the best orthopaedic surgeons in ${location.name}, Western Australia. View profiles, subspecialties, hospital affiliations and patient reviews, then book an appointment with the right specialist.`,
+    description: `Find orthopaedic surgeons in ${location.name}, Western Australia. Compare specialties, qualifications and patient reviews to choose a local specialist.`,
     alternates: { canonical: `/best-orthopaedic-surgeons/${location.slug}` },
   };
 }

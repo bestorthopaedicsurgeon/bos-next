@@ -37,6 +37,44 @@ const formatTitle = (title) => {
   return title.charAt(0).toUpperCase() + title.slice(1).toLowerCase();
 };
 
+const cleanText = (value) =>
+  String(value || "")
+    .replace(/<[^>]*>/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+
+const truncateDescription = (value, maxLength = 155) => {
+  const text = cleanText(value);
+  if (text.length <= maxLength) return text;
+
+  const shortened = text.slice(0, maxLength - 3).trimEnd();
+  const lastSpace = shortened.lastIndexOf(" ");
+  return `${lastSpace > 0 ? shortened.slice(0, lastSpace) : shortened}...`;
+};
+
+const getDoctorDisplayName = (doctor) =>
+  cleanText(
+    `${doctor?.title ? `${formatTitle(doctor.title)}. ` : ""}${doctor?.name || "Doctor"}`,
+  );
+
+const getDoctorDescription = (doctor, maxLength = 155) => {
+  const about = cleanText(doctor?.about);
+
+  if (about.length >= 100) {
+    return truncateDescription(about, maxLength);
+  }
+
+  const location = cleanText(doctor?.location);
+  const locationText = location
+    ? ` in ${location}, Western Australia`
+    : " across Western Australia";
+
+  return truncateDescription(
+    `View ${getDoctorDisplayName(doctor)}'s profile, specialties, qualifications, practice locations and patient reviews${locationText}.`,
+    maxLength,
+  );
+};
+
 // ─────────────────────────────────────────────
 // METADATA
 // ─────────────────────────────────────────────
@@ -53,25 +91,15 @@ export async function generateMetadata({ params }) {
 
   const doctData = res.data;
 
-  const formattedTitle = formatTitle(doctData?.title);
-  const doctorName = doctData?.name || "Doctor";
+  const displayName = getDoctorDisplayName(doctData);
   const designation = doctData?.designation
     ? doctData.designation.charAt(0).toUpperCase() +
     doctData.designation.slice(1).toLowerCase()
     : "Orthopaedic Surgeon";
   const location = doctData?.location ? ` in ${doctData.location}` : "";
 
-  const pageTitle = `${formattedTitle ? `${formattedTitle}. ` : ""}${doctorName} - ${designation}${location}`;
-
-  // Use about field for description if available
-  let description = `View the profile of ${formattedTitle ? `${formattedTitle}. ` : ""
-    }${doctorName}, ${designation} in Australia. Book an appointment on Best Orthopaedic Surgeons.`;
-
-  if (doctData?.about) {
-    const stripped = doctData.about.replace(/<[^>]*>/g, ""); // strip HTML tags
-    description =
-      stripped.length > 160 ? stripped.substring(0, 157) + "..." : stripped;
-  }
+  const pageTitle = `${displayName} - ${designation}${location}`;
+  const description = getDoctorDescription(doctData);
 
   const canonicalSlug = doctData?.slug || slug;
   const canonicalUrl = `${BASE_URL}/doctor/${canonicalSlug}`;
@@ -93,7 +121,7 @@ export async function generateMetadata({ params }) {
         ? [
           {
             url: doctData.image,
-            alt: `${formattedTitle ? `${formattedTitle}. ` : ""}${doctorName}`,
+            alt: displayName,
           },
         ]
         : undefined,
@@ -132,17 +160,12 @@ const Page = async ({ params }) => {
 
   const doctData = res?.data;
 
-  const formattedTitle = formatTitle(doctData?.title);
   const designation = doctData?.designation || "Orthopaedic Surgeon";
-  const pageTitle = `${formattedTitle ? `${formattedTitle}. ` : ""}${doctData?.name || "Doctor"
-    }`;
+  const pageTitle = getDoctorDisplayName(doctData);
 
   const canonicalSlug = doctData?.slug || slug;
 
-  // Build description for schema (strip HTML if any)
-  const schemaDescription = doctData?.about
-    ? doctData.about.replace(/<[^>]*>/g, "").substring(0, 300)
-    : `${pageTitle} is a specialist orthopaedic surgeon in Australia.`;
+  const schemaDescription = getDoctorDescription(doctData, 300);
 
   // ── Build structured postal addresses from the doctor's practice locations ──
   const practices = Array.isArray(doctData?.practices) ? doctData.practices : [];
@@ -151,7 +174,9 @@ const Page = async ({ params }) => {
     return m ? m[0] : undefined;
   };
   const parseLocality = (addr, fallback) => {
-    const m = String(addr || "").match(/([A-Za-z][A-Za-z\s]*?)\s+WA\s*\d{4}/);
+    const m = String(addr || "").match(
+      /(?:^|,)\s*([A-Za-z][A-Za-z\s'-]*?)\s+WA(?:\s+\d{4})?\s*$/i,
+    );
     return m ? m[1].trim() : fallback || undefined;
   };
   const practiceAddresses = practices
@@ -198,8 +223,8 @@ const Page = async ({ params }) => {
     "@type": "Physician",
     "@id": `${BASE_URL}/doctor/${canonicalSlug}#physician`,
     name: pageTitle,
-    jobTitle: designation,
-    medicalSpecialty: "Orthopedic",
+    occupationalCategory: designation,
+    medicalSpecialty: "https://schema.org/Musculoskeletal",
     description: schemaDescription,
     url: `${BASE_URL}/doctor/${canonicalSlug}`,
     areaServed: { "@type": "State", name: "Western Australia" },
@@ -259,8 +284,7 @@ const Page = async ({ params }) => {
           key={data.heading}
           heading={data.heading}
           step1={data.step1}
-          step2={`${formattedTitle ? `${formattedTitle}. ` : ""}${doctData?.name || "Doctor"
-            }`}
+          step2={pageTitle}
         />
       ))}
 

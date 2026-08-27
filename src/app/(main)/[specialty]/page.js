@@ -36,7 +36,7 @@ export async function generateMetadata({ params }) {
   }
   return {
     title: { absolute: `${sub.heading} in Western Australia | BOS` },
-    description: `Find and compare the best ${sub.keyword} in Western Australia. View profiles, qualifications, hospital affiliations and patient reviews, then book an appointment with the right specialist.`,
+    description: `Find ${sub.keyword} in Western Australia. Compare qualifications, hospital affiliations and patient reviews to choose a specialist.`,
     alternates: { canonical: `/${sub.slug}` },
   };
 }

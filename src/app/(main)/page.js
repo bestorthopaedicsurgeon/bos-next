@@ -16,7 +16,7 @@ export const metadata = {
     absolute: "Best Orthopaedic Surgeons in Western Australia | BOS",
   },
   description:
-    "Find the best orthopaedic surgeons in Western Australia. Compare profiles, qualifications and patient reviews, and book an appointment with a knee, hip, shoulder or spine specialist near you.",
+    "Find orthopaedic surgeons across Western Australia by specialty, location, qualifications and patient reviews. Choose the right surgeon for your care.",
   alternates: { canonical: "/" },
   // Note: no per-page `openGraph` override here — doing so would drop the
   // site-wide og:image from src/app/opengraph-image.js. og:title/description

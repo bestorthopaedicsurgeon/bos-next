@@ -44,3 +44,7 @@ next-env.d.ts
 
 # isolated QA build dir (TEST_DIST_DIR)
 /.next-qa/
+
+# private SEO working files
+/Ahrefs Audit SEO Issue/
+/BOS Blog content/
