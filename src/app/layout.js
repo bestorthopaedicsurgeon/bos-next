@@ -1,11 +1,11 @@
 import { DM_Sans, Syne } from "next/font/google";
-import Script from "next/script";
 import "./globals.css";
 import { ThemeProvider } from "@components/theme-provider";
 import { SessionProvider } from "next-auth/react";
 import SessionWrapper from "@/components/SessionWrapper";
 import { Toaster } from "@/components/ui/sonner";
 import { JsonLd } from "@/components/seo/JsonLd";
+import StaticRuhanaWidget from "@/components/StaticRuhanaWidget";
 
 const SITE_URL =
   process.env.NEXT_PUBLIC_BASE_URL ||
@@ -105,11 +105,11 @@ export default function RootLayout({ children }) {
         <ThemeProvider attribute="class" defaultTheme="light" enableSystem>
           <Toaster />
           <SessionWrapper>{children}</SessionWrapper>
+          <StaticRuhanaWidget
+            agentName="Isla"
+            imageUrl="/avatars/isla.png"
+          />
         </ThemeProvider>
-        <Script
-          src="https://www.ruhanaai.com/api/embed/agent-d311d1db66784ebd8a770eb99ee41d4e"
-          strategy="afterInteractive"
-        />
       </body>
     </html>
   );
