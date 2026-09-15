@@ -1,4 +1,5 @@
 import { DM_Sans, Syne } from "next/font/google";
+import Script from "next/script";
 import "./globals.css";
 import { ThemeProvider } from "@components/theme-provider";
 import { SessionProvider } from "next-auth/react";
@@ -105,6 +106,10 @@ export default function RootLayout({ children }) {
           <Toaster />
           <SessionWrapper>{children}</SessionWrapper>
         </ThemeProvider>
+        <Script
+          src="https://www.ruhanaai.com/api/embed/agent-d311d1db66784ebd8a770eb99ee41d4e"
+          strategy="afterInteractive"
+        />
       </body>
     </html>
   );
