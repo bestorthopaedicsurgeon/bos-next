@@ -4,6 +4,11 @@ import { seoLocations } from '@/lib/constants/seoLocations';
 import { seoSubspecialties } from '@/lib/constants/seoSubspecialties';
 import { getValidSubLocCombos } from '@/lib/seo/subLocCombos';
 
+// The sitemap is built once per deployment unless it is allowed to refresh
+// itself. Without this, doctor profiles added between deploys stay out of the
+// sitemap and Google never learns about them.
+export const revalidate = 21600; // 6 hours
+
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://www.bestorthopaedicsurgeon.com.au';
 

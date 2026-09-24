@@ -15,6 +15,7 @@ const DoctorCard = ({
   location,
   avgRating: providedAvgRating,
   reviews = [],
+  reviewCount: providedReviewCount,
   designation,
   featuredQualifications,
   reviewButton = false,
@@ -28,13 +29,16 @@ const DoctorCard = ({
       const totalScore = reviews.reduce((sum, review) => {
         return sum + ((review.professionalism || 0) + (review.punctuality || 0) + (review.helpfulness || 0) + (review.knowledge || 0)) / 4;
       }, 0);
-      displayRating = (totalScore / reviews.length).toFixed(1);
+      displayRating = totalScore / reviews.length;
     } else {
-      displayRating = "0.0";
+      displayRating = 0;
     }
   }
+  // Always one decimal, whether the rating was passed in or worked out here.
+  displayRating = Number(displayRating).toFixed(1);
 
-  const reviewCount = reviews?.length || 0;
+  // Some pages send the count on its own rather than the review rows.
+  const reviewCount = providedReviewCount ?? reviews?.length ?? 0;
   const profileHref = `/doctor/${slug || id}`;
 
   const goToProfile = () => router.push(profileHref);

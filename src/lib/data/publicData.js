@@ -131,6 +131,34 @@ export async function getPublicDoctorSlugs() {
   }
 }
 
+// Every public profile as a name and slug, sorted by surname, for the A to Z
+// list on /surgeons. That list is the only plain HTML link many profiles get,
+// since the searchable directory above it loads in the browser and crawlers
+// see no links there.
+export const getPublicDoctorLinks = cache(async () => {
+  try {
+    const docs = await prisma.doctorProfile.findMany({
+      where: { hidden: false, slug: { not: null } },
+      select: { slug: true, name: true, title: true },
+    });
+
+    return docs
+      .map((d) => {
+        const name = (d.name || "").replace(/\s+/g, " ").trim();
+        const title = d.title
+          ? `${d.title.charAt(0).toUpperCase()}${d.title.slice(1).toLowerCase()} `
+          : "";
+        const surname = name.split(" ").pop()?.toLowerCase() || "";
+        return { slug: d.slug, label: `${title}${name}`.trim(), surname };
+      })
+      .filter((d) => d.label)
+      .sort((a, b) => a.surname.localeCompare(b.surname));
+  } catch (e) {
+    console.error("getPublicDoctorLinks failed:", e?.message);
+    return [];
+  }
+});
+
 // Homepage featured lineup: pinned profiles first (in this order), then the
 // remaining slots filled from the featured pool in a stable order so the
 // same six always appear. All featured doctors still rank first on the
@@ -205,6 +233,7 @@ export async function getFeaturedDoctors() {
       featured: doc.featured,
       designation: doc.designation,
       location: doc.location,
+      reviewCount: doc.reviews.length,
       avgRating:
         doc.reviews.length === 0
           ? null

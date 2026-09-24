@@ -9,6 +9,11 @@ import { JsonLd } from "@/components/seo/JsonLd";
 import { seoLocations } from "@/lib/constants/seoLocations";
 import { seoSubspecialties } from "@/lib/constants/seoSubspecialties";
 import { LinkPillsSection } from "@/components/seo/LinkPillsSection";
+import { SurgeonIndexSection } from "@/components/seo/SurgeonIndexSection";
+import { getPublicDoctorLinks } from "@/lib/data/publicData";
+
+// Refresh so profiles added between deployments appear in the A to Z list.
+export const revalidate = 21600; // 6 hours
 
 const SITE_URL =
   process.env.NEXT_PUBLIC_BASE_URL ||
@@ -36,7 +41,9 @@ const breadcrumbSchema = {
   ],
 };
 
-const SurgeonsPage = () => {
+const SurgeonsPage = async () => {
+  const doctorLinks = await getPublicDoctorLinks();
+
   return (
     <div className="container">
       <JsonLd data={breadcrumbSchema} />
@@ -64,6 +71,14 @@ const SurgeonsPage = () => {
         links={seoLocations.map((l) => ({
           href: `/best-orthopaedic-surgeons/${l.slug}`,
           label: `Best Orthopaedic Surgeons in ${l.name}`,
+        }))}
+      />
+      <SurgeonIndexSection
+        title="Every orthopaedic surgeon in the BOS directory"
+        subtitle="All surgeon profiles on the platform, listed by surname."
+        links={doctorLinks.map((d) => ({
+          href: `/doctor/${d.slug}`,
+          label: d.label,
         }))}
       />
     </div>

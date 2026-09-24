@@ -66,4 +66,14 @@ export const SURGEON_SELECT = {
   experience: true,
   featured: true,
   practices: true,
+  // Ratings on the surgeon cards: without these the cards read 0.0/5.0 (0)
+  // even for surgeons who have reviews.
+  reviews: {
+    select: {
+      professionalism: true,
+      punctuality: true,
+      helpfulness: true,
+      knowledge: true,
+    },
+  },
 };
