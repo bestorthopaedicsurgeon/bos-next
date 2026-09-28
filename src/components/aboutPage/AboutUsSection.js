@@ -14,12 +14,12 @@ export const AboutUsSection = () => {
           height={564}
         />
         <div className="px-10">
-          <h1 className="font-syne text-primary mb-4 font-bold">About Us</h1>
+          <h2 className="as-h1 font-syne text-primary mb-4 font-bold">About Us</h2>
           <p className="mb-6 font-bold text-neutral-700">
             Your Health, Your Choice — Made Simple.
           </p>
           <p className="text-neutral-700">
-            At bestorthopedicsurgeon.com, we believe finding the right doctor
+            At bestorthopaedicsurgeon.com.au, we believe finding the right doctor
             shouldn’t be a challenge. Our platform connects patients with
             top-rated, trusted, and reviewed medical professionals across
             various specialties — helping you make informed decisions for your

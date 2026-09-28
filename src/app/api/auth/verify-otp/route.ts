@@ -65,7 +65,7 @@ export async function POST(req: Request) {
     // Send new password via email
     await sendEmail({
       to: email,
-      subject: "Your New Password - Best Orthopedic Surgeons",
+      subject: "Your New Password - Best Orthopaedic Surgeons",
       message: `
         <p>Your password has been successfully reset.</p>
         <p><strong>Your new password is: ${newPassword}</strong></p>

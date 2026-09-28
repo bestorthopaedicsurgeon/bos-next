@@ -2,6 +2,7 @@ import { cache } from "react";
 import { revalidatePath } from "next/cache";
 import { prisma } from "@/lib/prisma";
 import { pingIndexNow } from "@/lib/seo/indexNow";
+import { formatDoctorName } from "@/lib/utils";
 
 // Direct-Prisma data helpers for the public (statically rendered) pages.
 // These replace the old self-HTTP fetches so pages can be prerendered and
@@ -144,12 +145,8 @@ export const getPublicDoctorLinks = cache(async () => {
 
     return docs
       .map((d) => {
-        const name = (d.name || "").replace(/\s+/g, " ").trim();
-        const title = d.title
-          ? `${d.title.charAt(0).toUpperCase()}${d.title.slice(1).toLowerCase()} `
-          : "";
-        const surname = name.split(" ").pop()?.toLowerCase() || "";
-        return { slug: d.slug, label: `${title}${name}`.trim(), surname };
+        const surname = (d.name || "").trim().split(/\s+/).pop()?.toLowerCase() || "";
+        return { slug: d.slug, label: formatDoctorName(d.title, d.name), surname };
       })
       .filter((d) => d.label)
       .sort((a, b) => a.surname.localeCompare(b.surname));
@@ -292,6 +289,7 @@ export async function getPublicBlogSlugs() {
 export function revalidateDoctorContent(slug) {
   try {
     revalidatePath("/");
+    revalidatePath("/about"); // shares the homepage's featured surgeons
     if (slug) {
       revalidatePath(`/doctor/${slug}`);
     } else {

@@ -5,5 +5,5 @@ export const patientRegHeader = {
   step3: "Registration",
   subheading: "Complete your registration",
   description:
-    "Create your profile to reach the right orthopedic surgeon for your treatment.",
+    "Create your profile to reach the right orthopaedic surgeon for your treatment.",
 };

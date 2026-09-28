@@ -1,7 +1,7 @@
 export const doc_reg = {
   Subspeciality: [
     { value: "FOOT_AND_ANKLE", label: "Foot and Ankle Surgery" },
-    { value: "PEDIATRIC_ORTHOPEDICS", label: "Pediatric Orthopedics" },
+    { value: "PEDIATRIC_ORTHOPEDICS", label: "Paediatric Orthopaedics" },
     { value: "JOINT_REPLACEMENT", label: "Joint Replacement (Arthroplasty)" },
     { value: "SPINE_SURGERY", label: "Spine Surgery" },
     { value: "HAND_SURGERY", label: "Hand Surgery" },

@@ -14,6 +14,15 @@ import { JsonLd } from "@/components/seo/JsonLd";
 import { LinkPillsSection } from "@/components/seo/LinkPillsSection";
 import { AnswerSummary } from "@/components/seo/AnswerSummary";
 import { SeoFaq } from "@/components/seo/SeoFaq";
+import { formatDoctorName } from "@/lib/utils";
+import {
+  fitDescription,
+  fitTitle,
+  listJoin,
+  titleCase,
+  topHospitals,
+  withArticle,
+} from "@/lib/seo/copy";
 
 const BASE_URL =
   process.env.NEXT_PUBLIC_BASE_URL ||
@@ -34,9 +43,23 @@ export async function generateMetadata({ params }) {
   if (!sub) {
     return { title: "Not Found", robots: { index: false, follow: false } };
   }
+  // Keyword map: the broad term ("knee surgeon"); the Perth page owns
+  // "knee surgeon perth", so the two do not compete.
+  const n = (await getSurgeonsBySubspecialty(sub)).length;
+  const primary = titleCase(sub.primaryKeyword);
+  const plural = titleCase(sub.keyword);
   return {
-    title: { absolute: `${sub.heading} in Western Australia | BOS` },
-    description: `Find ${sub.keyword} in Western Australia. Compare qualifications, hospital affiliations and patient reviews to choose a specialist.`,
+    title: {
+      absolute: fitTitle([
+        n > 1 && `${primary} in WA | Compare ${n} ${plural} | BOS`,
+        n > 1 && `${primary} in WA | Compare ${n} ${plural}`,
+        n > 1 && `${primary} in WA | Compare ${n} Surgeons | BOS`,
+        `${primary} in Western Australia | BOS`,
+      ]),
+    },
+    description: fitDescription(
+      `Looking for ${withArticle(sub.primaryKeyword)} in Western Australia? Compare ${n > 1 ? `${n} ` : ""}${sub.keyword} by subspecialty, hospital and patient reviews, then book online.`,
+    ),
     alternates: { canonical: `/${sub.slug}` },
   };
 }
@@ -84,7 +107,7 @@ export default async function SubspecialtyPage({ params }) {
           "@type": "ListItem",
           position: i + 1,
           url: `${BASE_URL}/doctor/${s.slug || s.id}`,
-          name: `${s.title ? s.title + " " : ""}${s.name || ""}`.trim(),
+          name: formatDoctorName(s.title, s.name),
         })),
       },
     }),
@@ -116,6 +139,8 @@ export default async function SubspecialtyPage({ params }) {
     `hospital affiliations and patient reviews, so you can compare ` +
     `specialists and contact the right one for your condition.`;
 
+  const hospitals = topHospitals(surgeons);
+
   const faqs =
     surgeons.length > 0
       ? [
@@ -143,6 +168,14 @@ export default async function SubspecialtyPage({ params }) {
             q: `Do I need a GP referral to see a ${singular} in Australia?`,
             a: `You can book a consultation without a referral, but Medicare only rebates specialist consultations when you have a valid referral from your GP or another specialist. Most patients visit their GP first, then book with the surgeon of their choice.`,
           },
+          ...(hospitals.length > 0
+            ? [
+                {
+                  q: `Which hospitals do ${sub.keyword} in Western Australia operate at?`,
+                  a: `Among the ${sub.keyword} listed on BOS, the most common hospitals are ${listJoin(hospitals)}. Each surgeon profile lists every hospital where that surgeon operates.`,
+                },
+              ]
+            : []),
         ]
       : [];
 
@@ -163,7 +196,11 @@ export default async function SubspecialtyPage({ params }) {
 
       {/* Intro */}
       <div className="mx-auto mt-12 mb-10 max-w-3xl text-center">
-        <p className="text-lg leading-relaxed text-neutral-700">{sub.intro}</p>
+        <p className="text-lg leading-relaxed text-neutral-700">
+          {sub.intro}
+          {hospitals.length > 0 &&
+            ` ${sub.keyword.charAt(0).toUpperCase()}${sub.keyword.slice(1)} in Western Australia most often operate at ${listJoin(hospitals)}.`}
+        </p>
       </div>
 
       {/* Extractable direct answer with live directory numbers */}

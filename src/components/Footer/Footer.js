@@ -25,9 +25,15 @@ const Footer = () => {
       <div className="mx-auto grid max-w-7xl grid-cols-1 gap-12 sm:grid-cols-2 md:grid-cols-4">
         {/* Brand/About */}
         <div>
-          <h2 className="mb-4 text-xl font-semibold">
-            Best Orthopedic Surgeon
-          </h2>
+          <Link href="/" className="mb-4 inline-block">
+            <Image
+              src="/logos/bos-logo-2.png"
+              alt="Best Orthopaedic Surgeons"
+              width={202}
+              height={113}
+              className="h-auto w-40"
+            />
+          </Link>
           <p className="mb-2 text-base text-[#F1F8F6]">
             Built for Orthopaedic Surgeons. Trusted by Patients! <br />
             Your Trusted Orthopaedic Surgeon Directory

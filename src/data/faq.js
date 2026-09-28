@@ -33,6 +33,11 @@ export const faqData = {
       id: 5,
       question: "Does this website provide medical advice?",
       answer: "No. We do not offer medical or clinical advice. Our directory is an information and navigation tool only. All treatment decisions should be made in consultation with a qualified healthcare professional."
+    },
+    {
+      id: 6,
+      question: "How do I find an orthopaedic surgeon near me?",
+      answer: "Search by name or specialty at the top of this page, or browse by location to see the orthopaedic surgeons near you in Perth, Murdoch, Joondalup, Subiaco, Midland, Bunbury and across Western Australia. Each profile shows where the surgeon consults, so you can choose an orthopaedic surgeon close to home."
     }
   ],
 
@@ -151,6 +156,12 @@ export const faqData = {
       question: "Are outcomes guaranteed?",
       answer: "No directory can guarantee individual outcomes. Always follow medical advice and consult directly with your surgeon.",
       category: "General"
+    },
+    {
+      id: 20,
+      question: "How do I find an orthopaedic surgeon near me?",
+      answer: "Search by name or specialty at the top of this page, or browse by location to see the orthopaedic surgeons near you in Perth, Murdoch, Joondalup, Subiaco, Midland, Bunbury and across Western Australia. Each profile shows where the surgeon consults, so you can choose an orthopaedic surgeon close to home.",
+      category: "Directory"
     }
   ],
 

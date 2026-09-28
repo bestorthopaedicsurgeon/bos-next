@@ -1,4 +1,4 @@
-// Email template utilities for Best Orthopedic Surgeons
+// Email template utilities for Best Orthopaedic Surgeons
 // Matches the website's design theme with professional healthcare styling
 
 const PRIMARY_COLOR = '#2f797b';
@@ -18,7 +18,7 @@ function getEmailWrapper(content: string): string {
       <meta charset="UTF-8">
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
       <meta http-equiv="X-UA-Compatible" content="IE=edge">
-      <title>Best Orthopedic Surgeons</title>
+      <title>Best Orthopaedic Surgeons</title>
       <!--[if mso]>
       <style type="text/css">
         body, table, td {font-family: Arial, Helvetica, sans-serif !important;}
@@ -118,7 +118,7 @@ export function getOTPEmailTemplate(otp: string): { html: string; text: string }
 
   return {
     html: getEmailWrapper(content),
-    text: `Email Verification\n\nYour OTP for email verification is: ${otp}\n\nThis OTP will expire in 10 minutes.\n\nIf you didn't request this verification, please ignore this email.\n\n© ${new Date().getFullYear()} Best Orthopedic Surgeons. All rights reserved.`
+    text: `Email Verification\n\nYour OTP for email verification is: ${otp}\n\nThis OTP will expire in 10 minutes.\n\nIf you didn't request this verification, please ignore this email.\n\n© ${new Date().getFullYear()} Best Orthopaedic Surgeons. All rights reserved.`
   };
 }
 
@@ -136,7 +136,7 @@ export function getWelcomeEmailTemplate(userName: string): { html: string; text:
       </div>
       
       <h2 style="margin: 0 0 15px 0; color: ${TEXT_PRIMARY}; font-size: 28px; font-weight: 700;">
-        Welcome to Best Orthopedic Surgeons! 🎉
+        Welcome to Best Orthopaedic Surgeons! 🎉
       </h2>
       
       <p style="margin: 0 0 10px 0; color: ${TEXT_PRIMARY}; font-size: 18px;">
@@ -144,7 +144,7 @@ export function getWelcomeEmailTemplate(userName: string): { html: string; text:
       </p>
       
       <p style="margin: 0 0 30px 0; color: ${TEXT_SECONDARY}; font-size: 16px; line-height: 1.6;">
-        Thank you for joining our platform. We're excited to help you find the best orthopedic surgeons in Australia.
+        Thank you for joining our platform. We're excited to help you find the best orthopaedic surgeons in Australia.
       </p>
       
       <div style="background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%); border-radius: 8px; padding: 25px; margin-bottom: 30px; text-align: left;">
@@ -152,7 +152,7 @@ export function getWelcomeEmailTemplate(userName: string): { html: string; text:
           What's Next?
         </h3>
         <ul style="margin: 0; padding-left: 20px; color: ${TEXT_SECONDARY}; font-size: 15px; line-height: 1.8;">
-          <li>Browse our directory of top orthopedic surgeons</li>
+          <li>Browse our directory of top orthopaedic surgeons</li>
           <li>Read patient reviews and ratings</li>
           <li>Book appointments with specialists</li>
           <li>Access educational resources and blog posts</li>
@@ -171,7 +171,7 @@ export function getWelcomeEmailTemplate(userName: string): { html: string; text:
 
   return {
     html: getEmailWrapper(content),
-    text: `Welcome to Best Orthopedic Surgeons!\n\nHello ${userName},\n\nThank you for joining our platform. We're excited to help you find the best orthopedic surgeons in Australia.\n\nWhat's Next?\n- Browse our directory of top orthopedic surgeons\n- Read patient reviews and ratings\n- Book appointments with specialists\n- Access educational resources and blog posts\n\nIf you have any questions, our support team is here to help!\n\n© ${new Date().getFullYear()} Best Orthopedic Surgeons. All rights reserved.`
+    text: `Welcome to Best Orthopaedic Surgeons!\n\nHello ${userName},\n\nThank you for joining our platform. We're excited to help you find the best orthopaedic surgeons in Australia.\n\nWhat's Next?\n- Browse our directory of top orthopaedic surgeons\n- Read patient reviews and ratings\n- Book appointments with specialists\n- Access educational resources and blog posts\n\nIf you have any questions, our support team is here to help!\n\n© ${new Date().getFullYear()} Best Orthopaedic Surgeons. All rights reserved.`
   };
 }
 
@@ -199,7 +199,7 @@ export function getDoctorWelcomeEmailTemplate(userName: string): { html: string;
       </p>
       
       <p style="margin: 0 0 30px 0; color: ${TEXT_SECONDARY}; font-size: 16px; line-height: 1.6;">
-        Welcome to Best Orthopedic Surgeons. We're proud to have you as part of our exclusive directory of specialists in Australia.
+        Welcome to Best Orthopaedic Surgeons. We're proud to have you as part of our exclusive directory of specialists in Australia.
       </p>
       
       <div style="background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%); border-radius: 8px; padding: 25px; margin-bottom: 30px; text-align: left;">
@@ -226,7 +226,7 @@ export function getDoctorWelcomeEmailTemplate(userName: string): { html: string;
 
   return {
     html: getEmailWrapper(content),
-    text: `Welcome to Best Orthopedic Surgeons Specialist Network!\n\nHello Dr. ${userName},\n\nWelcome to Best Orthopedic Surgeons. We're proud to have you as part of our exclusive directory of specialists in Australia.\n\nGetting Started:\n- Complete your profile to increase your visibility\n- Review and respond to patient inquiries\n- Manage your weekly availability\n- Monitor patient ratings and feedback\n\nComplete Your Profile: ${process.env.NEXTAUTH_URL}/doctor/registration\n\nIf you have any questions, our provider support team is here to help!\n\n© ${new Date().getFullYear()} Best Orthopedic Surgeons. All rights reserved.`
+    text: `Welcome to Best Orthopaedic Surgeons Specialist Network!\n\nHello Dr. ${userName},\n\nWelcome to Best Orthopaedic Surgeons. We're proud to have you as part of our exclusive directory of specialists in Australia.\n\nGetting Started:\n- Complete your profile to increase your visibility\n- Review and respond to patient inquiries\n- Manage your weekly availability\n- Monitor patient ratings and feedback\n\nComplete Your Profile: ${process.env.NEXTAUTH_URL}/doctor/registration\n\nIf you have any questions, our provider support team is here to help!\n\n© ${new Date().getFullYear()} Best Orthopaedic Surgeons. All rights reserved.`
   };
 }
 
@@ -319,7 +319,7 @@ export function getAppointmentConfirmationTemplate(details: {
 
   return {
     html: getEmailWrapper(content),
-    text: `Appointment Confirmed\n\nHello ${details.patientName}, your appointment has been successfully scheduled.\n\nAppointment Details:\nSurgeon: ${details.surgeonName}\nDate: ${details.date}\nTime: ${details.time}\nLocation: ${details.location}\n\nBefore Your Appointment:\nPlease arrive 15 minutes early and bring any relevant medical records or imaging results.\n\n© ${new Date().getFullYear()} Best Orthopedic Surgeons. All rights reserved.`
+    text: `Appointment Confirmed\n\nHello ${details.patientName}, your appointment has been successfully scheduled.\n\nAppointment Details:\nSurgeon: ${details.surgeonName}\nDate: ${details.date}\nTime: ${details.time}\nLocation: ${details.location}\n\nBefore Your Appointment:\nPlease arrive 15 minutes early and bring any relevant medical records or imaging results.\n\n© ${new Date().getFullYear()} Best Orthopaedic Surgeons. All rights reserved.`
   };
 }
 
@@ -424,7 +424,7 @@ export function getDoctorAppointmentNotificationTemplate(details: {
 
   return {
     html: getEmailWrapper(content),
-    text: `New Appointment Request\n\nA new appointment has been booked for ${details.surgeonName}.\n\nPatient: ${details.patientName}\nEmail: ${details.patientEmail}\nPhone: ${details.patientPhone}\n\nDate: ${details.date}\nTime: ${details.time}\nType: ${details.consultationType}\nLocation: ${details.location}\n\n${details.symptoms ? `Symptoms: ${details.symptoms}\n` : ''}${details.message ? `Message: ${details.message}\n` : ''}\n© ${new Date().getFullYear()} Best Orthopedic Surgeons. All rights reserved.`
+    text: `New Appointment Request\n\nA new appointment has been booked for ${details.surgeonName}.\n\nPatient: ${details.patientName}\nEmail: ${details.patientEmail}\nPhone: ${details.patientPhone}\n\nDate: ${details.date}\nTime: ${details.time}\nType: ${details.consultationType}\nLocation: ${details.location}\n\n${details.symptoms ? `Symptoms: ${details.symptoms}\n` : ''}${details.message ? `Message: ${details.message}\n` : ''}\n© ${new Date().getFullYear()} Best Orthopaedic Surgeons. All rights reserved.`
   };
 }
 
@@ -476,7 +476,7 @@ export function getPasswordResetTemplate(resetLink: string, userName: string): {
 
   return {
     html: getEmailWrapper(content),
-    text: `Reset Your Password\n\nHello ${userName},\n\nWe received a request to reset your password. Click the link below to create a new password:\n\n${resetLink}\n\nThis link will expire in 1 hour. If you didn't request a password reset, please ignore this email or contact support if you have concerns.\n\n© ${new Date().getFullYear()} Best Orthopedic Surgeons. All rights reserved.`
+    text: `Reset Your Password\n\nHello ${userName},\n\nWe received a request to reset your password. Click the link below to create a new password:\n\n${resetLink}\n\nThis link will expire in 1 hour. If you didn't request a password reset, please ignore this email or contact support if you have concerns.\n\n© ${new Date().getFullYear()} Best Orthopaedic Surgeons. All rights reserved.`
   };
 }
 
@@ -501,7 +501,7 @@ export function getClaimApprovedTemplate(userName: string, email: string, passwo
       </p>
       
       <p style="margin: 0 0 30px 0; color: ${TEXT_SECONDARY}; font-size: 16px; line-height: 1.6;">
-        Great news! Your request to claim your doctor profile on Best Orthopedic Surgeons has been approved. You can now manage your profile, respond to patient questions, and more.
+        Great news! Your request to claim your doctor profile on Best Orthopaedic Surgeons has been approved. You can now manage your profile, respond to patient questions, and more.
       </p>
 
       ${password ? `
@@ -537,7 +537,7 @@ export function getClaimApprovedTemplate(userName: string, email: string, passwo
 
   return {
     html: getEmailWrapper(content),
-    text: `Claim Approved!\n\nHello ${userName},\n\nYour request to claim your doctor profile on Best Orthopedic Surgeons has been approved.\n\n${password ? `Your Login Credentials:\nEmail: ${email}\nTemporary Password: ${password}` : `You can log in using your existing account credentials.`}\n\nLog In: ${process.env.NEXTAUTH_URL}/login\n\n© ${new Date().getFullYear()} Best Orthopedic Surgeons. All rights reserved.`
+    text: `Claim Approved!\n\nHello ${userName},\n\nYour request to claim your doctor profile on Best Orthopaedic Surgeons has been approved.\n\n${password ? `Your Login Credentials:\nEmail: ${email}\nTemporary Password: ${password}` : `You can log in using your existing account credentials.`}\n\nLog In: ${process.env.NEXTAUTH_URL}/login\n\n© ${new Date().getFullYear()} Best Orthopaedic Surgeons. All rights reserved.`
   };
 }
 
@@ -562,7 +562,7 @@ export function getClaimSubmittedTemplate(userName: string): { html: string; tex
       </p>
       
       <p style="margin: 0 0 30px 0; color: ${TEXT_SECONDARY}; font-size: 16px; line-height: 1.6;">
-        We have successfully received your request to claim your doctor profile on Best Orthopedic Surgeons.
+        We have successfully received your request to claim your doctor profile on Best Orthopaedic Surgeons.
       </p>
 
       <div style="background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%); border-radius: 8px; padding: 25px; margin-bottom: 30px; text-align: left;">
@@ -586,7 +586,7 @@ export function getClaimSubmittedTemplate(userName: string): { html: string; tex
 
   return {
     html: getEmailWrapper(content),
-    text: `Claim Request Received\n\nHello ${userName},\n\nWe have successfully received your request to claim your doctor profile on Best Orthopedic Surgeons.\n\nStatus: Pending Review\n\nOur administration team is currently reviewing your details. This process typically takes 1-2 business days. Once approved, you will receive another email with instructions.\n\nIf you have any questions, please contact our support team.\n\n© ${new Date().getFullYear()} Best Orthopedic Surgeons. All rights reserved.`
+    text: `Claim Request Received\n\nHello ${userName},\n\nWe have successfully received your request to claim your doctor profile on Best Orthopaedic Surgeons.\n\nStatus: Pending Review\n\nOur administration team is currently reviewing your details. This process typically takes 1-2 business days. Once approved, you will receive another email with instructions.\n\nIf you have any questions, please contact our support team.\n\n© ${new Date().getFullYear()} Best Orthopaedic Surgeons. All rights reserved.`
   };
 }
 
@@ -614,7 +614,7 @@ export function getNotificationTemplate(subject: string, message: string, action
       
       <div style="margin-top: 30px; padding-top: 20px; border-top: 1px solid #e9ecef;">
         <p style="margin: 0; color: ${TEXT_SECONDARY}; font-size: 14px; line-height: 1.6;">
-          Thank you for using Best Orthopedic Surgeons.
+          Thank you for using Best Orthopaedic Surgeons.
         </p>
       </div>
     </div>
@@ -622,6 +622,6 @@ export function getNotificationTemplate(subject: string, message: string, action
 
   return {
     html: getEmailWrapper(content),
-    text: `${subject}\n\n${message}\n\n${actionText && actionLink ? `${actionText}: ${actionLink}\n\n` : ''}Thank you for using Best Orthopedic Surgeons.\n\n© ${new Date().getFullYear()} Best Orthopedic Surgeons. All rights reserved.`
+    text: `${subject}\n\n${message}\n\n${actionText && actionLink ? `${actionText}: ${actionLink}\n\n` : ''}Thank you for using Best Orthopaedic Surgeons.\n\n© ${new Date().getFullYear()} Best Orthopaedic Surgeons. All rights reserved.`
   };
 }

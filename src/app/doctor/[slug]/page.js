@@ -17,6 +17,19 @@ import {
 } from "@/lib/data/publicData";
 import { JsonLd } from "@/components/seo/JsonLd";
 import ReviewScroller from "@/components/docProfile/ReviewScroller";
+import { doctorSpecialtyLabel, formatDoctorName } from "@/lib/utils";
+import { SeoFaq } from "@/components/seo/SeoFaq";
+import { seoLocations } from "@/lib/constants/seoLocations";
+import { seoSubspecialties } from "@/lib/constants/seoSubspecialties";
+import { norm } from "@/lib/seo/match";
+import Link from "next/link";
+import {
+  hospitalName,
+  hospitalNames,
+  listJoin,
+  practiceAreas,
+  withArticle,
+} from "@/lib/seo/copy";
 
 const BASE_URL =
   process.env.NEXT_PUBLIC_BASE_URL || "https://www.bestorthopaedicsurgeon.com.au";
@@ -30,12 +43,6 @@ export async function generateStaticParams() {
   const slugs = await getPublicDoctorSlugs();
   return slugs.map((slug) => ({ slug }));
 }
-
-// Helper to capitalise first letter only
-const formatTitle = (title) => {
-  if (!title) return "";
-  return title.charAt(0).toUpperCase() + title.slice(1).toLowerCase();
-};
 
 const cleanText = (value) =>
   String(value || "")
@@ -53,9 +60,24 @@ const truncateDescription = (value, maxLength = 155) => {
 };
 
 const getDoctorDisplayName = (doctor) =>
-  cleanText(
-    `${doctor?.title ? `${formatTitle(doctor.title)}. ` : ""}${doctor?.name || "Doctor"}`,
+  cleanText(formatDoctorName(doctor?.title, doctor?.name || "Doctor"));
+
+// Search snippet written from the profile's own data. The about text is often
+// the surgeon's own website copy, so it makes a poor, duplicated snippet.
+const getDoctorMetaDescription = (doctor) => {
+  const name = getDoctorDisplayName(doctor);
+  const specialty = doctorSpecialtyLabel(doctor?.designation).toLowerCase();
+  const location = cleanText(doctor?.location);
+  const where = location ? `in ${location}, WA` : "in Western Australia";
+  const areas = practiceAreas(doctor).slice(0, 3).map((a) => a.label);
+  const lead = `${name} is an ${specialty} ${where}${
+    areas.length > 0 ? ` treating ${listJoin(areas)} conditions` : ""
+  }.`;
+  return truncateDescription(
+    `${lead} View qualifications, hospitals and reviews.`,
+    160,
   );
+};
 
 const getDoctorDescription = (doctor, maxLength = 155) => {
   const about = cleanText(doctor?.about);
@@ -92,20 +114,20 @@ export async function generateMetadata({ params }) {
   const doctData = res.data;
 
   const displayName = getDoctorDisplayName(doctData);
-  const designation = doctData?.designation
-    ? doctData.designation.charAt(0).toUpperCase() +
-    doctData.designation.slice(1).toLowerCase()
-    : "Orthopaedic Surgeon";
-  const location = doctData?.location ? ` in ${doctData.location}` : "";
+  const specialty = doctorSpecialtyLabel(doctData?.designation);
+  const location = doctData?.location ? ` in ${cleanText(doctData.location)}` : "";
 
-  const pageTitle = `${displayName} - ${designation}${location}`;
-  const description = getDoctorDescription(doctData);
+  // Name searches ("dr rhys clark", "dr rhys clark reviews") are the main way
+  // patients find a profile. Absolute, so the brand suffix does not push the
+  // title past the length Google shows.
+  const pageTitle = `${displayName} Reviews | ${specialty}${location}`;
+  const description = getDoctorMetaDescription(doctData);
 
   const canonicalSlug = doctData?.slug || slug;
   const canonicalUrl = `${BASE_URL}/doctor/${canonicalSlug}`;
 
   return {
-    title: pageTitle,
+    title: { absolute: pageTitle },
     description: description,
     // ✅ Canonical URL
     alternates: {
@@ -243,11 +265,93 @@ const Page = async ({ params }) => {
       doctData.hospitalAffiliations.length > 0 && {
         hospitalAffiliation: doctData.hospitalAffiliations.map((h) => ({
           "@type": "Hospital",
-          name: (h && (h.name || h)) || undefined,
+          name: hospitalName(h) || undefined,
           ...(h?.address && { address: h.address }),
         })),
       }),
   };
+
+  // The specialty and suburb shown on the profile link to their directory
+  // pages, when one exists.
+  const firstSubspecialty = norm((cleanSubspecialties[0] || "").split(",")[0]);
+  const subspecialtyPage = seoSubspecialties.find((s) =>
+    s.matchTerms.some((t) => firstSubspecialty.includes(norm(t))),
+  );
+  const doctorLocation = norm(doctData?.location);
+  const locationPage =
+    seoLocations.find(
+      (l) => l.type === "suburb" && l.suburbs.map(norm).includes(doctorLocation),
+    ) || seoLocations.find((l) => l.suburbs.map(norm).includes(doctorLocation));
+  const subspecialtyHref = subspecialtyPage ? `/${subspecialtyPage.slug}` : null;
+  const locationHref = locationPage
+    ? `/best-orthopaedic-surgeons/${locationPage.slug}`
+    : null;
+
+  // Questions answered only from this profile's own data.
+  // Suburbs read cleanly where stored practice names and addresses vary.
+  const practiceSuburbs = [
+    ...new Set(
+      practices
+        .map((p) => parseLocality(p?.clinicAddress, undefined))
+        .filter(Boolean),
+    ),
+  ];
+  const hospitals = hospitalNames(doctData?.hospitalAffiliations);
+  const areas = practiceAreas(doctData || {});
+  const firstPracticeName = practices.find((p) => p?.phone)?.practiceName;
+  const specialty = doctorSpecialtyLabel(doctData?.designation).toLowerCase();
+  // Answers use the short form ("Dr Clark") so the full name is not repeated
+  // in every sentence.
+  const shortName = formatDoctorName(
+    doctData?.title,
+    (doctData?.name || "").trim().split(/s+/).pop(),
+  );
+  const profileFaqs = doctData
+    ? [
+        practiceSuburbs.length > 0 && {
+          q: `Where does ${pageTitle} consult?`,
+          a: `${shortName} consults in ${listJoin(practiceSuburbs)}. The Clinic Location section above lists each address and phone number.`,
+        },
+        hospitals.length > 0 && {
+          q: `Which hospitals is ${pageTitle} affiliated with?`,
+          a: `${shortName} is affiliated with ${listJoin(hospitals)}.`,
+        },
+        areas.length > 0 && {
+          q: `What does ${pageTitle} specialise in?`,
+          // Each area links to its directory page, styled like the links in
+          // the specialty page FAQs.
+          a: (
+            <>
+              {`${shortName} is ${withArticle(specialty)} whose areas of practice include `}
+              {areas.map((area, i) => (
+                <span key={area.href}>
+                  {i > 0 && (i === areas.length - 1 ? " and " : ", ")}
+                  <Link
+                    href={area.href}
+                    className="text-primary underline"
+                    style={{ fontSize: "inherit", fontWeight: "inherit" }}
+                  >
+                    {area.label}
+                  </Link>
+                </span>
+              ))}
+              {" surgery."}
+            </>
+          ),
+          aText: `${shortName} is ${withArticle(specialty)} whose areas of practice include ${listJoin(areas.map((a) => a.label))} surgery.`,
+        },
+        {
+          q: `How do I book an appointment with ${pageTitle}?`,
+          a: primaryPhone
+            ? `Use the Book Appointment button on this page, or call ${firstPracticeName ? `${firstPracticeName} on ` : ""}${primaryPhone}.`
+            : `Use the Book Appointment button on this page to request a time with ${shortName}.`,
+        },
+        {
+          q: `Do I need a referral to see ${pageTitle}?`,
+          a: `You can book a consultation without a referral, but Medicare only rebates specialist consultations when you have a valid referral from your GP or another specialist. Most patients visit their GP first, then book with the surgeon of their choice.`,
+        },
+      ].filter(Boolean)
+    : [];
 
   // ✅ Breadcrumb JSON-LD Schema
   const breadcrumbSchema = {
@@ -283,6 +387,8 @@ const Page = async ({ params }) => {
         <ProfileHeader
           key={data.heading}
           heading={data.heading}
+          // The doctor's name below is the page's h1.
+          headingAs="div"
           step1={data.step1}
           step2={pageTitle}
         />
@@ -291,8 +397,11 @@ const Page = async ({ params }) => {
       <div className="w-full max-w-7xl mx-auto flex flex-col min-lg:flex-row items-start gap-10 mt-10">
         {/* left area */}
         <div className="flex-1 w-full flex flex-col gap-5">
-          <DocProfile docProfile_Details={doctData} />
-          <DocInfo docProfile_Details={doctData} />
+          <DocProfile docProfile_Details={doctData} locationHref={locationHref} />
+          <DocInfo
+            docProfile_Details={doctData}
+            subspecialtyHref={subspecialtyHref}
+          />
         </div>
         {/* right area */}
         <div className="w-full min-lg:w-[450px] xl:w-[500px] flex flex-col gap-5 min-lg:self-stretch">
@@ -311,6 +420,13 @@ const Page = async ({ params }) => {
         initialReviews={res?.reviewsData}
         initialQuestions={res?.questions}
       />
+      {/* Same FAQ block as the location pages, built from this profile only */}
+      <div className="w-full max-w-7xl mx-auto mt-16">
+        <SeoFaq
+          title={`Common questions about ${pageTitle}`}
+          faqs={profileFaqs}
+        />
+      </div>
       <FindAnotherSurgeonCTA />
     </div>
   );

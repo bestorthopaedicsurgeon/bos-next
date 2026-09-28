@@ -1,3 +1,4 @@
+import { cache } from "react";
 import { prisma } from "@/lib/prisma";
 import { seoSubspecialties } from "@/lib/constants/seoSubspecialties";
 import { seoLocations } from "@/lib/constants/seoLocations";
@@ -39,7 +40,7 @@ export async function getValidSubLocCombos(threshold = COMBO_THRESHOLD) {
 }
 
 // Surgeons matching BOTH a subspecialty and a location.
-export async function getSurgeonsBySubAndLoc(sub, loc) {
+async function findSurgeonsBySubAndLoc(sub, loc) {
   if (!sub || !loc) return [];
   try {
     const docs = await prisma.doctorProfile.findMany({
@@ -54,3 +55,6 @@ export async function getSurgeonsBySubAndLoc(sub, loc) {
     return [];
   }
 }
+
+// Cached per request: the page metadata and the page body both need the list.
+export const getSurgeonsBySubAndLoc = cache(findSurgeonsBySubAndLoc);

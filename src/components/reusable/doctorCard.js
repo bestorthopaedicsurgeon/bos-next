@@ -4,6 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import React from "react";
+import { formatDoctorName } from "@/lib/utils";
 
 const DoctorCard = ({
   id,
@@ -40,6 +41,7 @@ const DoctorCard = ({
   // Some pages send the count on its own rather than the review rows.
   const reviewCount = providedReviewCount ?? reviews?.length ?? 0;
   const profileHref = `/doctor/${slug || id}`;
+  const displayName = formatDoctorName(title, name);
 
   const goToProfile = () => router.push(profileHref);
   const goToReview = () => {
@@ -55,12 +57,14 @@ const DoctorCard = ({
       {/* Crawlable profile link for SEO. sr-only = invisible, no layout/visual
           impact; gives search engines a real anchor with the surgeon's name. */}
       <Link href={profileHref} className="sr-only">
-        {`View profile of ${title} ${name}`}
+        {`View profile of ${displayName}`}
       </Link>
       <div className="flex h-full flex-1 flex-col max-sm:w-full">
         <div className="flex flex-col gap-3.5">
-          <h2 className="font-syne text-neutral-800">{`${title} ${name}`}</h2>
-          <h4 className="text-primary">{designation}</h4>
+          {/* Styled as the h2/h4 they were; a page listing 100 surgeons
+              should not have 200 headings. */}
+          <div className="as-h2 font-syne text-neutral-800">{displayName}</div>
+          <div className="as-h4 text-primary">{designation}</div>
           <div className="flex items-center gap-2">
             <Image
               src="/icons/location.png"

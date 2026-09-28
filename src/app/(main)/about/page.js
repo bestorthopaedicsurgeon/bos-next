@@ -14,9 +14,15 @@ import { CtaSection } from "@/components/hero/CTA/CtaSection";
 import { FeaturedSurgeonsSection } from "@/components/hero/FeaturedSurgeonsSection";
 import { ServicesSection } from "@/components/hero/ServicesSection";
 import { TestimonialsSection } from "@/components/hero/Testimonials/TestimonialsSection";
+import { getFeaturedDoctors } from "@/lib/data/publicData";
 import React from "react";
 
-const AboutPage = () => {
+// Same refresh as the homepage, which shares the featured surgeon lineup.
+export const revalidate = 3600;
+
+const AboutPage = async () => {
+  const featuredDoctors = await getFeaturedDoctors();
+
   return (
     <div>
       <div className="container">
@@ -27,7 +33,7 @@ const AboutPage = () => {
       </div>
       <CtaSectionAbout />
       <div className="container">
-      <FeaturedSurgeonsSection />
+      <FeaturedSurgeonsSection doctors={featuredDoctors} />
       </div>
       <TestimonialsSection />
       {/* <Partners /> */}

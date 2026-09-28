@@ -1,9 +1,10 @@
+import { cache } from "react";
 import { prisma } from "@/lib/prisma";
 import { matchesLocation, sortSurgeons, SURGEON_SELECT } from "./match";
 
 // Returns the surgeons that practise in a given SEO location config.
 // Direct Prisma, fully guarded — returns [] on error.
-export async function getSurgeonsByLocation(location) {
+async function findSurgeonsByLocation(location) {
   if (!location) return [];
   try {
     const docs = await prisma.doctorProfile.findMany({
@@ -16,3 +17,6 @@ export async function getSurgeonsByLocation(location) {
     return [];
   }
 }
+
+// Cached per request: the page metadata and the page body both need the list.
+export const getSurgeonsByLocation = cache(findSurgeonsByLocation);

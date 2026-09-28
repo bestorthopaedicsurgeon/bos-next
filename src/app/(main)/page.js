@@ -5,6 +5,9 @@ import { SearchableDoctorsWrapper } from "@/components/hero/SearchableDoctorsWra
 import { ServicesSection } from "@/components/hero/ServicesSection";
 import { TestimonialsSection } from "@/components/hero/Testimonials/TestimonialsSection";
 import { getFeaturedDoctors } from "@/lib/data/publicData";
+import { LinkPillsSection } from "@/components/seo/LinkPillsSection";
+import { seoLocations } from "@/lib/constants/seoLocations";
+import { seoSubspecialties } from "@/lib/constants/seoSubspecialties";
 import Image from "next/image";
 
 // Prerendered with hourly refresh; doctor and blog mutations revalidate this
@@ -12,11 +15,13 @@ import Image from "next/image";
 export const revalidate = 3600;
 
 export const metadata = {
+  // Keyword map: "orthopaedic surgeon near me" (home already ranks for it),
+  // keeping the brand phrase in the title.
   title: {
-    absolute: "Best Orthopaedic Surgeons in Western Australia | BOS",
+    absolute: "Orthopaedic Surgeon Near Me | Best Orthopaedic Surgeons in WA",
   },
   description:
-    "Find orthopaedic surgeons across Western Australia by specialty, location, qualifications and patient reviews. Choose the right surgeon for your care.",
+    "Find an orthopaedic surgeon near you. Compare 100+ orthopaedic surgeons across Perth and Western Australia by specialty, suburb, hospital and patient reviews.",
   alternates: { canonical: "/" },
   // Note: no per-page `openGraph` override here — doing so would drop the
   // site-wide og:image from src/app/opengraph-image.js. og:title/description
@@ -37,6 +42,22 @@ export default async function Home() {
         <CtaSection />
         <Blogsection />
         <ServicesSection />
+        {/* Same pill card as /surgeons: gives every specialty and location
+            page a link from the strongest page on the site. */}
+        <LinkPillsSection
+          title="Find an orthopaedic surgeon near you"
+          subtitle="Browse orthopaedic surgeons by specialty or by location across Perth and Western Australia."
+          links={[
+            ...seoSubspecialties.map((sub) => ({
+              href: `/${sub.slug}`,
+              label: sub.heading,
+            })),
+            ...seoLocations.map((loc) => ({
+              href: `/best-orthopaedic-surgeons/${loc.slug}`,
+              label: `Orthopaedic Surgeons in ${loc.name}`,
+            })),
+          ]}
+        />
         <FAQSection />
       </div>
     </>

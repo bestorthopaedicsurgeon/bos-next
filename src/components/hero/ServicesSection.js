@@ -89,9 +89,9 @@ export const ServicesSection = () => {
 
   return (
     <section ref={sectionRef} className="mb-30 flex flex-col items-center justify-center px-4 py-16">
-      <h1 className="mb-8 text-center text-2xl md:text-3xl lg:text-4xl font-bold text-gray-800">
+      <h2 className="as-h1 mb-8 text-center text-2xl md:text-3xl lg:text-4xl font-bold text-gray-800">
         Easy Steps To Get Our Services
-      </h1>
+      </h2>
       <p className="mb-12 text-center text-gray-600 max-w-2xl">
         We believe in making things simple for you. With just a few easy steps, you can access our services and start experiencing the value we bring.
       </p>

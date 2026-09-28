@@ -14,6 +14,15 @@ import ProfileHeader from "@/components/reusable/profileHeader";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { LinkPillsSection } from "@/components/seo/LinkPillsSection";
 import { AnswerSummary } from "@/components/seo/AnswerSummary";
+import { formatDoctorName } from "@/lib/utils";
+import {
+  fitDescription,
+  fitTitle,
+  listJoin,
+  titleCase,
+  topHospitals,
+  withArticle,
+} from "@/lib/seo/copy";
 
 const BASE_URL =
   process.env.NEXT_PUBLIC_BASE_URL ||
@@ -34,9 +43,23 @@ export async function generateMetadata({ params }) {
   if (!sub || !loc) {
     return { title: "Not Found", robots: { index: false, follow: false } };
   }
+  // Keyword map: "<specialty> surgeon <location>", e.g. "knee surgeon perth".
+  const n = (await getSurgeonsBySubAndLoc(sub, loc)).length;
+  const local = titleCase(sub.localKeyword);
+  const plural = titleCase(sub.keyword);
   return {
-    title: { absolute: `${sub.heading} in ${loc.name} | BOS` },
-    description: `Find ${sub.keyword} in ${loc.name}, Western Australia. Compare qualifications, affiliations and patient reviews to choose a specialist.`,
+    title: {
+      absolute: fitTitle([
+        n > 1 && `${local} ${loc.name} | Compare ${n} ${plural} | BOS`,
+        n > 1 && `${local} ${loc.name} | Compare ${n} ${plural}`,
+        n > 1 && `${local} ${loc.name} | Compare ${n} Surgeons | BOS`,
+        `${local} ${loc.name} | ${sub.heading} | BOS`,
+        `${local} ${loc.name} | BOS`,
+      ]),
+    },
+    description: fitDescription(
+      `Looking for ${withArticle(sub.localKeyword)} in ${loc.name}? Compare ${n > 1 ? `${n} ` : ""}${sub.keyword} in ${loc.name} by hospital, subspecialty and patient reviews, then book online.`,
+    ),
     alternates: { canonical: `/${sub.slug}/${loc.slug}` },
   };
 }
@@ -52,6 +75,7 @@ export default async function SubspecialtyLocationPage({ params }) {
     getValidSubLocCombos(),
   ]);
   const canonicalUrl = `${BASE_URL}/${sub.slug}/${loc.slug}`;
+  const hospitals = topHospitals(surgeons);
 
   const breadcrumbSchema = {
     "@context": "https://schema.org",
@@ -89,7 +113,7 @@ export default async function SubspecialtyLocationPage({ params }) {
           "@type": "ListItem",
           position: i + 1,
           url: `${BASE_URL}/doctor/${s.slug || s.id}`,
-          name: `${s.title ? s.title + " " : ""}${s.name || ""}`.trim(),
+          name: formatDoctorName(s.title, s.name),
         })),
       },
     }),
@@ -122,13 +146,16 @@ export default async function SubspecialtyLocationPage({ params }) {
 
       <div className="mx-auto mt-12 mb-10 max-w-3xl text-center">
         <p className="text-lg leading-relaxed text-neutral-700">
-          {`Looking for the best ${sub.name.toLowerCase()} surgeons in ${loc.name}? Browse experienced ${sub.keyword} practising in ${loc.name}, Western Australia. Compare their qualifications, hospital affiliations and patient reviews, then book an appointment with the right specialist.`}
+          {`Looking for ${withArticle(sub.localKeyword)} in ${loc.name}? Browse experienced ${sub.keyword} practising in ${loc.name}, Western Australia. Compare their qualifications, hospital affiliations and patient reviews, then book an appointment with the right specialist.`}
+          {hospitals.length > 0 &&
+            ` The ${sub.keyword} listed here most often operate at ${listJoin(hospitals)}.`}
+          {` Each ${sub.localKeyword} in ${loc.name} below has a profile with qualifications, hospitals and patient reviews.`}
         </p>
       </div>
 
       {surgeons.length > 0 && (
         <AnswerSummary>
-          {`Best Orthopaedic Surgeons (BOS) lists ${surgeons.length} verified ${sub.keyword} practising in ${loc.name}, Western Australia. Each profile shows the surgeon's qualifications, hospital affiliations and patient reviews so you can compare local ${sub.name.toLowerCase()} specialists before booking a consultation.`}
+          {`Best Orthopaedic Surgeons (BOS) lists ${surgeons.length} verified ${sub.keyword} in ${loc.name}, Western Australia. Each profile shows the surgeon's qualifications, hospital affiliations and patient reviews so you can compare local ${sub.name.toLowerCase()} specialists before booking a consultation.`}
         </AnswerSummary>
       )}
 

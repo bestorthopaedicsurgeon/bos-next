@@ -83,6 +83,22 @@ export const seoLocations = [
       "Joondalup serves Perth's northern suburbs, with Joondalup Health Campus providing comprehensive orthopaedic care. Browse orthopaedic surgeons practising in Joondalup below and book an appointment close to home.",
   },
   {
+    slug: "midland",
+    name: "Midland",
+    type: "suburb",
+    suburbs: ["Midland"],
+    intro:
+      "Midland is the main medical centre for Perth's eastern suburbs and the Swan Valley, anchored by St John of God Midland Public and Private Hospitals. Several orthopaedic surgeons consult and operate in Midland, so patients in the east can see a specialist close to home. Browse orthopaedic surgeons practising in Midland below and book an appointment.",
+  },
+  {
+    slug: "mount-lawley",
+    name: "Mount Lawley",
+    type: "suburb",
+    suburbs: ["Mount Lawley"],
+    intro:
+      "Mount Lawley is home to St John of God Mount Lawley Hospital, a major private hospital serving Perth's inner northern suburbs. A number of experienced orthopaedic surgeons consult and operate in Mount Lawley. Find an orthopaedic surgeon practising in Mount Lawley below and book directly.",
+  },
+  {
     slug: "bunbury",
     name: "Bunbury",
     type: "city",

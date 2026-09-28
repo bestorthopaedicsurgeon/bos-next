@@ -5,8 +5,8 @@ const InfoSectionLefta = ({image}) => {
   return (
     <section className="grid grid-cols-1 gap-8 px-4 py-8 md:grid-cols-[1.4fr_1fr] items-center">
       <div className="min-lg:max-w-[600px]">
-        <h1 className="font-syne text-primary">What Makes Us Different
-        </h1>
+        <h2 className="as-h1 font-syne text-primary">What Makes Us Different
+        </h2>
         <p className="mt-4 text-lg text-gray-700">
        <b> Exclusive Focus on Orthopaedics </b>
 No GPs, dentists, or unrelated fields — just dedicated Orthopaedic professionals. <br />

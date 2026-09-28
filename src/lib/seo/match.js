@@ -66,6 +66,8 @@ export const SURGEON_SELECT = {
   experience: true,
   featured: true,
   practices: true,
+  // Page intros name the hospitals these surgeons operate at.
+  hospitalAffiliations: true,
   // Ratings on the surgeon cards: without these the cards read 0.0/5.0 (0)
   // even for surgeons who have reviews.
   reviews: {

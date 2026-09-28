@@ -5,13 +5,14 @@ import Link from "next/link";
 import { useParams } from "next/navigation";
 import React, { useState } from "react";
 import ClaimProfileModal from "../ClaimProfileModal";
+import { formatDoctorName } from "@/lib/utils";
 const {
   Popover,
   PopoverTrigger,
   PopoverContent,
 } = require("@/components/ui/popover");
 
-const DocProfile = ({ docProfile_Details, editProfile }) => {
+const DocProfile = ({ docProfile_Details, editProfile, locationHref }) => {
   const [data, setData] = useState(docProfile_Details);
   const doctorProfile = data || {};
   const [editField, setEditField] = useState(null);
@@ -108,11 +109,7 @@ const DocProfile = ({ docProfile_Details, editProfile }) => {
     </div>
   );
 
-  const formatTitle = (title) => {
-    if (!title) return "";
-    return title.charAt(0).toUpperCase() + title.slice(1).toLowerCase();
-  };
-  const formattedTitle = formatTitle(doctorProfile?.title);
+  const displayName = formatDoctorName(doctorProfile?.title, data?.name);
 
   // Calculate average rating
   const reviews = doctorProfile?.reviews || [];
@@ -136,7 +133,7 @@ const DocProfile = ({ docProfile_Details, editProfile }) => {
         <div className="border-primary relative h-50 w-50 overflow-hidden rounded-md border-2">
           <Image
             src={data?.image || "/home/doctor-1.jpg"}
-            alt={`${formattedTitle ? `${formattedTitle}. ` : ""}${data?.name || "Orthopaedic surgeon"}`}
+            alt={displayName || "Orthopaedic surgeon"}
             fill
             className="object-cover"
           />
@@ -144,16 +141,22 @@ const DocProfile = ({ docProfile_Details, editProfile }) => {
 
         {/* ✅ Added w-full on mobile so the button inside stretches full width */}
         <div className="flex flex-col flex-wrap gap-2 w-full max-md:items-center min-lg:w-[220px]">
-          <h3 className="font-[500]">
-            {`${formattedTitle ? `${formattedTitle}. ` : ""}${data.name}`}
-          </h3>
+          {/* The page's h1, styled exactly as the h3 it replaced. */}
+          <h1 className="as-h3 font-[500]">{displayName}</h1>
           <p className="text-primary text-[16px] font-[700]">
             {doctorProfile?.designation}
           </p>
           {doctorProfile?.location && (
             <p className="flex items-center gap-3 text-[13px] max-md:justify-center">
               <MapPin className="text-primary h-5 w-5" />
-              {doctorProfile?.location}, Australia
+              {locationHref ? (
+                // Links to the suburb page; styled as the plain text it was.
+                <Link href={locationHref} className="hover:underline" style={{ fontSize: "inherit", fontWeight: "inherit", color: "inherit", lineHeight: "inherit" }}>
+                  {doctorProfile?.location}, Australia
+                </Link>
+              ) : (
+                <>{doctorProfile?.location}, Australia</>
+              )}
             </p>
           )}
 

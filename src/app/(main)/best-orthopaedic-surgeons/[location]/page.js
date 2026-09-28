@@ -11,6 +11,8 @@ import { JsonLd } from "@/components/seo/JsonLd";
 import { LinkPillsSection } from "@/components/seo/LinkPillsSection";
 import { AnswerSummary } from "@/components/seo/AnswerSummary";
 import { SeoFaq } from "@/components/seo/SeoFaq";
+import { formatDoctorName } from "@/lib/utils";
+import { fitDescription, fitTitle, listJoin, topHospitals } from "@/lib/seo/copy";
 
 const BASE_URL =
   process.env.NEXT_PUBLIC_BASE_URL ||
@@ -35,11 +37,19 @@ export async function generateMetadata({ params }) {
     };
   }
 
+  // Keyword map: "orthopaedic surgeon <location>".
+  const n = (await getSurgeonsByLocation(location)).length;
   return {
     title: {
-      absolute: `Best Orthopaedic Surgeons in ${location.name} | BOS`,
+      absolute: fitTitle([
+        n > 1 && `Orthopaedic Surgeon ${location.name} | Compare ${n} Surgeons | BOS`,
+        n > 1 && `Orthopaedic Surgeon ${location.name} | Compare ${n} Surgeons`,
+        `Orthopaedic Surgeon ${location.name} | BOS`,
+      ]),
     },
-    description: `Find orthopaedic surgeons in ${location.name}, Western Australia. Compare specialties, qualifications and patient reviews to choose a local specialist.`,
+    description: fitDescription(
+      `Looking for an orthopaedic surgeon in ${location.name}? Compare ${n > 1 ? `${n} ` : ""}${location.name} orthopaedic surgeons by specialty, hospital and patient reviews, then book online.`,
+    ),
     alternates: { canonical: `/best-orthopaedic-surgeons/${location.slug}` },
   };
 }
@@ -90,7 +100,7 @@ export default async function LocationPage({ params }) {
           "@type": "ListItem",
           position: i + 1,
           url: `${BASE_URL}/doctor/${s.slug || s.id}`,
-          name: `${s.title ? s.title + " " : ""}${s.name || ""}`.trim(),
+          name: formatDoctorName(s.title, s.name),
         })),
       },
     }),
@@ -129,6 +139,8 @@ export default async function LocationPage({ params }) {
     `. Each profile shows qualifications, hospital affiliations and patient ` +
     `reviews so you can compare local specialists before booking.`;
 
+  const hospitals = topHospitals(surgeons);
+
   const faqs =
     surgeons.length > 0
       ? [
@@ -144,6 +156,14 @@ export default async function LocationPage({ params }) {
             q: `Do I need a GP referral to see an orthopaedic surgeon in ${location.name}?`,
             a: `You can book a consultation without a referral, but Medicare only rebates specialist consultations when you have a valid referral from your GP or another specialist. Most patients visit their GP first, then book with the surgeon of their choice.`,
           },
+          ...(hospitals.length > 0
+            ? [
+                {
+                  q: `Which hospitals do orthopaedic surgeons in ${location.name} operate at?`,
+                  a: `Among the orthopaedic surgeons in ${location.name} listed on BOS, the most common hospitals are ${listJoin(hospitals)}. Each surgeon profile lists every hospital where that surgeon operates.`,
+                },
+              ]
+            : []),
         ]
       : [];
 
@@ -163,6 +183,8 @@ export default async function LocationPage({ params }) {
       <div className="mx-auto mt-12 mb-10 max-w-3xl text-center">
         <p className="text-lg leading-relaxed text-neutral-700">
           {location.intro}
+          {hospitals.length > 0 &&
+            ` Most orthopaedic surgeons in ${location.name} operate at ${listJoin(hospitals)}.`}
         </p>
       </div>
 

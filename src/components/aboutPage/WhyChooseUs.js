@@ -7,7 +7,7 @@ export const WhyChooseUs = () => {
       <div className="grid grid-cols-1 items-center gap-8 lg:grid-cols-2">
         <div className="flex flex-col items-center justify-center gap-8 px-4 text-center lg:items-start lg:text-left">
           <div>
-            <h1 className="font-syne text-primary mb-4">Why Choose Us?</h1>
+            <h2 className="as-h1 font-syne text-primary mb-4">Why Choose Us?</h2>
           </div>
           <div>
             <h3 className="text-primary mb-4 text-2xl">

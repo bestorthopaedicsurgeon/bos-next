@@ -93,7 +93,7 @@ export async function sendOTP(email: string, otp: string): Promise<void> {
     from: EMAIL_SENDER,
     replyTo: REPLY_TO,
     to: email,
-    subject: 'Verify Your Email - Best Orthopedic Surgeons',
+    subject: 'Verify Your Email - Best Orthopaedic Surgeons',
     text,
     html,
     attachments: commonAttachments,
@@ -161,8 +161,8 @@ export async function sendWelcomeEmail(email: string, userName: string, role?: s
     : getWelcomeEmailTemplate(userName);
 
   const subject = role === 'DOCTOR'
-    ? 'Welcome to the Best Orthopedic Surgeons Network! 🩺'
-    : 'Welcome to Best Orthopedic Surgeons! 🎉';
+    ? 'Welcome to the Best Orthopaedic Surgeons Network! 🩺'
+    : 'Welcome to Best Orthopaedic Surgeons! 🎉';
 
   const mailOptions = {
     from: EMAIL_SENDER,
@@ -202,7 +202,7 @@ export async function sendAppointmentConfirmation(
     from: EMAIL_SENDER,
     replyTo: REPLY_TO,
     to: email,
-    subject: 'Appointment Confirmed - Best Orthopedic Surgeons',
+    subject: 'Appointment Confirmed - Best Orthopaedic Surgeons',
     text,
     html,
     attachments: commonAttachments,
@@ -241,7 +241,7 @@ export async function sendAppointmentNotificationToDoctor(
     from: EMAIL_SENDER,
     replyTo: REPLY_TO,
     to: email,
-    subject: `New Appointment: ${details.patientName} - Best Orthopedic Surgeons`,
+    subject: `New Appointment: ${details.patientName} - Best Orthopaedic Surgeons`,
     text,
     html,
     attachments: commonAttachments,
@@ -266,7 +266,7 @@ export async function sendPasswordReset(email: string, resetLink: string, userNa
     from: EMAIL_SENDER,
     replyTo: REPLY_TO,
     to: email,
-    subject: 'Reset Your Password - Best Orthopedic Surgeons',
+    subject: 'Reset Your Password - Best Orthopaedic Surgeons',
     text,
     html,
     attachments: commonAttachments,
@@ -316,7 +316,7 @@ export async function sendClaimSubmittedEmail(email: string, userName: string): 
     from: EMAIL_SENDER,
     replyTo: REPLY_TO,
     to: email,
-    subject: 'Claim Request Received - Best Orthopedic Surgeons 🩺',
+    subject: 'Claim Request Received - Best Orthopaedic Surgeons 🩺',
     text,
     html,
     attachments: commonAttachments,

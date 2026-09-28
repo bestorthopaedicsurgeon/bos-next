@@ -105,7 +105,7 @@ export const HeroSection = ({ onSearch, initialParams }) => {
             <div className="bg-primary-foreground mx-auto h-[2px] w-full" />
           </div>
           <h1 className="font-syne mb-4">
-            Find the Right Orthopedic Specialist
+            Find the Right Orthopaedic Surgeon
           </h1>
           <div className="hidden h-[352px] w-[308px] max-lg:mx-auto max-lg:flex max-lg:justify-center max-sm:h-full max-sm:w-full">
             <Image
@@ -163,7 +163,7 @@ export const HeroSection = ({ onSearch, initialParams }) => {
       </div>
       <div className="rounded-4xl bg-white px-5 py-6 sm:px-10 sm:py-8 lg:px-20">
         <div className="mb-4">
-          <h1 className="font-syne text-primary">Find A Surgeon</h1>
+          <h2 className="as-h1 font-syne text-primary">Find A Surgeon</h2>
         </div>
         <div className="flex gap-4 max-md:flex-wrap">
           <input

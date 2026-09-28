@@ -7,7 +7,7 @@ export const WhoWeAre = () => {
   return (
     <section className="">
       <div className="bg-primary relative right-1/2 left-1/2 -mx-[50vw] flex w-screen flex-col items-center justify-center py-16">
-        <h1 className="font-syne text-primary-foreground">Who we are</h1>
+        <h2 className="as-h1 font-syne text-primary-foreground">Who we are</h2>
         <p className="text-primary-foreground text-center max-w-[1200px] mx-auto">
           We are a healthcare-driven platform designed to simplify your search
           for expert medical care.Whether you&apos;re dealing with a condition, looking for preventive

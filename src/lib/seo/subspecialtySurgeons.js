@@ -1,9 +1,10 @@
+import { cache } from "react";
 import { prisma } from "@/lib/prisma";
 import { matchesSubspecialty, sortSurgeons, SURGEON_SELECT } from "./match";
 
 // Returns the surgeons whose subspecialities match a given SEO subspecialty.
 // Direct Prisma, fully guarded — returns [] on error.
-export async function getSurgeonsBySubspecialty(subspecialty) {
+async function findSurgeonsBySubspecialty(subspecialty) {
   if (!subspecialty) return [];
   try {
     const docs = await prisma.doctorProfile.findMany({
@@ -16,3 +17,6 @@ export async function getSurgeonsBySubspecialty(subspecialty) {
     return [];
   }
 }
+
+// Cached per request: the page metadata and the page body both need the list.
+export const getSurgeonsBySubspecialty = cache(findSurgeonsBySubspecialty);

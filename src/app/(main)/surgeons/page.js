@@ -19,10 +19,11 @@ const SITE_URL =
   process.env.NEXT_PUBLIC_BASE_URL ||
   "https://www.bestorthopaedicsurgeon.com.au";
 
+// Keyword map: "orthopaedic surgeon", the broadest search in the niche.
 export const metadata = {
-  title: "Orthopaedic Surgeons in Western Australia",
+  title: { absolute: "Orthopaedic Surgeon Directory for Western Australia | BOS" },
   description:
-    "Browse orthopaedic surgeons across Western Australia by specialty and location. Compare qualifications and reviews to find the right surgeon for your care.",
+    "Find the right orthopaedic surgeon in Western Australia. Browse every orthopaedic surgeon by specialty and suburb, and compare qualifications and reviews.",
   alternates: { canonical: "/surgeons" },
   // No per-page `openGraph` override (would drop the site-wide og:image).
 };

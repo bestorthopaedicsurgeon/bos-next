@@ -131,9 +131,9 @@ export const AllSurgeons = ({ searchParams = {} }) => {
     return (
       <section className="mb-40" id="all_surgeons">
         <div className="mb-8 flex items-center justify-between">
-          <h1 className="font-syne text-primary">
+          <h2 className="as-h1 font-syne text-primary">
             {isSearchMode ? "Searching..." : "Loading All Surgeons..."}
-          </h1>
+          </h2>
         </div>
         <div className="grid grid-cols-1 gap-8 lg:grid-cols-2">
           {[...Array(6)].map((_, index) => (
@@ -160,12 +160,12 @@ export const AllSurgeons = ({ searchParams = {} }) => {
   return (
     <section className="mb-40" id="all_surgeons">
       <div className="mb-8 flex items-center justify-between">
-        <h1 className="font-syne text-primary">
+        <h2 className="as-h1 font-syne text-primary">
           {isSearchMode ? 
             `Search Results ${totalDoctors ? `(${totalDoctors})` : ''}` : 
             "All Orthopaedic Surgeons"
           }
-        </h1>
+        </h2>
       </div>
       
       {!hasResults && isSearchMode ? (

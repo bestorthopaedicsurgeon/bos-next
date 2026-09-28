@@ -42,7 +42,7 @@ const Types = () => {
 
   return (
     <section>
-      <h1 className="font-syne text-primary">Types Of Orthopaedic Surgeons</h1>
+      <h2 className="as-h1 font-syne text-primary">Types Of Orthopaedic Surgeons</h2>
       <div className="grid grid-cols-1 gap-8 px-4 py-8 md:grid-cols-3 ">
         {cards.map((card, index) => (
           <div

@@ -14,9 +14,9 @@ export const FeaturedSurgeonsSection = ({ doctors }) => {
   return (
     <section className="mb-40">
       <div className="mb-8 flex max-sm:flex-wrap items-center justify-between">
-        <h1 className="font-syne text-primary">
+        <h2 className="as-h1 font-syne text-primary">
           Featured Orthopaedic Surgeons
-        </h1>
+        </h2>
         <Link href="/surgeons">
             <Button variant={"primary"} size={"primary"}>
               <div className="flex items-center gap-2">

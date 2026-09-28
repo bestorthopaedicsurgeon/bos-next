@@ -7,7 +7,7 @@ export const Blogs = ({ initialBlogs = [] }) => {
   if (!initialBlogs || initialBlogs.length === 0) {
     return (
       <section id="blogs">
-        <h1 className="font-syne text-primary text-center mb-8">Western Australia Orthopaedic Surgeon Insights</h1>
+        <h2 className="as-h1 font-syne text-primary text-center mb-8">Western Australia Orthopaedic Surgeon Insights</h2>
         <div className="text-center text-gray-500 py-8">
           No blog posts available yet. Check back soon!
         </div>
@@ -17,7 +17,7 @@ export const Blogs = ({ initialBlogs = [] }) => {
 
   return (
     <section id="blogs">
-      <h1 className="font-syne text-primary text-center mb-8">Western Australia Orthopaedic Surgeon Insights</h1>
+      <h2 className="as-h1 font-syne text-primary text-center mb-8">Western Australia Orthopaedic Surgeon Insights</h2>
       <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
         {initialBlogs.map((card, index) => (
           <BlogCard key={card.id || index} {...card} />

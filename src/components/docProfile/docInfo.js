@@ -2,8 +2,10 @@
 import React, { useState, useEffect } from "react";
 import { MapPin, ChevronLeft, ChevronRight, Phone, Printer, Building2 } from "lucide-react";
 import useEmblaCarousel from "embla-carousel-react";
+import Link from "next/link";
+import { formatDoctorName } from "@/lib/utils";
 
-const DocInfo = ({ docProfile_Details, showLocation = true }) => {
+const DocInfo = ({ docProfile_Details, showLocation = true, subspecialtyHref }) => {
   const data = docProfile_Details;
   const doctorProfile = data || {};
 
@@ -38,7 +40,6 @@ const DocInfo = ({ docProfile_Details, showLocation = true }) => {
     if (!title) return "";
     return title.charAt(0).toUpperCase() + title.slice(1).toLowerCase();
   };
-  const formattedTitle = formatTitle(doctorProfile?.title);
 
   const nextLocation = () => {
     setCurrentLocationIndex((prev) => (prev === practices.length - 1 ? 0 : prev + 1));
@@ -137,12 +138,19 @@ const DocInfo = ({ docProfile_Details, showLocation = true }) => {
         >
           <div>
             <p className={`${heading_style}`}>Name</p>
-            <p className={`${info_style}`}>{`${formattedTitle ? `${formattedTitle}. ` : ""}${data.name}`}</p>
+            <p className={`${info_style}`}>{formatDoctorName(data.title, data.name)}</p>
           </div>
           <div>
             <p className={`${heading_style}`}>Subspeciality</p>
             <p className={`${info_style} max-w-52`}>
-              {doctorProfile?.subspecialities?.[0]?.split(",")[0] || "Not specified"}
+              {subspecialtyHref && doctorProfile?.subspecialities?.[0] ? (
+                // Links to the specialty page; styled as the plain text it was.
+                <Link href={subspecialtyHref} className="hover:underline" style={{ fontSize: "inherit", fontWeight: "inherit", color: "inherit", lineHeight: "inherit" }}>
+                  {doctorProfile.subspecialities[0].split(",")[0]}
+                </Link>
+              ) : (
+                doctorProfile?.subspecialities?.[0]?.split(",")[0] || "Not specified"
+              )}
             </p>
           </div>
           <div>

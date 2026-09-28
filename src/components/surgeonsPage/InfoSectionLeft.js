@@ -5,7 +5,7 @@ const InfoSectionLeft = ({ image }) => {
   return (
     <section className="grid grid-cols-1 items-center gap-8 px-4 py-8 md:grid-cols-[1.4fr_1fr]">
       <div className="min-lg:max-w-[600px]">
-        <h1 className="font-syne text-primary">What is Orthopaedic Surgery</h1>
+        <h2 className="as-h1 font-syne text-primary">What is Orthopaedic Surgery</h2>
         <p className="mt-4 text-lg text-gray-700">
           Orthopaedics is a surgical specialty dedicated to diagnosing,
           treating, preventing, and rehabilitating conditions affecting the
