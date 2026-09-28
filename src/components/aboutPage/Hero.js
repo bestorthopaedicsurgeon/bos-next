@@ -26,7 +26,7 @@ export const HeroSection = () => {
             <div className="bg-primary-foreground mx-auto h-[2px] w-full" />
           </div>
           <h1 className="font-syne mb-4">
-            We Help Discover a Pain Free Path
+            Find the Best Orthopaedic Surgeon
 
           </h1>
           <div className="hidden max-lg:flex max-lg:justify-center max-lg:mx-auto max-h-[352px] w-full max-w-[348px] h-full mb-6">
@@ -41,7 +41,7 @@ export const HeroSection = () => {
             />
           </div>
           <p className="mb-4">
-            Helping patients find the right orthopaedic surgeons with ease. Our platform lets you discover, review, and rate healthcare professionals based on real patient experiences.
+            Best Orthopaedic Surgeon helps patients across Western Australia find the right orthopaedic surgeon with ease. Discover, review and rate surgeons based on real patient experiences.
           </p>
           <div className="mb-4 flex flex-wrap gap-4">
             <ScrollLink href="/surgeons" scrollTarget="section">

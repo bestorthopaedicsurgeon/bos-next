@@ -12,7 +12,7 @@ export const HowItWorks = () => {
     },
     {
       icon: <Edit className="w-12 h-12 text-primary" />,
-      title: "Customize Your Listing",
+      title: "Customise Your Listing",
       description: "Add your areas of expertise, credentials, clinic details, and professional photo."
     },
     {
@@ -28,7 +28,7 @@ export const HowItWorks = () => {
         <div className="text-center mb-12">
           <h2 className="font-syne mb-4">How It Works</h2>
           <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-            Get started with your professional profile in just three simple steps.
+            Get your surgeon profile live in just three simple steps.
           </p>
         </div>
 

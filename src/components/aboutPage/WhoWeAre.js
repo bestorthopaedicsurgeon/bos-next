@@ -9,14 +9,13 @@ export const WhoWeAre = () => {
       <div className="bg-primary relative right-1/2 left-1/2 -mx-[50vw] flex w-screen flex-col items-center justify-center py-16">
         <h2 className="as-h1 font-syne text-primary-foreground">Who we are</h2>
         <p className="text-primary-foreground text-center max-w-[1200px] mx-auto">
-          We are a healthcare-driven platform designed to simplify your search
-          for expert medical care.Whether you&apos;re dealing with a condition, looking for preventive
-            advice, or seeking specialized treatment, we offer access to a
-            community of highly rated doctors. Our listings are not just names
-            and addresses they&apos;re real doctors reviewed by real patients.
-            Through honest ratings and detailed profiles, we aim to empower you
-            to choose health professionals who meet your expectations
-
+          We are an independent directory built to make expert orthopaedic care
+          easier to find. Whether you have a new injury, ongoing joint pain or need
+          specialised surgery, you can compare highly rated orthopaedic surgeons in
+          one place. Our listings are not just names and addresses: they are real
+          surgeons reviewed by real patients. With honest ratings and detailed
+          profiles, we help you choose the best orthopaedic surgeon for your
+          condition and your location.
         </p>
         {/* <p className="max-w-[1200px] mx-auto text-white">
          
@@ -33,19 +32,18 @@ export const WhoWeAre = () => {
           <div>
             <h3 className="mb-4">Our Mission</h3>
             <p>
-              To make healthcare access easy, transparent, and patient-friendly
-              by connecting people with qualified, top-rated doctors. We aim to
-              empower every individual to take control of their health journey
-              with confidence and trust.
+              To make it simple for every patient in Western Australia to find the best
+              orthopaedic surgeon for their needs, with clear profiles, honest reviews
+              and easy access to care.
             </p>
           </div>
           <div>
             <h3 className="mb-4">Our Vision</h3>
             <p>
-              We envision a future where quality healthcare is accessible to
-              all, driven by trust, transparency, and exceptional patient
-              experiences. In this future, individuals can easily navigate their
-              healthcare choices, with the assurance and trust.
+              We envision a future where quality orthopaedic care is accessible to all,
+              driven by trust, transparency and exceptional patient experiences, and
+              where anyone can find the best orthopaedic surgeon near them with
+              confidence.
             </p>
           </div>
         </div>

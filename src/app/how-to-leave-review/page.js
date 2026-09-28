@@ -7,7 +7,7 @@ const HowToLeaveReviewPage = () => {
   return (
  
       <div className="container">
-        <ProfileHeader heading={"How to Leave a Review"} step1={"help"} step2={"review guide"} />
+        <ProfileHeader heading={"How to Leave Doctor Reviews"} step1={"help"} step2={"review guide"} />
         <ReviewSteps />
       <WhyReviewMatters />
       </div>

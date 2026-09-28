@@ -4,8 +4,9 @@ import { JsonLd } from "@/components/seo/JsonLd";
 import { faqData } from "@/data/faq";
 
 export const metadata = {
-  title: "Frequently Asked Questions",
-  description: "Find answers to common questions about our orthopaedic surgeon directory, ratings, reviews, and how to find the right surgeon in Western Australia.",
+  // Keyword map: "what does an orthopaedic surgeon do" (secondary "what is an orthopaedic surgeon").
+  title: { absolute: "What Does an Orthopaedic Surgeon Do? FAQs for Patients" },
+  description: "What does an orthopaedic surgeon do, and when should you see one? Answers on referrals, first appointments, our WA directory, ratings and reviews.",
   alternates: { canonical: '/faq' },
 };
 

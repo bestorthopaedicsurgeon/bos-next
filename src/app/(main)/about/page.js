@@ -1,6 +1,7 @@
 export const metadata = {
-  title: 'About Us',
-  description: 'Learn how Best Orthopaedic Surgeons helps patients compare orthopaedic specialists across Western Australia and why our directory exists.',
+  // Keyword map: "best orthopaedic surgeon".
+  title: { absolute: 'Best Orthopaedic Surgeon in WA | About Our Directory' },
+  description: 'How we help you find the best orthopaedic surgeon in Perth and Western Australia, with verified profiles and real patient reviews in one independent directory.',
   alternates: { canonical: '/about' },
 };
 

@@ -14,17 +14,17 @@ export const WhyChooseUs = () => {
               Reliable and reviewed
             </h3>
             <p className="text-sm text-neutral-700">
-              Doctors listed are reviewed by patients, so you can book with
-              confidence.
+              Every surgeon listed is reviewed by patients, so you can choose the best
+              orthopaedic surgeon with confidence.
             </p>
           </div>
           <div>
             <h3 className="text-primary mb-4 text-2xl">
-              Location-Based Search
+              Search by Location
             </h3>
             <p className="text-sm text-neutral-700">
-              Find doctors near you or in your preferred city or neighborhood by
-              booking an appointment to the preffered doctor.
+              Find orthopaedic surgeons near you, in your suburb or anywhere in Western
+              Australia, and book with the surgeon you prefer.
             </p>
           </div>
           <div>
@@ -32,8 +32,8 @@ export const WhyChooseUs = () => {
               Seamless Appointment Booking
             </h3>
             <p className="text-sm text-neutral-700">
-              Skip the long phone calls — book your doctor with just a few
-              clicks by choosing your suitable day and time.
+              Skip the long phone calls and book your surgeon in a few clicks by
+              choosing a day and time that suits you.
             </p>
           </div>
           <div>
@@ -41,7 +41,7 @@ export const WhyChooseUs = () => {
               Transparency in Healthcare
             </h3>
             <p className="text-sm text-neutral-700">
-              Our focus is on helping patients make informed choices based on
+              Our focus is on helping you choose the best orthopaedic surgeon based on
               real feedback and ratings.
             </p>
           </div>

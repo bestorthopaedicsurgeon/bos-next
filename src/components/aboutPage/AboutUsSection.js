@@ -16,14 +16,14 @@ export const AboutUsSection = () => {
         <div className="px-10">
           <h2 className="as-h1 font-syne text-primary mb-4 font-bold">About Us</h2>
           <p className="mb-6 font-bold text-neutral-700">
-            Your Health, Your Choice — Made Simple.
+            Your Health, Your Choice, Made Simple.
           </p>
           <p className="text-neutral-700">
-            At bestorthopaedicsurgeon.com.au, we believe finding the right doctor
-            shouldn’t be a challenge. Our platform connects patients with
-            top-rated, trusted, and reviewed medical professionals across
-            various specialties — helping you make informed decisions for your
-            health with confidence and ease.
+            At Best Orthopaedic Surgeon, we believe finding the best orthopaedic surgeon
+            for your needs shouldn&apos;t be a challenge. Our directory brings together
+            orthopaedic surgeons across Western Australia with verified profiles and
+            real patient reviews, so you can make informed decisions about your care
+            with confidence.
           </p>
           <Button className="mt-8" variant="primary" size="primary" asChild>
             <ScrollLink href="/surgeons" scrollTarget="section_high">

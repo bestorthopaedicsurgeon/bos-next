@@ -2,8 +2,9 @@ import Footer from "@/components/Footer/Footer";
 import Header from "@/components/header/Header";
 
 export const metadata = {
-  title: 'Create Surgeon Profile',
-  description: 'Learn how Western Australian orthopaedic surgeons can create or claim a BOS profile, add practice details and help patients find their services.',
+  // Keyword map: "surgeon profile" (secondary "doctor directory").
+  title: { absolute: 'Create Your Surgeon Profile | WA Orthopaedic Directory' },
+  description: "Create or claim your surgeon profile on Western Australia's orthopaedic directory. Add your subspecialties, clinics and credentials so patients can find you.",
   alternates: { canonical: '/how-to-make-surgeons-profile' },
 };
 

@@ -2,8 +2,9 @@ import Footer from "@/components/Footer/Footer";
 import Header from "@/components/header/Header";
 
 export const metadata = {
-  title: 'How to Leave a Review',
-  description: 'Learn how to find an orthopaedic surgeon profile, submit a patient review and understand how reviews are checked before publication on BOS.',
+  // Keyword map: "doctor reviews" (secondary "rate my doctor").
+  title: { absolute: 'How to Leave Doctor Reviews | Rate Your Orthopaedic Surgeon' },
+  description: 'Leave doctor reviews for your orthopaedic surgeon in five simple steps. Rate your doctor and help other patients in Western Australia choose with confidence.',
   alternates: { canonical: '/how-to-leave-review' },
 };
 

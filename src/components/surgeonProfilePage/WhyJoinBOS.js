@@ -6,7 +6,7 @@ export const WhyJoinBOS = () => {
     {
       icon: <Target className="w-8 h-8 text-primary" />,
       title: "Targeted Exposure",
-      description: "Unlike general medical directories, BOS WA is 100% focused on Orthopaedics. That means your profile is seen by patients specifically searching for the care you provide."
+      description: "Unlike general medical directories, BOS WA is 100% focused on orthopaedics. That means your surgeon profile is seen by patients specifically searching for the care you provide."
     },
     {
       icon: <Star className="w-8 h-8 text-primary" />,
@@ -16,12 +16,12 @@ export const WhyJoinBOS = () => {
     {
       icon: <Search className="w-8 h-8 text-primary" />,
       title: "Appear in Local Search Results",
-      description: "Our platform is optimized for search engines, helping your profile rank higher when patients search for Orthopaedic surgeons in Perth, Bunbury, Fremantle, and other WA locations."
+      description: "Our platform is optimised for search engines, helping your profile rank higher when patients search for Orthopaedic surgeons in Perth, Bunbury, Fremantle, and other WA locations."
     },
     {
       icon: <Settings className="w-8 h-8 text-primary" />,
       title: "Full Control of Your Profile",
-      description: "Easily manage your professional profile with up-to-date details including subspecialties, clinic locations, appointment procedures, credentials, and contact info."
+      description: "Easily manage your surgeon profile with current details including subspecialties, clinic locations, appointment procedures, credentials and contact info."
     },
     {
       icon: <Users className="w-8 h-8 text-primary" />,

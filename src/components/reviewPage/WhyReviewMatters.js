@@ -10,7 +10,7 @@ export const WhyReviewMatters = () => {
     },
     {
       icon: <Award className="w-8 h-8 text-primary" />,
-      title: "Recognizes excellent care",
+      title: "Recognises excellent care",
       description: "Acknowledge outstanding surgeons and their dedication to patient care and recovery."
     },
     {
@@ -31,7 +31,7 @@ export const WhyReviewMatters = () => {
         <div className="text-center mb-12">
           <h2 className="font-syne mb-4">Why Your Review Matters</h2>
           <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-            Every review you leave makes a meaningful impact on the healthcare community and future patients.
+            Honest doctor reviews make a meaningful impact on future patients and the wider healthcare community.
           </p>
         </div>
 

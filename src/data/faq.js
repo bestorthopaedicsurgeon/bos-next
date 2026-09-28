@@ -1,10 +1,10 @@
 export const faqData = {
-  pageTitle: "Frequently Asked Questions",
+  pageTitle: "What Does an Orthopaedic Surgeon Do? FAQs",
   breadcrumb: "Home > FAQs",
   
   header: {
     subtitle: "Got Questions? We've Got Answers",
-    description: "Find answers to the most common questions about our orthopaedic surgeon directory, ratings, reviews, and more."
+    description: "What does an orthopaedic surgeon do, and how do you choose the right one? Find answers about orthopaedic care, our directory, ratings and reviews."
   },
 
   // FAQs to show on home page (first 5-6 most important ones)
@@ -43,6 +43,60 @@ export const faqData = {
 
   // All FAQs for the FAQ page
   allFaqs: [
+    {
+      id: 21,
+      question: "What is an orthopaedic surgeon?",
+      answer: "An orthopaedic surgeon is a specialist doctor who diagnoses and treats problems with the bones, joints, ligaments, tendons, muscles and spine. In Australia they complete years of specialist surgical training and hold a Fellowship of the Royal Australasian College of Surgeons (FRACS).",
+      category: "Getting Started"
+    },
+    {
+      id: 22,
+      question: "What does an orthopaedic surgeon do?",
+      answer: "They assess injuries and conditions of the musculoskeletal system, arrange scans such as MRI and recommend treatment. Many patients never need an operation. When surgery is the right option, they perform procedures such as joint replacement, arthroscopy, ligament reconstruction and fracture repair.",
+      category: "Getting Started"
+    },
+    {
+      id: 23,
+      question: "What does an orthopaedic surgeon do at the first appointment?",
+      answer: "They ask about your symptoms and history, examine the affected area and review any scans. Then they explain the likely cause and your treatment options. Bring your GP referral, a list of your medications and any previous imaging.",
+      category: "Getting Started"
+    },
+    {
+      id: 24,
+      question: "What does an orthopaedic surgeon do that a GP or physio does not?",
+      answer: "Your GP manages your overall health and a physiotherapist treats movement, strength and rehabilitation. An orthopaedic surgeon diagnoses complex bone and joint problems and performs surgery when it is needed. The three often work together on your recovery.",
+      category: "Getting Started"
+    },
+    {
+      id: 25,
+      question: "What does an orthopaedic surgeon do for arthritis?",
+      answer: "For hip and knee arthritis, they confirm the diagnosis and usually start with exercise, weight management and pain relief. Joint replacement is considered when pain and stiffness keep limiting daily life despite these treatments.",
+      category: "Getting Started"
+    },
+    {
+      id: 29,
+      question: "What does an orthopaedic surgeon do for knee pain?",
+      answer: "They find the cause, such as arthritis, a meniscus tear or a ligament injury, through an examination and often an MRI. Treatment usually starts with physiotherapy or other non surgical care, and surgery such as ligament reconstruction or knee replacement is considered when it is likely to help.",
+      category: "Getting Started"
+    },
+    {
+      id: 26,
+      question: "What does an orthopaedic surgeon do for sports injuries?",
+      answer: "They assess injuries such as ACL tears, meniscus tears and shoulder dislocations, often with an MRI, and advise whether physiotherapy or surgery gives you the best chance of a safe return to sport.",
+      category: "Getting Started"
+    },
+    {
+      id: 27,
+      question: "What does an orthopaedic surgeon do for back pain?",
+      answer: "Most back pain settles without surgery, so a GP and physiotherapist usually manage it first. A spine surgeon assesses back pain that persists or causes nerve symptoms such as leg pain, numbness or weakness, and explains whether surgery could help.",
+      category: "Getting Started"
+    },
+    {
+      id: 28,
+      question: "What does an orthopaedic surgeon do after surgery?",
+      answer: "They check your wound and progress at follow up appointments, arrange physiotherapy and guide your return to work, driving and sport. Most patients see their surgeon a few weeks after the operation and again as they recover.",
+      category: "Getting Started"
+    },
     {
       id: 1,
       question: "How does the rating system work?",

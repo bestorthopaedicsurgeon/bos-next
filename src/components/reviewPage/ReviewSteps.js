@@ -8,7 +8,7 @@ export const ReviewSteps = () => {
     {
       step: "Step 1",
       title: "Search for Your Surgeon",
-      description: "Use the search bar to find your Orthopaedic surgeon by name, location, or specialty."
+      description: "Use the search bar to find your orthopaedic surgeon by name, location or specialty."
     },
     {
       step: "Step 2", 
@@ -17,18 +17,18 @@ export const ReviewSteps = () => {
     },
     {
       step: "Step 3",
-      title: 'Click "Leave a Review"',
-      description: "You'll find the review section near the bottom of the profile. Simply click \"Leave a Review\" or \"Rate This Surgeon.\""
+      title: 'Go to "Rate & Review"',
+      description: "You'll find the Rate & Review section near the bottom of the profile, or click \"Write a Review\" on the surgeon's card to jump straight there. You will need to log in, which keeps every review genuine."
     },
     {
       step: "Step 4",
       title: "Share Your Experience",
-      description: "Rate them on key areas such as: Professionalism, Communication & Clarity, Wait Time, Treatment Outcome, Overall Satisfaction. Then, write a short, helpful summary of your visit — what went well, and what others should know."
+      description: "Rate your doctor on professionalism, punctuality, helpfulness and knowledge. Then write a short, helpful summary of your visit: what went well and what other patients should know."
     },
     {
       step: "Step 5",
       title: "Submit",
-      description: "Click Submit Review. Your review will be moderated and published shortly."
+      description: "Click Submit. Your review will be moderated and published shortly."
     }
   ];
 
@@ -38,7 +38,7 @@ export const ReviewSteps = () => {
         <div className="text-center mb-12">
           <h2 className="font-syne mb-4">Simple Steps to Leave Your Review</h2>
           <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-            Leaving a review is quick, easy, and incredibly helpful for others. Here&apos;s how it works:
+            Doctor reviews help other patients in Western Australia choose the right orthopaedic surgeon. Leaving one is quick and easy. Here&apos;s how it works:
           </p>
         </div>
 

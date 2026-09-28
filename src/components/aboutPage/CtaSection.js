@@ -11,7 +11,7 @@ export const CtaSectionAbout = () => {
           Feel Something Wrong With Your Bones?
         </h2>
         <p className="text-primary-foreground text-center">
-        Bone pain, stiffness, or unusual swelling could be early warning signs of an underlying condition. Don’t delay—consult a specialist today and protect your mobility.
+        Bone pain, stiffness or unusual swelling could be early warning signs of an underlying condition. Don&apos;t delay: see your GP and find the best orthopaedic surgeon to protect your mobility.
         </p>
         <Button className="mt-8" variant="primaryForeground" size="primaryForeground" asChild>
           <ScrollLink href="/surgeons" scrollTarget="section">

@@ -7,7 +7,7 @@ export const WAIntroSection = () => {
     "Grow your online visibility",
     "Attract new patients",
     "Strengthen your local presence",
-    "Be part of a trusted, surgeon-only platform",
+    "Be part of a trusted platform built only for surgeons",
   ];
 
   return (
@@ -15,11 +15,11 @@ export const WAIntroSection = () => {
       <div className="container mx-auto px-4">
         <div className="text-center mb-12">
           <h2 className="font-syne mb-4 max-w-2xl mx-auto">
-            Are You an Orthopaedic Surgeon Practicing in WA?
+            Are You an Orthopaedic Surgeon Practising in WA?
           </h2>
           <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-            Join the only directory in Western Australia dedicated solely to Orthopaedic professionals.
-            Claim your profile or join and list your profile today to showcase your expertise.
+            Join the only directory in Western Australia dedicated solely to orthopaedic surgeons.
+            Claim your surgeon profile or create a new one today to showcase your expertise.
           </p>
         </div>
 
