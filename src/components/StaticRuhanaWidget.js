@@ -3,6 +3,7 @@
 import Image from "next/image";
 import { Mic, MicOff, PhoneOff, X } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
+import { track } from "@/lib/analytics";
 import "./StaticRuhanaWidget.css";
 
 const ANAM_AGENT_ID = "9734bd3e-1f0e-4556-a325-1772e7fd1eda";
@@ -150,6 +151,7 @@ export default function StaticRuhanaWidget({
 
     setCallState("connecting");
     setCallError("");
+    track("isla_call_click");
 
     timeoutRef.current = setTimeout(() => {
       if (isCurrent() && !live) {
@@ -190,6 +192,7 @@ export default function StaticRuhanaWidget({
       client.addListener(AnamEvent.VIDEO_PLAY_STARTED, () => {
         if (hangUpIfStale()) return;
         live = true;
+        track("isla_call_connected");
         clearTimeout(timeoutRef.current);
         setVideoPlaying(true);
         setCallState("live");

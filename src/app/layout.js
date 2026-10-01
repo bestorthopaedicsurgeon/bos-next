@@ -6,6 +6,7 @@ import SessionWrapper from "@/components/SessionWrapper";
 import { Toaster } from "@/components/ui/sonner";
 import { JsonLd } from "@/components/seo/JsonLd";
 import StaticRuhanaWidget from "@/components/StaticRuhanaWidget";
+import GoogleAnalytics from "@/components/analytics/GoogleAnalytics";
 
 const SITE_URL =
   process.env.NEXT_PUBLIC_BASE_URL ||
@@ -110,6 +111,7 @@ export default function RootLayout({ children }) {
             imageUrl="/avatars/isla.png"
           />
         </ThemeProvider>
+        <GoogleAnalytics />
       </body>
     </html>
   );

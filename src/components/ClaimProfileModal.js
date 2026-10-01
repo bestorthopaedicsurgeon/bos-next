@@ -11,6 +11,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { useSanitizedForm } from "@/hooks/useSanitizedForm";
+import { track } from "@/lib/analytics";
 
 const ClaimProfileModal = ({ children, doctorId }) => {
   const { data: session, status } = useSession();
@@ -59,6 +60,7 @@ const ClaimProfileModal = ({ children, doctorId }) => {
       });
 
       if (response.ok) {
+        track("claim_profile_submit", { doctor_id: doctorId });
         setMessage("Profile claim request submitted successfully!");
         setTimeout(() => {
           setIsOpen(false);

@@ -9,6 +9,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { submitDoctorReview } from "@/lib/apiCalls/client/doctor";
 import { toast } from "sonner";
 import { useSanitizedForm } from "@/hooks/useSanitizedForm";
+import { track } from "@/lib/analytics";
 
 export default function ReviewForm({ className, doctorId, doctorName, onReviewSubmit }) {
   const { data: session, status } = useSession();
@@ -70,6 +71,7 @@ export default function ReviewForm({ className, doctorId, doctorName, onReviewSu
       };
       console.log('asdasd',doctorId);
       const res = await submitDoctorReview(doctorId, reviewData);
+      track("review_submitted", { doctor_id: doctorId });
 
       // Reset form on success
       setFormData({

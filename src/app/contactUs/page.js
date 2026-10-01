@@ -4,6 +4,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { submitContactForm } from '@/lib/apiCalls/client/ContactUs';
 import { toast } from "sonner";
 import { sanitizeInput, validateEmail, validateName, validatePhone } from "@/lib/sanitize";
+import { track } from "@/lib/analytics";
 
 const formField = "flex flex-col gap-2 max-md:col-span-2";
 const inputField = "border border-gray-300 rounded-md p-3 focus:outline-none focus:border-primary";
@@ -98,6 +99,7 @@ const Page = () => {
     
     try {
       await submitContactForm(formData);
+      track("contact_form_submit");
       setSuccess(true);
       toast.success('Message sent successfully');
       

@@ -10,6 +10,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { useSanitizedForm } from "@/hooks/useSanitizedForm";
+import { track } from "@/lib/analytics";
 
 const CollaborateModal = ({ children }) => {
   const [isOpen, setIsOpen] = useState(false);
@@ -46,6 +47,7 @@ const CollaborateModal = ({ children }) => {
       });
 
       if (response.ok) {
+        track("collaborate_submit");
         toast.success("Collaboration request submitted successfully!");
         setMessage("Your collaboration request has been submitted successfully!");
         setTimeout(() => {

@@ -108,6 +108,8 @@ const DoctorCard = ({
             <div
               onClick={goToReview}
               className="cursor-pointer max-sm:w-full"
+              data-track="write_review_click"
+              data-track-label={slug || id}
             >
               <Button
                 className="w-fit max-sm:w-full"

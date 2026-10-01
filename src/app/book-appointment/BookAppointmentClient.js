@@ -15,6 +15,7 @@ import {
 } from "@/components/ui/dialog";
 import { Checkbox } from "@/components/ui/checkbox";
 import AvailabilityCalendar from "@/components/calendar";
+import { track } from "@/lib/analytics";
 
 const formField = "flex flex-col gap-2 max-md:col-span-2";
 const inputField =
@@ -75,6 +76,7 @@ const BookingPageContent = () => {
 
       const data = await res.json();
       if (data.success) {
+        track("appointment_request", { doctor_id: doctorId, consult_type: consultType });
         setSuccess(true);
         setOpenDialog(true);
       } else {

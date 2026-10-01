@@ -17,6 +17,7 @@ import Image from "next/image";
 import Link from "next/link";
 import React, { useState, useCallback, useMemo, useEffect, useRef } from "react";
 import { debounce } from "lodash";
+import { track } from "@/lib/analytics";
 
 export const HeroSection = ({ onSearch, initialParams }) => {
   const [searchForm, setSearchForm] = useState(initialParams || {
@@ -63,9 +64,21 @@ export const HeroSection = ({ onSearch, initialParams }) => {
     [],
   );
 
+  // The wrapper passes a new onSearch each render, so the same search can run
+  // twice; only report a search term once in a row.
+  const lastTrackedSearch = useRef("");
+
   // Stable debounced search function
   const debouncedSearch = useMemo(
-    () => debounce((params) => onSearch(params), 500),
+    () =>
+      debounce((params) => {
+        onSearch(params);
+        const term = [params.name, params.subspecialty, params.location].filter(Boolean).join(" | ");
+        if (term && term !== lastTrackedSearch.current) {
+          lastTrackedSearch.current = term;
+          track("search", { search_term: term });
+        }
+      }, 500),
     [onSearch]
   );
 
