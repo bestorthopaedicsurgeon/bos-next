@@ -1,4 +1,4 @@
-export const getAllDoctors = async (params = {}) => {
+export const getAllDoctors = async (params = {}, options = {}) => {
   try {
     const { page = 1, limit = 12, name = "", subspecialty = "", location = "", filter = "", stats = false } = params;
 
@@ -13,6 +13,7 @@ export const getAllDoctors = async (params = {}) => {
 
     const res = await fetch(`/api/doctors/all?${queryParams.toString()}`, {
       method: "GET",
+      signal: options.signal,
     });
 
     const data = await res.json();
@@ -23,6 +24,7 @@ export const getAllDoctors = async (params = {}) => {
 
     return data; // Return full data including pagination
   } catch (error) {
+    if (error?.name === "AbortError") throw error;
     console.error("API error (doctors):", error);
     return null;
   }

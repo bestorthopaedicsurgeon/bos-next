@@ -1,5 +1,5 @@
 "use client";
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useCallback } from "react";
 import { useSearchParams } from "next/navigation";
 import { HeroSection } from "./Hero";
 import { AllSurgeons } from "./AllSurgeons";
@@ -28,6 +28,7 @@ export const SearchableSurgeonsWrapper = () => {
   }, [searchParamsHook]);
   const heroRef = useRef(null);
   const surgeonsRef = useRef(null);
+  const handleSearch = useCallback((params) => setSearchParams(params), []);
 
   // When landing: check sessionStorage or URL params (for backward compatibility) and scroll
   useEffect(() => {
@@ -68,7 +69,7 @@ export const SearchableSurgeonsWrapper = () => {
     <>
       <div ref={heroRef}>
         <HeroSection
-          onSearch={(params) => setSearchParams(params)}
+          onSearch={handleSearch}
           initialParams={searchParams}
         />
       </div>

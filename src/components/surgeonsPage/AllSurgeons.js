@@ -12,19 +12,22 @@ export const AllSurgeons = ({ searchParams = {} }) => {
   const [doctorsResponse, setDoctorsResponse] = useState(null);
   const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
+  const name = searchParams.name || "";
+  const subspecialty = searchParams.subspecialty || "";
+  const location = searchParams.location || "";
 
   const prevSearchParams = useRef(searchParams);
-  const lastFetchedParams = useRef("");
+  const latestRequest = useRef(0);
 
   useEffect(() => {
     // Check if search parameters actually changed
     const searchChanged = 
-      prevSearchParams.current.name !== (searchParams.name || "") ||
-      prevSearchParams.current.subspecialty !== (searchParams.subspecialty || "") ||
-      prevSearchParams.current.location !== (searchParams.location || "");
+      prevSearchParams.current.name !== name ||
+      prevSearchParams.current.subspecialty !== subspecialty ||
+      prevSearchParams.current.location !== location;
     
     // Update ref for next comparison
-    prevSearchParams.current = searchParams;
+    prevSearchParams.current = { name, subspecialty, location };
 
     // If search changed and we are not on page 1, reset to page 1
     // This will trigger a re-render and this effect will run again with currentPage = 1
@@ -33,22 +36,22 @@ export const AllSurgeons = ({ searchParams = {} }) => {
       return;
     }
 
+    const controller = new AbortController();
+    const requestId = ++latestRequest.current;
+
     // Fetch doctors
     const fetchDoctorsData = async () => {
-      // Avoid fetching if parameters haven't changed since last fetch
-      const currentParamsKey = `${searchParams.name}-${searchParams.subspecialty}-${searchParams.location}-${currentPage}`;
-      if (lastFetchedParams.current === currentParamsKey) return;
-      lastFetchedParams.current = currentParamsKey;
-
       setLoading(true);
       try {
         const res = await getAllDoctors({
           page: currentPage,
           limit: DOCTORS_PER_PAGE,
-          name: searchParams.name,
-          subspecialty: searchParams.subspecialty,
-          location: searchParams.location,
-        });
+          name,
+          subspecialty,
+          location,
+        }, { signal: controller.signal });
+
+        if (controller.signal.aborted || requestId !== latestRequest.current) return;
 
         if (res?.success) {
           setDoctorsResponse(res);
@@ -56,22 +59,24 @@ export const AllSurgeons = ({ searchParams = {} }) => {
           setDoctorsResponse(null);
         }
       } catch (error) {
+        if (error?.name === "AbortError") return;
         console.error("Error fetching surgeons:", error);
-        setDoctorsResponse(null);
+        if (requestId === latestRequest.current) setDoctorsResponse(null);
       } finally {
-        setLoading(false);
+        if (requestId === latestRequest.current) setLoading(false);
       }
     };
 
     fetchDoctorsData();
-  }, [currentPage, searchParams.name, searchParams.subspecialty, searchParams.location]);
+    return () => controller.abort();
+  }, [currentPage, name, subspecialty, location]);
 
   const displayDoctors = doctorsResponse?.data || [];
   const pagination = doctorsResponse?.pagination || { totalPages: 0, totalCount: 0 };
   const totalDoctors = pagination.totalCount;
   const totalPages = pagination.totalPages;
   const hasResults = displayDoctors.length > 0;
-  const isSearchMode = Object.keys(searchParams).length > 0;
+  const isSearchMode = Boolean(name || subspecialty || location);
 
   // Pagination calculations for display info
   const startIndex = (currentPage - 1) * DOCTORS_PER_PAGE;

@@ -18,6 +18,7 @@ import { useRouter } from "next/navigation";
 import React, { useState, useCallback, useMemo } from "react";
 import Link from "next/link";
 import ScrollLink from "@/components/reusable/ScrollLink";
+import { SURGEON_SUBSPECIALTY_OPTIONS } from "@/lib/search/surgeonSubspecialty";
 
 export const HeroSection = () => {
   const router = useRouter();  
@@ -26,25 +27,6 @@ export const HeroSection = () => {
     subspecialty: "",
     location: "",
   });
-
-  const subspecialities = useMemo(
-    () => [
-      { value: "Hip & Knee", label: "Hip & Knee" },
-      { value: "Foot & Ankle", label: "Foot & Ankle" },
-      { value: "Sports", label: "Sports" },
-      { value: "Hip Arthroscopy", label: "Hip Arthroscopy" },
-      { value: "Shoulder", label: "Shoulder" },
-      { value: "Upper Limb", label: "Upper Limb" },
-      { value: "Lower Limb", label: "Lower Limb" },
-      { value: "Elbow", label: "Elbow" },
-      { value: "Trauma", label: "Trauma" },
-      { value: "Paediatric Orthopaedics", label: "Paediatric Orthopaedics" },
-      { value: "Spine", label: "Spine" },
-      { value: "General Orthopaedics", label: "General Orthopaedics" },
-      { value: "Tumour", label: "Tumour" },
-    ],
-    [],
-  );
 
   const locationOptions = useMemo(
     () =>
@@ -163,7 +145,7 @@ export const HeroSection = () => {
             }
           />
           <SearchableSelect
-            options={subspecialities}
+            options={SURGEON_SUBSPECIALTY_OPTIONS}
             placeholder="Subspecialty"
             value={searchForm.subspecialty}
             onChange={(value) =>
