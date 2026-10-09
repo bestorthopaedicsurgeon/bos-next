@@ -200,11 +200,18 @@ const DocProfile = ({ docProfile_Details, editProfile, locationHref }) => {
     Book Appointment
   </button>
 </Link>
+          {/* Printable QR code that opens this profile's review form, for
+              clinic counters. Under Book Appointment until xl, where the
+              header has room for it at the top right. */}
+          {doctorProfile?.slug && (
+            <div className="mt-1 xl:hidden">
+              <ReviewQrCode slug={doctorProfile.slug} name={displayName} designation={doctorProfile?.designation} />
+            </div>
+          )}
         </div>
 
-        {/* Printable QR code that opens this profile's review form, for clinic counters. */}
         {doctorProfile?.slug && (
-          <div className="md:ml-auto md:self-start">
+          <div className="hidden shrink-0 self-start xl:ml-auto xl:block">
             <ReviewQrCode slug={doctorProfile.slug} name={displayName} designation={doctorProfile?.designation} />
           </div>
         )}

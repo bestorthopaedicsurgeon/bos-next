@@ -33,10 +33,16 @@ function WriteReviewScroll({ targetRef }) {
     // Retries with an instant fallback: programmatic smooth scrolls can be
     // swallowed during page load (global scroll-behavior:smooth plus the
     // router's own scroll restoration), so keep trying until it lands.
+    // Below lg the review form wraps under the review list, so phones (and
+    // every QR code scan) go straight to the form itself.
+    const target = () =>
+      (window.matchMedia("(max-width: 1023px)").matches &&
+        targetRef.current?.querySelector("[data-review-form]")) ||
+      targetRef.current;
     let attempts = 0;
     const interval = setInterval(() => {
       attempts += 1;
-      targetRef.current?.scrollIntoView({
+      target()?.scrollIntoView({
         behavior: attempts === 1 ? "smooth" : "instant",
         block: "start",
       });

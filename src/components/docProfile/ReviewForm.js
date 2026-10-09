@@ -133,7 +133,7 @@ export default function ReviewForm({ className, doctorId, doctorName, onReviewSu
 
   if (status === "loading") {
     return (
-      <div className={`h-full rounded-lg bg-white p-6 shadow-md ${className}`}>
+      <div data-review-form className={`h-full scroll-mt-24 rounded-lg bg-white p-6 shadow-md ${className}`}>
         <p className="text-primary mb-4 font-[700]">
           Rate & Review Dr. {doctorName}
         </p>
@@ -146,7 +146,7 @@ export default function ReviewForm({ className, doctorId, doctorName, onReviewSu
 
   if (!isLoggedIn) {
     return (
-      <div className={`h-full rounded-lg bg-white p-6 shadow-md ${className}`}>
+      <div data-review-form className={`h-full scroll-mt-24 rounded-lg bg-white p-6 shadow-md ${className}`}>
         <p className="text-primary mb-4 font-[700]">
           Rate & Review Dr. {doctorName}
         </p>
@@ -188,7 +188,7 @@ export default function ReviewForm({ className, doctorId, doctorName, onReviewSu
   }
 
   return (
-    <div className={`h-full rounded-lg bg-white p-6 shadow-md ${className}`}>
+    <div data-review-form className={`h-full scroll-mt-24 rounded-lg bg-white p-6 shadow-md ${className}`}>
       <p className="text-primary mb-4 font-[700]">
         Rate & Review Dr. {doctorName}
       </p>
