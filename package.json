@@ -7,7 +7,9 @@
     "build": "prisma generate && next build",
     "start": "next start",
     "lint": "next lint",
-    "test:search": "node --test src/lib/search/surgeonSubspecialty.test.cts"
+    "test:search": "node --test src/lib/search/surgeonSubspecialty.test.cts",
+    "test:google-reviews": "node --test src/data/googleReviews.test.mjs",
+    "verify:google-reviews-html": "node scripts/verifyGoogleReviewHtml.mjs"
   },
   "dependencies": {
     "@anam-ai/js-sdk": "^4.27.0",

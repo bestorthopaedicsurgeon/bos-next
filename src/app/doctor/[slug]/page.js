@@ -17,7 +17,9 @@ import {
 } from "@/lib/data/publicData";
 import { JsonLd } from "@/components/seo/JsonLd";
 import ReviewScroller from "@/components/docProfile/ReviewScroller";
-import GoogleReviews from "@/components/docProfile/GoogleReviews";
+import GoogleReviews, {
+  getGoogleReviews,
+} from "@/components/docProfile/GoogleReviews";
 import { doctorSpecialtyLabel, formatDoctorName } from "@/lib/utils";
 import { SeoFaq } from "@/components/seo/SeoFaq";
 import { seoLocations } from "@/lib/constants/seoLocations";
@@ -32,8 +34,10 @@ import {
   withArticle,
 } from "@/lib/seo/copy";
 
-const BASE_URL =
-  process.env.NEXT_PUBLIC_BASE_URL || "https://www.bestorthopaedicsurgeon.com.au";
+// Public profile identity must always resolve to the production domain. This
+// prevents local or preview environment values from leaking into canonicals,
+// breadcrumbs, and Physician entity IDs.
+const BASE_URL = "https://www.bestorthopaedicsurgeon.com.au";
 
 // Prerendered per doctor with a daily safety net; the doctor mutation APIs
 // call revalidateDoctorContent() so edits show up immediately. Unknown or
@@ -187,6 +191,14 @@ const Page = async ({ params }) => {
   const pageTitle = getDoctorDisplayName(doctData);
 
   const canonicalSlug = doctData?.slug || slug;
+  const googleReviewData = getGoogleReviews(canonicalSlug);
+  const primaryGoogleListing = googleReviewData?.listings?.find(
+    (listing) => listing.primary,
+  );
+
+  // Link the physician entity to its Google listing, but never merge imported
+  // Google ratings into BOS review markup. Google's review-snippet policy does
+  // not allow ratings aggregated from another website.
 
   const schemaDescription = getDoctorDescription(doctData, 300);
 
@@ -250,6 +262,9 @@ const Page = async ({ params }) => {
     medicalSpecialty: "https://schema.org/Musculoskeletal",
     description: schemaDescription,
     url: `${BASE_URL}/doctor/${canonicalSlug}`,
+    ...(primaryGoogleListing?.url && {
+      sameAs: [primaryGoogleListing.url],
+    }),
     areaServed: { "@type": "State", name: "Western Australia" },
     ...(doctData?.image && { image: doctData.image }),
     ...(primaryPhone && { telephone: primaryPhone }),
@@ -420,7 +435,13 @@ const Page = async ({ params }) => {
         doctData={doctData}
         initialReviews={res?.reviewsData}
         initialQuestions={res?.questions}
-        googleReviews={<GoogleReviews slug={canonicalSlug} doctorName={pageTitle} />}
+        googleReviews={
+          <GoogleReviews
+            slug={canonicalSlug}
+            doctorName={pageTitle}
+            data={googleReviewData}
+          />
+        }
       />
       {/* Same FAQ block as the location pages, built from this profile only */}
       <div className="w-full max-w-7xl mx-auto mt-16">

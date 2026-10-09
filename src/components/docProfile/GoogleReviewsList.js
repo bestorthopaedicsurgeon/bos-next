@@ -9,8 +9,14 @@ const LONG = 320; // characters before a review is clamped behind "Read more"
 function ReviewCard({ review, hidden }) {
   const [open, setOpen] = useState(false);
   const long = review.text.length > LONG;
+  const authorId = `google-review-${review.id}-author`;
+
   return (
-    <li className={`${hidden ? "hidden" : "flex"} h-full flex-col rounded-lg bg-white p-6 shadow-sm`}>
+    <li
+      aria-labelledby={authorId}
+      data-review-source="google"
+      className={`${hidden ? "hidden" : "flex"} h-full flex-col rounded-lg bg-white p-6 shadow-sm`}
+    >
       <div className="flex items-start gap-3">
         <span
           aria-hidden="true"
@@ -19,12 +25,26 @@ function ReviewCard({ review, hidden }) {
           {review.author.trim().charAt(0)}
         </span>
         <div className="min-w-0 flex-1">
-          <p className="truncate text-[15px] font-[600] text-[#232323]">{review.author}</p>
-          <p className="text-[13px] text-[#737373]">{review.age}</p>
+          <h3
+            id={authorId}
+            className="truncate text-[15px] font-[600] text-[#232323]"
+          >
+            {review.author}
+          </h3>
+          <time dateTime={review.date} className="text-[13px] text-[#737373]">
+            {review.age}
+          </time>
         </div>
-        <span title="Posted on Google" className="mt-1">
+        <a
+          href={review.sourceUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          title="Posted on Google"
+          aria-label={`View the source of ${review.author}'s review on Google`}
+          className="mt-1"
+        >
           <GoogleG className="h-5 w-5" />
-        </span>
+        </a>
       </div>
       <div className="mt-3 flex flex-wrap items-center gap-2">
         <Stars rating={review.rating} />
@@ -37,11 +57,12 @@ function ReviewCard({ review, hidden }) {
           </span>
         )}
       </div>
-      <p
+      <blockquote
+        cite={review.sourceUrl}
         className={`mt-3 text-[14px] leading-relaxed font-[500] whitespace-pre-line text-[#3a3a3a] ${long && !open ? "line-clamp-6" : ""}`}
       >
         {review.text}
-      </p>
+      </blockquote>
       {long && (
         <button
           type="button"
@@ -62,7 +83,10 @@ export default function GoogleReviewsList({ items }) {
   const [all, setAll] = useState(false);
   return (
     <>
-      <ul className="mt-6 grid grid-cols-1 gap-5 md:grid-cols-2 xl:grid-cols-3">
+      <ul
+        aria-label="Patient reviews published on Google"
+        className="mt-6 grid grid-cols-1 gap-5 md:grid-cols-2 xl:grid-cols-3"
+      >
         {items.map((review, i) => (
           <ReviewCard key={review.id} review={review} hidden={!all && i >= INITIAL} />
         ))}

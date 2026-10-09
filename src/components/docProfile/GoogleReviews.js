@@ -39,8 +39,8 @@ export function getGoogleReviews(slug) {
 // Google reviews for a surgeon, shown under the BOS reviews. Rendered on the
 // server so every review is in the page HTML; only the "show more" controls
 // run in the browser.
-export default function GoogleReviews({ slug, doctorName }) {
-  const data = getGoogleReviews(slug);
+export default function GoogleReviews({ slug, doctorName, data: suppliedData }) {
+  const data = suppliedData ?? getGoogleReviews(slug);
   if (!data) return null;
 
   const primary = data.listings.find((l) => l.primary) || data.listings[0];
@@ -50,9 +50,14 @@ export default function GoogleReviews({ slug, doctorName }) {
     id: r.id,
     author: r.author,
     rating: r.rating,
+    date: r.date,
     age: reviewAge(r.date),
     text: r.text,
-    source: r.listing === primary.key ? null : { name: byKey[r.listing].name, url: byKey[r.listing].url },
+    sourceUrl: byKey[r.listing].url,
+    source:
+      r.listing === primary.key
+        ? null
+        : { name: byKey[r.listing].name, url: byKey[r.listing].url },
   }));
 
   return (
