@@ -17,6 +17,7 @@ import {
 } from "@/lib/data/publicData";
 import { JsonLd } from "@/components/seo/JsonLd";
 import ReviewScroller from "@/components/docProfile/ReviewScroller";
+import GoogleReviews from "@/components/docProfile/GoogleReviews";
 import { doctorSpecialtyLabel, formatDoctorName } from "@/lib/utils";
 import { SeoFaq } from "@/components/seo/SeoFaq";
 import { seoLocations } from "@/lib/constants/seoLocations";
@@ -419,6 +420,7 @@ const Page = async ({ params }) => {
         doctData={doctData}
         initialReviews={res?.reviewsData}
         initialQuestions={res?.questions}
+        googleReviews={<GoogleReviews slug={canonicalSlug} doctorName={pageTitle} />}
       />
       {/* Same FAQ block as the location pages, built from this profile only */}
       <div className="w-full max-w-7xl mx-auto mt-16">

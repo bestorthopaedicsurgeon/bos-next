@@ -48,7 +48,8 @@ function WriteReviewScroll({ targetRef }) {
   return null;
 }
 
-export function DocTabs({ doctData, ownProfile, initialReviews, initialQuestions }) {
+// googleReviews: optional server rendered section shown under the reviews.
+export function DocTabs({ doctData, ownProfile, initialReviews, initialQuestions, googleReviews }) {
   const tabsRef = useRef(null);
 
   const handleReviewSubmit = () => {
@@ -91,8 +92,9 @@ export function DocTabs({ doctData, ownProfile, initialReviews, initialQuestions
         </TabsList>
         <TabsContent
           value="reviews"
-          className="mt-3 flex gap-10 max-lg:flex-wrap"
+          className="mt-3 flex flex-col gap-10"
         >
+          <div className="flex gap-10 max-lg:flex-wrap">
           <Rating
             doctorId={doctData.id}
             initialData={initialReviews}
@@ -108,6 +110,8 @@ export function DocTabs({ doctData, ownProfile, initialReviews, initialQuestions
                 /*  onReviewSubmit={handleReviewSubmit} */
                 />
               ))}
+          </div>
+          {googleReviews}
         </TabsContent>
         <TabsContent
           value="about"

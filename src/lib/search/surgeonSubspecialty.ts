@@ -29,7 +29,7 @@ const DEFINITIONS: SubspecialtyDefinition[] = [
   },
   {
     value: "Hip & Knee",
-    label: "Hip & Knee",
+    label: "Hip and Knee Arthroplasty",
     aliases: ["hip and knee", "hip knee"],
     requiredTermGroups: [["hip"], ["knee"]],
   },

@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useParams } from "next/navigation";
 import React, { useState } from "react";
 import ClaimProfileModal from "../ClaimProfileModal";
+import ReviewQrCode from "./ReviewQrCode";
 import { formatDoctorName } from "@/lib/utils";
 const {
   Popover,
@@ -200,6 +201,13 @@ const DocProfile = ({ docProfile_Details, editProfile, locationHref }) => {
   </button>
 </Link>
         </div>
+
+        {/* Printable QR code that opens this profile's review form, for clinic counters. */}
+        {doctorProfile?.slug && (
+          <div className="md:ml-auto md:self-start">
+            <ReviewQrCode slug={doctorProfile.slug} name={displayName} designation={doctorProfile?.designation} />
+          </div>
+        )}
 
         {editProfile && (
           <Link href={`/doctor/edit/`}>

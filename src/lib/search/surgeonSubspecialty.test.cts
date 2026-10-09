@@ -25,7 +25,7 @@ test("the dropdown contains only the requested hip and spine choices", () => {
   );
   assert.equal(
     SURGEON_SUBSPECIALTY_OPTIONS.some(
-      (option: { label: string }) => option.label === "Hip & Knee",
+      (option: { label: string }) => option.label === "Hip and Knee Arthroplasty",
     ),
     true,
   );
