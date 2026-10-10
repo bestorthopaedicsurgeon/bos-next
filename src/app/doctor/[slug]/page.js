@@ -262,7 +262,9 @@ const Page = async ({ params }) => {
     medicalSpecialty: "https://schema.org/Musculoskeletal",
     description: schemaDescription,
     url: `${BASE_URL}/doctor/${canonicalSlug}`,
-    ...(primaryGoogleListing?.url && {
+    // Only the surgeon's own Google profile is the same entity; a shared
+    // clinic listing is not.
+    ...(primaryGoogleListing?.url && !primaryGoogleListing.shared && {
       sameAs: [primaryGoogleListing.url],
     }),
     areaServed: { "@type": "State", name: "Western Australia" },

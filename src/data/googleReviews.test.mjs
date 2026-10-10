@@ -53,5 +53,5 @@ test("every Google review has complete, attributable source data", () => {
     }
   }
 
-  assert.equal(reviewIds.size, 182);
+  assert.equal(reviewIds.size, 197);
 });

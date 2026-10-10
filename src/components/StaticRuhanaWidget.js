@@ -1,13 +1,12 @@
 "use client";
 
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import { Mic, MicOff, PhoneOff, X } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { track } from "@/lib/analytics";
 import "./StaticRuhanaWidget.css";
 
-const ANAM_AGENT_ID = "9734bd3e-1f0e-4556-a325-1772e7fd1eda";
-const ANAM_API_BASE_URL = "https://lab.anam.ai";
 const VIDEO_ELEMENT_ID = "rhn-live-video";
 const CONNECT_TIMEOUT_MS = 45000;
 
@@ -15,13 +14,61 @@ const loadAnamSdk = () => import("@anam-ai/js-sdk");
 
 // Anam signs the idle clip URL for one hour, so it is fetched at runtime.
 const fetchPreviewVideoUrl = async () => {
-  const response = await fetch(
-    `${ANAM_API_BASE_URL}/v1/personas/${ANAM_AGENT_ID}/widget`,
-  );
+  const response = await fetch("/api/isla/preview");
   if (!response.ok) return null;
-  const config = await response.json();
-  return config.persona?.avatarVideoUrl || null;
+  const { videoUrl } = await response.json();
+  return videoUrl || null;
 };
+
+// Isla's tools (defined in src/lib/isla/persona.js) run here, against the BOS
+// API, and their results go back to her.
+const islaApi = async (url) => {
+  try {
+    const response = await fetch(url);
+    const data = await response.json();
+    return data.text || "That information is not available right now.";
+  } catch {
+    return "The BOS directory could not be reached just now.";
+  }
+};
+
+function registerIslaTools(client, router) {
+  client.registerToolCallHandler("find_surgeons", {
+    onStart: async ({ arguments: args = {} }) => {
+      track("isla_tool_call", { label: "find_surgeons" });
+      const query = new URLSearchParams({
+        need: args.need || "",
+        location: args.location || "",
+        name: args.name || "",
+      });
+      return islaApi(`/api/isla/surgeons?${query}`);
+    },
+  });
+  client.registerToolCallHandler("get_surgeon_details", {
+    onStart: async ({ arguments: args = {} }) => {
+      track("isla_tool_call", { label: "get_surgeon_details" });
+      return islaApi(`/api/isla/surgeons/${encodeURIComponent(args.slug || "")}`);
+    },
+  });
+  client.registerToolCallHandler("read_site_page", {
+    onStart: async ({ arguments: args = {} }) => {
+      track("isla_tool_call", { label: "read_site_page" });
+      return islaApi(`/api/isla/page?${new URLSearchParams({ path: args.path || "" })}`);
+    },
+  });
+  client.registerToolCallHandler("open_page", {
+    onStart: async ({ arguments: args = {} }) => {
+      track("isla_tool_call", { label: "open_page" });
+      const path = String(args.path || "").trim();
+      if (!/^\/[a-z0-9\-/]*$/i.test(path) || path.startsWith("//")) {
+        return "That is not a BOS page that can be opened.";
+      }
+      // Client side navigation, so the call carries on.
+      router.push(path);
+      return "The page is now open on screen.";
+    },
+  });
+}
 
 export default function StaticRuhanaWidget({
   agentName,
@@ -34,6 +81,7 @@ export default function StaticRuhanaWidget({
   const [videoPlaying, setVideoPlaying] = useState(false);
   const [muted, setMuted] = useState(false);
   const [callError, setCallError] = useState("");
+  const router = useRouter();
   const clientRef = useRef(null);
   const attemptRef = useRef(0);
   const timeoutRef = useRef(null);
@@ -162,22 +210,28 @@ export default function StaticRuhanaWidget({
     try {
       const [{ createClient, AnamEvent }, response] = await Promise.all([
         loadAnamSdk(),
-        fetch(`${ANAM_API_BASE_URL}/v1/auth/widget`, {
+        fetch("/api/isla/session", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ agentId: ANAM_AGENT_ID }),
+          body: JSON.stringify({ path: window.location.pathname }),
         }),
       ]);
 
+      if (response.status === 429) {
+        if (isCurrent()) {
+          endCall("Too many calls just now. Please try again in a few minutes.");
+        }
+        return;
+      }
       if (!response.ok) throw new Error(`HTTP ${response.status}`);
       const { sessionToken } = await response.json();
       if (!isCurrent()) return;
 
       const client = createClient(sessionToken, {
-        api: { baseUrl: ANAM_API_BASE_URL },
         metrics: { disableClientMetrics: true },
       });
       clientRef.current = client;
+      registerIslaTools(client, router);
 
       // stopStreaming does nothing while the session is still starting, so a
       // call closed mid connect is hung up as soon as it comes up.

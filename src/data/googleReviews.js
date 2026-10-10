@@ -1,10 +1,11 @@
 // Google reviews shown on surgeon profiles, keyed by BOS profile slug.
-// Text was compiled from each surgeon's public Google Business Profile;
-// star ratings and review ages were checked against the live listings on
-// 2026-10-09 (GOOGLE_REVIEWS_CAPTURED_AT). `date` is estimated from
-// Google's relative age ("3 months ago") on that day. Only reviews that
-// are about the surgeon named on the profile are included.
-export const GOOGLE_REVIEWS_CAPTURED_AT = "2026-10-09";
+// Each surgeon's reviews come from their own Google Business Profile, or,
+// when they have none, from their clinic's listing (`shared: true`), where
+// only reviews that name the surgeon are kept. Reviews that name another
+// doctor are left out. Text is exactly as written on Google; `date` is
+// estimated from Google's relative age ("3 months ago") on the capture day.
+// First six profiles captured 2026-10-09, the rest 2026-10-10.
+export const GOOGLE_REVIEWS_CAPTURED_AT = "2026-10-10";
 
 export const googleReviews = {
   "ryan-du-sart": {
@@ -875,7 +876,7 @@ export const googleReviews = {
         "key": "joint-studio",
         "name": "The Joint Studio",
         "address": "Suite 1/85 Monash Ave, Nedlands WA 6009, Australia",
-        "rating": 5.0,
+        "rating": 5,
         "reviewCount": 78,
         "url": "https://maps.google.com/?cid=9899099098364151033",
         "primary": false
@@ -1386,7 +1387,7 @@ export const googleReviews = {
         "key": "antony-liddell",
         "name": "Dr Antony Liddell - Perth Orthopaedic Surgeon",
         "address": "Perth Orthopaedic & Sports Medicine Centre, Level 1/1 Havelock St, West Perth WA 6005, Australia",
-        "rating": 5.0,
+        "rating": 5,
         "reviewCount": 21,
         "url": "https://share.google/faEwweG4DVvXo1Fg6",
         "primary": true
@@ -1559,6 +1560,238 @@ export const googleReviews = {
         "date": "2024-10-09",
         "listing": "abhijit-ghoshal",
         "text": "Was referred by another surgeon who had ceased taking public patients. Ghosh was advised on surgery to be performed. Totally disregarded original surgeons instructions, was unable to make decision on his own and had to consult fellow surgeons before deciding on totally different course of action. Referred me to RPH where I waited months. Finally called RPH only to be told I was in line for a pain education course after which I would then have to wait again to see another spinal surgeon Complete waste of time and money and ultimately I doubt as to whether he is a capable surgeon as he merely palmed me off to someone else Highly recommend avoiding as it seems he just sees patients for the consult fee with no Intention of actually providing treatment or making his own decisions"
+      }
+    ]
+  },
+  "satyen-gohil": {
+    "listings": [
+      {
+        "key": "/g/11bwp1ldqd",
+        "name": "Orthopaedics WA Wexford",
+        "address": "Murdoch Square, Suite 205, Level 2 Tower C/44 Barry Marshall Parade, Murdoch WA 6150",
+        "rating": 4.4,
+        "reviewCount": 19,
+        "url": "https://maps.google.com/?cid=7142503008708506801",
+        "primary": true,
+        "shared": true
+      }
+    ],
+    "reviews": [
+      {
+        "id": "g11bwp1ldqd-ZMjdITlJBEAE",
+        "author": "Ben Bowden",
+        "rating": 5,
+        "date": "2019-10-10",
+        "listing": "/g/11bwp1ldqd",
+        "text": "I had a surfing injury with my shoulder and would highly recommend Satyen Gohil for anyone looking for a good orthopaedic surgeon. He was extremely knowledgeable and guided me through the entire healing process along with recommending a great physio. I'm now back in the water with a shoulder that feels as good as new! Thanks so much Sat!!"
+      }
+    ]
+  },
+  "sheldon-moniz": {
+    "listings": [
+      {
+        "key": "/g/11bwp1ldqd",
+        "name": "Orthopaedics WA Wexford",
+        "address": "Murdoch Square, Suite 205, Level 2 Tower C/44 Barry Marshall Parade, Murdoch WA 6150",
+        "rating": 4.4,
+        "reviewCount": 19,
+        "url": "https://maps.google.com/?cid=7142503008708506801",
+        "primary": true,
+        "shared": true
+      }
+    ],
+    "reviews": [
+      {
+        "id": "g11bwp1ldqd-ZDIxeWIyYxAB",
+        "author": "Janelle Sepkus",
+        "rating": 5,
+        "date": "2026-03-10",
+        "listing": "/g/11bwp1ldqd",
+        "text": "I recently had hand surgery ( after a skiing injury) with Dr Moniz and whilst I am still in the recovery stage I must say Dr Moniz and His absolutely gorgeous office manager Ash far exceeded my expectations with their care and service for their patients. I have had a lot of medical procedures in the past and this is the first time I have felt genuinely cared about not just another number rather an equal. It’s early days but thanks Ash, Dr Moniz and team for your exceptional service and care. Could not recommend highly enough."
+      }
+    ]
+  },
+  "daniel-marshall": {
+    "listings": [
+      {
+        "key": "/g/11bwp1ldqd",
+        "name": "Orthopaedics WA Wexford",
+        "address": "Murdoch Square, Suite 205, Level 2 Tower C/44 Barry Marshall Parade, Murdoch WA 6150",
+        "rating": 4.4,
+        "reviewCount": 19,
+        "url": "https://maps.google.com/?cid=7142503008708506801",
+        "primary": true,
+        "shared": true
+      }
+    ],
+    "reviews": [
+      {
+        "id": "g11bwp1ldqd-ZDFKVlZWRRAB",
+        "author": "Malcolm Smartt",
+        "rating": 5,
+        "date": "2025-10-10",
+        "listing": "/g/11bwp1ldqd",
+        "text": "I have had ankle problems for many years and had an ankle fusion on my right ankle and due to the loss of movement those close to me state I now have a club foot – no pain but lack of movement is an issue. I then needed something done on my left ankle and chose a replacement and Dan Marshall was recommended and how right they were. A particularly pleasant no nonsense person and a very talented surgeon. I am now some 10 weeks post surgery back in normal shoes and have had limited pain throughout.\nI cannot provide enough complimentary adjectives for Dan and would highly recommend him to anyone and at the same time recommend an ankle replacement versus a fusion.\n\nIn addition, Tiana in reception was helpful, most efficient and made admin matters easy.\n\nThank you Dan\nCheers\nMal Smartt"
+      }
+    ]
+  },
+  "thomas-bucher": {
+    "listings": [
+      {
+        "key": "/g/11bwp1ldqd",
+        "name": "Orthopaedics WA Wexford",
+        "address": "Murdoch Square, Suite 205, Level 2 Tower C/44 Barry Marshall Parade, Murdoch WA 6150",
+        "rating": 4.4,
+        "reviewCount": 19,
+        "url": "https://maps.google.com/?cid=7142503008708506801",
+        "primary": true,
+        "shared": true
+      }
+    ],
+    "reviews": [
+      {
+        "id": "g11bwp1ldqd-nanJDc1hnEAE",
+        "author": "Chris Mould",
+        "rating": 5,
+        "date": "2025-10-10",
+        "listing": "/g/11bwp1ldqd",
+        "text": "I had a hip replacement done by Dr Bucher in May 24. He had to also break my femur to straighten my leg so the new implant could be put in, this was a seriously complex operation. Dr Bucher did an excellent job the scar was lengthy but looks great. My recovery has been long but I am getting better everyday and best of all no more excruciating pain. I finally have legs almost the same length after 30 years of being an inch short on the Rhs. I highly recommend Dr Bucher he has given me a new lease on life."
+      },
+      {
+        "id": "g11bwp1ldqd-3bXNEblRnEAE",
+        "author": "Victoria Edwards",
+        "rating": 5,
+        "date": "2024-10-10",
+        "listing": "/g/11bwp1ldqd",
+        "text": "I highly recommend Dr Thomas Bucher “The man who can”!\nI had a hip replacement last year (2023) which, unfortunately didn’t go according to plan. So I was referred to Dr Bucher who is extremely experienced in revision hip surgery.\nHe managed to put everything back into place and a year on I am back to total mobility.\nI can’t thank this guy enough - he pretty much saved my leg! And such a nice guy, he treats you like a real person, not just a patient. 😊😊👍🏻👍🏻👍🏻"
+      },
+      {
+        "id": "g11bwp1ldqd-1MGY3dWFnEAE",
+        "author": "Neil Todd",
+        "rating": 5,
+        "date": "2022-10-10",
+        "listing": "/g/11bwp1ldqd",
+        "text": "Just had a total knee replacement done by Thomas Bucher.I can't thank him enough. I am usually a very stressed person but at no time after the admission did i feel stressed. The staff at murdoch hospial are fantastic .All the nurses at st roses ward were very friendly and good at their job.So a very big thankyou to Mr Thomas Bucher and murdoch hopital and medibank for paying for it"
+      }
+    ]
+  },
+  "simon-wall": {
+    "listings": [
+      {
+        "key": "/g/11bwp1ldqd",
+        "name": "Orthopaedics WA Wexford",
+        "address": "Murdoch Square, Suite 205, Level 2 Tower C/44 Barry Marshall Parade, Murdoch WA 6150",
+        "rating": 4.4,
+        "reviewCount": 19,
+        "url": "https://maps.google.com/?cid=7142503008708506801",
+        "primary": true,
+        "shared": true
+      }
+    ],
+    "reviews": [
+      {
+        "id": "g11bwp1ldqd-ZFRSQkxYYxAB",
+        "author": "Mel Reyn",
+        "rating": 1,
+        "date": "2026-09-12",
+        "listing": "/g/11bwp1ldqd",
+        "text": "Dr wall had no intention of trying to save my leg ,all he was interested in was amputating my leg because of the cost being I was in a public hospital.So happy I ignored him as I still have 2 legs,"
+      },
+      {
+        "id": "g11bwp1ldqd-UkhOU1NVRRAB",
+        "author": "Sangita Kumar",
+        "rating": 5,
+        "date": "2026-02-10",
+        "listing": "/g/11bwp1ldqd",
+        "text": "Dr Simon wall did my surgery on my leg. He repaired my acl and meniscus back in 2023. I can run again and do various physical movements. He is a brilliant doctor and very kind. 🌻😃"
+      }
+    ]
+  },
+  "christopher-w-jones": {
+    "listings": [
+      {
+        "key": "/g/11bwp1ldqd",
+        "name": "Orthopaedics WA Wexford",
+        "address": "Murdoch Square, Suite 205, Level 2 Tower C/44 Barry Marshall Parade, Murdoch WA 6150",
+        "rating": 4.4,
+        "reviewCount": 19,
+        "url": "https://maps.google.com/?cid=7142503008708506801",
+        "primary": true,
+        "shared": true
+      }
+    ],
+    "reviews": [
+      {
+        "id": "g11bwp1ldqd-Tm5aR1JHYxAB",
+        "author": "Jeremy Noble",
+        "rating": 5,
+        "date": "2026-07-10",
+        "listing": "/g/11bwp1ldqd",
+        "text": "I have had 4 different knee surgeries and various other orthopaedic surgeries on different broken bones and injuries due to various sporting injuries. Dr Chris Jones is by far the most professional and accomplished surgeon I have heard of or come across.\n\nHe took the time to call me in advance of my surgery and had conducted a team meeting with colleagues in the lead up to my operation. He thoroughly explained every step of the procedure and added a facet to the surgery that had not been considered previously that was dynamic and extremely effective.\n\nAfter surgery not only did he come and see me twice before I was discharged but also called my next of kin and explained in full detail everything that had been done and the prognosis moving forward.\n\nI have private insurance and chose Chris after receiving a glowing review from a friend.\n\nThis would have been a 10 star review had they been allowed. Cannot recommend Chris enough."
+      },
+      {
+        "id": "g11bwp1ldqd-YTFsQk1XYxAB",
+        "author": "Robyn Edmondstone",
+        "rating": 5,
+        "date": "2026-06-10",
+        "listing": "/g/11bwp1ldqd",
+        "text": "Dr Chris Jones,\nWhat a legend this man is ,from the first appointment I felt at ease and after 2 hip replacements & a knee arthroscopy operation I can honestly say his knowledge,caring, professional nature and understanding are fantastic as is his communication skills and post surgery care he treats you like a person and not just a number like some do.\nHe is a very knowledgeable man and will answer any questions you have and help you to understand the procedure he is going to do on you. I wouldn’t hesitate to recommend him to anyone wanting a professional fantastic surgeon."
+      },
+      {
+        "id": "g11bwp1ldqd-VlVjd1dGRRAB",
+        "author": "Trevor Clay",
+        "rating": 5,
+        "date": "2025-10-10",
+        "listing": "/g/11bwp1ldqd",
+        "text": "I could not fault my Orthopaedic Surgeon Mr Chris Jones’ full hip replacement surgery. The attention to detail and the precision with which the surgery was carried out resulted in a perfect outcome. Every interaction with Chris and his assistant from the pre-surgery, surgery and to the postoperative care was without fault."
+      },
+      {
+        "id": "g11bwp1ldqd-KNUxLbEh3EAE",
+        "author": "Susan Halse",
+        "rating": 5,
+        "date": "2023-10-10",
+        "listing": "/g/11bwp1ldqd",
+        "text": "CHRISTOPHER JONES WAS WONDERFUL. CARING, KOWLEDGABLE, ABLE. WOULD GLADLY RECOMMEND HIM."
+      }
+    ]
+  },
+  "andrew-mattin": {
+    "listings": [
+      {
+        "key": "/g/11bwp1ldqd",
+        "name": "Orthopaedics WA Wexford",
+        "address": "Murdoch Square, Suite 205, Level 2 Tower C/44 Barry Marshall Parade, Murdoch WA 6150",
+        "rating": 4.4,
+        "reviewCount": 19,
+        "url": "https://maps.google.com/?cid=7142503008708506801",
+        "primary": true,
+        "shared": true
+      }
+    ],
+    "reviews": [
+      {
+        "id": "g11bwp1ldqd-ZEVaTE9YYxAB",
+        "author": "Frank Gucciardi",
+        "rating": 5,
+        "date": "2025-12-10",
+        "listing": "/g/11bwp1ldqd",
+        "text": "I was highly recommended Dr Andrew Mattin\nWhich my left arm i was so much pain that I needed surgery\nI was Diagnosis Cubital Tunnel Release and Excision of Ganglion, and surgery was November 2025\nDr Andrew Mattin did a fantastic job, and my pain is easing\nAlso bed side manner was great\nThe reception staff were really helpful and friendly and especially Julie she was very helpful before the surgery\nI would recommend Dr Andrew Mattin to anyone\nThank You"
+      },
+      {
+        "id": "g11bwp1ldqd-YWpCM05rRRAB",
+        "author": "Dean Carrabin",
+        "rating": 5,
+        "date": "2025-10-10",
+        "listing": "/g/11bwp1ldqd",
+        "text": "Dr Mattin did a rotator cuff repair on my left shoulder and did a fantastic job. The reception staff were really helpful and friendly and I couldn’t fault any part of the process"
+      },
+      {
+        "id": "g11bwp1ldqd-ROXA3Nk5BEAE",
+        "author": "Aidan Cowdery",
+        "rating": 5,
+        "date": "2017-10-10",
+        "listing": "/g/11bwp1ldqd",
+        "text": "Andrew Mattin operated on both my shoulder successfully. Very professional and gap free!"
       }
     ]
   }

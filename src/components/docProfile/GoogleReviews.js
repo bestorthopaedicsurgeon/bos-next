@@ -78,7 +78,9 @@ export default function GoogleReviews({ slug, doctorName, data: suppliedData }) 
             <span className="text-[16px] font-[700] text-[#232323]">{primary.rating.toFixed(1)}</span>
             <Stars rating={primary.rating} />
             <span>
-              {primary.reviewCount} reviews on Google
+              {primary.shared
+                ? `${primary.reviewCount} reviews for ${primary.name} on Google`
+                : `${primary.reviewCount} reviews on Google`}
             </span>
           </div>
         </div>
@@ -86,7 +88,7 @@ export default function GoogleReviews({ slug, doctorName, data: suppliedData }) 
           href={primary.url}
           target="_blank"
           rel="noopener noreferrer"
-          aria-label={`View ${doctorName} on Google (opens in a new tab)`}
+          aria-label={`View ${primary.shared ? primary.name : doctorName} on Google (opens in a new tab)`}
           className="inline-flex min-h-11 items-center justify-center gap-2 rounded-full border border-primary bg-white px-6 py-2.5 text-sm font-semibold text-primary transition hover:bg-primary/10"
         >
           <GoogleG className="h-4 w-4" />
@@ -95,7 +97,9 @@ export default function GoogleReviews({ slug, doctorName, data: suppliedData }) 
         </a>
       </div>
       <p className="mt-3 text-[13px] text-[#737373]">
-        What patients say about {doctorName} on Google, shown as written by each reviewer.
+        {primary.shared
+          ? `Reviews that name ${doctorName} on the ${primary.name} Google listing, shown as written by each reviewer.`
+          : `What patients say about ${doctorName} on Google, shown as written by each reviewer.`}
         {others.map((l) => (
           <span key={l.key}>
             {" "}Includes reviews that name {doctorName} from the{" "}
