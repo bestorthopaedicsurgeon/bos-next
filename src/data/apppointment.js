@@ -3,7 +3,7 @@ export const appointment = {
     {
       heading: "Get Consultaion",
       step1: "Surgeons",
-      step2: "Dr Smith’s Profile",
+      step2: "Surgeon Profile",
       step3: "Appointment",
     },
   ],

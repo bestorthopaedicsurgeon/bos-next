@@ -30,6 +30,9 @@ const BookingPageContent = () => {
   const searchParams = useSearchParams();
   const doctorId = searchParams.get("doctorId");
   const doctorName = searchParams.get("doctorName");
+  const doctorProfileBreadcrumb = doctorName?.trim()
+    ? `${doctorName.trim()}'s Profile`
+    : "Surgeon Profile";
 
   const [consultType, setConsultType] = useState("online");
   const [acceptTerms, setAcceptTerms] = useState(false);
@@ -96,7 +99,7 @@ const BookingPageContent = () => {
             key={data.heading}
             heading={data.heading}
             step1={data.step1}
-            step2={data.step2}
+            step2={doctorProfileBreadcrumb}
             step3={data.step3}
           />
         ))}
