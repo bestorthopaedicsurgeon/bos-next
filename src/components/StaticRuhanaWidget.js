@@ -9,6 +9,8 @@ import "./StaticRuhanaWidget.css";
 
 const VIDEO_ELEMENT_ID = "rhn-live-video";
 const CONNECT_TIMEOUT_MS = 45000;
+// Matches the phone layout in StaticRuhanaWidget.css.
+const PHONE_QUERY = "(max-width: 520px), (max-height: 520px) and (pointer: coarse)";
 
 const loadAnamSdk = () => import("@anam-ai/js-sdk");
 
@@ -101,6 +103,42 @@ export default function StaticRuhanaWidget({
   const videoRef = useRef(null);
   const previewVideoRef = useRef(null);
   const previewSlotRef = useRef(null);
+  const audioContextRef = useRef(null);
+  const stopVoiceMeterRef = useRef(null);
+
+  // On phones the round avatar grows and shrinks with Isla's voice. Her audio
+  // level is read locally and handed to CSS as --rhn-voice (0 to 1).
+  const startVoiceMeter = useCallback((stream) => {
+    const context = audioContextRef.current;
+    const avatar = videoRef.current?.parentElement;
+    if (!context || !avatar || !stream?.getAudioTracks?.().length) return;
+    if (!window.matchMedia(PHONE_QUERY).matches) return;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+
+    stopVoiceMeterRef.current?.();
+    const source = context.createMediaStreamSource(stream);
+    const analyser = context.createAnalyser();
+    analyser.fftSize = 512;
+    source.connect(analyser);
+
+    const samples = new Uint8Array(analyser.fftSize);
+    let level = 0;
+    let frame = requestAnimationFrame(function measure() {
+      analyser.getByteTimeDomainData(samples);
+      let sum = 0;
+      for (const sample of samples) sum += ((sample - 128) / 128) ** 2;
+      const loudness = Math.min(1, Math.sqrt(sum / samples.length) * 5);
+      level = level * 0.65 + loudness * 0.35;
+      avatar.style.setProperty("--rhn-voice", level.toFixed(3));
+      frame = requestAnimationFrame(measure);
+    });
+
+    stopVoiceMeterRef.current = () => {
+      cancelAnimationFrame(frame);
+      source.disconnect();
+      avatar.style.removeProperty("--rhn-voice");
+    };
+  }, []);
 
   // One looping idle clip is shared by the launcher and the open panel. It is
   // created outside React and moved between the two avatar slots, so it keeps
@@ -187,6 +225,8 @@ export default function StaticRuhanaWidget({
     clientRef.current = null;
     client?.stopStreaming().catch(() => {});
 
+    stopVoiceMeterRef.current?.();
+    stopVoiceMeterRef.current = null;
     if (videoRef.current) videoRef.current.srcObject = null;
 
     setCallState("idle");
@@ -199,6 +239,8 @@ export default function StaticRuhanaWidget({
     () => () => {
       clearTimeout(timeoutRef.current);
       clientRef.current?.stopStreaming().catch(() => {});
+      stopVoiceMeterRef.current?.();
+      audioContextRef.current?.close().catch(() => {});
     },
     [],
   );
@@ -213,6 +255,17 @@ export default function StaticRuhanaWidget({
     setCallState("connecting");
     setCallError("");
     track("isla_call_click");
+
+    // Created inside the tap, so phones allow it to run.
+    try {
+      const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+      if (AudioContextClass && !audioContextRef.current) {
+        audioContextRef.current = new AudioContextClass();
+      }
+      audioContextRef.current?.resume().catch(() => {});
+    } catch {
+      audioContextRef.current = null;
+    }
 
     timeoutRef.current = setTimeout(() => {
       if (isCurrent() && !live) {
@@ -263,6 +316,15 @@ export default function StaticRuhanaWidget({
         clearTimeout(timeoutRef.current);
         setVideoPlaying(true);
         setCallState("live");
+      });
+
+      client.addListener(AnamEvent.AUDIO_STREAM_STARTED, (stream) => {
+        if (!isCurrent()) return;
+        try {
+          startVoiceMeter(stream);
+        } catch {
+          // The avatar simply stays still if the browser cannot read the level.
+        }
       });
 
       client.addListener(AnamEvent.MIC_PERMISSION_DENIED, () => {
@@ -349,7 +411,7 @@ export default function StaticRuhanaWidget({
       aria-label={`${agentName} patient navigator`}
     >
       {open ? (
-        <section className="rhn-preview-panel">
+        <section className={`rhn-preview-panel rhn-panel-${callState}`}>
           <button
             className="rhn-close"
             type="button"
@@ -400,7 +462,10 @@ export default function StaticRuhanaWidget({
             </button>
           )}
 
-          <small role={callError ? "alert" : undefined}>
+          <small
+            className={callError ? "rhn-note rhn-note-error" : "rhn-note"}
+            role={callError ? "alert" : undefined}
+          >
             {callError || "AI patient navigator. General guidance only."}
           </small>
         </section>
@@ -412,6 +477,10 @@ export default function StaticRuhanaWidget({
             aria-expanded="false"
             onClick={() => setOpen(true)}
           >
+            <span className="rhn-bubble" aria-hidden="true">
+              Need help?
+            </span>
+
             {avatar()}
 
             <span className="rhn-copy">
