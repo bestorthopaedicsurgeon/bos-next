@@ -1,5 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
+import AdSlot from "@/components/ads/AdSlot";
 
 const socialIcons = [
   {
@@ -21,7 +22,12 @@ const socialIcons = [
 
 const Footer = () => {
   return (
-    <footer className="mt-30 w-full bg-[#3A8686] px-4 py-16 text-[#F1F8F6] md:px-16">
+    <>
+      <AdSlot
+        placement="SITE_WIDE_FOOTER"
+        className="container mx-auto mt-20 px-5"
+      />
+      <footer className="mt-30 w-full bg-[#3A8686] px-4 py-16 text-[#F1F8F6] md:px-16">
       <div className="mx-auto grid max-w-7xl grid-cols-1 gap-12 sm:grid-cols-2 md:grid-cols-4">
         {/* Brand/About */}
         <div>
@@ -126,6 +132,11 @@ const Footer = () => {
                 Review Policy
               </Link>
             </li>
+            <li>
+              <Link href="/advertising-policy" className="hover:underline">
+                Advertising Policy
+              </Link>
+            </li>
           </ul>
         </div>
       </div>
@@ -138,7 +149,8 @@ const Footer = () => {
           </p>
         </div>
       </div>
-    </footer>
+      </footer>
+    </>
   );
 };
 

@@ -23,6 +23,7 @@ import {
   topHospitals,
   withArticle,
 } from "@/lib/seo/copy";
+import AdSlot from "@/components/ads/AdSlot";
 
 const BASE_URL =
   process.env.NEXT_PUBLIC_BASE_URL ||
@@ -82,7 +83,12 @@ export default async function SubspecialtyLocationPage({ params }) {
     "@type": "BreadcrumbList",
     itemListElement: [
       { "@type": "ListItem", position: 1, name: "Home", item: BASE_URL },
-      { "@type": "ListItem", position: 2, name: "Surgeons", item: `${BASE_URL}/surgeons` },
+      {
+        "@type": "ListItem",
+        position: 2,
+        name: "Surgeons",
+        item: `${BASE_URL}/surgeons`,
+      },
       {
         "@type": "ListItem",
         position: 3,
@@ -124,13 +130,19 @@ export default async function SubspecialtyLocationPage({ params }) {
     .filter((c) => c.subSlug === sub.slug && c.locSlug !== loc.slug)
     .map((c) => {
       const l = getLocationBySlug(c.locSlug);
-      return { href: `/${sub.slug}/${c.locSlug}`, label: `${sub.name} surgeons in ${l?.name || c.locSlug}` };
+      return {
+        href: `/${sub.slug}/${c.locSlug}`,
+        label: `${sub.name} surgeons in ${l?.name || c.locSlug}`,
+      };
     });
   const otherSubsHere = combos
     .filter((c) => c.locSlug === loc.slug && c.subSlug !== sub.slug)
     .map((c) => {
       const s = getSubspecialtyBySlug(c.subSlug);
-      return { href: `/${c.subSlug}/${loc.slug}`, label: `${s?.name || c.subSlug} surgeons in ${loc.name}` };
+      return {
+        href: `/${c.subSlug}/${loc.slug}`,
+        label: `${s?.name || c.subSlug} surgeons in ${loc.name}`,
+      };
     });
 
   return (
@@ -160,6 +172,11 @@ export default async function SubspecialtyLocationPage({ params }) {
       )}
 
       <section className="mb-20">
+        <AdSlot
+          placement="SPECIALTY_LOCATION_RESULTS_INLINE"
+          context={{ specialty: sub.slug, location: loc.slug }}
+          className="mb-10"
+        />
         <div className="mb-6 flex items-center justify-between">
           <h2 className="font-syne text-primary">
             {`${sub.heading} in ${loc.name}`}
@@ -184,7 +201,7 @@ export default async function SubspecialtyLocationPage({ params }) {
             </p>
             <Link
               href={`/${sub.slug}`}
-              className="bg-primary inline-block rounded-full px-8 py-4 font-medium text-white transition-all hover:bg-primary/90"
+              className="bg-primary hover:bg-primary/90 inline-block rounded-full px-8 py-4 font-medium text-white transition-all"
             >
               {`See all ${sub.name.toLowerCase()} surgeons in WA`}
             </Link>
@@ -202,7 +219,10 @@ export default async function SubspecialtyLocationPage({ params }) {
       <LinkPillsSection
         title={`Other orthopaedic specialties in ${loc.name}`}
         links={[
-          { href: `/best-orthopaedic-surgeons/${loc.slug}`, label: `All surgeons in ${loc.name}` },
+          {
+            href: `/best-orthopaedic-surgeons/${loc.slug}`,
+            label: `All surgeons in ${loc.name}`,
+          },
           ...otherSubsHere,
         ]}
       />

@@ -12,7 +12,13 @@ import { LinkPillsSection } from "@/components/seo/LinkPillsSection";
 import { AnswerSummary } from "@/components/seo/AnswerSummary";
 import { SeoFaq } from "@/components/seo/SeoFaq";
 import { formatDoctorName } from "@/lib/utils";
-import { fitDescription, fitTitle, listJoin, topHospitals } from "@/lib/seo/copy";
+import {
+  fitDescription,
+  fitTitle,
+  listJoin,
+  topHospitals,
+} from "@/lib/seo/copy";
+import AdSlot from "@/components/ads/AdSlot";
 
 const BASE_URL =
   process.env.NEXT_PUBLIC_BASE_URL ||
@@ -42,7 +48,8 @@ export async function generateMetadata({ params }) {
   return {
     title: {
       absolute: fitTitle([
-        n > 1 && `Orthopaedic Surgeon ${location.name} | Compare ${n} Surgeons | BOS`,
+        n > 1 &&
+          `Orthopaedic Surgeon ${location.name} | Compare ${n} Surgeons | BOS`,
         n > 1 && `Orthopaedic Surgeon ${location.name} | Compare ${n} Surgeons`,
         `Orthopaedic Surgeon ${location.name} | BOS`,
       ]),
@@ -110,7 +117,10 @@ export default async function LocationPage({ params }) {
 
   // Contextual links to each subspecialty in THIS location that has depth.
   const subspecialtyLinks = seoSubspecialties
-    .map((s) => ({ s, count: surgeons.filter((d) => matchesSubspecialty(d, s)).length }))
+    .map((s) => ({
+      s,
+      count: surgeons.filter((d) => matchesSubspecialty(d, s)).length,
+    }))
     .filter((x) => x.count >= COMBO_THRESHOLD)
     .map((x) => ({
       href: `/${x.s.slug}/${location.slug}`,
@@ -124,7 +134,10 @@ export default async function LocationPage({ params }) {
 
   // Extractable answer and FAQ built from live directory numbers.
   const topSubs = seoSubspecialties
-    .map((s) => ({ s, count: surgeons.filter((d) => matchesSubspecialty(d, s)).length }))
+    .map((s) => ({
+      s,
+      count: surgeons.filter((d) => matchesSubspecialty(d, s)).length,
+    }))
     .filter((x) => x.count > 0)
     .sort((a, b) => b.count - a.count)
     .slice(0, 3)
@@ -193,6 +206,11 @@ export default async function LocationPage({ params }) {
 
       {/* Surgeon grid */}
       <section className="mb-24">
+        <AdSlot
+          placement="LOCATION_RESULTS_INLINE"
+          context={{ location: location.slug }}
+          className="mb-10"
+        />
         <div className="mb-6 flex items-center justify-between">
           <h2 className="font-syne text-primary">
             {surgeons.length > 0
@@ -205,7 +223,8 @@ export default async function LocationPage({ params }) {
           <>
             <div className="mb-6 text-sm text-gray-600">
               Showing {surgeons.length} orthopaedic{" "}
-              {surgeons.length === 1 ? "surgeon" : "surgeons"} in {location.name}
+              {surgeons.length === 1 ? "surgeon" : "surgeons"} in{" "}
+              {location.name}
             </div>
             <div className="grid grid-cols-1 gap-8 lg:grid-cols-2">
               {surgeons.map((s) => (
@@ -222,7 +241,7 @@ export default async function LocationPage({ params }) {
             </p>
             <Link
               href="/surgeons"
-              className="bg-primary inline-block rounded-full px-8 py-4 font-medium text-white transition-all hover:bg-primary/90"
+              className="bg-primary hover:bg-primary/90 inline-block rounded-full px-8 py-4 font-medium text-white transition-all"
             >
               Browse all orthopaedic surgeons
             </Link>
@@ -231,17 +250,17 @@ export default async function LocationPage({ params }) {
       </section>
 
       {/* CTA to full directory */}
-      <section className="bg-primary mb-24 rounded-4xl px-10 py-16 text-center text-primary-foreground">
-        <h2 className="font-syne mb-4 text-primary-foreground">
+      <section className="bg-primary text-primary-foreground mb-24 rounded-4xl px-10 py-16 text-center">
+        <h2 className="font-syne text-primary-foreground mb-4">
           Looking across Western Australia?
         </h2>
-        <p className="mx-auto mb-8 max-w-xl text-primary-foreground/85">
+        <p className="text-primary-foreground/85 mx-auto mb-8 max-w-xl">
           Search the full directory of orthopaedic surgeons across WA by name,
           subspecialty and location.
         </p>
         <Link
           href="/surgeons"
-          className="bg-primary-foreground text-primary inline-block rounded-full px-8 py-4 font-semibold transition-all hover:bg-primary-foreground/90"
+          className="bg-primary-foreground text-primary hover:bg-primary-foreground/90 inline-block rounded-full px-8 py-4 font-semibold transition-all"
         >
           Browse the full directory
         </Link>

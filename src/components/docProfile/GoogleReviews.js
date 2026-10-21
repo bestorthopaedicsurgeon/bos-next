@@ -46,6 +46,9 @@ export default function GoogleReviews({ slug, doctorName, data: suppliedData }) 
   const primary = data.listings.find((l) => l.primary) || data.listings[0];
   const others = data.listings.filter((l) => l !== primary);
   const byKey = Object.fromEntries(data.listings.map((l) => [l.key, l]));
+  // Google's own reviews page for the listing, where each review can be
+  // checked; the listing's Maps page when there is no verified Place ID.
+  const verifyUrl = (l) => l.reviewsUrl || l.url;
   const items = data.reviews.map((r) => ({
     id: r.id,
     author: r.author,
@@ -53,11 +56,11 @@ export default function GoogleReviews({ slug, doctorName, data: suppliedData }) 
     date: r.date,
     age: reviewAge(r.date),
     text: r.text,
-    sourceUrl: byKey[r.listing].url,
+    sourceUrl: verifyUrl(byKey[r.listing]),
     source:
       r.listing === primary.key
         ? null
-        : { name: byKey[r.listing].name, url: byKey[r.listing].url },
+        : { name: byKey[r.listing].name, url: verifyUrl(byKey[r.listing]) },
   }));
 
   return (
@@ -85,7 +88,7 @@ export default function GoogleReviews({ slug, doctorName, data: suppliedData }) 
           </div>
         </div>
         <a
-          href={primary.url}
+          href={verifyUrl(primary)}
           target="_blank"
           rel="noopener noreferrer"
           aria-label={`View ${primary.shared ? primary.name : doctorName} on Google (opens in a new tab)`}
@@ -103,7 +106,7 @@ export default function GoogleReviews({ slug, doctorName, data: suppliedData }) 
         {others.map((l) => (
           <span key={l.key}>
             {" "}Includes reviews that name {doctorName} from the{" "}
-            <a href={l.url} target="_blank" rel="noopener noreferrer" className="text-primary text-[13px] underline underline-offset-2">
+            <a href={verifyUrl(l)} target="_blank" rel="noopener noreferrer" className="text-primary text-[13px] underline underline-offset-2">
               {l.name}
             </a>{" "}
             Google listing ({l.rating.toFixed(1)}, {l.reviewCount} reviews).

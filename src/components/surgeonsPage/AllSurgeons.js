@@ -2,9 +2,9 @@
 import DoctorCard from "@/components/reusable/doctorCard";
 import { Button } from "@/components/ui/button";
 import { getAllDoctors } from "@/lib/apiCalls/client/allDoctor";
-import { ExternalLink, ChevronLeft, ChevronRight } from "lucide-react";
-import Image from "next/image";
-import React, { useState, useEffect, useCallback, useRef } from "react";
+import { ChevronLeft, ChevronRight } from "lucide-react";
+import { useState, useEffect, useRef } from "react";
+import AdSlot from "@/components/ads/AdSlot";
 
 const DOCTORS_PER_PAGE = 12;
 
@@ -21,11 +21,11 @@ export const AllSurgeons = ({ searchParams = {} }) => {
 
   useEffect(() => {
     // Check if search parameters actually changed
-    const searchChanged = 
+    const searchChanged =
       prevSearchParams.current.name !== name ||
       prevSearchParams.current.subspecialty !== subspecialty ||
       prevSearchParams.current.location !== location;
-    
+
     // Update ref for next comparison
     prevSearchParams.current = { name, subspecialty, location };
 
@@ -43,15 +43,19 @@ export const AllSurgeons = ({ searchParams = {} }) => {
     const fetchDoctorsData = async () => {
       setLoading(true);
       try {
-        const res = await getAllDoctors({
-          page: currentPage,
-          limit: DOCTORS_PER_PAGE,
-          name,
-          subspecialty,
-          location,
-        }, { signal: controller.signal });
+        const res = await getAllDoctors(
+          {
+            page: currentPage,
+            limit: DOCTORS_PER_PAGE,
+            name,
+            subspecialty,
+            location,
+          },
+          { signal: controller.signal },
+        );
 
-        if (controller.signal.aborted || requestId !== latestRequest.current) return;
+        if (controller.signal.aborted || requestId !== latestRequest.current)
+          return;
 
         if (res?.success) {
           setDoctorsResponse(res);
@@ -72,7 +76,10 @@ export const AllSurgeons = ({ searchParams = {} }) => {
   }, [currentPage, name, subspecialty, location]);
 
   const displayDoctors = doctorsResponse?.data || [];
-  const pagination = doctorsResponse?.pagination || { totalPages: 0, totalCount: 0 };
+  const pagination = doctorsResponse?.pagination || {
+    totalPages: 0,
+    totalCount: 0,
+  };
   const totalDoctors = pagination.totalCount;
   const totalPages = pagination.totalPages;
   const hasResults = displayDoctors.length > 0;
@@ -86,7 +93,9 @@ export const AllSurgeons = ({ searchParams = {} }) => {
   const goToPage = (page) => {
     setCurrentPage(page);
     // Smooth scroll to results section
-    document.getElementById('all_surgeons')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    document
+      .getElementById("all_surgeons")
+      ?.scrollIntoView({ behavior: "smooth", block: "start" });
   };
 
   const goToPreviousPage = () => {
@@ -101,7 +110,7 @@ export const AllSurgeons = ({ searchParams = {} }) => {
   const getPageNumbers = () => {
     const pages = [];
     const maxPagesToShow = 5;
-    
+
     if (totalPages <= maxPagesToShow) {
       // Show all pages if total is small
       for (let i = 1; i <= totalPages; i++) {
@@ -111,23 +120,23 @@ export const AllSurgeons = ({ searchParams = {} }) => {
       // Show first page, last page, current page, and nearby pages
       if (currentPage <= 3) {
         for (let i = 1; i <= 4; i++) pages.push(i);
-        pages.push('...');
+        pages.push("...");
         pages.push(totalPages);
       } else if (currentPage >= totalPages - 2) {
         pages.push(1);
-        pages.push('...');
+        pages.push("...");
         for (let i = totalPages - 3; i <= totalPages; i++) pages.push(i);
       } else {
         pages.push(1);
-        pages.push('...');
+        pages.push("...");
         pages.push(currentPage - 1);
         pages.push(currentPage);
         pages.push(currentPage + 1);
-        pages.push('...');
+        pages.push("...");
         pages.push(totalPages);
       }
     }
-    
+
     return pages;
   };
 
@@ -142,8 +151,11 @@ export const AllSurgeons = ({ searchParams = {} }) => {
         </div>
         <div className="grid grid-cols-1 gap-8 lg:grid-cols-2">
           {[...Array(6)].map((_, index) => (
-            <div key={index} className="border-primary flex max-sm:flex-col-reverse w-full items-center max-sm:justify-center max-sm:items-start justify-evenly gap-7 rounded-3xl border px-11 py-10 animate-pulse">
-              <div className="flex flex-col gap-3.5 max-sm:w-full flex-1">
+            <div
+              key={index}
+              className="border-primary flex w-full animate-pulse items-center justify-evenly gap-7 rounded-3xl border px-11 py-10 max-sm:flex-col-reverse max-sm:items-start max-sm:justify-center"
+            >
+              <div className="flex flex-1 flex-col gap-3.5 max-sm:w-full">
                 <div className="h-6 w-3/4 rounded bg-white"></div>
                 <div className="h-4 w-1/2 rounded bg-white"></div>
                 <div className="h-4 w-2/3 rounded bg-white"></div>
@@ -166,25 +178,29 @@ export const AllSurgeons = ({ searchParams = {} }) => {
     <section className="mb-40" id="all_surgeons">
       <div className="mb-8 flex items-center justify-between">
         <h2 className="as-h1 font-syne text-primary">
-          {isSearchMode ? 
-            `Search Results ${totalDoctors ? `(${totalDoctors})` : ''}` : 
-            "All Orthopaedic Surgeons"
-          }
+          {isSearchMode
+            ? `Search Results ${totalDoctors ? `(${totalDoctors})` : ""}`
+            : "All Orthopaedic Surgeons"}
         </h2>
       </div>
-      
+
       {!hasResults && isSearchMode ? (
         <div className="flex flex-col items-center justify-center py-16 text-center">
           <div className="mb-4 text-6xl">🔍</div>
-          <h3 className="mb-2 text-xl font-semibold text-gray-600">No doctors found</h3>
+          <h3 className="mb-2 text-xl font-semibold text-gray-600">
+            No doctors found
+          </h3>
           <p className="text-gray-500">
-            Try adjusting your search criteria or clear the search to see all doctors.
+            Try adjusting your search criteria or clear the search to see all
+            doctors.
           </p>
         </div>
       ) : !hasResults && !isSearchMode ? (
         <div className="flex flex-col items-center justify-center py-16 text-center">
           <div className="mb-4 text-6xl">👨‍⚕️</div>
-          <h3 className="mb-2 text-xl font-semibold text-gray-600">No doctors available</h3>
+          <h3 className="mb-2 text-xl font-semibold text-gray-600">
+            No doctors available
+          </h3>
           <p className="text-gray-500">
             Please check back later or contact support.
           </p>
@@ -193,62 +209,81 @@ export const AllSurgeons = ({ searchParams = {} }) => {
         <>
           {/* Results count */}
           <div className="mb-4 text-sm text-gray-600">
-            Showing {startIndex + 1}-{Math.min(endIndex, totalDoctors)} of {totalDoctors} surgeons
+            Showing {startIndex + 1}-{Math.min(endIndex, totalDoctors)} of{" "}
+            {totalDoctors} surgeons
           </div>
 
           {/* Doctors grid */}
-          <div className="grid grid-cols-1 gap-8 lg:grid-cols-2 mb-8">
+          <div className="mb-8 grid grid-cols-1 gap-8 lg:grid-cols-2">
             {displayDoctors?.map((doctor, index) => (
-              <DoctorCard key={doctor.id || index} {...doctor} reviewButton={true} />
+              <DoctorCard
+                key={doctor.id || index}
+                {...doctor}
+                reviewButton={true}
+              />
             ))}
           </div>
 
           {/* Pagination controls */}
           {totalPages > 1 && (
-            <div className="flex items-center justify-center gap-2 flex-wrap">
+            <div className="flex flex-wrap items-center justify-center gap-2">
               {/* Previous button */}
               <Button
                 onClick={goToPreviousPage}
                 disabled={currentPage === 1}
                 variant="outline"
-                className="px-3 py-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="px-3 py-2 disabled:cursor-not-allowed disabled:opacity-50"
               >
                 <ChevronLeft className="h-4 w-4" />
                 <span className="ml-1">Previous</span>
               </Button>
 
               {/* Page numbers */}
-              {getPageNumbers().map((page, index) => (
-                page === '...' ? (
-                  <span key={`ellipsis-${index}`} className="px-2 text-gray-500">...</span>
+              {getPageNumbers().map((page, index) =>
+                page === "..." ? (
+                  <span
+                    key={`ellipsis-${index}`}
+                    className="px-2 text-gray-500"
+                  >
+                    ...
+                  </span>
                 ) : (
                   <Button
                     key={page}
                     onClick={() => goToPage(page)}
                     variant={currentPage === page ? "default" : "outline"}
-                    className={`px-4 py-2 min-w-[40px] ${
-                      currentPage === page 
-                        ? 'bg-primary text-white' 
-                        : 'hover:bg-gray-100'
+                    className={`min-w-[40px] px-4 py-2 ${
+                      currentPage === page
+                        ? "bg-primary text-white"
+                        : "hover:bg-gray-100"
                     }`}
                   >
                     {page}
                   </Button>
-                )
-              ))}
+                ),
+              )}
 
               {/* Next button */}
               <Button
                 onClick={goToNextPage}
                 disabled={currentPage === totalPages}
                 variant="outline"
-                className="px-3 py-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="px-3 py-2 disabled:cursor-not-allowed disabled:opacity-50"
               >
                 <span className="mr-1">Next</span>
                 <ChevronRight className="h-4 w-4" />
               </Button>
             </div>
           )}
+
+          <AdSlot
+            placement="SURGEON_RESULTS_INLINE"
+            context={{
+              specialty: subspecialty || undefined,
+              location: location || undefined,
+            }}
+            className="mt-12"
+          />
         </>
       )}
     </section>

@@ -22,6 +22,14 @@ test("every Google review has complete, attributable source data", () => {
       assert.ok(listing.key, `${slug} has a listing without a key`);
       assert.ok(!listingKeys.has(listing.key), `${slug} repeats ${listing.key}`);
       assert.match(listing.url, /^https:\/\//, `${listing.key} has an invalid URL`);
+      if (listing.reviewsUrl || listing.placeId) {
+        assert.match(listing.placeId, /^ChIJ[A-Za-z0-9_-]+$/, `${listing.key} has an invalid Place ID`);
+        assert.equal(
+          listing.reviewsUrl,
+          `https://search.google.com/local/reviews?placeid=${listing.placeId}`,
+          `${listing.key} must link to Google's reviews page for its own Place ID`,
+        );
+      }
       assert.ok(
         Number.isFinite(listing.rating) && listing.rating >= 1 && listing.rating <= 5,
         `${listing.key} has an invalid rating`,
@@ -53,5 +61,5 @@ test("every Google review has complete, attributable source data", () => {
     }
   }
 
-  assert.equal(reviewIds.size, 197);
+  assert.equal(reviewIds.size, 1276);
 });

@@ -220,6 +220,91 @@ model Answer {
   @@index([authorId])
 }
 
+model Advertiser {
+  id           String       @id @default(cuid())
+  name         String
+  contactName  String?
+  contactEmail String?
+  websiteUrl   String
+  abn          String?
+  isActive     Boolean      @default(true)
+  createdAt    DateTime     @default(now())
+  updatedAt    DateTime     @updatedAt
+  campaigns    AdCampaign[]
+
+  @@index([name])
+}
+
+model AdCampaign {
+  id                   String           @id @default(cuid())
+  advertiserId         String
+  name                 String
+  mediaType            AdMediaType
+  coverage             AdCoverage       @default(SELECTED_PLACEMENTS)
+  desktopImagePath     String?
+  mobileImagePath      String?
+  videoPath            String?
+  posterPath           String?
+  captionsPath         String?
+  originalFileName     String?
+  altText              String
+  destinationUrl       String
+  ctaLabel             String           @default("Learn more")
+  status               AdCampaignStatus @default(DRAFT)
+  startsAt             DateTime?
+  endsAt               DateTime?
+  timezone             String           @default("Australia/Perth")
+  priority             Int              @default(0)
+  weight               Int              @default(1)
+  loopVideo            Boolean          @default(true)
+  complianceNotes      String?
+  complianceAcceptedAt DateTime?
+  reviewedById         String?
+  approvedAt           DateTime?
+  createdById          String
+  createdAt            DateTime         @default(now())
+  updatedAt            DateTime         @updatedAt
+  advertiser           Advertiser       @relation(fields: [advertiserId], references: [id], onDelete: Restrict)
+  assignments          AdAssignment[]
+  dailyMetrics         AdDailyMetric[]
+
+  @@index([advertiserId])
+  @@index([status, startsAt, endsAt])
+  @@index([coverage])
+}
+
+model AdAssignment {
+  id           String     @id @default(cuid())
+  campaignId   String
+  placementKey String
+  context      Json?
+  isActive     Boolean    @default(true)
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+  campaign     AdCampaign @relation(fields: [campaignId], references: [id], onDelete: Cascade)
+
+  @@unique([campaignId, placementKey])
+  @@index([placementKey, isActive])
+}
+
+model AdDailyMetric {
+  id             String     @id @default(cuid())
+  campaignId     String
+  placementKey   String
+  date           DateTime   @db.Date
+  impressions    Int        @default(0)
+  clicks         Int        @default(0)
+  videoStarts    Int        @default(0)
+  videoCompletes Int        @default(0)
+  createdAt      DateTime   @default(now())
+  updatedAt      DateTime   @updatedAt
+  campaign       AdCampaign @relation(fields: [campaignId], references: [id], onDelete: Cascade)
+
+  @@unique([campaignId, placementKey, date])
+  @@index([campaignId, date])
+  @@index([date])
+}
+
 enum Role {
   ADMIN
   DOCTOR
@@ -252,4 +337,25 @@ enum ClaimStatus {
   PENDING
   APPROVED
   REJECTED
+}
+
+enum AdMediaType {
+  IMAGE
+  VIDEO
+}
+
+enum AdCoverage {
+  SITE_WIDE
+  SELECTED_PLACEMENTS
+}
+
+enum AdCampaignStatus {
+  DRAFT
+  PENDING_REVIEW
+  SCHEDULED
+  ACTIVE
+  PAUSED
+  ENDED
+  REJECTED
+  ARCHIVED
 }

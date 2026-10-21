@@ -12,7 +12,8 @@ const SITE = "https://www.bestorthopaedicsurgeon.com.au";
 // account cannot hold custom avatars.
 const ORIGINAL_AVATAR_ID = "d4cac2e3-816a-4ad4-af58-2a084fdcfccb";
 const AVATAR_NAME = "Isla (BOS)";
-const AVATAR_SOURCE = `${SITE}/avatars/isla-avatar-source.jpg`;
+// Photos of Isla on the live site, tried in order.
+const AVATAR_SOURCES = [`${SITE}/avatars/isla-avatar-source.jpg`, `${SITE}/avatars/isla.png`];
 const STOCK_AVATAR_ID = "30fa96d0-26c4-4e55-94a0-517025942e18";
 
 export class AnamError extends Error {
@@ -55,7 +56,14 @@ const keyId = () => createHash("sha256").update(apiKey()).digest("hex").slice(0,
 const wait = (ms) => new Promise((r) => setTimeout(r, ms));
 
 async function findNamedAvatar() {
-  const list = await anam(`/avatars?onlyOneShot=true&perPage=100&search=${encodeURIComponent("Isla")}`);
+  let list;
+  try {
+    list = await anam(`/avatars?onlyOneShot=true&perPage=100&search=${encodeURIComponent("Isla")}`);
+  } catch (e) {
+    // A new account has no avatars at all, and Anam answers that with a 404.
+    if (e.status === 404) return null;
+    throw e;
+  }
   const items = list?.data || list?.items || (Array.isArray(list) ? list : []);
   return items.find((a) => a.displayName === AVATAR_NAME)?.id || null;
 }
@@ -70,23 +78,33 @@ async function provisionAvatar() {
   }
   const existing = await findNamedAvatar();
   if (existing) return existing;
-  try {
-    const created = await anam("/avatars", {
-      method: "POST",
-      body: { displayName: AVATAR_NAME, imageUrl: AVATAR_SOURCE, avatarModel: "cara-4" },
-    });
-    if (created?.id) return created.id;
-  } catch (e) {
-    if (e.status === 409) {
-      // Another request is creating it right now.
-      for (let i = 0; i < 5; i++) {
-        await wait(3000);
-        const id = await findNamedAvatar();
-        if (id) return id;
+  for (const imageUrl of AVATAR_SOURCES) {
+    // Only offer Anam a photo that is actually live.
+    const live = await fetch(imageUrl, { method: "HEAD", cache: "no-store" })
+      .then((r) => r.ok && /^image\//.test(r.headers.get("content-type") || ""))
+      .catch(() => false);
+    if (!live) continue;
+    try {
+      const created = await anam("/avatars", {
+        method: "POST",
+        body: { displayName: AVATAR_NAME, imageUrl, avatarModel: "cara-4" },
+      });
+      if (created?.id) return created.id;
+    } catch (e) {
+      if (e.status === 409) {
+        // Another request is creating it right now.
+        for (let i = 0; i < 5; i++) {
+          await wait(3000);
+          const id = await findNamedAvatar();
+          if (id) return id;
+        }
       }
+      console.error(`Isla avatar could not be created from ${imageUrl}:`, e.message);
+      // 403 means the plan has no custom avatar slot; other photos won't help.
+      if (e.status === 401 || e.status === 403) break;
     }
-    console.error("Isla avatar could not be created, using a stock avatar:", e.message);
   }
+  console.error("Using a stock avatar for Isla.");
   return STOCK_AVATAR_ID;
 }
 

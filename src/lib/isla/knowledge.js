@@ -13,6 +13,16 @@ const CACHE_MS = 10 * 60 * 1000; // profiles are re-read at most every 10 minute
 let cached = { at: 0, promise: null };
 
 const clean = (s) => String(s ?? "").replace(/\s+/g, " ").trim();
+
+// Isla's model has read "WA" in addresses as Washington. Everything she reads
+// spells it out where it is a place ("Murdoch WA 6150", "Perth, WA"), but
+// business names such as "Orthopaedics WA Wexford" are left as they are.
+const WA_PLACE =
+  /(?<!\b(?:Group|Orthopaedics?|Surgery|Surgeons?|Clinic|Centre|Center|Health|Institute|Hand|Spine|Sports|Imaging|Radiology|Physio)\s)\bWA\b(?!\s+[A-Z][a-z])/g;
+export const fullWA = (text) =>
+  String(text ?? "")
+    .replace(/Western Australia\s*\(WA\)/g, "Western Australia")
+    .replace(WA_PLACE, "Western Australia");
 const norm = (s) =>
   clean(s)
     .toLowerCase()
@@ -127,8 +137,15 @@ function googleOf(slug) {
     .filter((r) => r.rating >= 4 && r.text.length > 60)
     .slice(0, 2)
     .map((r) => clean(r.text).slice(0, 220));
+  // A clinic's shared listing rating is the clinic's, not the surgeon's.
+  if (primary.shared) return { shared: true, clinic: clean(primary.name), named: g.reviews.length, quotes };
   return { rating: primary.rating, count: primary.reviewCount, quotes };
 }
+
+const googleSummary = (g) =>
+  g.shared
+    ? `${g.named} Google review${g.named === 1 ? "" : "s"} name them on the ${g.clinic} listing`
+    : `Google ${g.rating} from ${g.count} reviews`;
 
 function shape(d) {
   const name = formatDoctorName(d.title, d.name);
@@ -204,9 +221,9 @@ export function directoryLine(s) {
     s.places.length ? `practises in ${s.places.slice(0, 4).join(", ")}` : "",
     s.focus.length ? `focus: ${short(s.focus, 6).join("; ")}` : "",
     s.bos ? `BOS ${s.bos.rating} from ${s.bos.count}` : "",
-    s.google ? `Google ${s.google.rating} from ${s.google.count}` : "",
+    s.google ? googleSummary(s.google) : "",
   ];
-  return bits.filter(Boolean).join(" | ");
+  return fullWA(bits.filter(Boolean).join(" | "));
 }
 
 // Plain words a patient might use, mapped to words found in profiles.
@@ -278,12 +295,16 @@ export async function findSurgeons({ need = "", location = "", name = "", limit 
     return b.need - a.need;
   });
   const top = rows.slice(0, Math.min(Math.max(Number(limit) || 5, 1), 8));
-  const head = [];
-  if (location && !place) head.push(`Could not place "${location}" in Western Australia, so results are not sorted by distance. Ask for their suburb or town.`);
+  const head = ["Every surgeon on BOS practises in Western Australia, Australia."];
+  if (location && !place) {
+    head.push(
+      `Could not place "${location}" in Western Australia, so results are not sorted by distance. If that place is outside Western Australia, kindly explain that BOS only lists surgeons in Western Australia. Otherwise ask for their suburb or town in Western Australia.`,
+    );
+  }
   if (place) head.push(`Distances are from ${place.name}.`);
   if (!top.length) {
     head.push(`No surgeon on BOS matches${need ? ` "${need}"` : ""}${name ? ` named "${name}"` : ""}. Say so honestly and offer a broader search.`);
-    return head.join(" ");
+    return fullWA(head.join(" "));
   }
   const lines = top.map(({ s, dist, nearest }, i) =>
     [
@@ -292,22 +313,28 @@ export async function findSurgeons({ need = "", location = "", name = "", limit 
       nearest ? `nearest rooms ${nearest.suburb}${dist != null ? `, about ${Math.round(dist)} km away` : ""}` : s.places.length ? `practises in ${s.places.slice(0, 3).join(", ")}` : "",
       s.focus.length ? `focus: ${short(s.focus, 5, 60).join("; ")}` : "",
       s.bos ? `BOS rating ${s.bos.rating} from ${s.bos.count} reviews` : "",
-      s.google ? `Google ${s.google.rating} from ${s.google.count} reviews` : "",
+      s.google ? googleSummary(s.google) : "",
     ]
       .filter(Boolean)
       .join(". "),
   );
-  return [...head, ...lines, `There are ${rows.length} matching surgeons on BOS in total.`].join("\n");
+  return fullWA([...head, ...lines, `There are ${rows.length} matching surgeons on BOS in total.`].join("\n"));
 }
 
 // Everything BOS shows on one profile, for Isla's get_surgeon_details tool.
-export async function surgeonDetails(slug) {
+// One surgeon by slug, or by name when Isla passes a name instead.
+async function findSurgeon(slug) {
   const all = await getSurgeons();
   const key = norm(slug).replace(/ /g, "-");
-  const s = all.find((x) => x.slug === key) || all.find((x) => nameScore(x, slug) >= 3);
+  return all.find((x) => x.slug === key) || all.find((x) => nameScore(x, slug) >= 3) || null;
+}
+
+export async function surgeonDetails(slug) {
+  const s = await findSurgeon(slug);
   if (!s) return `No BOS profile found for "${slug}". Use find_surgeons to look them up by name.`;
   const out = [
     `${s.name}, ${s.specialty}${s.rank ? `, ${s.rank}` : ""}${s.experience ? `, ${s.experience} years of experience` : ""}.`,
+    `Practises in Western Australia, Australia${s.places.length ? `: ${s.places.join(", ")}` : ""}.`,
     s.group ? `Group: ${s.group}.` : "",
     s.practices.length ? `Rooms: ${s.practices.map((p) => `${p.name}${p.address ? `, ${p.address}` : ""}${p.phone ? `, phone ${p.phone}` : ""}`).join(" | ")}.` : "",
     s.hospitals.length ? `Hospitals: ${s.hospitals.map((h) => h.name).join("; ")}.` : "",
@@ -318,11 +345,26 @@ export async function surgeonDetails(slug) {
     s.days.length ? `Consulting days listed: ${s.days.join(", ")}.` : "",
     s.availability.length ? `Listed availability: ${s.availability.join("; ")}.` : "",
     s.bos ? `BOS patient rating ${s.bos.rating} out of 5 from ${s.bos.count} reviews.` : "No BOS patient reviews yet.",
-    s.google ? `Google rating ${s.google.rating} from ${s.google.count} reviews. Patients wrote: ${s.google.quotes.map((q) => `"${q}"`).join(" ")}` : "",
+    s.google ? `${googleSummary(s.google)}. Patients wrote: ${s.google.quotes.map((q) => `"${q}"`).join(" ")}` : "",
     s.about ? `About: ${s.about.slice(0, 1600)}` : "",
     `Profile page: ${s.path}.`,
   ];
-  return out.filter(Boolean).join("\n");
+  return fullWA(out.filter(Boolean).join("\n"));
+}
+
+// The surgeon's booking page (the same one as the Book Appointment button on
+// their profile), for Isla's open_booking_page tool. The form there sends an
+// appointment request to the surgeon's rooms.
+export async function bookingPage(slug) {
+  const s = await findSurgeon(slug);
+  if (!s) return { path: null, text: `No BOS profile found for "${slug}". Use find_surgeons to look them up by name.` };
+  const phone = s.practices.find((p) => p.phone)?.phone;
+  return {
+    path: `/book-appointment?doctorId=${s.id}&doctorName=${encodeURIComponent(s.name)}`,
+    text: fullWA(
+      `The booking page for ${s.name} is now open on screen. The visitor fills in the short form there, with their details and preferred time, and the request is sent to ${s.name}'s rooms. It is a request, not a confirmed appointment.${phone ? ` They can also call the rooms on ${phone}.` : ""} Most surgeons need a GP referral.`,
+    ),
+  };
 }
 
 export async function surgeonBySlug(slug) {
@@ -363,7 +405,7 @@ const MAIN_PAGES = [
 
 export async function siteMapText({ locations = [], specialties = [] } = {}) {
   const blogs = await getBlogs().catch(() => []);
-  return [
+  return fullWA([
     "Main pages:",
     ...MAIN_PAGES.map(([path, what]) => `${path}: ${what}`),
     locations.length ? `Surgeons by location: ${locations.map((l) => `/best-orthopaedic-surgeons/${l.slug} (${l.name})`).join(", ")}` : "",
@@ -371,7 +413,7 @@ export async function siteMapText({ locations = [], specialties = [] } = {}) {
     blogs.length ? `Blog posts (${blogs.length}):\n${blogs.map((b) => `/blog/${b.slug}: ${clean(b.title)}`).join("\n")}` : "",
   ]
     .filter(Boolean)
-    .join("\n");
+    .join("\n"));
 }
 
 const ENTITIES = { amp: "&", lt: "<", gt: ">", quot: '"', apos: "'", nbsp: " ", rsquo: "’", lsquo: "‘", ldquo: "“", rdquo: "”", ndash: "-", mdash: "-", hellip: "…" };
@@ -403,5 +445,5 @@ export async function readSitePage(origin, path) {
   const res = await fetch(`${origin}${p}`, { headers: { "User-Agent": "BOS-Isla" }, cache: "no-store" });
   if (!res.ok) return `The page ${p} could not be found on BOS.`;
   const text = htmlToText(await res.text());
-  return text ? `Text of ${p}:\n${text.slice(0, 6000)}` : `The page ${p} has no readable text.`;
+  return text ? fullWA(`Text of ${p}:\n${text.slice(0, 6000)}`) : `The page ${p} has no readable text.`;
 }

@@ -9,6 +9,7 @@ import { LinkPillsSection } from "@/components/seo/LinkPillsSection";
 import { seoLocations } from "@/lib/constants/seoLocations";
 import { seoSubspecialties } from "@/lib/constants/seoSubspecialties";
 import Image from "next/image";
+import AdSlot from "@/components/ads/AdSlot";
 
 // Prerendered with hourly refresh; doctor and blog mutations revalidate this
 // page directly, so content changes still appear immediately.
@@ -34,11 +35,12 @@ export default async function Home() {
 
   return (
     <>
-      <div className="mx-auto container px-4 sm:px-6 lg:px-8">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <SearchableDoctorsWrapper featuredDoctors={featuredDoctors} />
+        <AdSlot placement="HOME_AFTER_TESTIMONIALS" className="my-12" />
       </div>
       <TestimonialsSection />
-      <div className="mx-auto container px-4 sm:px-6 lg:px-8">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <CtaSection />
         <Blogsection />
         <ServicesSection />

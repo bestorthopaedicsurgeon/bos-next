@@ -23,6 +23,7 @@ import {
   topHospitals,
   withArticle,
 } from "@/lib/seo/copy";
+import AdSlot from "@/components/ads/AdSlot";
 
 const BASE_URL =
   process.env.NEXT_PUBLIC_BASE_URL ||
@@ -115,7 +116,10 @@ export default async function SubspecialtyPage({ params }) {
 
   // Contextual links to this subspecialty in each location that has depth.
   const locationLinks = seoLocations
-    .map((l) => ({ l, count: surgeons.filter((s) => matchesLocation(s, l)).length }))
+    .map((l) => ({
+      l,
+      count: surgeons.filter((s) => matchesLocation(s, l)).length,
+    }))
     .filter((x) => x.count >= COMBO_THRESHOLD)
     .map((x) => ({
       href: `/${sub.slug}/${x.l.slug}`,
@@ -208,6 +212,11 @@ export default async function SubspecialtyPage({ params }) {
 
       {/* Surgeon grid */}
       <section className="mb-24">
+        <AdSlot
+          placement="SPECIALTY_RESULTS_INLINE"
+          context={{ specialty: sub.slug }}
+          className="mb-10"
+        />
         <div className="mb-6 flex items-center justify-between">
           <h2 className="font-syne text-primary">
             {sub.heading} in Western Australia
@@ -234,7 +243,7 @@ export default async function SubspecialtyPage({ params }) {
             </p>
             <Link
               href="/surgeons"
-              className="bg-primary inline-block rounded-full px-8 py-4 font-medium text-white transition-all hover:bg-primary/90"
+              className="bg-primary hover:bg-primary/90 inline-block rounded-full px-8 py-4 font-medium text-white transition-all"
             >
               Browse all orthopaedic surgeons
             </Link>
@@ -243,27 +252,24 @@ export default async function SubspecialtyPage({ params }) {
       </section>
 
       {/* CTA to full directory */}
-      <section className="bg-primary mb-24 rounded-4xl px-10 py-16 text-center text-primary-foreground">
-        <h2 className="font-syne mb-4 text-primary-foreground">
+      <section className="bg-primary text-primary-foreground mb-24 rounded-4xl px-10 py-16 text-center">
+        <h2 className="font-syne text-primary-foreground mb-4">
           Not sure which surgeon you need?
         </h2>
-        <p className="mx-auto mb-8 max-w-xl text-primary-foreground/85">
+        <p className="text-primary-foreground/85 mx-auto mb-8 max-w-xl">
           Search the full directory of orthopaedic surgeons across WA by name,
           subspecialty and location.
         </p>
         <Link
           href="/surgeons"
-          className="bg-primary-foreground text-primary inline-block rounded-full px-8 py-4 font-semibold transition-all hover:bg-primary-foreground/90"
+          className="bg-primary-foreground text-primary hover:bg-primary-foreground/90 inline-block rounded-full px-8 py-4 font-semibold transition-all"
         >
           Browse the full directory
         </Link>
       </section>
 
       {/* FAQ with FAQPage schema */}
-      <SeoFaq
-        title={`${sub.heading}: common questions`}
-        faqs={faqs}
-      />
+      <SeoFaq title={`${sub.heading}: common questions`} faqs={faqs} />
 
       {/* Contextual internal links to the subspecialty x location matrix */}
       <LinkPillsSection

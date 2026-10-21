@@ -22,15 +22,20 @@ const PUBLIC_ROUTES = [
   "/privacy-policy",
   "/legal-disclaimer",
   "/review-policy",
-  
+  "/advertising-policy",
+
   ...AUTH_PAGES,
-];  
+];
 
 const isDoctorSlugRoute = (pathname: string) => {
   // Match /doctor/ followed by one or more characters that are not slashes
   // and ensure it's not /doctor/edit or /doctor/registration
-  return /^\/doctor\/[^\/]+$/.test(pathname) &&
-    !["/doctor/edit", "/doctor/registration"].some((blocked) => pathname.startsWith(blocked));
+  return (
+    /^\/doctor\/[^\/]+$/.test(pathname) &&
+    !["/doctor/edit", "/doctor/registration"].some((blocked) =>
+      pathname.startsWith(blocked),
+    )
+  );
 };
 
 const isBlogSlugRoute = (pathname: string) => {
@@ -53,7 +58,7 @@ const isSubspecialtyRoute = (pathname: string) => {
 // redirect to /login below and never serve their content).
 const isMetadataRoute = (pathname: string) =>
   /^\/(opengraph-image|twitter-image|icon|apple-icon|manifest|sitemap|robots)/.test(
-    pathname
+    pathname,
   );
 
 export async function middleware(req: NextRequest) {

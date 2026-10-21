@@ -15,5 +15,6 @@ Disallow: /book-appointment
 Disallow: /admin/
 Disallow: /login
 Disallow: /signup
+Disallow: /api/ads/
 
 Sitemap: https://www.bestorthopaedicsurgeon.com.au/sitemap.xml

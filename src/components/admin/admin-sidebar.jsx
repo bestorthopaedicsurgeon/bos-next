@@ -1,16 +1,17 @@
-"use client"
+"use client";
 
-import * as React from "react"
-import Link from "next/link"
-import { usePathname } from "next/navigation"
+import * as React from "react";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 import {
   BarChart3,
   Home,
+  Megaphone,
   Stethoscope,
   NotebookPen,
-} from "lucide-react"
+} from "lucide-react";
 
-import { cn } from "@/lib/utils"
+import { cn } from "@/lib/utils";
 import {
   Sidebar,
   SidebarContent,
@@ -23,7 +24,7 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
   SidebarRail,
-} from "@/components/ui/sidebar"
+} from "@/components/ui/sidebar";
 
 // Menu items
 const data = {
@@ -108,11 +109,16 @@ const data = {
       url: "/admin/blogs",
       icon: NotebookPen,
     },
+    {
+      title: "Advertising",
+      url: "/admin/ads",
+      icon: Megaphone,
+    },
   ],
-}
+};
 
 export function AdminSidebar({ ...props }) {
-  const pathname = usePathname()
+  const pathname = usePathname();
 
   return (
     <Sidebar collapsible="icon" sticky {...props} className="admin_sidebar">
@@ -121,12 +127,14 @@ export function AdminSidebar({ ...props }) {
           <SidebarMenuItem>
             <SidebarMenuButton size="lg" asChild>
               <Link href="/admin">
-                <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-[#2F797B] text-sidebar-primary-foreground">
+                <div className="text-sidebar-primary-foreground flex aspect-square size-8 items-center justify-center rounded-lg bg-[#2F797B]">
                   <Stethoscope className="size-4" />
                 </div>
                 <div className="grid flex-1 text-left text-sm leading-tight">
                   <span className="truncate font-semibold">Admin Panel</span>
-                  <span className="truncate text-xs">Best Orthopaedic Surgeons</span>
+                  <span className="truncate text-xs">
+                    Best Orthopaedic Surgeons
+                  </span>
                 </div>
               </Link>
             </SidebarMenuButton>
@@ -149,8 +157,8 @@ export function AdminSidebar({ ...props }) {
                       <SidebarMenu className="ml-4">
                         {item.items.map((subItem) => (
                           <SidebarMenuItem key={subItem.title}>
-                            <SidebarMenuButton 
-                              asChild 
+                            <SidebarMenuButton
+                              asChild
                               isActive={pathname === subItem.url}
                               className="w-full"
                             >
@@ -162,12 +170,12 @@ export function AdminSidebar({ ...props }) {
                         ))}
                       </SidebarMenu>
                     </SidebarMenuItem>
-                  )
+                  );
                 }
                 return (
                   <SidebarMenuItem key={item.title}>
-                    <SidebarMenuButton 
-                      asChild 
+                    <SidebarMenuButton
+                      asChild
                       tooltip={item.title}
                       isActive={pathname === item.url}
                     >
@@ -177,7 +185,7 @@ export function AdminSidebar({ ...props }) {
                       </Link>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
-                )
+                );
               })}
             </SidebarMenu>
           </SidebarGroupContent>
@@ -197,5 +205,5 @@ export function AdminSidebar({ ...props }) {
       </SidebarFooter>
       <SidebarRail />
     </Sidebar>
-  )
-} 
+  );
+}

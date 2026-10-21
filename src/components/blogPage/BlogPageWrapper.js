@@ -3,6 +3,7 @@
 import { useRef, useEffect } from "react";
 import { HeroSection } from "./Hero";
 import { Blogs } from "./Blogs";
+import AdSlot from "@/components/ads/AdSlot";
 
 export const BlogPageWrapper = ({ initialBlogs = [] }) => {
   const heroRef = useRef(null);
@@ -38,6 +39,7 @@ export const BlogPageWrapper = ({ initialBlogs = [] }) => {
       <div ref={heroRef}>
         <HeroSection />
       </div>
+      <AdSlot placement="BLOG_INDEX_INLINE" className="my-10" />
       <div ref={blogsRef}>
         <Blogs initialBlogs={initialBlogs} />
       </div>

@@ -69,19 +69,30 @@ const getDoctorDisplayName = (doctor) =>
 
 // Search snippet written from the profile's own data. The about text is often
 // the surgeon's own website copy, so it makes a poor, duplicated snippet.
-const getDoctorMetaDescription = (doctor) => {
+// When the surgeon has their own Google listing rated 4.0 or more, the snippet
+// states its rating (a clinic's shared rating is not the surgeon's, so it is
+// never used). Every review, whatever the rating, is still on the page.
+const getDoctorMetaDescription = (doctor, googleListing) => {
   const name = getDoctorDisplayName(doctor);
   const specialty = doctorSpecialtyLabel(doctor?.designation).toLowerCase();
   const location = cleanText(doctor?.location);
   const where = location ? `in ${location}, WA` : "in Western Australia";
   const areas = practiceAreas(doctor).slice(0, 3).map((a) => a.label);
-  const lead = `${name} is an ${specialty} ${where}${
-    areas.length > 0 ? ` treating ${listJoin(areas)} conditions` : ""
-  }.`;
-  return truncateDescription(
-    `${lead} View qualifications, hospitals and reviews.`,
-    160,
-  );
+  const lead = (n) =>
+    `${name} is an ${specialty} ${where}${
+      n > 0 ? ` treating ${listJoin(areas.slice(0, n))} conditions` : ""
+    }.`;
+  const google =
+    googleListing && !googleListing.shared && googleListing.reviewCount > 0 && googleListing.rating >= 4
+      ? `Rated ${googleListing.rating.toFixed(1)} from ${googleListing.reviewCount} Google reviews.`
+      : "";
+  const tail = "View qualifications, hospitals and reviews.";
+  // Keep the rating whole: drop practice areas before cutting the sentence.
+  for (let n = areas.length; n >= 0; n--) {
+    const text = [lead(n), google, tail].filter(Boolean).join(" ");
+    if (text.length <= 160) return text;
+  }
+  return truncateDescription([lead(0), google].filter(Boolean).join(" "), 160);
 };
 
 const getDoctorDescription = (doctor, maxLength = 155) => {
@@ -126,10 +137,11 @@ export async function generateMetadata({ params }) {
   // patients find a profile. Absolute, so the brand suffix does not push the
   // title past the length Google shows.
   const pageTitle = `${displayName} Reviews | ${specialty}${location}`;
-  const description = getDoctorMetaDescription(doctData);
 
   const canonicalSlug = doctData?.slug || slug;
   const canonicalUrl = `${BASE_URL}/doctor/${canonicalSlug}`;
+  const googleListing = getGoogleReviews(canonicalSlug)?.listings?.find((l) => l.primary);
+  const description = getDoctorMetaDescription(doctData, googleListing);
 
   return {
     title: { absolute: pageTitle },
@@ -192,9 +204,9 @@ const Page = async ({ params }) => {
 
   const canonicalSlug = doctData?.slug || slug;
   const googleReviewData = getGoogleReviews(canonicalSlug);
-  const primaryGoogleListing = googleReviewData?.listings?.find(
-    (listing) => listing.primary,
-  );
+  const ownGoogleUrls = (googleReviewData?.listings || [])
+    .filter((listing) => !listing.shared && listing.url)
+    .map((listing) => listing.url);
 
   // Link the physician entity to its Google listing, but never merge imported
   // Google ratings into BOS review markup. Google's review-snippet policy does
@@ -262,11 +274,9 @@ const Page = async ({ params }) => {
     medicalSpecialty: "https://schema.org/Musculoskeletal",
     description: schemaDescription,
     url: `${BASE_URL}/doctor/${canonicalSlug}`,
-    // Only the surgeon's own Google profile is the same entity; a shared
-    // clinic listing is not.
-    ...(primaryGoogleListing?.url && !primaryGoogleListing.shared && {
-      sameAs: [primaryGoogleListing.url],
-    }),
+    // Only the surgeon's own Google profiles are the same entity; a shared
+    // clinic listing is not. Each URL was checked against Google.
+    ...(ownGoogleUrls.length > 0 && { sameAs: ownGoogleUrls }),
     areaServed: { "@type": "State", name: "Western Australia" },
     ...(doctData?.image && { image: doctData.image }),
     ...(primaryPhone && { telephone: primaryPhone }),

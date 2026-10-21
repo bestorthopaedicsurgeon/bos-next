@@ -4,6 +4,8 @@ import Image from "next/image";
 import React from "react";
 import { format } from "date-fns";
 import { JsonLd } from "@/components/seo/JsonLd";
+import AdSlot from "@/components/ads/AdSlot";
+import { splitForInlineAd } from "@/lib/ads/articleSplit";
 
 const BLOG_BASE_URL =
   process.env.NEXT_PUBLIC_BASE_URL ||
@@ -92,6 +94,9 @@ const Page = async ({ params }) => {
   if (!blog) {
     return <div className="container">Blog not found.</div>;
   }
+
+  const articleHtml = normalizeBlogHeadings(blog.content);
+  const articleParts = splitForInlineAd(articleHtml);
 
   const breadcrumbSchema = {
     "@context": "https://schema.org",
@@ -437,7 +442,7 @@ const Page = async ({ params }) => {
           // Remove contenteditable attributes
           table.removeAttribute('contenteditable');
           table.setAttribute('contenteditable', 'false');
-          
+
           // Disable editing on all table cells
           const cells = table.querySelectorAll('th, td');
           cells.forEach(cell => {
@@ -455,12 +460,12 @@ const Page = async ({ params }) => {
 
       // Run immediately
       disableTableEditing();
-      
+
       // Run after DOM is fully loaded
       if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', disableTableEditing);
       }
-      
+
       // Run after a short delay to catch any dynamic content
       setTimeout(disableTableEditing, 100);
       setTimeout(disableTableEditing, 500);
@@ -476,31 +481,31 @@ const Page = async ({ params }) => {
 
       {/* Inject CSS styles for blog content */}
       <style dangerouslySetInnerHTML={{ __html: blogContentStyles }} />
-      
+
       {/* Inject JavaScript to disable table editing */}
       <script dangerouslySetInnerHTML={{ __html: disableTableEditing }} />
-      
+
       <ProfileHeader
         heading={"Read Blog"}
         headingAs="p"
         step1={"blog"}
         step2={slug}
       />
-      
+
       {/* Blog Title */}
-      <div className="mb-8 mt-10">
-        <h1 className="font-syne text-primary font-bold leading-tight">
+      <div className="mt-10 mb-8">
+        <h1 className="font-syne text-primary leading-tight font-bold">
           {blog.title}
         </h1>
       </div>
 
       {/* Hero Image */}
       {blog?.image && (
-        <div className="mb-8 w-full rounded-xl overflow-hidden">
+        <div className="mb-8 w-full overflow-hidden rounded-xl">
           <img
             src={`${blog.image}?v=${Date.now()}`}
             alt={blog.title}
-            className="w-full h-auto rounded-xl"
+            className="h-auto w-full rounded-xl"
           />
         </div>
       )}
@@ -512,7 +517,7 @@ const Page = async ({ params }) => {
           width={60}
           height={60}
           alt="profile"
-          className="h-14 w-14 rounded-full border-2 border-primary/20"
+          className="border-primary/20 h-14 w-14 rounded-full border-2"
         />
         <div className="flex flex-col">
           <p className="text-lg font-semibold text-gray-900 dark:text-gray-100">
@@ -526,10 +531,19 @@ const Page = async ({ params }) => {
       </div>
 
       {/* Blog Content */}
-      <article className="prose prose-lg max-w-none prose-headings:text-primary prose-headings:font-syne prose-a:text-primary prose-strong:text-gray-900 dark:prose-invert dark:prose-headings:text-primary dark:prose-a:text-primary">
-        <div
-          dangerouslySetInnerHTML={{ __html: normalizeBlogHeadings(blog.content) }}
-        ></div>
+      <article className="prose prose-lg prose-headings:text-primary prose-headings:font-syne prose-a:text-primary prose-strong:text-gray-900 dark:prose-invert dark:prose-headings:text-primary dark:prose-a:text-primary max-w-none">
+        {articleParts ? (
+          <div>
+            <div dangerouslySetInnerHTML={{ __html: articleParts[0] }} />
+            <AdSlot
+              placement="BLOG_ARTICLE_INLINE"
+              className="not-prose my-10"
+            />
+            <div dangerouslySetInnerHTML={{ __html: articleParts[1] }} />
+          </div>
+        ) : (
+          <div dangerouslySetInnerHTML={{ __html: articleHtml }} />
+        )}
       </article>
     </div>
   );

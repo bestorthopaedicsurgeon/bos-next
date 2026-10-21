@@ -68,6 +68,19 @@ function registerIslaTools(client, router) {
       return "The page is now open on screen.";
     },
   });
+  client.registerToolCallHandler("open_booking_page", {
+    onStart: async ({ arguments: args = {} }) => {
+      track("isla_tool_call", { label: "open_booking_page" });
+      try {
+        const response = await fetch(`/api/isla/booking?${new URLSearchParams({ slug: args.slug || "" })}`);
+        const { path, text } = await response.json();
+        if (path?.startsWith("/book-appointment?")) router.push(path);
+        return text || "The booking page could not be opened just now.";
+      } catch {
+        return "The booking page could not be opened just now. Suggest the Book Appointment button on the surgeon's profile.";
+      }
+    },
+  });
 }
 
 export default function StaticRuhanaWidget({

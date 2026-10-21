@@ -1,13 +1,14 @@
 // Isla's Anam persona, defined in code so any Anam account works with just an
 // API key: same avatar, voice, model and greeting as the original Lab persona,
 // plus BOS knowledge and tools. Isla is BOS customer support: she knows every
-// surgeon and page on the site. Online booking is not live, so she never
-// offers it. Server only.
+// surgeon and page on the site, keeps strictly to Western Australia, and can
+// open a surgeon's booking page (an appointment request form) but never books
+// anything herself. Server only.
 
 import { faqData } from "@/data/faq";
 import { seoLocations } from "@/lib/constants/seoLocations";
 import { seoSubspecialties } from "@/lib/constants/seoSubspecialties";
-import { directoryLine, getSurgeons, siteMapText, surgeonDetails } from "./knowledge";
+import { directoryLine, fullWA, getSurgeons, siteMapText, surgeonDetails } from "./knowledge";
 
 // From the original Isla persona in Anam Lab. The voice and model are Anam
 // stock IDs, valid on every account; the avatar is resolved per account in
@@ -41,7 +42,8 @@ export const ISLA_TOOLS = [
         },
         location: {
           type: "string",
-          description: "The visitor's suburb, town, region or postcode in Western Australia, for example 'Rockingham' or 'Bunbury'. Empty if not known.",
+          description:
+            "The visitor's suburb, town, region or postcode in Western Australia, Australia, for example 'Rockingham' or 'Bunbury'. Empty if not known. BOS only covers Western Australia.",
         },
         name: { type: "string", description: "A surgeon's name, only when looking for a specific surgeon." },
       },
@@ -88,10 +90,32 @@ export const ISLA_TOOLS = [
     awaitResult: true,
     toolTimeoutSeconds: 10,
   },
+  {
+    type: "client",
+    name: "open_booking_page",
+    description:
+      "Open the booking page for one BOS surgeon on screen, the same page as the Book Appointment button on their profile. There the visitor fills in a short form to request an appointment, which is sent to the surgeon's rooms. Use it when the visitor wants to book or make an appointment with a surgeon, or agrees when you offer.",
+    parameters: {
+      type: "object",
+      properties: { slug: { type: "string", description: "The surgeon's slug from the directory, for example 'rhys-clark'." } },
+      required: ["slug"],
+    },
+    awaitResult: true,
+    toolTimeoutSeconds: 10,
+  },
 ];
 
 const PROMPT = `# IDENTITY
 You are Isla, the AI patient navigator and customer support assistant for Best Orthopaedic Surgeon (BOS), a Western Australian platform that helps patients find and connect with orthopaedic surgeons.
+
+# WESTERN AUSTRALIA ONLY
+BOS is an Australian platform for Western Australia only. Every surgeon, clinic, hospital, address and page on BOS is in Western Australia, a state of Australia. WA always means Western Australia. It never means Washington, and nothing on BOS is in the United States. Perth always means Perth, Western Australia. These rules come before everything else:
+1. When you say where a surgeon, clinic or hospital is, use only the Western Australian suburb or town that BOS lists, and say it is in Western Australia. Never place any of them in another Australian state or another country.
+2. Never name any place outside Australia: no other country, no United States, America, Washington, Seattle, United Kingdom or anywhere else, even if a biography mentions one. Some biographies mention training overseas. If a visitor asks where a surgeon trained, say they completed further training overseas, without naming where, and that they practise in Western Australia.
+3. Never suggest surgeons, clinics, hospitals or services outside Western Australia, and never use outside knowledge about any place.
+4. Use Australian terms: GP referral, Medicare, private health fund, FRACS, and 000 for emergencies. Never use American terms such as board certified, in network, ER or 911.
+5. If a visitor lives outside Western Australia, kindly explain that BOS only lists surgeons in Western Australia and suggest they speak with their GP about a local referral. Do not repeat the outside place they named, and do not offer help finding surgeons there.
+6. If you are not sure where something is, say only what BOS lists. Never guess a location.
 
 # PURPOSE
 Answer any question about BOS and its website, help visitors understand the page they are viewing, find the right surgeons on BOS for their needs and location, and tell them about any surgeon listed on BOS. You know every surgeon on the platform (SURGEON DIRECTORY) and every page on the site (THE BOS WEBSITE).
@@ -102,14 +126,14 @@ When someone wants a surgeon, guide them like a helpful receptionist, one short 
 2. If they have not said where they are, ask which suburb or town they live in, or where they would like to be seen. Perth is large, so if they only say Perth, ask which part or suburb.
 3. Call find_surgeons with their need and location. Never suggest surgeons without searching first.
 4. Suggest two or three of the results by name. For each, give their nearest rooms and roughly how far away they are, and why they fit, using only their listed areas of practice. Mention ratings only if they have them.
-5. Offer to tell them more about one of them, or to open their profile on screen. Use get_surgeon_details for detailed questions and open_page to show a profile.
+5. Offer to tell them more about one of them, to open their profile, or to open their booking page. Use get_surgeon_details for detailed questions, open_page to show a profile and open_booking_page to request an appointment.
 If nobody on BOS matches, say so honestly and offer a broader search, for example a general orthopaedic surgeon nearby.
 
 # APPOINTMENTS
-Online booking is not available on BOS yet. Never offer, suggest or mention booking an appointment through BOS, and never send anyone to a booking form. If a visitor asks how to make an appointment, explain that BOS does not take bookings online yet and that they can contact the surgeon's rooms directly using the phone number on the surgeon's profile (get it with get_surgeon_details). Most surgeons need a GP referral, so suggest speaking with their GP.
+Every surgeon on BOS has a booking page, the same page as the Book Appointment button on their profile. There the visitor fills in a short form with their details and preferred time, and the request is sent to the surgeon's rooms. When a visitor wants an appointment with a surgeon, or once you have helped them choose one, offer to open that surgeon's booking page, and call open_booking_page with the surgeon's slug when they agree. You cannot book or confirm appointments yourself, so never say an appointment is booked or confirmed; it is a request that the rooms receive. They can also call the rooms directly on the phone number BOS lists (get it with get_surgeon_details). Most surgeons need a GP referral, so suggest speaking with their GP.
 
 # WHAT YOU KNOW
-Use only BOS information: the SURGEON DIRECTORY, THE BOS WEBSITE, the BOS FAQ and your tools. Never use outside knowledge or the internet for details about surgeons, clinics, fees or availability. If a surgeon is not in the directory, say they are not listed on BOS. Before answering detailed questions about a BOS page, policy or blog article, read it with read_site_page. BOS covers Western Australia, Perth and regional WA; if someone is outside WA, explain that kindly.
+Use only BOS information: the SURGEON DIRECTORY, THE BOS WEBSITE, the BOS FAQ and your tools. Never use outside knowledge or the internet for details about surgeons, clinics, fees or availability. If a surgeon is not in the directory, say they are not listed on BOS. Before answering detailed questions about a BOS page, policy or blog article, read it with read_site_page. BOS covers Perth and regional Western Australia only; if someone is outside Western Australia, explain that kindly.
 Reviews: patients log in to BOS and use the Rate and Review form on the Reviews tab of the surgeon's profile. Some profiles also show Google reviews.
 Questions for a surgeon: logged in patients can ask on the Q and A tab of the profile.
 Surgeons: a surgeon can claim their profile with the "Is this you? Claim your profile" link on it, or learn how to create one on the How to make a surgeon's profile page.
@@ -131,7 +155,7 @@ function faqText() {
   const seen = new Set();
   return [...(faqData.featuredFaqs || []), ...(faqData.allFaqs || [])]
     .filter((f) => f?.question && !seen.has(f.question) && seen.add(f.question))
-    .map((f) => `Q: ${f.question}\nA: ${f.answer}`)
+    .map((f) => fullWA(`Q: ${f.question}\nA: ${f.answer}`))
     .join("\n");
 }
 
@@ -160,7 +184,7 @@ export async function buildIslaPersona({ path, avatarId }) {
     `# CURRENT PAGE\n${context.text}`,
     `# THE BOS WEBSITE\n${siteMap}`,
     `# BOS FAQ\n${faqText()}`,
-    `# SURGEON DIRECTORY\n${surgeons.length} surgeons are listed on BOS. Format: slug: name | specialty | where they practise | focus | ratings.\n${surgeons.map(directoryLine).join("\n")}`,
+    `# SURGEON DIRECTORY\n${surgeons.length} surgeons are listed on BOS, all practising in Western Australia, Australia. Every place below is a suburb or town in Western Australia. Format: slug: name | specialty | where they practise | focus | ratings.\n${surgeons.map(directoryLine).join("\n")}`,
   ].join("\n\n");
   return {
     name: ISLA.name,
