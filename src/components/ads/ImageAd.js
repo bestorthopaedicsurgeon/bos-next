@@ -12,7 +12,7 @@ export default function ImageAd({ creative, className }) {
         className="focus-visible:ring-primary block w-full focus-visible:ring-2 focus-visible:outline-none focus-visible:ring-inset"
         aria-label={`View advertisement from ${creative.advertiserName} (opens in a new tab)`}
       >
-        <picture>
+        <picture className="block w-full">
           {creative.mobileImageUrl && (
             <source
               media="(max-width: 639px)"
@@ -22,7 +22,7 @@ export default function ImageAd({ creative, className }) {
           <img
             src={creative.desktopImageUrl}
             alt={creative.altText}
-            className="block max-h-[220px] min-h-[90px] w-full object-cover sm:max-h-[250px]"
+            className="block h-auto w-full object-contain"
             loading="lazy"
             decoding="async"
           />
